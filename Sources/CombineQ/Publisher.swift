@@ -32,3 +32,24 @@ public protocol Publisher {
     ///                   once attached it can begin to receive values.
     func receive<S>(subscriber: S) where S : Subscriber, Self.Failure == S.Failure, Self.Output == S.Input
 }
+
+extension Publisher {
+    
+    /// Attaches the specified subscriber to this publisher.
+    ///
+    /// Always call this function instead of `receive(subscriber:)`.
+    /// Adopters of `Publisher` must implement `receive(subscriber:)`. The implementation of `subscribe(_:)` in this extension calls through to `receive(subscriber:)`.
+    /// - SeeAlso: `receive(subscriber:)`
+    /// - Parameters:
+    ///     - subscriber: The subscriber to attach to this `Publisher`. After attaching, the subscriber can start to receive values.
+    public func subscribe<S>(_ subscriber: S) where S : Subscriber, Self.Failure == S.Failure, Self.Output == S.Input {
+        self.receive(subscriber: subscriber)
+    }
+}
+
+extension Publisher {
+    
+    public func eraseToAnyPublisher() -> AnyPublisher<Self.Output, Self.Failure> {
+        return AnyPublisher(self)
+    }
+}

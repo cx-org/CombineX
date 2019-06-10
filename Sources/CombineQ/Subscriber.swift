@@ -28,3 +28,10 @@ public protocol Subscriber : CustomCombineIdentifierConvertible {
     /// - Parameter completion: A `Completion` case indicating whether publishing completed normally or with an error.
     func receive(completion: Subscribers.Completion<Self.Failure>)
 }
+
+extension Subscriber {
+    
+    public func eraseToAnySubscriber() -> AnySubscriber<Self.Input, Self.Failure> {
+        return AnySubscriber(self)
+    }
+}
