@@ -58,19 +58,22 @@ public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertibl
         self.receiveValueBody = s.receive(_:)
         self.receiveCompletionBody = s.receive(completion:)
         
+        // REMINDME: It behaves differently than the system `Combine`.
         self.combineIdentifier = CombineIdentifier()
     }
     
     public init<S>(_ s: S) where Input == S.Output, Failure == S.Failure, S : Subject {
-        #warning("receiveSubscriptionBody")
         self.receiveSubscriptionBody = {
+            #warning("need test")
             $0.request(.unlimited)
         }
         
         self.receiveValueBody = { value in
             s.send(value)
+            #warning("need test")
             return .unlimited
         }
+
         self.receiveCompletionBody = s.send(completion:)
         
         self.combineIdentifier = CombineIdentifier()

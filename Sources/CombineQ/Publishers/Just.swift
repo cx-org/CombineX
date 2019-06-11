@@ -32,8 +32,8 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, S.Failure == Publishers.Just<Output>.Failure {
-//            let subscription = JustSubscription(<#T##pub: <<error type>>##<<error type>>#>, <#T##sub: <<error type>>##<<error type>>#>)
-//            subscriber.receive(completion: subscription)
+            let subscription = JustSubscription(self, subscriber)
+            subscriber.receive(subscription: subscription)
         }
     }
 }
@@ -42,8 +42,7 @@ extension Publishers.Just {
     
     private final class JustSubscription<S>: Subscription where Output == S.Input, S : Subscriber, S.Failure == Publishers.Just<Output>.Failure {
         
-        let lock = NSLock()
-        var isCancelled = false
+        let isCancelled = Atomic<Bool>(false)
         
         let pub: Publishers.Just<Output>
         let sub: S
@@ -54,11 +53,7 @@ extension Publishers.Just {
         }
         
         func request(_ demand: Subscribers.Demand) {
-            lock.lock()
-            defer {
-                lock.lock()
-            }
-            guard demand > 0, !self.isCancelled else {
+            guard demand > 0, !self.isCancelled.load() else {
                 return
             }
             _ = self.sub.receive(self.pub.output)
@@ -66,12 +61,44 @@ extension Publishers.Just {
         }
         
         func cancel() {
-            lock.lock()
-            defer {
-                lock.lock()
-            }
-            self.isCancelled = true
+            _ = self.isCancelled.exchange(with: true)
         }
     }
+}
 
+extension Publishers.Just : Equatable where Output : Equatable {
+    
+    /// Returns a Boolean value indicating whether two values are equal.
+    ///
+    /// Equality is the inverse of inequality. For any values `a` and `b`,
+    /// `a == b` implies that `a != b` is `false`.
+    ///
+    /// - Parameters:
+    ///   - lhs: A value to compare.
+    ///   - rhs: Another value to compare.
+    public static func == (lhs: Publishers.Just<Output>, rhs: Publishers.Just<Output>) -> Bool {
+        return lhs.output == rhs.output
+    }
+}
+
+extension Publishers.Just where Output : Comparable {
+    
+    public func min() -> Publishers.Just<Output> {
+        return self
+    }
+    
+    public func max() -> Publishers.Just<Output> {
+        return self
+    }
+}
+
+extension Publishers.Just where Output : Equatable {
+    
+    public func contains(_ output: Output) -> Publishers.Just<Bool> {
+        return Publishers.Just(self.output == output)
+    }
+    
+    public func removeDuplicates() -> Publishers.Just<Output> {
+        return self
+    }
 }
