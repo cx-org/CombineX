@@ -19,7 +19,7 @@ class Atomic<Value> {
         self.value = value
     }
     
-    /// Stores a value.
+    /// Stores the provided value.
     ///
     /// - Returns: The old value.
     func exchange(with value: Value) -> Value {
@@ -42,7 +42,7 @@ class Atomic<Value> {
 
 extension Atomic where Value: Equatable {
     
-    /// Stores a value at the specified index of the array, if it equals a value.
+    /// Stores the `desired` if it equals the `expected`.
     ///
     /// - Returns: The old value.
     func compareAndExchange(expected: Value, desired: Value) -> Bool {
@@ -60,21 +60,21 @@ extension Atomic where Value: AdditiveArithmetic {
     /// Adds the provided value to the existing value.
     ///
     /// - Returns: The old value.
-    func add(_ rhs: Value) -> Value {
+    func add(_ value: Value) -> Value {
         self.write {
             let old = $0
-            $0 += rhs
+            $0 += value
             return old
         }
     }
     
     /// Subtracts the provided value from the existing value.
     ///
-    /// Subtracts `rhs` from this value.
-    func sub(_ rhs: Value) -> Value {
+    /// - Returns: The old value.
+    func sub(_ value: Value) -> Value {
         self.write {
             let old = $0
-            $0 -= rhs
+            $0 -= value
             return old
         }
     }
@@ -82,26 +82,35 @@ extension Atomic where Value: AdditiveArithmetic {
 
 extension Atomic where Value: BinaryInteger {
     
-    func and(_ rhs: Value) -> Value {
+    /// Computes a bitwise AND on the existing value with the provided value.
+    ///
+    /// - Returns: The old value.
+    func and(_ value: Value) -> Value {
         self.write {
             let old = $0
-            $0 &= rhs
+            $0 &= value
             return old
         }
     }
     
-    func or(_ rhs: Value) -> Value {
+    /// Computes a bitwise OR on the existing value with the provided value.
+    ///
+    /// - Returns: The old value.
+    func or(_ value: Value) -> Value {
         self.write {
             let old = $0
-            $0 |= rhs
+            $0 |= value
             return old
         }
     }
     
-    func xor(_ rhs: Value) -> Value {
+    /// Computes a bitwise XOR on the existing value with the provided value.
+    ///
+    /// - Returns: The old value.
+    func xor(_ value: Value) -> Value {
         self.write {
             let old = $0
-            $0 ^= rhs
+            $0 ^= value
             return old
         }
     }
