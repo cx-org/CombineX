@@ -8,11 +8,14 @@ extension Subscriptions {
     }
 }
 
-private final class EmptySubscription: Subscription, Cancellable, CustomCombineIdentifierConvertible {
+extension Subscriptions {
     
-    func request(_ demand: Subscribers.Demand) {
-    }
-    
-    func cancel() {
+    private final class EmptySubscription: Subscription, Cancellable, CustomCombineIdentifierConvertible {
+        
+        func request(_ demand: Subscribers.Demand) {
+        }
+        
+        func cancel() {
+        }
     }
 }

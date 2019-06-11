@@ -1,7 +1,6 @@
 /// A subject that passes along values and completion.
 ///
 /// Use a `PassthroughSubject` in unit tests when you want a publisher than can publish specific values on-demand during tests.
-@available(OSX 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 final public class PassthroughSubject<Output, Failure> : Subject where Failure : Error {
     
     public init() {

@@ -1,0 +1,694 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		"CombineQ::CombineQPackageTests::ProductTarget" /* CombineQPackageTests */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = OBJ_107 /* Build configuration list for PBXAggregateTarget "CombineQPackageTests" */;
+			buildPhases = (
+			);
+			dependencies = (
+				OBJ_110 /* PBXTargetDependency */,
+			);
+			name = CombineQPackageTests;
+			productName = CombineQPackageTests;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		66682E8D22AFEB63009DBDF6 /* CustomSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66682E8C22AFEB63009DBDF6 /* CustomSubscription.swift */; };
+		OBJ_105 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_6 /* Package.swift */; };
+		OBJ_116 /* CombineQTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_50 /* CombineQTests.swift */; };
+		OBJ_117 /* JustTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_52 /* JustTests.swift */; };
+		OBJ_118 /* XCTestManifests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_53 /* XCTestManifests.swift */; };
+		OBJ_119 /* helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_54 /* helpers.swift */; };
+		OBJ_121 /* CombineQ.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = "CombineQ::CombineQ::Product" /* CombineQ.framework */; };
+		OBJ_65 /* AnyCancellable.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* AnyCancellable.swift */; };
+		OBJ_66 /* AnyPublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_10 /* AnyPublisher.swift */; };
+		OBJ_67 /* AnySubject.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_11 /* AnySubject.swift */; };
+		OBJ_68 /* AnySubscriber.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_12 /* AnySubscriber.swift */; };
+		OBJ_69 /* Cancellable.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_13 /* Cancellable.swift */; };
+		OBJ_70 /* CombineIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_14 /* CombineIdentifier.swift */; };
+		OBJ_71 /* Completion.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_15 /* Completion.swift */; };
+		OBJ_72 /* ConnectablePublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_16 /* ConnectablePublisher.swift */; };
+		OBJ_73 /* CustomCombineIdentifierConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_17 /* CustomCombineIdentifierConvertible.swift */; };
+		OBJ_74 /* Demand.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_18 /* Demand.swift */; };
+		OBJ_75 /* ImmediateScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_19 /* ImmediateScheduler.swift */; };
+		OBJ_76 /* Publisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_20 /* Publisher.swift */; };
+		OBJ_77 /* Publishers.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_21 /* Publishers.swift */; };
+		OBJ_78 /* Autoconnect.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_23 /* Autoconnect.swift */; };
+		OBJ_79 /* Just.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_24 /* Just.swift */; };
+		OBJ_80 /* Once.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_25 /* Once.swift */; };
+		OBJ_81 /* SubscribeOn.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_26 /* SubscribeOn.swift */; };
+		OBJ_82 /* assign.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_27 /* assign.swift */; };
+		OBJ_83 /* sink.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_28 /* sink.swift */; };
+		OBJ_84 /* Scheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_29 /* Scheduler.swift */; };
+		OBJ_85 /* SchedulerTimeIntervalConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_30 /* SchedulerTimeIntervalConvertible.swift */; };
+		OBJ_86 /* Subject.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_31 /* Subject.swift */; };
+		OBJ_87 /* CurrentValueSubject.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_33 /* CurrentValueSubject.swift */; };
+		OBJ_88 /* PassthroughSubject.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_34 /* PassthroughSubject.swift */; };
+		OBJ_89 /* Subscriber.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_35 /* Subscriber.swift */; };
+		OBJ_90 /* Subscribers.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_36 /* Subscribers.swift */; };
+		OBJ_91 /* Assign.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_38 /* Assign.swift */; };
+		OBJ_92 /* Sink.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_39 /* Sink.swift */; };
+		OBJ_93 /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_40 /* Subscription.swift */; };
+		OBJ_94 /* Subscriptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_41 /* Subscriptions.swift */; };
+		OBJ_95 /* Empty.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_43 /* Empty.swift */; };
+		OBJ_96 /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_45 /* Atomic.swift */; };
+		OBJ_97 /* Bag.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_46 /* Bag.swift */; };
+		OBJ_98 /* WaitForImplementation.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_47 /* WaitForImplementation.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		66682E8222AFD2D3009DBDF6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = OBJ_1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = "CombineQ::CombineQ";
+			remoteInfo = CombineQ;
+		};
+		66682E8322AFD2DF009DBDF6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = OBJ_1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = "CombineQ::CombineQTests";
+			remoteInfo = CombineQTests;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		66682E8C22AFEB63009DBDF6 /* CustomSubscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSubscription.swift; sourceTree = "<group>"; };
+		"CombineQ::CombineQ::Product" /* CombineQ.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CombineQ.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		"CombineQ::CombineQTests::Product" /* CombineQTests.xctest */ = {isa = PBXFileReference; lastKnownFileType = file; path = CombineQTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		OBJ_10 /* AnyPublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyPublisher.swift; sourceTree = "<group>"; };
+		OBJ_11 /* AnySubject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnySubject.swift; sourceTree = "<group>"; };
+		OBJ_12 /* AnySubscriber.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnySubscriber.swift; sourceTree = "<group>"; };
+		OBJ_13 /* Cancellable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cancellable.swift; sourceTree = "<group>"; };
+		OBJ_14 /* CombineIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineIdentifier.swift; sourceTree = "<group>"; };
+		OBJ_15 /* Completion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Completion.swift; sourceTree = "<group>"; };
+		OBJ_16 /* ConnectablePublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectablePublisher.swift; sourceTree = "<group>"; };
+		OBJ_17 /* CustomCombineIdentifierConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCombineIdentifierConvertible.swift; sourceTree = "<group>"; };
+		OBJ_18 /* Demand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Demand.swift; sourceTree = "<group>"; };
+		OBJ_19 /* ImmediateScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmediateScheduler.swift; sourceTree = "<group>"; };
+		OBJ_20 /* Publisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Publisher.swift; sourceTree = "<group>"; };
+		OBJ_21 /* Publishers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Publishers.swift; sourceTree = "<group>"; };
+		OBJ_23 /* Autoconnect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Autoconnect.swift; sourceTree = "<group>"; };
+		OBJ_24 /* Just.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Just.swift; sourceTree = "<group>"; };
+		OBJ_25 /* Once.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Once.swift; sourceTree = "<group>"; };
+		OBJ_26 /* SubscribeOn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscribeOn.swift; sourceTree = "<group>"; };
+		OBJ_27 /* assign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = assign.swift; sourceTree = "<group>"; };
+		OBJ_28 /* sink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sink.swift; sourceTree = "<group>"; };
+		OBJ_29 /* Scheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scheduler.swift; sourceTree = "<group>"; };
+		OBJ_30 /* SchedulerTimeIntervalConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchedulerTimeIntervalConvertible.swift; sourceTree = "<group>"; };
+		OBJ_31 /* Subject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subject.swift; sourceTree = "<group>"; };
+		OBJ_33 /* CurrentValueSubject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentValueSubject.swift; sourceTree = "<group>"; };
+		OBJ_34 /* PassthroughSubject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassthroughSubject.swift; sourceTree = "<group>"; };
+		OBJ_35 /* Subscriber.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subscriber.swift; sourceTree = "<group>"; };
+		OBJ_36 /* Subscribers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subscribers.swift; sourceTree = "<group>"; };
+		OBJ_38 /* Assign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Assign.swift; sourceTree = "<group>"; };
+		OBJ_39 /* Sink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sink.swift; sourceTree = "<group>"; };
+		OBJ_40 /* Subscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
+		OBJ_41 /* Subscriptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subscriptions.swift; sourceTree = "<group>"; };
+		OBJ_43 /* Empty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Empty.swift; sourceTree = "<group>"; };
+		OBJ_45 /* Atomic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Atomic.swift; sourceTree = "<group>"; };
+		OBJ_46 /* Bag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bag.swift; sourceTree = "<group>"; };
+		OBJ_47 /* WaitForImplementation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitForImplementation.swift; sourceTree = "<group>"; };
+		OBJ_50 /* CombineQTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineQTests.swift; sourceTree = "<group>"; };
+		OBJ_52 /* JustTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JustTests.swift; sourceTree = "<group>"; };
+		OBJ_53 /* XCTestManifests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTestManifests.swift; sourceTree = "<group>"; };
+		OBJ_54 /* helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = helpers.swift; sourceTree = "<group>"; };
+		OBJ_58 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		OBJ_59 /* combine.swift.api */ = {isa = PBXFileReference; lastKnownFileType = text; path = combine.swift.api; sourceTree = "<group>"; };
+		OBJ_6 /* Package.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
+		OBJ_9 /* AnyCancellable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyCancellable.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		OBJ_120 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 0;
+			files = (
+				OBJ_121 /* CombineQ.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		OBJ_99 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		66682E8622AFD35B009DBDF6 /* Schedulers */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_19 /* ImmediateScheduler.swift */,
+			);
+			path = Schedulers;
+			sourceTree = "<group>";
+		};
+		OBJ_22 /* Publishers */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_21 /* Publishers.swift */,
+				OBJ_23 /* Autoconnect.swift */,
+				OBJ_24 /* Just.swift */,
+				OBJ_25 /* Once.swift */,
+				OBJ_26 /* SubscribeOn.swift */,
+				OBJ_27 /* assign.swift */,
+				OBJ_28 /* sink.swift */,
+			);
+			path = Publishers;
+			sourceTree = "<group>";
+		};
+		OBJ_32 /* Subjects */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_33 /* CurrentValueSubject.swift */,
+				OBJ_34 /* PassthroughSubject.swift */,
+			);
+			path = Subjects;
+			sourceTree = "<group>";
+		};
+		OBJ_37 /* Subscribers */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_36 /* Subscribers.swift */,
+				OBJ_38 /* Assign.swift */,
+				OBJ_39 /* Sink.swift */,
+			);
+			path = Subscribers;
+			sourceTree = "<group>";
+		};
+		OBJ_42 /* Subscriptions */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_41 /* Subscriptions.swift */,
+				OBJ_43 /* Empty.swift */,
+			);
+			path = Subscriptions;
+			sourceTree = "<group>";
+		};
+		OBJ_44 /* Internal */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_45 /* Atomic.swift */,
+				OBJ_46 /* Bag.swift */,
+				OBJ_47 /* WaitForImplementation.swift */,
+				66682E8C22AFEB63009DBDF6 /* CustomSubscription.swift */,
+			);
+			path = Internal;
+			sourceTree = "<group>";
+		};
+		OBJ_48 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_49 /* CombineQTests */,
+			);
+			name = Tests;
+			sourceTree = SOURCE_ROOT;
+		};
+		OBJ_49 /* CombineQTests */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_50 /* CombineQTests.swift */,
+				OBJ_51 /* Publishers */,
+				OBJ_53 /* XCTestManifests.swift */,
+				OBJ_54 /* helpers.swift */,
+			);
+			name = CombineQTests;
+			path = Tests/CombineQTests;
+			sourceTree = SOURCE_ROOT;
+		};
+		OBJ_5 = {
+			isa = PBXGroup;
+			children = (
+				OBJ_6 /* Package.swift */,
+				OBJ_7 /* Sources */,
+				OBJ_48 /* Tests */,
+				OBJ_55 /* Products */,
+				OBJ_58 /* README.md */,
+				OBJ_59 /* combine.swift.api */,
+			);
+			sourceTree = "<group>";
+		};
+		OBJ_51 /* Publishers */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_52 /* JustTests.swift */,
+			);
+			path = Publishers;
+			sourceTree = "<group>";
+		};
+		OBJ_55 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				"CombineQ::CombineQTests::Product" /* CombineQTests.xctest */,
+				"CombineQ::CombineQ::Product" /* CombineQ.framework */,
+			);
+			name = Products;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		OBJ_7 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_8 /* CombineQ */,
+			);
+			name = Sources;
+			sourceTree = SOURCE_ROOT;
+		};
+		OBJ_8 /* CombineQ */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_9 /* AnyCancellable.swift */,
+				OBJ_10 /* AnyPublisher.swift */,
+				OBJ_11 /* AnySubject.swift */,
+				OBJ_12 /* AnySubscriber.swift */,
+				OBJ_13 /* Cancellable.swift */,
+				OBJ_14 /* CombineIdentifier.swift */,
+				OBJ_15 /* Completion.swift */,
+				OBJ_16 /* ConnectablePublisher.swift */,
+				OBJ_17 /* CustomCombineIdentifierConvertible.swift */,
+				OBJ_18 /* Demand.swift */,
+				OBJ_20 /* Publisher.swift */,
+				OBJ_29 /* Scheduler.swift */,
+				OBJ_30 /* SchedulerTimeIntervalConvertible.swift */,
+				OBJ_31 /* Subject.swift */,
+				OBJ_35 /* Subscriber.swift */,
+				OBJ_40 /* Subscription.swift */,
+				OBJ_22 /* Publishers */,
+				66682E8622AFD35B009DBDF6 /* Schedulers */,
+				OBJ_32 /* Subjects */,
+				OBJ_37 /* Subscribers */,
+				OBJ_42 /* Subscriptions */,
+				OBJ_44 /* Internal */,
+			);
+			name = CombineQ;
+			path = Sources/CombineQ;
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		"CombineQ::CombineQ" /* CombineQ */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = OBJ_61 /* Build configuration list for PBXNativeTarget "CombineQ" */;
+			buildPhases = (
+				OBJ_64 /* Sources */,
+				OBJ_99 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CombineQ;
+			productName = CombineQ;
+			productReference = "CombineQ::CombineQ::Product" /* CombineQ.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		"CombineQ::CombineQTests" /* CombineQTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = OBJ_112 /* Build configuration list for PBXNativeTarget "CombineQTests" */;
+			buildPhases = (
+				OBJ_115 /* Sources */,
+				OBJ_120 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				OBJ_122 /* PBXTargetDependency */,
+			);
+			name = CombineQTests;
+			productName = CombineQTests;
+			productReference = "CombineQ::CombineQTests::Product" /* CombineQTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		"CombineQ::SwiftPMPackageDescription" /* CombineQPackageDescription */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = OBJ_101 /* Build configuration list for PBXNativeTarget "CombineQPackageDescription" */;
+			buildPhases = (
+				OBJ_104 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CombineQPackageDescription;
+			productName = CombineQPackageDescription;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		OBJ_1 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftMigration = 9999;
+				LastUpgradeCheck = 9999;
+			};
+			buildConfigurationList = OBJ_2 /* Build configuration list for PBXProject "CombineQ" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				English,
+				en,
+			);
+			mainGroup = OBJ_5;
+			productRefGroup = OBJ_55 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				"CombineQ::CombineQ" /* CombineQ */,
+				"CombineQ::SwiftPMPackageDescription" /* CombineQPackageDescription */,
+				"CombineQ::CombineQPackageTests::ProductTarget" /* CombineQPackageTests */,
+				"CombineQ::CombineQTests" /* CombineQTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		OBJ_104 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 0;
+			files = (
+				OBJ_105 /* Package.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		OBJ_115 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 0;
+			files = (
+				OBJ_116 /* CombineQTests.swift in Sources */,
+				OBJ_117 /* JustTests.swift in Sources */,
+				OBJ_118 /* XCTestManifests.swift in Sources */,
+				OBJ_119 /* helpers.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		OBJ_64 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 0;
+			files = (
+				OBJ_65 /* AnyCancellable.swift in Sources */,
+				OBJ_66 /* AnyPublisher.swift in Sources */,
+				OBJ_67 /* AnySubject.swift in Sources */,
+				OBJ_68 /* AnySubscriber.swift in Sources */,
+				OBJ_69 /* Cancellable.swift in Sources */,
+				OBJ_70 /* CombineIdentifier.swift in Sources */,
+				OBJ_71 /* Completion.swift in Sources */,
+				OBJ_72 /* ConnectablePublisher.swift in Sources */,
+				OBJ_73 /* CustomCombineIdentifierConvertible.swift in Sources */,
+				OBJ_74 /* Demand.swift in Sources */,
+				OBJ_75 /* ImmediateScheduler.swift in Sources */,
+				OBJ_76 /* Publisher.swift in Sources */,
+				OBJ_77 /* Publishers.swift in Sources */,
+				OBJ_78 /* Autoconnect.swift in Sources */,
+				OBJ_79 /* Just.swift in Sources */,
+				OBJ_80 /* Once.swift in Sources */,
+				OBJ_81 /* SubscribeOn.swift in Sources */,
+				OBJ_82 /* assign.swift in Sources */,
+				OBJ_83 /* sink.swift in Sources */,
+				OBJ_84 /* Scheduler.swift in Sources */,
+				OBJ_85 /* SchedulerTimeIntervalConvertible.swift in Sources */,
+				OBJ_86 /* Subject.swift in Sources */,
+				OBJ_87 /* CurrentValueSubject.swift in Sources */,
+				OBJ_88 /* PassthroughSubject.swift in Sources */,
+				OBJ_89 /* Subscriber.swift in Sources */,
+				OBJ_90 /* Subscribers.swift in Sources */,
+				OBJ_91 /* Assign.swift in Sources */,
+				OBJ_92 /* Sink.swift in Sources */,
+				66682E8D22AFEB63009DBDF6 /* CustomSubscription.swift in Sources */,
+				OBJ_93 /* Subscription.swift in Sources */,
+				OBJ_94 /* Subscriptions.swift in Sources */,
+				OBJ_95 /* Empty.swift in Sources */,
+				OBJ_96 /* Atomic.swift in Sources */,
+				OBJ_97 /* Bag.swift in Sources */,
+				OBJ_98 /* WaitForImplementation.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		OBJ_110 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = "CombineQ::CombineQTests" /* CombineQTests */;
+			targetProxy = 66682E8322AFD2DF009DBDF6 /* PBXContainerItemProxy */;
+		};
+		OBJ_122 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = "CombineQ::CombineQ" /* CombineQ */;
+			targetProxy = 66682E8222AFD2D3009DBDF6 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		OBJ_102 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				LD = /usr/bin/true;
+				OTHER_SWIFT_FLAGS = "-swift-version 5 -I $(TOOLCHAIN_DIR)/usr/lib/swift/pm/4_2 -target x86_64-apple-macosx10.10 -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		OBJ_103 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				LD = /usr/bin/true;
+				OTHER_SWIFT_FLAGS = "-swift-version 5 -I $(TOOLCHAIN_DIR)/usr/lib/swift/pm/4_2 -target x86_64-apple-macosx10.10 -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		OBJ_108 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		OBJ_109 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		OBJ_113 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = CombineQ.xcodeproj/CombineQTests_Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				OTHER_CFLAGS = "$(inherited)";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited)";
+				SWIFT_VERSION = 5.0;
+				TARGET_NAME = CombineQTests;
+				TVOS_DEPLOYMENT_TARGET = 10.0;
+				WATCHOS_DEPLOYMENT_TARGET = 3.0;
+			};
+			name = Debug;
+		};
+		OBJ_114 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = CombineQ.xcodeproj/CombineQTests_Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				OTHER_CFLAGS = "$(inherited)";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited)";
+				SWIFT_VERSION = 5.0;
+				TARGET_NAME = CombineQTests;
+				TVOS_DEPLOYMENT_TARGET = 10.0;
+				WATCHOS_DEPLOYMENT_TARGET = 3.0;
+			};
+			name = Release;
+		};
+		OBJ_3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_NS_ASSERTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"SWIFT_PACKAGE=1",
+					"DEBUG=1",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_SWIFT_FLAGS = "-DXcode";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator appletvos appletvsimulator watchos watchsimulator";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SWIFT_PACKAGE DEBUG";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				USE_HEADERMAP = NO;
+			};
+			name = Debug;
+		};
+		OBJ_4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"SWIFT_PACKAGE=1",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				OTHER_SWIFT_FLAGS = "-DXcode";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator appletvos appletvsimulator watchos watchsimulator";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SWIFT_PACKAGE";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				USE_HEADERMAP = NO;
+			};
+			name = Release;
+		};
+		OBJ_62 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = CombineQ.xcodeproj/CombineQ_Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) $(TOOLCHAIN_DIR)/usr/lib/swift/macosx";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				OTHER_CFLAGS = "$(inherited)";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = CombineQ;
+				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited)";
+				SWIFT_VERSION = 5.0;
+				TARGET_NAME = CombineQ;
+				TVOS_DEPLOYMENT_TARGET = 10.0;
+				WATCHOS_DEPLOYMENT_TARGET = 3.0;
+			};
+			name = Debug;
+		};
+		OBJ_63 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = CombineQ.xcodeproj/CombineQ_Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) $(TOOLCHAIN_DIR)/usr/lib/swift/macosx";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				OTHER_CFLAGS = "$(inherited)";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = CombineQ;
+				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited)";
+				SWIFT_VERSION = 5.0;
+				TARGET_NAME = CombineQ;
+				TVOS_DEPLOYMENT_TARGET = 10.0;
+				WATCHOS_DEPLOYMENT_TARGET = 3.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		OBJ_101 /* Build configuration list for PBXNativeTarget "CombineQPackageDescription" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				OBJ_102 /* Debug */,
+				OBJ_103 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		OBJ_107 /* Build configuration list for PBXAggregateTarget "CombineQPackageTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				OBJ_108 /* Debug */,
+				OBJ_109 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		OBJ_112 /* Build configuration list for PBXNativeTarget "CombineQTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				OBJ_113 /* Debug */,
+				OBJ_114 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		OBJ_2 /* Build configuration list for PBXProject "CombineQ" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				OBJ_3 /* Debug */,
+				OBJ_4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		OBJ_61 /* Build configuration list for PBXNativeTarget "CombineQ" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				OBJ_62 /* Debug */,
+				OBJ_63 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = OBJ_1 /* Project object */;
+}

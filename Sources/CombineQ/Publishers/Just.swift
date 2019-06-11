@@ -31,8 +31,10 @@ extension Publishers {
         /// - Parameters:
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, S.Failure == Publishers.Just<Output>.Failure {
-            let subscription = JustSubscription(self, subscriber)
+        public func receive<S>(subscriber: S)
+        where S : Subscriber, S.Input == Output, S.Failure == Never
+        {
+            let subscription = JustSubscription(pub: self, sub: subscriber)
             subscriber.receive(subscription: subscription)
         }
     }
@@ -40,28 +42,34 @@ extension Publishers {
 
 extension Publishers.Just {
     
-    private final class JustSubscription<S>: Subscription where Output == S.Input, S : Subscriber, S.Failure == Publishers.Just<Output>.Failure {
+    private final class JustSubscription<S>:
+        CustomSubscription<Publishers.Just<Output>, S>
+    where
+        S: Subscriber,
+        S.Input == Output,
+        S.Failure == Never
+    {
         
-        let isCancelled = Atomic<Bool>(false)
-        
-        let pub: Publishers.Just<Output>
-        let sub: S
-        
-        init(_ pub: Publishers.Just<Output>, _ sub: S) {
-            self.pub = pub
-            self.sub = sub
-        }
-        
-        func request(_ demand: Subscribers.Demand) {
-            guard demand > 0, !self.isCancelled.load() else {
+        override func request(_ demand: Subscribers.Demand) {
+            guard demand > 0 else {
                 return
             }
-            _ = self.sub.receive(self.pub.output)
-            self.sub.receive(completion: .finished)
+            
+            self.state.write {
+                switch $0 {
+                case .waiting:
+                    _ = self.sub.receive(self.pub.output)
+                    self.sub.receive(completion: .finished)
+                    
+                    $0 = .completed
+                default:
+                    break
+                }
+            }
         }
         
-        func cancel() {
-            _ = self.isCancelled.exchange(with: true)
+        override func cancel() {
+            self.state.store(.cancelled)
         }
     }
 }

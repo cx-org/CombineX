@@ -313,13 +313,14 @@ public struct ImmediateScheduler : Scheduler {
     
     /// Performs the action at some time after the specified date.
     public func schedule(after date: ImmediateScheduler.SchedulerTimeType, tolerance: ImmediateScheduler.SchedulerTimeType.Stride, options: ImmediateScheduler.SchedulerOptions?, _ action: @escaping () -> Void) {
+        #warning("need test")
         fatalError()
     }
     
     /// Performs the action at some time after the specified date, at the specified
     /// frequency, optionally taking into account tolerance if possible.
     public func schedule(after date: ImmediateScheduler.SchedulerTimeType, interval: ImmediateScheduler.SchedulerTimeType.Stride, tolerance: ImmediateScheduler.SchedulerTimeType.Stride, options: ImmediateScheduler.SchedulerOptions?, _ action: @escaping () -> Void) -> Cancellable {
-        action()
+        #warning("need test")
         fatalError()
     }
 }

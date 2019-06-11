@@ -39,8 +39,10 @@ extension Publishers {
         /// - Parameters:
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
-            let subscription = OnceSubscriptions(self, subscriber)
+        public func receive<S>(subscriber: S)
+        where S : Subscriber, S.Input == Output, S.Failure == Failure
+        {
+            let subscription = OnceSubscriptions(pub: self, sub: subscriber)
             subscriber.receive(subscription: subscription)
         }
     }
@@ -48,34 +50,40 @@ extension Publishers {
 
 extension Publishers.Once {
     
-    private final class OnceSubscriptions<S>: Subscription where Output == S.Input, Failure == S.Failure, S : Subscriber {
+    private final class OnceSubscriptions<S>:
+        CustomSubscription<Publishers.Once<Output, Failure>, S>
+    where
+        S : Subscriber,
+        S.Input == Output,
+        S.Failure == Failure
+    {
         
-        let isCancelled = Atomic<Bool>(false)
-        
-        let pub: Publishers.Once<Output, Failure>
-        let sub: S
-        
-        init(_ pub: Publishers.Once<Output, Failure>, _ sub: S) {
-            self.pub = pub
-            self.sub = sub
-        }
-        
-        func request(_ demand: Subscribers.Demand) {
-            guard demand > 0, !self.isCancelled.load() else {
+        override func request(_ demand: Subscribers.Demand) {
+            guard demand > 0 else {
                 return
             }
             
-            switch pub.result {
-            case .success(let output):
-                _ = sub.receive(output)
-                sub.receive(completion: .finished)
-            case .failure(let error):
-                sub.receive(completion: .failure(error))
+            self.state.write {
+                switch $0 {
+                case .waiting:
+                    switch self.pub.result {
+                    case .success(let output):
+                        _ = self.sub.receive(output)
+                        self.sub.receive(completion: .finished)
+                    case .failure(let error):
+                        self.sub.receive(completion: .failure(error))
+                    }
+                    
+                    $0 = .completed
+                default:
+                    break
+                }
             }
+            
         }
         
-        func cancel() {
-            _ = self.isCancelled.exchange(with: true)
+        override func cancel() {
+            self.state.store(.cancelled)
         }
     }
 }
