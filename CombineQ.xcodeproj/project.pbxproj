@@ -284,12 +284,12 @@
 				OBJ_31 /* Subject.swift */,
 				OBJ_35 /* Subscriber.swift */,
 				OBJ_40 /* Subscription.swift */,
+				OBJ_44 /* Internal */,
 				OBJ_22 /* Publishers */,
 				66682E8622AFD35B009DBDF6 /* Schedulers */,
 				OBJ_32 /* Subjects */,
 				OBJ_37 /* Subscribers */,
 				OBJ_42 /* Subscriptions */,
-				OBJ_44 /* Internal */,
 			);
 			name = CombineQ;
 			path = Sources/CombineQ;
