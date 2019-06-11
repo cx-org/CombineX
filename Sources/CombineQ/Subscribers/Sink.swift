@@ -81,7 +81,6 @@ extension Subscribers {
         /// - Returns: A `Demand` instance indicating how many more elements the subcriber expects to receive.
         final public func receive(_ value: Subscribers.Sink<Upstream>.Input) -> Subscribers.Demand {
             self.receiveValue(value)
-            #warning("Combine always return '.max(0)' here.")
             return .max(0)
         }
         
@@ -94,6 +93,8 @@ extension Subscribers {
         
         /// Cancel the activity.
         final public func cancel() {
+            #warning("Do we need to abort subscription here?")
+            WaitForImplementation()
         }
     }
 }
