@@ -58,6 +58,8 @@ extension Publishers.Once {
         S.Failure == Failure
     {
         
+        let state = Atomic<State>(value: .waiting)
+        
         override func request(_ demand: Subscribers.Demand) {
             switch self.state.load() {
             case .waiting:
@@ -69,7 +71,7 @@ extension Publishers.Once {
                 switch self.pub.result {
                 case .success(let output):
                     _ = self.sub.receive(output)
-                    self.sub.receive(completion: .finished)
+                self.sub.receive(completion: .finished)
                 case .failure(let error):
                     self.sub.receive(completion: .failure(error))
                 }

@@ -98,7 +98,8 @@ extension Publishers.Map {
         }
         
         override func cancel() {
-            self.state.store(.cancelled)
+//            self.state.store(.cancelled)
+            Global.Unimplemented()
         }
         
         func receive(subscription: Subscription) {

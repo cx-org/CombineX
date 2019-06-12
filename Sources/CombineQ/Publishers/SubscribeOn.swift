@@ -42,6 +42,9 @@ extension Publishers.SubscribeOn {
         S.Input == Output,
         S.Failure == Failure
     {
+        
+        let state = Atomic<State>(value: .waiting)
+        
         override func request(_ demand: Subscribers.Demand) {
             Global.Unimplemented()
             self.state.write { __state in

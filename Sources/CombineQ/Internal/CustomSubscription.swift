@@ -14,8 +14,6 @@ where
     let pub: Pub
     let sub: Sub
     
-    let state = Atomic<State>(value: .waiting)
-    
     init(pub: Pub, sub: Sub) {
         self.pub = pub
         self.sub = sub

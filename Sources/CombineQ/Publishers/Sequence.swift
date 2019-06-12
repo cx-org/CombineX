@@ -41,6 +41,8 @@ extension Publishers.Sequence {
         S.Failure == Failure
     {
         
+        let state = Atomic<State>(value: .waiting)
+        
         var iterator: Elements.Iterator
         
         override init(pub: Pub, sub: Sub) {
@@ -49,6 +51,20 @@ extension Publishers.Sequence {
         }
         
         override func request(_ demand: Subscribers.Demand) {
+            switch self.state.load() {
+            case .waiting:
+                self.state.store(.subscribing(demand))
+                if demand > 0 {
+                    if let next = iterator.next() {
+                        let d = self.sub.receive(next)
+//                        self.state.
+                    } else {
+                        self.sub.receive(completion: .finished)
+                    }
+                }
+            default:
+                break
+            }
             self.state.write { __state in
                 switch __state {
                 case .waiting:

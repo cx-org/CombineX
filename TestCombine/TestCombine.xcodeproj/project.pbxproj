@@ -35,6 +35,7 @@
 		662C094022B13873006ECE08 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 662C08AF22B06D55006ECE08 /* Assets.xcassets */; };
 		662C094322B13B15006ECE08 /* testSink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 662C094222B13B15006ECE08 /* testSink.swift */; };
 		662C094822B13B7F006ECE08 /* testSink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 662C094222B13B15006ECE08 /* testSink.swift */; };
+		662C094B22B14696006ECE08 /* testJust.swift in Sources */ = {isa = PBXBuildFile; fileRef = 662C094A22B14696006ECE08 /* testJust.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -106,6 +107,7 @@
 		662C091622B135F6006ECE08 /* TestCombineQ.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestCombineQ.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		662C092622B135F7006ECE08 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		662C094222B13B15006ECE08 /* testSink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = testSink.swift; sourceTree = "<group>"; };
+		662C094A22B14696006ECE08 /* testJust.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = testJust.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -224,6 +226,7 @@
 				662C08D622B06D72006ECE08 /* helpers */,
 				662C090122B12FB3006ECE08 /* testAssign.swift */,
 				662C094222B13B15006ECE08 /* testSink.swift */,
+				662C094A22B14696006ECE08 /* testJust.swift */,
 			);
 			path = combine;
 			sourceTree = "<group>";
@@ -430,6 +433,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				662C08AB22B06D54006ECE08 /* ViewController.swift in Sources */,
+				662C094B22B14696006ECE08 /* testJust.swift in Sources */,
 				662C08DA22B06D72006ECE08 /* ObjectObserver.swift in Sources */,
 				662C094322B13B15006ECE08 /* testSink.swift in Sources */,
 				662C08A722B06D54006ECE08 /* AppDelegate.swift in Sources */,

@@ -174,15 +174,15 @@
 		OBJ_22 /* Publishers */ = {
 			isa = PBXGroup;
 			children = (
-				OBJ_21 /* Publishers.swift */,
+				OBJ_27 /* assign.swift */,
 				OBJ_23 /* Autoconnect.swift */,
 				OBJ_24 /* Just.swift */,
-				OBJ_25 /* Once.swift */,
-				OBJ_26 /* SubscribeOn.swift */,
-				OBJ_27 /* assign.swift */,
-				OBJ_28 /* sink.swift */,
 				6287088C22B09D36002386E2 /* Map+TryMap.swift */,
+				OBJ_25 /* Once.swift */,
+				OBJ_21 /* Publishers.swift */,
 				6287089222B0AFF7002386E2 /* Sequence.swift */,
+				OBJ_28 /* sink.swift */,
+				OBJ_26 /* SubscribeOn.swift */,
 			);
 			path = Publishers;
 			sourceTree = "<group>";

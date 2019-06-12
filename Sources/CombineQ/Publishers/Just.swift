@@ -49,6 +49,7 @@ extension Publishers.Just {
         S.Input == Output,
         S.Failure == Never
     {
+        let state = Atomic<State>(value: .waiting)
         
         override func request(_ demand: Subscribers.Demand) {
             switch self.state.load() {

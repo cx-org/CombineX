@@ -17,32 +17,8 @@ enum State {
     - 如果继续 request demand 大于 0，会开始发送
 
 
-+ Subscription 多次 `request(_:)`
-
-    - 把 `demand` 加到 `subscribing` 上
-
-+ SubscribeOn
-
-    - 一次把已有的 value -> completion 都放入 scheduler
-
-```swift
-let pub = Publishers.Sequence<[Int], Never>(sequence: [1, 2])
-
-let anySub = AnySubscriber<Int, Never>(receiveSubscription: { (s) in
-		print
-	}, receiveValue: { v in
-		print("receiveValue is on queue", DispatchQueue.isOn(queue))
-		print("receive value", v)
-		    
-		queue.async {		// 1 -> 2 -> completion -> "async queue"
-		    print("async queue")
-		}
-		return .max(0)
-	} , receiveCompletion: { completion in
-		print("receiveCompletion is on queue", DispatchQueue.isOn(queue))
-		print("receive completion", completion)
-	})
-```
++ Subscription 多次 `request(_:)`，如果这时是 subscribing 状态，就把 `demand` 加到 `subscribing` 上
++ `request(demand:)` 后就开始了 `receive(value:)`
 
 ## Assign
 

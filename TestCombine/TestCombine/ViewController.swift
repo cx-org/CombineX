@@ -7,13 +7,17 @@
 //
 
 import UIKit
+#if CombineQ
+import CombineQ
+#else
 import Combine
+#endif
 
 class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        testSink()
+        testJust()
     }
 }
