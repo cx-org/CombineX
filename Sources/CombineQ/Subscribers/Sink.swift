@@ -57,6 +57,8 @@ extension Subscribers {
             Global.Unimplemented()
         }
         
+        private let subscription = Atomic<Subscription?>(value: nil)
+        
         /// Initializes a sink with the provided closures.
         ///
         /// - Parameters:
@@ -72,6 +74,7 @@ extension Subscribers {
         /// Use the received `Subscription` to request items from the publisher.
         /// - Parameter subscription: A subscription that represents the connection between publisher and subscriber.
         final public func receive(subscription: Subscription) {
+            Atomic.ifNil(self.subscription, store: subscription)
             subscription.request(.unlimited)
         }
         
@@ -89,10 +92,16 @@ extension Subscribers {
         /// - Parameter completion: A `Completion` case indicating whether publishing completed normally or with an error.
         final public func receive(completion: Subscribers.Completion<Subscribers.Sink<Upstream>.Failure>) {
             self.receiveCompletion?(completion)
+            
+            self.subscription.exchange(with: nil)?.cancel()
         }
         
         /// Cancel the activity.
         final public func cancel() {
+        }
+        
+        deinit {
+            self.subscription.exchange(with: nil)?.cancel()
         }
     }
 }

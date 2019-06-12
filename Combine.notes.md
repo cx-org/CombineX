@@ -50,25 +50,23 @@ let anySub = AnySubscriber<Int, Never>(receiveSubscription: { (s) in
     - 自定义的 `AnySubscriber` 需要先发送 `subscription`，即 `sub.receive(subscriptions:)`。直接发 `value` 没有用
     - `receive(value:)` 总是返回 `.max(0)`
     - `receive(subscription:)` 总是请求 `unlimited`
-    - 发送 `completion` 后，会调用 `subscription.cancel()`
+    - 发送 `completion` 后，会调用 `subscription.cancel()`, 然后不再持有 `subscription`，即 `deinit`
     - 发送 `completion` 后，再发送新的 `value` 没有用了
     - 如果已经有 `subscription`，并且还没有 cancel，再发送 `subscription`, 新的会立即 `cancel/deinit`.
-    - 如果已经有 `subscription`，并且已经被 cancel，再发送 `subscription` 会再次请求 `unlimited`，但再发送 value 已经没有效果了。
+    - 如果已经有 `subscription`，并且已经被 cancel，再发送 `subscription` 会再次请求 `unlimited`，但再发送 value 已经没有效果了。（即，有状态，且只能结束一次。）
 
 
-# Sink & Assign
+# Sink
 
-- 自定义的 AnySubscriber 需要先发送 subscription，即 `sub.receive(subscriptions:)`。
+- flow
+    - 自定义的 `AnySubscriber` 需要先发送 `subscription`，即 `sub.receive(subscriptions:)`。直接发 `value` 没有用
+    - `receive(value:)` 总是返回 `.max(0)`
+    - `receive(subscription:)` 总是请求 `unlimited`
+    - 发送 `completion` 后，会调用 `subscription.cancel()`, 然后不再持有 `subscription`，即 `deinit`
+    - 发送 `completion` 后，再发送新的 `value` 仍然有用
+    - 如果已经有 `subscription`，并且还没有 cancel，再发送 `subscription`, 新的会立即 `cancel/deinit`.
+    - 如果已经有 `subscription`，并且已经被 cancel，再发送 `subscription` 会再次请求 `unlimited`，但再发送 value 仍然有用。（即，无状态，只要有事件就接收）
 
-- Cancel a sink/assign
-    - 没有任何作用
-
-- sink 收到 completion 后继续收到 value
-    - 继续更新
-
-
-- assign 收到 completion 后继续收到 value
-    - 不会再被更新
 
 # SubscribeOn
 

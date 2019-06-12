@@ -18,17 +18,15 @@ func testAssign() {
     
     let pub = AnyPublisher<Int, Never> { (sub) in
         DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
-            let subcription = AnotherSubscription()
-            
             print("[AnyPub] send subscription 0")
-            sub.receive(subscription: subcription)
+            sub.receive(subscription: AnotherSubscription())
             print("[AnyPub] send 0")
             print("[AnyPub] want more", sub.receive(0))
             
             sub.receive(completion: .finished)
             
             print("[AnyPub] send subscription 1")
-            sub.receive(subscription: subcription)
+            sub.receive(subscription: AnotherSubscription())
             print("[AnyPub] send 1")
             print("[AnyPub] want more", sub.receive(1))
             
