@@ -22,6 +22,6 @@ extension ConnectablePublisher {
     ///
     /// - Returns: A publisher which automatically connects to its upstream connectable publisher.
     public func autoconnect() -> Publishers.Autoconnect<Self> {
-        WaitForImplementation()
+        Global.Unimplemented()
     }
 }

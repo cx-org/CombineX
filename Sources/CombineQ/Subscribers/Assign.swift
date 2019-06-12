@@ -43,13 +43,15 @@ extension Subscribers {
         /// If this type has value semantics, the mirror should be unaffected by
         /// subsequent mutations of the instance.
         final public var customMirror: Mirror {
-            WaitForImplementation()
+            Global.Unimplemented()
         }
         
         /// A custom playground description for this instance.
         final public var playgroundDescription: Any {
-            WaitForImplementation()
+            Global.Unimplemented()
         }
+        
+        private let subscription = Atomic<Subscription?>(value: nil)
         
         public init(object: Root, keyPath: ReferenceWritableKeyPath<Root, Input>) {
             self.object = object
@@ -61,6 +63,11 @@ extension Subscribers {
         /// Use the received `Subscription` to request items from the publisher.
         /// - Parameter subscription: A subscription that represents the connection between publisher and subscriber.
         final public func receive(subscription: Subscription) {
+            self.subscription.write {
+                if $0 == nil {
+                    $0 = subscription
+                }
+            }
             subscription.request(.unlimited)
         }
         
@@ -69,7 +76,9 @@ extension Subscribers {
         /// - Parameter input: The published element.
         /// - Returns: A `Demand` instance indicating how many more elements the subcriber expects to receive.
         final public func receive(_ value: Input) -> Subscribers.Demand {
-            self.object?[keyPath: self.keyPath] = value
+            if self.subscription.load() != nil {
+                self.object?[keyPath: self.keyPath] = value
+            }
             return .max(0)
         }
         
@@ -77,12 +86,15 @@ extension Subscribers {
         ///
         /// - Parameter completion: A `Completion` case indicating whether publishing completed normally or with an error.
         final public func receive(completion: Subscribers.Completion<Never>) {
-            WaitForImplementation()
+            Global.Unimplemented()
         }
         
         /// Cancel the activity.
         final public func cancel() {
-            WaitForImplementation()
+        }
+        
+        deinit {
+            subscription.load()?.cancel()
         }
     }
 }

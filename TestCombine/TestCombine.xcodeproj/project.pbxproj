@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		621A2A3622B0EA9600C80164 /* AnotherEmptySubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621A2A3522B0EA9600C80164 /* AnotherEmptySubscription.swift */; };
 		662C08A722B06D54006ECE08 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 662C08A622B06D54006ECE08 /* AppDelegate.swift */; };
 		662C08A922B06D54006ECE08 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 662C08A822B06D54006ECE08 /* SceneDelegate.swift */; };
 		662C08AB22B06D54006ECE08 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 662C08AA22B06D54006ECE08 /* ViewController.swift */; };
@@ -37,6 +38,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		621A2A3522B0EA9600C80164 /* AnotherEmptySubscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnotherEmptySubscription.swift; sourceTree = "<group>"; };
 		662C08A322B06D54006ECE08 /* TestCombine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestCombine.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		662C08A622B06D54006ECE08 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		662C08A822B06D54006ECE08 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -138,6 +140,7 @@
 			children = (
 				662C08D722B06D72006ECE08 /* DispatchQueueScheduler.swift */,
 				662C08D822B06D72006ECE08 /* ObjectObserver.swift */,
+				621A2A3522B0EA9600C80164 /* AnotherEmptySubscription.swift */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -277,6 +280,7 @@
 				662C08DA22B06D72006ECE08 /* ObjectObserver.swift in Sources */,
 				662C08A722B06D54006ECE08 /* AppDelegate.swift in Sources */,
 				662C08A922B06D54006ECE08 /* SceneDelegate.swift in Sources */,
+				621A2A3622B0EA9600C80164 /* AnotherEmptySubscription.swift in Sources */,
 				662C08D922B06D72006ECE08 /* DispatchQueueScheduler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

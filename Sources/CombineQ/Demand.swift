@@ -66,7 +66,7 @@ extension Subscribers {
             switch (lhs, rhs) {
             case (.unlimited, _):
                 return .unlimited
-            case (_, .unlimited):
+            case (.max, .unlimited):
                 return .max(0)
             case (.max(let d0), .max(let d1)):
                 return .max(d0 - d1)
@@ -80,12 +80,7 @@ extension Subscribers {
         
         /// When subtracting any value from .unlimited, the result is still .unlimited. A negative demand is possible, but be aware that it is not usable when requesting values in a subscription.
         public static func - (lhs: Subscribers.Demand, rhs: Int) -> Subscribers.Demand {
-            switch lhs {
-            case .max(let d):
-                return .max(d - rhs)
-            case .unlimited:
-                return .unlimited
-            }
+            return lhs - .max(rhs)
         }
         
         /// When subtracting any value from .unlimited, the result is still .unlimited. A negative demand is possible, but be aware that it is not usable when requesting values in a subscription.
@@ -103,30 +98,15 @@ extension Subscribers {
         }
         
         public static func >= (lhs: Subscribers.Demand, rhs: Int) -> Bool {
-            switch lhs {
-            case .max(let d):
-                return d >= rhs
-            case .unlimited:
-                return true
-            }
+            return (lhs > rhs) || (lhs == rhs)
         }
         
         public static func > (lhs: Int, rhs: Subscribers.Demand) -> Bool {
-            switch rhs {
-            case .max(let d):
-                return lhs > d
-            case .unlimited:
-                return false
-            }
+            return rhs <= lhs
         }
         
         public static func >= (lhs: Int, rhs: Subscribers.Demand) -> Bool {
-            switch rhs {
-            case .max(let d):
-                return lhs >= d
-            case .unlimited:
-                return false
-            }
+            return (lhs > rhs) || (lhs == rhs)
         }
         
         public static func < (lhs: Subscribers.Demand, rhs: Int) -> Bool {
@@ -139,30 +119,15 @@ extension Subscribers {
         }
         
         public static func < (lhs: Int, rhs: Subscribers.Demand) -> Bool {
-            switch rhs {
-            case .max(let d):
-                return lhs < d
-            case .unlimited:
-                return true
-            }
+            return rhs >= lhs
         }
         
         public static func <= (lhs: Subscribers.Demand, rhs: Int) -> Bool {
-            switch lhs {
-            case .max(let d):
-                return d <= rhs
-            case .unlimited:
-                return false
-            }
+            return (lhs < rhs) || (lhs == rhs)
         }
         
         public static func <= (lhs: Int, rhs: Subscribers.Demand) -> Bool {
-            switch rhs {
-            case .max(let d):
-                return lhs <= d
-            case .unlimited:
-                return false
-            }
+            return (lhs < rhs) || (lhs == rhs)
         }
         
         /// Returns a Boolean value indicating whether two values are equal.
@@ -198,12 +163,7 @@ extension Subscribers {
         
         /// If lhs is .unlimited and rhs is .unlimited then the result is true. Otherwise, the rules for < are followed.
         public static func <= (lhs: Subscribers.Demand, rhs: Subscribers.Demand) -> Bool {
-            switch (lhs, rhs) {
-            case (.unlimited, .unlimited):
-                return true
-            default:
-                return lhs < rhs
-            }
+            return (lhs < rhs) || (lhs == rhs)
         }
         
         /// Returns a Boolean value that indicates whether the value of the first
@@ -233,32 +193,17 @@ extension Subscribers {
         
         /// Returns `true` if `lhs` and `rhs` are not equal. `.unlimited` is not equal to any integer.
         public static func != (lhs: Subscribers.Demand, rhs: Int) -> Bool {
-            switch lhs {
-            case .max(let d):
-                return d != rhs
-            case .unlimited:
-                return true
-            }
+            return !(lhs == rhs)
         }
         
         /// Returns `true` if `lhs` and `rhs` are equal. `.unlimited` is not equal to any integer.
         public static func == (lhs: Int, rhs: Subscribers.Demand) -> Bool {
-            switch rhs {
-            case .max(let d):
-                return lhs == d
-            case .unlimited:
-                return false
-            }
+            return rhs == lhs
         }
         
         /// Returns `true` if `lhs` and `rhs` are not equal. `.unlimited` is not equal to any integer.
         public static func != (lhs: Int, rhs: Subscribers.Demand) -> Bool {
-            switch rhs {
-            case .max(let d):
-                return lhs != d
-            case .unlimited:
-                return true
-            }
+            return rhs != lhs
         }
         
         /// Returns the number of requested values, or nil if unlimited.

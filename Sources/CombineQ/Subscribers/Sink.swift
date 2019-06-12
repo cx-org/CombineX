@@ -49,12 +49,12 @@ extension Subscribers {
         /// If this type has value semantics, the mirror should be unaffected by
         /// subsequent mutations of the instance.
         final public var customMirror: Mirror {
-            WaitForImplementation()
+            Global.Unimplemented()
         }
         
         /// A custom playground description for this instance.
         final public var playgroundDescription: Any {
-            WaitForImplementation()
+            Global.Unimplemented()
         }
         
         /// Initializes a sink with the provided closures.
@@ -93,7 +93,6 @@ extension Subscribers {
         
         /// Cancel the activity.
         final public func cancel() {
-            WaitForImplementation()
         }
     }
 }

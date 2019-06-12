@@ -2,10 +2,15 @@ import Foundation
 
 class Atomic<Value> {
     
-    private let lock = NSLock()
+    private let lock: NSLocking
     private var value: Value
     
-    init(_ value: Value) {
+    init(value: Value, recursive: Bool = false) {
+        if recursive {
+            self.lock = NSRecursiveLock()
+        } else {
+            self.lock = NSLock()
+        }
         self.value = value
     }
     
@@ -29,12 +34,12 @@ class Atomic<Value> {
         return old
     }
     
-    func read<Result>(_ body: @escaping (Value) throws -> Result) rethrows -> Result {
+    func read<Result>(_ body: (Value) throws -> Result) rethrows -> Result {
         lock.lock(); defer { lock.unlock() }
         return try body(self.value)
     }
     
-    func write<Result>(_ body: @escaping (inout Value) throws -> Result) rethrows -> Result {
+    func write<Result>(_ body: (inout Value) throws -> Result) rethrows -> Result {
         lock.lock(); defer { lock.unlock() }
         return try body(&self.value)
     }

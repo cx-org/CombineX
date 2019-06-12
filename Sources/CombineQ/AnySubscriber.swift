@@ -42,12 +42,12 @@ public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertibl
     /// If this type has value semantics, the mirror should be unaffected by
     /// subsequent mutations of the instance.
     public var customMirror: Mirror {
-        WaitForImplementation()
+        Global.Unimplemented()
     }
     
     /// A custom playground description for this instance.
     public var playgroundDescription: Any {
-        WaitForImplementation()
+        Global.Unimplemented()
     }
     
     /// Creates a type-erasing subscriber to wrap an existing subscriber.

@@ -21,6 +21,10 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		6287088D22B09D36002386E2 /* Map+TryMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6287088C22B09D36002386E2 /* Map+TryMap.swift */; };
+		6287089122B0AFD5002386E2 /* MapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6287089022B0AFD5002386E2 /* MapTests.swift */; };
+		6287089322B0AFF7002386E2 /* Sequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6287089222B0AFF7002386E2 /* Sequence.swift */; };
+		6287089622B0DAD4002386E2 /* SubscriptionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6287089522B0DAD4002386E2 /* SubscriptionState.swift */; };
 		66682E8D22AFEB63009DBDF6 /* CustomSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66682E8C22AFEB63009DBDF6 /* CustomSubscription.swift */; };
 		OBJ_105 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_6 /* Package.swift */; };
 		OBJ_116 /* CombineQTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_50 /* CombineQTests.swift */; };
@@ -61,7 +65,7 @@
 		OBJ_95 /* Empty.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_43 /* Empty.swift */; };
 		OBJ_96 /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_45 /* Atomic.swift */; };
 		OBJ_97 /* Bag.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_46 /* Bag.swift */; };
-		OBJ_98 /* WaitForImplementation.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_47 /* WaitForImplementation.swift */; };
+		OBJ_98 /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_47 /* Global.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -82,6 +86,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		6287088C22B09D36002386E2 /* Map+TryMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Map+TryMap.swift"; sourceTree = "<group>"; };
+		6287089022B0AFD5002386E2 /* MapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTests.swift; sourceTree = "<group>"; };
+		6287089222B0AFF7002386E2 /* Sequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sequence.swift; sourceTree = "<group>"; };
+		6287089522B0DAD4002386E2 /* SubscriptionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionState.swift; sourceTree = "<group>"; };
 		66682E8C22AFEB63009DBDF6 /* CustomSubscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSubscription.swift; sourceTree = "<group>"; };
 		"CombineQ::CombineQ::Product" /* CombineQ.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CombineQ.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		"CombineQ::CombineQTests::Product" /* CombineQTests.xctest */ = {isa = PBXFileReference; lastKnownFileType = file; path = CombineQTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -117,7 +125,7 @@
 		OBJ_43 /* Empty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Empty.swift; sourceTree = "<group>"; };
 		OBJ_45 /* Atomic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Atomic.swift; sourceTree = "<group>"; };
 		OBJ_46 /* Bag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bag.swift; sourceTree = "<group>"; };
-		OBJ_47 /* WaitForImplementation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitForImplementation.swift; sourceTree = "<group>"; };
+		OBJ_47 /* Global.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
 		OBJ_50 /* CombineQTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineQTests.swift; sourceTree = "<group>"; };
 		OBJ_52 /* JustTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JustTests.swift; sourceTree = "<group>"; };
 		OBJ_53 /* XCTestManifests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTestManifests.swift; sourceTree = "<group>"; };
@@ -165,6 +173,8 @@
 				OBJ_26 /* SubscribeOn.swift */,
 				OBJ_27 /* assign.swift */,
 				OBJ_28 /* sink.swift */,
+				6287088C22B09D36002386E2 /* Map+TryMap.swift */,
+				6287089222B0AFF7002386E2 /* Sequence.swift */,
 			);
 			path = Publishers;
 			sourceTree = "<group>";
@@ -202,8 +212,9 @@
 			children = (
 				OBJ_45 /* Atomic.swift */,
 				OBJ_46 /* Bag.swift */,
-				OBJ_47 /* WaitForImplementation.swift */,
+				OBJ_47 /* Global.swift */,
 				66682E8C22AFEB63009DBDF6 /* CustomSubscription.swift */,
+				6287089522B0DAD4002386E2 /* SubscriptionState.swift */,
 			);
 			path = Internal;
 			sourceTree = "<group>";
@@ -244,6 +255,7 @@
 			isa = PBXGroup;
 			children = (
 				OBJ_52 /* JustTests.swift */,
+				6287089022B0AFD5002386E2 /* MapTests.swift */,
 			);
 			path = Publishers;
 			sourceTree = "<group>";
@@ -415,9 +427,11 @@
 				OBJ_78 /* Autoconnect.swift in Sources */,
 				OBJ_79 /* Just.swift in Sources */,
 				OBJ_80 /* Once.swift in Sources */,
+				6287089322B0AFF7002386E2 /* Sequence.swift in Sources */,
 				OBJ_81 /* SubscribeOn.swift in Sources */,
 				OBJ_82 /* assign.swift in Sources */,
 				OBJ_83 /* sink.swift in Sources */,
+				6287089622B0DAD4002386E2 /* SubscriptionState.swift in Sources */,
 				OBJ_84 /* Scheduler.swift in Sources */,
 				OBJ_85 /* SchedulerTimeIntervalConvertible.swift in Sources */,
 				OBJ_86 /* Subject.swift in Sources */,
@@ -427,13 +441,15 @@
 				OBJ_90 /* Subscribers.swift in Sources */,
 				OBJ_91 /* Assign.swift in Sources */,
 				OBJ_92 /* Sink.swift in Sources */,
+				6287089122B0AFD5002386E2 /* MapTests.swift in Sources */,
 				66682E8D22AFEB63009DBDF6 /* CustomSubscription.swift in Sources */,
+				6287088D22B09D36002386E2 /* Map+TryMap.swift in Sources */,
 				OBJ_93 /* Subscription.swift in Sources */,
 				OBJ_94 /* Subscriptions.swift in Sources */,
 				OBJ_95 /* Empty.swift in Sources */,
 				OBJ_96 /* Atomic.swift in Sources */,
 				OBJ_97 /* Bag.swift in Sources */,
-				OBJ_98 /* WaitForImplementation.swift in Sources */,
+				OBJ_98 /* Global.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

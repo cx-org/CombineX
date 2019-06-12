@@ -51,20 +51,19 @@ extension Publishers.Just {
     {
         
         override func request(_ demand: Subscribers.Demand) {
-            guard demand > 0 else {
-                return
-            }
-            
-            self.state.write {
-                switch $0 {
-                case .waiting:
-                    _ = self.sub.receive(self.pub.output)
-                    self.sub.receive(completion: .finished)
-                    
-                    $0 = .completed
-                default:
-                    break
+            switch self.state.load() {
+            case .waiting:
+                guard demand > 0 else {
+                    // REMINDME: Combine will crashe here.
+                    fatalError("trying to request '<= 0' values from Just")
                 }
+                
+                _ = self.sub.receive(self.pub.output)
+                self.sub.receive(completion: .finished)
+                
+                self.state.store(.completed)
+            default:
+                break
             }
         }
         

@@ -59,27 +59,25 @@ extension Publishers.Once {
     {
         
         override func request(_ demand: Subscribers.Demand) {
-            guard demand > 0 else {
-                return
-            }
-            
-            self.state.write {
-                switch $0 {
-                case .waiting:
-                    switch self.pub.result {
-                    case .success(let output):
-                        _ = self.sub.receive(output)
-                        self.sub.receive(completion: .finished)
-                    case .failure(let error):
-                        self.sub.receive(completion: .failure(error))
-                    }
-                    
-                    $0 = .completed
-                default:
-                    break
+            switch self.state.load() {
+            case .waiting:
+                guard demand > 0 else {
+                    // REMINDME: Combine crashes here.
+                    fatalError("trying to request '<= 0' values from Once")
                 }
+                
+                switch self.pub.result {
+                case .success(let output):
+                    _ = self.sub.receive(output)
+                    self.sub.receive(completion: .finished)
+                case .failure(let error):
+                    self.sub.receive(completion: .failure(error))
+                }
+                
+                self.state.store(.completed)
+            default:
+                break
             }
-            
         }
         
         override func cancel() {

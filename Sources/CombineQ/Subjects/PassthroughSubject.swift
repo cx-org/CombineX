@@ -13,20 +13,20 @@ final public class PassthroughSubject<Output, Failure> : Subject where Failure :
     ///     - subscriber: The subscriber to attach to this `Publisher`.
     ///                   once attached it can begin to receive values.
     final public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
-        WaitForImplementation()
+        Global.Unimplemented()
     }
     
     /// Sends a value to the subscriber.
     ///
     /// - Parameter value: The value to send.
     final public func send(_ input: Output) {
-        WaitForImplementation()
+        Global.Unimplemented()
     }
     
     /// Sends a completion signal to the subscriber.
     ///
     /// - Parameter completion: A `Completion` instance which indicates whether publishing has finished normally or failed with an error.
     final public func send(completion: Subscribers.Completion<Failure>) {
-        WaitForImplementation()
+        Global.Unimplemented()
     }
 }

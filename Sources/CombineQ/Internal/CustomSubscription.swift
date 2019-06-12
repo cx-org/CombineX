@@ -1,18 +1,20 @@
-enum SubscriptionState {
-    case waiting
-    case subscribing(Subscribers.Demand)
-    case completed
-    case cancelled
-}
-
-class CustomSubscription<Pub, Sub>: Subscription where Pub: Publisher, Sub: Subscriber, Pub.Output == Sub.Input, Pub.Failure == Sub.Failure {
+class CustomSubscription<P, S>:
+    Subscription
+where
+    P: Publisher,
+    S: Subscriber,
+    P.Output == S.Input,
+    P.Failure == S.Failure
+{
     
     typealias State = SubscriptionState
+    typealias Pub = P
+    typealias Sub = S
     
     let pub: Pub
     let sub: Sub
     
-    let state = Atomic<State>(.waiting)
+    let state = Atomic<State>(value: .waiting)
     
     init(pub: Pub, sub: Sub) {
         self.pub = pub
@@ -20,8 +22,10 @@ class CustomSubscription<Pub, Sub>: Subscription where Pub: Publisher, Sub: Subs
     }
     
     func request(_ demand: Subscribers.Demand) {
+        Global.RequiresConcreteImplementation()
     }
     
     func cancel() {
+        Global.RequiresConcreteImplementation()
     }
 }
