@@ -1,13 +1,10 @@
-//
-//  AnotherEmptySubscription.swift
-//  TestCombine
-//
-//  Created by Quentin MED on 2019/6/12.
-//  Copyright © 2019 Quentin Jin. All rights reserved.
-//
-
 import Foundation
+
+#if CombineQ
+import CombineQ
+#else
 import Combine
+#endif
 
 private class IdGen {
     static var current = 0
@@ -24,19 +21,19 @@ private class IdGen {
     }
 }
 
-class AnotherEmptySubscription: Subscription {
+class AnotherSubscription: Subscription {
     
     let id = IdGen.next()
     
     func request(_ demand: Subscribers.Demand) {
-        print("[AES]", id, "got sub's demand", demand)
+        print("[AnotherSubscription: \(id)]", "request demand", demand)
     }
     
     func cancel() {
-        print("[AES]", id, "sub wants to cancel")
+        print("[AnotherSubscription: \(id)]", "cancel")
     }
-
+    
     deinit {
-        print("[AES]", id, "deinit")
+        print("[AnotherSubscription: \(id)]", "deinit")
     }
 }

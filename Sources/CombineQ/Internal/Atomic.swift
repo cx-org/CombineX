@@ -1,6 +1,6 @@
 import Foundation
 
-class Atomic<Value> {
+final class Atomic<Value> {
     
     private let lock: NSLocking
     private var value: Value
@@ -117,6 +117,18 @@ extension Atomic where Value: BinaryInteger {
             let old = $0
             $0 ^= value
             return old
+        }
+    }
+}
+
+extension Atomic {
+    
+    
+    class func ifNil(_ atomic: Atomic<Value?>, store value: Value) {
+        atomic.lock.lock(); defer { atomic.lock.unlock() }
+        
+        if atomic.value == nil {
+            atomic.value = value
         }
     }
 }
