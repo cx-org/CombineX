@@ -73,6 +73,6 @@ extension Publisher {
     ///   - options: Options that customize the delivery of elements.
     /// - Returns: A publisher which performs upstream operations on the specified scheduler.
     public func subscribe<S>(on scheduler: S, options: S.SchedulerOptions? = nil) -> Publishers.SubscribeOn<Self, S> where S : Scheduler {
-        Global.Unimplemented()
+        Global.RequiresImplementation()
     }
 }

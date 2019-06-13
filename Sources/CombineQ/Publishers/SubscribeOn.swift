@@ -46,8 +46,8 @@ extension Publishers.SubscribeOn {
         let state = Atomic<State>(value: .waiting)
         
         override func request(_ demand: Subscribers.Demand) {
-            Global.Unimplemented()
-            self.state.write { __state in
+            Global.RequiresImplementation()
+            self.state.withLockMutating { __state in
                 switch __state {
                 case .waiting:
                     guard demand > 0 else {
@@ -71,7 +71,7 @@ extension Publishers.SubscribeOn {
                     self.pub.subscribe(subscriber)
                 case .subscribing(let currentDemand):
                     __state = .subscribing(currentDemand + demand)
-                case .completed, .cancelled:
+                case .finished:
                     break
                 }
                 
@@ -79,15 +79,15 @@ extension Publishers.SubscribeOn {
         }
         
         private func receive(subscription: Subscription) {
-            Global.Unimplemented()
+            Global.RequiresImplementation()
         }
         
         public func receive(_ value: Output) -> Subscribers.Demand {
-            Global.Unimplemented()
+            Global.RequiresImplementation()
         }
         
         override func cancel() {
-            self.state.store(.cancelled)
+            self.state.store(.finished)
         }
     }
 }

@@ -47,7 +47,7 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, S.Failure == Publishers.TryMap<Upstream, Output>.Failure {
-            Global.Unimplemented()
+            Global.RequiresImplementation()
         }
     }
 }
@@ -99,7 +99,7 @@ extension Publishers.Map {
         
         override func cancel() {
 //            self.state.store(.cancelled)
-            Global.Unimplemented()
+            Global.RequiresImplementation()
         }
         
         func receive(subscription: Subscription) {

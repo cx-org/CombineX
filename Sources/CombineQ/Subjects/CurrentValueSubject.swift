@@ -18,20 +18,20 @@ final public class CurrentValueSubject<Output, Failure> : Subject where Failure 
     ///     - subscriber: The subscriber to attach to this `Publisher`.
     ///                   once attached it can begin to receive values.
     final public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
-        Global.Unimplemented()
+        Global.RequiresImplementation()
     }
     
     /// Sends a value to the subscriber.
     ///
     /// - Parameter value: The value to send.
     final public func send(_ input: Output) {
-        Global.Unimplemented()
+        Global.RequiresImplementation()
     }
     
     /// Sends a completion signal to the subscriber.
     ///
     /// - Parameter completion: A `Completion` instance which indicates whether publishing has finished normally or failed with an error.
     final public func send(completion: Subscribers.Completion<Failure>) {
-        Global.Unimplemented()
+        Global.RequiresImplementation()
     }
 }

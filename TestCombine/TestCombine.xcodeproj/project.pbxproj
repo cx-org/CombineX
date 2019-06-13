@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		621A2A3622B0EA9600C80164 /* AnotherSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621A2A3522B0EA9600C80164 /* AnotherSubscription.swift */; };
+		62C50D5B22B24BCC006C6C09 /* testJust.swift in Sources */ = {isa = PBXBuildFile; fileRef = 662C094A22B14696006ECE08 /* testJust.swift */; };
+		62C50D6322B2561B006C6C09 /* testEmpty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C50D6222B2561B006C6C09 /* testEmpty.swift */; };
+		62C50D6422B2561B006C6C09 /* testEmpty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C50D6222B2561B006C6C09 /* testEmpty.swift */; };
 		662C08A722B06D54006ECE08 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 662C08A622B06D54006ECE08 /* AppDelegate.swift */; };
 		662C08A922B06D54006ECE08 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 662C08A822B06D54006ECE08 /* SceneDelegate.swift */; };
 		662C08AB22B06D54006ECE08 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 662C08AA22B06D54006ECE08 /* ViewController.swift */; };
@@ -85,6 +88,7 @@
 
 /* Begin PBXFileReference section */
 		621A2A3522B0EA9600C80164 /* AnotherSubscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnotherSubscription.swift; sourceTree = "<group>"; };
+		62C50D6222B2561B006C6C09 /* testEmpty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = testEmpty.swift; sourceTree = "<group>"; };
 		662C08A322B06D54006ECE08 /* TestCombine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestCombine.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		662C08A622B06D54006ECE08 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		662C08A822B06D54006ECE08 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -227,6 +231,7 @@
 				662C090122B12FB3006ECE08 /* testAssign.swift */,
 				662C094222B13B15006ECE08 /* testSink.swift */,
 				662C094A22B14696006ECE08 /* testJust.swift */,
+				62C50D6222B2561B006C6C09 /* testEmpty.swift */,
 			);
 			path = combine;
 			sourceTree = "<group>";
@@ -441,6 +446,7 @@
 				662C090B22B1308A006ECE08 /* Extensions.swift in Sources */,
 				662C08A922B06D54006ECE08 /* SceneDelegate.swift in Sources */,
 				621A2A3622B0EA9600C80164 /* AnotherSubscription.swift in Sources */,
+				62C50D6322B2561B006C6C09 /* testEmpty.swift in Sources */,
 				662C08D922B06D72006ECE08 /* DispatchQueueScheduler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -466,6 +472,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				662C093822B1374B006ECE08 /* ObjectObserver.swift in Sources */,
+				62C50D5B22B24BCC006C6C09 /* testJust.swift in Sources */,
 				662C093922B1374E006ECE08 /* DispatchQueueScheduler.swift in Sources */,
 				662C094822B13B7F006ECE08 /* testSink.swift in Sources */,
 				662C093722B13749006ECE08 /* Extensions.swift in Sources */,
@@ -473,6 +480,7 @@
 				662C093C22B1385D006ECE08 /* AppDelegate.swift in Sources */,
 				662C093622B1373B006ECE08 /* AnotherSubscription.swift in Sources */,
 				662C093B22B13777006ECE08 /* ViewController.swift in Sources */,
+				62C50D6422B2561B006C6C09 /* testEmpty.swift in Sources */,
 				662C093D22B1385F006ECE08 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

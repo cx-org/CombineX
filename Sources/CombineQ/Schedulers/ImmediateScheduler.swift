@@ -256,7 +256,7 @@ public struct ImmediateScheduler : Scheduler {
             ///
             /// - Parameter decoder: The decoder to read data from.
             public init(from decoder: Decoder) throws {
-                Global.Unimplemented()
+                Global.RequiresImplementation()
             }
             
             /// Encodes this value into the given encoder.
@@ -269,7 +269,7 @@ public struct ImmediateScheduler : Scheduler {
             ///
             /// - Parameter encoder: The encoder to write data to.
             public func encode(to encoder: Encoder) throws {
-                Global.Unimplemented()
+                Global.RequiresImplementation()
             }
             
             /// Returns a Boolean value indicating whether two values are equal.

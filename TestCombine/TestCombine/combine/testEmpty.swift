@@ -1,8 +1,8 @@
 //
-//  testJust.swift
+//  testEmpty.swift
 //  TestCombine
 //
-//  Created by Quentin Jin on 2019/6/12.
+//  Created by Quentin MED on 2019/6/13.
 //  Copyright © 2019 Quentin Jin. All rights reserved.
 //
 
@@ -13,8 +13,8 @@ import CombineQ
 import Combine
 #endif
 
-func testJust() {
-    let pub = Publishers.Just(1)
+func testEmpty() {
+    let pub = Publishers.Empty(completeImmediately: true, outputType: Int.self, failureType: Never.self)
     
     var subscription: Subscription?
     let sub = AnySubscriber<Int, Never>(receiveSubscription: { (s) in
@@ -28,12 +28,12 @@ func testJust() {
         
         print("[AnySub] receive subscription", s)
         
-//        DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
-//            print("[AnySub] try to cancel subscription")
-//            subscription?.cancel()
-//            print("[AnySub] subscription is canceld")
-//        }
-        s.request(.max(1))
+        //        DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
+        //            print("[AnySub] try to cancel subscription")
+        //            subscription?.cancel()
+        //            print("[AnySub] subscription is canceld")
+        //        }
+        s.request(.max(-1))
     }, receiveValue: { i in
         print("[AnySub] receive value", i)
         

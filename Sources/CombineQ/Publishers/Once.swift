@@ -61,8 +61,8 @@ extension Publishers.Once {
         let state = Atomic<State>(value: .waiting)
         
         override func request(_ demand: Subscribers.Demand) {
-            switch self.state.load() {
-            case .waiting:
+            if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(demand)) {
+                
                 guard demand > 0 else {
                     // REMINDME: Combine crashes here.
                     fatalError("trying to request '<= 0' values from Once")
@@ -71,19 +71,17 @@ extension Publishers.Once {
                 switch self.pub.result {
                 case .success(let output):
                     _ = self.sub.receive(output)
-                self.sub.receive(completion: .finished)
+                    self.sub.receive(completion: .finished)
                 case .failure(let error):
                     self.sub.receive(completion: .failure(error))
                 }
                 
-                self.state.store(.completed)
-            default:
-                break
+                self.state.store(.finished)
             }
         }
         
         override func cancel() {
-            self.state.store(.cancelled)
+            self.state.store(.finished)
         }
     }
 }

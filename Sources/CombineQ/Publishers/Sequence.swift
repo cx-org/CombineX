@@ -26,7 +26,7 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Failure == S.Failure, S : Subscriber, Elements.Element == S.Input {
-            Global.Unimplemented()
+            Global.RequiresImplementation()
         }
     }
 }
@@ -65,7 +65,7 @@ extension Publishers.Sequence {
             default:
                 break
             }
-            self.state.write { __state in
+            self.state.withLockMutating { __state in
                 switch __state {
                 case .waiting:
                     __state = .subscribing(demand)
@@ -83,7 +83,7 @@ extension Publishers.Sequence {
         }
         
         override func cancel() {
-            self.state.store(.cancelled)
+            self.state.store(.finished)
         }
     }
 }

@@ -49,12 +49,12 @@ extension Subscribers {
         /// If this type has value semantics, the mirror should be unaffected by
         /// subsequent mutations of the instance.
         final public var customMirror: Mirror {
-            Global.Unimplemented()
+            Global.RequiresImplementation()
         }
         
         /// A custom playground description for this instance.
         final public var playgroundDescription: Any {
-            Global.Unimplemented()
+            Global.RequiresImplementation()
         }
         
         private let subscription = Atomic<Subscription?>(value: nil)

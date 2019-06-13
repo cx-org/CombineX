@@ -24,6 +24,7 @@
 		6287088D22B09D36002386E2 /* Map+TryMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6287088C22B09D36002386E2 /* Map+TryMap.swift */; };
 		6287089322B0AFF7002386E2 /* Sequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6287089222B0AFF7002386E2 /* Sequence.swift */; };
 		6287089622B0DAD4002386E2 /* SubscriptionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6287089522B0DAD4002386E2 /* SubscriptionState.swift */; };
+		62C50D6122B25364006C6C09 /* Empty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C50D6022B25364006C6C09 /* Empty.swift */; };
 		662C08DB22B12DEF006ECE08 /* AssignTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6287089022B0AFD5002386E2 /* AssignTests.swift */; };
 		66682E8D22AFEB63009DBDF6 /* CustomSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66682E8C22AFEB63009DBDF6 /* CustomSubscription.swift */; };
 		OBJ_105 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_6 /* Package.swift */; };
@@ -62,7 +63,7 @@
 		OBJ_92 /* Sink.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_39 /* Sink.swift */; };
 		OBJ_93 /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_40 /* Subscription.swift */; };
 		OBJ_94 /* Subscriptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_41 /* Subscriptions.swift */; };
-		OBJ_95 /* Empty.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_43 /* Empty.swift */; };
+		OBJ_95 /* empty.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_43 /* empty.swift */; };
 		OBJ_96 /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_45 /* Atomic.swift */; };
 		OBJ_97 /* Bag.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_46 /* Bag.swift */; };
 		OBJ_98 /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_47 /* Global.swift */; };
@@ -90,6 +91,7 @@
 		6287089022B0AFD5002386E2 /* AssignTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssignTests.swift; sourceTree = "<group>"; };
 		6287089222B0AFF7002386E2 /* Sequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sequence.swift; sourceTree = "<group>"; };
 		6287089522B0DAD4002386E2 /* SubscriptionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionState.swift; sourceTree = "<group>"; };
+		62C50D6022B25364006C6C09 /* Empty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Empty.swift; sourceTree = "<group>"; };
 		66682E8C22AFEB63009DBDF6 /* CustomSubscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSubscription.swift; sourceTree = "<group>"; };
 		"CombineQ::CombineQ::Product" /* CombineQ.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CombineQ.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		"CombineQ::CombineQTests::Product" /* CombineQTests.xctest */ = {isa = PBXFileReference; lastKnownFileType = file; path = CombineQTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -122,7 +124,7 @@
 		OBJ_39 /* Sink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sink.swift; sourceTree = "<group>"; };
 		OBJ_40 /* Subscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
 		OBJ_41 /* Subscriptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subscriptions.swift; sourceTree = "<group>"; };
-		OBJ_43 /* Empty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Empty.swift; sourceTree = "<group>"; };
+		OBJ_43 /* empty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = empty.swift; sourceTree = "<group>"; };
 		OBJ_45 /* Atomic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Atomic.swift; sourceTree = "<group>"; };
 		OBJ_46 /* Bag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bag.swift; sourceTree = "<group>"; };
 		OBJ_47 /* Global.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
@@ -183,6 +185,7 @@
 				6287089222B0AFF7002386E2 /* Sequence.swift */,
 				OBJ_28 /* sink.swift */,
 				OBJ_26 /* SubscribeOn.swift */,
+				62C50D6022B25364006C6C09 /* Empty.swift */,
 			);
 			path = Publishers;
 			sourceTree = "<group>";
@@ -210,7 +213,7 @@
 			isa = PBXGroup;
 			children = (
 				OBJ_41 /* Subscriptions.swift */,
-				OBJ_43 /* Empty.swift */,
+				OBJ_43 /* empty.swift */,
 			);
 			path = Subscriptions;
 			sourceTree = "<group>";
@@ -454,7 +457,8 @@
 				6287088D22B09D36002386E2 /* Map+TryMap.swift in Sources */,
 				OBJ_93 /* Subscription.swift in Sources */,
 				OBJ_94 /* Subscriptions.swift in Sources */,
-				OBJ_95 /* Empty.swift in Sources */,
+				OBJ_95 /* empty.swift in Sources */,
+				62C50D6122B25364006C6C09 /* Empty.swift in Sources */,
 				OBJ_96 /* Atomic.swift in Sources */,
 				OBJ_97 /* Bag.swift in Sources */,
 				OBJ_98 /* Global.swift in Sources */,

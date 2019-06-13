@@ -47,3 +47,8 @@ enum State {
 # SubscribeOn
 
 - receiveSubscription 不会在 queue 上，value/completion 会在 queue 上
+
+# Just
+
+- requestDemand 时如果 <0，会 crash
+- 即使在接受数据时 cancel subscription，finish 还是会到来。

@@ -52,8 +52,7 @@ extension Publishers.Just {
         let state = Atomic<State>(value: .waiting)
         
         override func request(_ demand: Subscribers.Demand) {
-            switch self.state.load() {
-            case .waiting:
+            if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(demand)) {
                 guard demand > 0 else {
                     // REMINDME: Combine will crashe here.
                     fatalError("trying to request '<= 0' values from Just")
@@ -62,14 +61,12 @@ extension Publishers.Just {
                 _ = self.sub.receive(self.pub.output)
                 self.sub.receive(completion: .finished)
                 
-                self.state.store(.completed)
-            default:
-                break
+                self.state.store(.finished)
             }
         }
         
         override func cancel() {
-            self.state.store(.cancelled)
+            self.state.store(.finished)
         }
     }
 }

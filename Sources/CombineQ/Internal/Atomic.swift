@@ -34,12 +34,12 @@ final class Atomic<Value> {
         return old
     }
     
-    func read<Result>(_ body: (Value) throws -> Result) rethrows -> Result {
+    func withLock<Result>(_ body: (Value) throws -> Result) rethrows -> Result {
         lock.lock(); defer { lock.unlock() }
         return try body(self.value)
     }
     
-    func write<Result>(_ body: (inout Value) throws -> Result) rethrows -> Result {
+    func withLockMutating<Result>(_ body: (inout Value) throws -> Result) rethrows -> Result {
         lock.lock(); defer { lock.unlock() }
         return try body(&self.value)
     }
@@ -47,13 +47,13 @@ final class Atomic<Value> {
 
 extension Atomic where Value: Equatable {
     
-    /// Stores the `desired` if it equals the `expected`.
+    /// Stores the `newVaue` if it equals the `expected`.
     ///
-    /// - Returns: The old value.
-    func compareAndExchange(expected: Value, desired: Value) -> Bool {
+    /// - Returns: `true` if the store occurred.
+    func compareAndStore(expected: Value, newVaue: Value) -> Bool {
         lock.lock(); defer { lock.unlock() }
         if self.value == expected {
-            self.value = desired
+            self.value = newVaue
             return true
         }
         return false
@@ -66,7 +66,7 @@ extension Atomic where Value: AdditiveArithmetic {
     ///
     /// - Returns: The old value.
     func add(_ value: Value) -> Value {
-        self.write {
+        self.withLockMutating {
             let old = $0
             $0 += value
             return old
@@ -77,7 +77,7 @@ extension Atomic where Value: AdditiveArithmetic {
     ///
     /// - Returns: The old value.
     func sub(_ value: Value) -> Value {
-        self.write {
+        self.withLockMutating {
             let old = $0
             $0 -= value
             return old
@@ -91,7 +91,7 @@ extension Atomic where Value: BinaryInteger {
     ///
     /// - Returns: The old value.
     func and(_ value: Value) -> Value {
-        self.write {
+        self.withLockMutating {
             let old = $0
             $0 &= value
             return old
@@ -102,7 +102,7 @@ extension Atomic where Value: BinaryInteger {
     ///
     /// - Returns: The old value.
     func or(_ value: Value) -> Value {
-        self.write {
+        self.withLockMutating {
             let old = $0
             $0 |= value
             return old
@@ -113,7 +113,7 @@ extension Atomic where Value: BinaryInteger {
     ///
     /// - Returns: The old value.
     func xor(_ value: Value) -> Value {
-        self.write {
+        self.withLockMutating {
             let old = $0
             $0 ^= value
             return old
@@ -123,7 +123,6 @@ extension Atomic where Value: BinaryInteger {
 
 extension Atomic {
     
-    
     class func ifNil(_ atomic: Atomic<Value?>, store value: Value) {
         atomic.lock.lock(); defer { atomic.lock.unlock() }
         
@@ -132,3 +131,4 @@ extension Atomic {
         }
     }
 }
+
