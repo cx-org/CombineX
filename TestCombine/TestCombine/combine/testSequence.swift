@@ -15,7 +15,7 @@ import Combine
 
 func testSequence() {
 
-    let pub = Publishers.Sequence<[Int], Never>(sequence: [1])
+    let pub = Publishers.Sequence<[Int], Never>(sequence: [1, 2, 3])
     
     var subscription: Subscription?
     let sub = AnySubscriber<Int, Never>(receiveSubscription: { (s) in
@@ -31,12 +31,17 @@ func testSequence() {
 //            print("[AnySub] subscription is canceld")
 //        }
         s.request(.max(1))
+        
+//        DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
+//            print("[AnySub] request more ")
+//            s.request(.max(2))
+//        }
     }, receiveValue: { i in
         print("[AnySub] receive value", i)
         
-        print("[AnySub] cancel subscription when receive value", subscription as Any)
-        subscription?.cancel()
-        return .max(2)
+//        print("[AnySub] cancel subscription when receive value", subscription as Any)
+//        subscription?.cancel()
+        return .max(1)
     }, receiveCompletion: {
         print("[AnySub] receive completion", $0)
     })
@@ -44,3 +49,11 @@ func testSequence() {
     pub.subscribe(sub)
     
 }
+
+/*
+ [AnySub] receive subscription [1, 2, 3]
+ [AnySub] receive value 1
+ [AnySub] receive value 2
+ [AnySub] receive value 3
+ [AnySub] receive completion finished
+ */

@@ -168,7 +168,6 @@
 		66682E8622AFD35B009DBDF6 /* Schedulers */ = {
 			isa = PBXGroup;
 			children = (
-				OBJ_18 /* Demand.swift */,
 				OBJ_19 /* ImmediateScheduler.swift */,
 			);
 			path = Schedulers;
@@ -213,6 +212,7 @@
 		OBJ_42 /* Subscriptions */ = {
 			isa = PBXGroup;
 			children = (
+				OBJ_18 /* Demand.swift */,
 				OBJ_41 /* Subscriptions.swift */,
 				OBJ_43 /* empty.swift */,
 			);

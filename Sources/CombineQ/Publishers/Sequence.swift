@@ -26,7 +26,8 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Failure == S.Failure, S : Subscriber, Elements.Element == S.Input {
-            Global.RequiresImplementation()
+            let subscription = SequenceSubscription(pub: self, sub: subscriber)
+            subscriber.receive(subscription: subscription)
         }
     }
 }
@@ -43,41 +44,79 @@ extension Publishers.Sequence {
         
         let state = Atomic<State>(value: .waiting)
         
-        var iterator: Elements.Iterator
+        var elements: Elements
         
         override init(pub: Pub, sub: Sub) {
-            self.iterator = pub.sequence.makeIterator()
+            self.elements = pub.sequence
             super.init(pub: pub, sub: sub)
         }
         
         override func request(_ demand: Subscribers.Demand) {
-            switch self.state.load() {
-            case .waiting:
-                self.state.store(.subscribing(demand))
-                if demand > 0 {
-                    if let next = iterator.next() {
-                        let d = self.sub.receive(next)
-//                        self.state.
-                    } else {
-                        self.sub.receive(completion: .finished)
+            if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(demand)) {
+                
+                switch demand {
+                case .unlimited:
+                    self.fastPath()
+                case .max(let amount):
+                    if amount > 0 {
+                        self.slowPath(demand)
                     }
                 }
-            default:
-                break
+            } else if let demand = self.state.tryAdd(demand), demand > 0 {
+                self.slowPath(demand)
             }
-            self.state.withLockMutating { __state in
-                switch __state {
-                case .waiting:
-                    __state = .subscribing(demand)
-                    if demand > 0 {
-                        if let next = iterator.next() {
-                            let d = self.sub.receive(next)
-                        } else {
+        }
+        
+        private func fastPath() {
+            for element in self.elements {
+                if self.state.isFinished {
+                    return
+                } else {
+                    _ = self.sub.receive(element)
+                }
+            }
+            
+            if self.state.isFinished {
+                return
+            }
+            self.sub.receive(completion: .finished)
+        }
+        
+        private func slowPath(_ demand: Subscribers.Demand) {
+            guard demand > 0 else { return }
+            
+            var iterator = self.elements.makeIterator()
+            
+            var totalDemand = demand
+            var sended: Subscribers.Demand = .max(0)
+            
+            while true {
+                
+                while sended < totalDemand {
+                    guard let element = iterator.next() else {
+                        if !self.state.isFinished {
                             self.sub.receive(completion: .finished)
+                            self.state.store(.finished)
                         }
+                        return
                     }
-                default:
-                    break
+                    
+                    if self.state.isFinished {
+                        return
+                    }
+                    if let demand = self.state.tryAdd(self.sub.receive(element)), demand < 0 {
+                        return
+                    }
+                    
+                    sended += 1
+                }
+                
+                if let current = self.state.demand {
+                    if current <= 0 {
+                        return
+                    } else {
+                        totalDemand = current
+                    }
                 }
             }
         }
