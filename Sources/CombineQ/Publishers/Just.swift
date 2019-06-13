@@ -68,6 +68,10 @@ extension Publishers.Just {
         override func cancel() {
             self.state.store(.finished)
         }
+        
+        deinit {
+            print("JustSubscription deinit")
+        }
     }
 }
 

@@ -11,14 +11,16 @@ enum State {
 
 # Subscription
 
-+ request demand 小于 0
+- request demand 小于 0
     - 什么也不发送
     - 但会记住 demand
     - 如果继续 request demand 大于 0，会开始发送
 
 
-+ Subscription 多次 `request(_:)`，如果这时是 subscribing 状态，就把 `demand` 加到 `subscribing` 上
-+ `request(demand:)` 后就开始了 `receive(value:)`
+- Subscription 多次 `request(_:)`，如果这时是 subscribing 状态，就把 `demand` 加到 `subscribing` 上
+- `request(demand:)` 后就开始了 `receive(value:)`
+- subscription 会持有 publisher/subscriber。如果 subscription 不 deinit， 其它两者都不会 deinit（当然，如果他们是引用类型）。
+
 
 ## Assign
 

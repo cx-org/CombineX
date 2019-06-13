@@ -20,11 +20,7 @@ func testEmpty() {
     let sub = AnySubscriber<Int, Never>(receiveSubscription: { (s) in
         subscription = s
         
-        print(type(of: s))
-        debugPrint(s)
-        for m in Mirror(reflecting: s).children {
-            print(m.label, m.value)
-        }
+        debugPrint(s, type(of: s))
         
         print("[AnySub] receive subscription", s)
         
@@ -37,7 +33,7 @@ func testEmpty() {
     }, receiveValue: { i in
         print("[AnySub] receive value", i)
         
-        print("[AnySub] cancel subscription when receive value", subscription)
+        print("[AnySub] cancel subscription when receive value", subscription as Any)
         subscription?.cancel()
         return .max(0)
     }, receiveCompletion: {

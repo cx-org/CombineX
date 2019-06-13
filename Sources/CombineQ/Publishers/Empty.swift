@@ -20,7 +20,7 @@ extension Publishers {
         ///   - outputType: The output type exposed by this publisher.
         ///   - failureType: The failure type exposed by this publisher.
         public init(completeImmediately: Bool = true, outputType: Output.Type, failureType: Failure.Type) {
-            Global.RequiresImplementation()
+            self.completeImmediately = completeImmediately
         }
         
         /// A Boolean value that indicates whether the publisher immediately sends a completion.
@@ -35,7 +35,8 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
-            
+            let subscription = EmptySubscription(pub: self, sub: subscriber)
+            subscriber.receive(subscription: subscription)
         }
         
         /// Returns a Boolean value indicating whether two values are equal.
@@ -47,14 +48,14 @@ extension Publishers {
         ///   - lhs: A value to compare.
         ///   - rhs: Another value to compare.
         public static func == (lhs: Publishers.Empty<Output, Failure>, rhs: Publishers.Empty<Output, Failure>) -> Bool {
-            Global.RequiresImplementation()
+            return lhs.completeImmediately == rhs.completeImmediately
         }
     }
 }
 
 extension Publishers.Empty {
     
-    private final class EmptySubscriptions<S>:
+    private final class EmptySubscription<S>:
         CustomSubscription<Publishers.Empty<Output, Failure>, S>
     where
         S : Subscriber,

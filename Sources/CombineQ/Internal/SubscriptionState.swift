@@ -1,5 +1,6 @@
 enum SubscriptionState {
     
+    // waiting for request demand
     case waiting
     
     case subscribing(Subscribers.Demand)

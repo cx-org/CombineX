@@ -1,8 +1,8 @@
 //
-//  testJust.swift
+//  testSequence.swift
 //  TestCombine
 //
-//  Created by Quentin Jin on 2019/6/12.
+//  Created by Quentin Jin on 2019/6/13.
 //  Copyright © 2019 Quentin Jin. All rights reserved.
 //
 
@@ -13,16 +13,16 @@ import CombineQ
 import Combine
 #endif
 
-func testJust() {
-    let pub = Publishers.Just(1)
+func testSequence() {
+
+    let pub = Publishers.Sequence<[Int], Never>(sequence: [1])
     
     var subscription: Subscription?
     let sub = AnySubscriber<Int, Never>(receiveSubscription: { (s) in
         subscription = s
         
-        print(type(of: s))
-        debugPrint(s)
-
+        debugPrint(s, type(of: s))
+        
         print("[AnySub] receive subscription", s)
         
 //        DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
@@ -36,17 +36,11 @@ func testJust() {
         
         print("[AnySub] cancel subscription when receive value", subscription as Any)
         subscription?.cancel()
-        return .max(0)
+        return .max(2)
     }, receiveCompletion: {
         print("[AnySub] receive completion", $0)
     })
     
     pub.subscribe(sub)
+    
 }
-
-/*
- [AnySub] receive subscription Just
- [AnySub] receive value 1
- [AnySub] cancel subscription when receive value Optional(Just)
- [AnySub] receive completion finished
- */
