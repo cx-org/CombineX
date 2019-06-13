@@ -149,13 +149,14 @@ extension Subscribers {
             }
         }
         
-        /// If lhs is .unlimited, then the result is always false. If rhs is .unlimited then the result is always false. Otherwise, the two max values are compared.
+        /// If lhs is .unlimited, then the result is always false. If rhs is .unlimited then the result is always true. Otherwise, the two max values are compared.
+        #warning("The documetation here is wrong, it says 'If rhs is .unlimited then the result is always true.'")
         public static func < (lhs: Subscribers.Demand, rhs: Subscribers.Demand) -> Bool {
             switch (lhs, rhs) {
             case (.unlimited, _):
                 return false
             case (_, .unlimited):
-                return false
+                return true
             case (.max(let d0), .max(let d1)):
                 return d0 < d1
             }
