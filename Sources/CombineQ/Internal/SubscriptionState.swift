@@ -86,12 +86,17 @@ extension Atomic where Value == SubscriptionState {
 
 extension Atomic where Value == SubscriptionState {
     
-    func tryAdd(_ demand: Subscribers.Demand) -> Subscribers.Demand? {
+    typealias TryAdd = (before: Subscribers.Demand, after: Subscribers.Demand)
+    
+    /// Adds the provided demand to the existing demand if the current state is `subscribing`.
+    ///
+    /// - Returns: `(before, after)` if added, otherwise nil.
+    func tryAdd(_ demand: Subscribers.Demand) -> TryAdd? {
         self.withLockMutating {
             if let old = $0.demand {
                 let new = old + demand
                 $0 = .subscribing(new)
-                return new
+                return (old, new)
             } else {
                 return nil
             }

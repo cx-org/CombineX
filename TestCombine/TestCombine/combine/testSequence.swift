@@ -17,9 +17,7 @@ func testSequence() {
 
     let pub = Publishers.Sequence<[Int], Never>(sequence: [1, 2, 3, 4, 5])
     
-    var subscription: Subscription?
     let sub = AnySubscriber<Int, Never>(receiveSubscription: { (s) in
-        subscription = s
         
         debugPrint(s, type(of: s))
         
@@ -30,17 +28,17 @@ func testSequence() {
 //            subscription?.cancel()
 //            print("[AnySub] subscription is canceld")
 //        }
+        
+        DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
+            print("[AnySub] request more ")
+            s.request(.max(1))
+        }
+        
         s.request(.max(1))
-        
-//        DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
-//            print("[AnySub] request more ")
-//            s.request(.max(1))
-//        }
     }, receiveValue: { i in
-        print("[AnySub] receive value", i)
+        print("[AnySub] receive value", i, CFAbsoluteTimeGetCurrent(), Thread.current)
         
-//        print("[AnySub] cancel subscription when receive value", subscription as Any)
-//        subscription?.cancel()
+        Thread.sleep(forTimeInterval: 1.5)
         return .max(1)
     }, receiveCompletion: {
         print("[AnySub] receive completion", $0)
@@ -61,5 +59,13 @@ func testSequence() {
  [AnySub] receive value 1
  [AnySub] request more
  [AnySub] receive value 2
+
+ [AnySub] receive value 1 582192960.189217 <NSThread: 0x600001969300>{number = 1, name = main}
+ [AnySub] request more
+ [AnySub] receive value 2 582192961.690672 <NSThread: 0x600001969300>{number = 1, name = main}
+ [AnySub] receive value 3 582192963.192004 <NSThread: 0x600001969300>{number = 1, name = main}
+ [AnySub] receive value 4 582192964.693115 <NSThread: 0x600001969300>{number = 1, name = main}
+ [AnySub] receive value 5 582192966.19335 <NSThread: 0x600001969300>{number = 1, name = main}
+ [AnySub] receive completion finished
 
  */

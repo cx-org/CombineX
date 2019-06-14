@@ -44,10 +44,10 @@ extension Publishers.Sequence {
         
         let state = Atomic<State>(value: .waiting)
         
-        var elements: Elements
+        var iterator: Elements.Iterator
         
         override init(pub: Pub, sub: Sub) {
-            self.elements = pub.sequence
+            self.iterator = pub.sequence.makeIterator()
             super.init(pub: pub, sub: sub)
         }
         
@@ -62,20 +62,20 @@ extension Publishers.Sequence {
                         self.slowPath(demand)
                     }
                 }
-            } else if let demand = self.state.tryAdd(demand), demand > 0 {
-                self.slowPath(demand)
+            } else if let demand = self.state.tryAdd(demand), demand.before <= 0 {
+                self.slowPath(demand.after)
             }
         }
         
         private func fastPath() {
-            for element in self.elements {
+            if let next = self.iterator.next() {
                 if self.state.isFinished {
                     return
                 } else {
-                    _ = self.sub.receive(element)
+                    _ = self.sub.receive(next)
                 }
             }
-            
+
             if self.state.isFinished {
                 return
             }
@@ -83,8 +83,6 @@ extension Publishers.Sequence {
         }
         
         private func slowPath(_ demand: Subscribers.Demand) {
-            var iterator = self.elements.makeIterator()
-            
             var totalDemand = demand
             while totalDemand > 0 {
                 guard let element = iterator.next() else {
@@ -98,8 +96,8 @@ extension Publishers.Sequence {
                 if self.state.isFinished {
                     return
                 }
-                let newDemand = self.sub.receive(element)
-                guard let currentDemand = self.state.tryAdd(newDemand - 1), currentDemand > 0 else {
+                let demand = self.sub.receive(element)
+                guard let currentDemand = self.state.tryAdd(demand - 1)?.after, currentDemand > 0 else {
                     return
                 }
                 

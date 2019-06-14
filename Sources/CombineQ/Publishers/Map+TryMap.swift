@@ -90,7 +90,7 @@ extension Publishers.Map {
         
         override init(pub: Pub, sub: Sub) {
             super.init(pub: pub, sub: sub)
-            pub.upstream.subscribe(self)
+            self.pub.upstream.subscribe(self)
         }
         
         override func request(_ demand: Subscribers.Demand) {
@@ -98,8 +98,7 @@ extension Publishers.Map {
         }
         
         override func cancel() {
-//            self.state.store(.cancelled)
-            Global.RequiresImplementation()
+            self.subscription.cancel()
         }
         
         func receive(subscription: Subscription) {
@@ -112,6 +111,59 @@ extension Publishers.Map {
         
         func receive(completion: Subscribers.Completion<Failure>) {
             self.sub.receive(completion: completion)
+        }
+    }
+}
+
+extension Publishers.TryMap {
+    
+    private final class TryMapSubscription<S>:
+        CustomSubscription<Publishers.TryMap<Upstream, Output>, S>,
+        Subscriber
+        where
+        S: Subscriber,
+        S.Input == Output,
+        S.Failure == Failure
+    {
+        
+        typealias Input = Upstream.Output
+        typealias Failure = Upstream.Failure
+        
+        private var subscription: Subscription!
+        
+        override init(pub: Pub, sub: Sub) {
+            super.init(pub: pub, sub: sub)
+            self.pub.upstream.subscribe(self)
+        }
+        
+        override func request(_ demand: Subscribers.Demand) {
+            self.subscription.request(demand)
+        }
+        
+        override func cancel() {
+            self.subscription.cancel()
+        }
+        
+        func receive(subscription: Subscription) {
+            self.subscription = subscription
+        }
+        
+        func receive(_ input: Input) -> Subscribers.Demand {
+            do {
+                return self.sub.receive(try self.pub.transform(input))
+            } catch {
+                self.sub.receive(completion: .failure(error))
+                return .none
+            }
+        }
+        
+        func receive(completion: Subscribers.Completion<Failure>) {
+            switch completion {
+            case .finished:
+                self.sub.receive(completion: .finished)
+            case .failure(let e):
+                self.sub.receive(completion: .failure(e))
+            }
         }
     }
 }
