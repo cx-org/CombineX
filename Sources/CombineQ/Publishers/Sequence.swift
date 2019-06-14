@@ -110,3 +110,12 @@ extension Publishers.Sequence {
         }
     }
 }
+
+
+extension Sequence {
+    
+    public func publisher() -> Publishers.Sequence<Self, Never> {
+        return Publishers.Sequence<Self, Never>(sequence: self)
+    }
+}
+

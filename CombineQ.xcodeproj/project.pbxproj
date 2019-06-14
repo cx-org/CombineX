@@ -21,7 +21,12 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		6287088D22B09D36002386E2 /* Map+TryMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6287088C22B09D36002386E2 /* Map+TryMap.swift */; };
+		6229040E22B391670012FFC4 /* TryMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6229040D22B391670012FFC4 /* TryMap.swift */; };
+		6229041022B395540012FFC4 /* MapError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6229040F22B395540012FFC4 /* MapError.swift */; };
+		6229041222B398BB0012FFC4 /* FlatMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6229041122B398BB0012FFC4 /* FlatMap.swift */; };
+		6229041422B39CB70012FFC4 /* Merge+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6229041322B39CB70012FFC4 /* Merge+.swift */; };
+		6229041622B39E2B0012FFC4 /* Merge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6229041522B39E2B0012FFC4 /* Merge.swift */; };
+		6287088D22B09D36002386E2 /* Map.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6287088C22B09D36002386E2 /* Map.swift */; };
 		6287089322B0AFF7002386E2 /* Sequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6287089222B0AFF7002386E2 /* Sequence.swift */; };
 		6287089622B0DAD4002386E2 /* SubscriptionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6287089522B0DAD4002386E2 /* SubscriptionState.swift */; };
 		62C50D6122B25364006C6C09 /* Empty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C50D6022B25364006C6C09 /* Empty.swift */; };
@@ -87,7 +92,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		6287088C22B09D36002386E2 /* Map+TryMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Map+TryMap.swift"; sourceTree = "<group>"; };
+		6229040D22B391670012FFC4 /* TryMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TryMap.swift; sourceTree = "<group>"; };
+		6229040F22B395540012FFC4 /* MapError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapError.swift; sourceTree = "<group>"; };
+		6229041122B398BB0012FFC4 /* FlatMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlatMap.swift; sourceTree = "<group>"; };
+		6229041322B39CB70012FFC4 /* Merge+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Merge+.swift"; sourceTree = "<group>"; };
+		6229041522B39E2B0012FFC4 /* Merge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Merge.swift; sourceTree = "<group>"; };
+		6287088C22B09D36002386E2 /* Map.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Map.swift; sourceTree = "<group>"; };
 		6287089022B0AFD5002386E2 /* AssignTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssignTests.swift; sourceTree = "<group>"; };
 		6287089222B0AFF7002386E2 /* Sequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sequence.swift; sourceTree = "<group>"; };
 		6287089522B0DAD4002386E2 /* SubscriptionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionState.swift; sourceTree = "<group>"; };
@@ -178,14 +188,19 @@
 			children = (
 				OBJ_27 /* assign.swift */,
 				OBJ_23 /* Autoconnect.swift */,
+				62C50D6022B25364006C6C09 /* Empty.swift */,
 				OBJ_24 /* Just.swift */,
-				6287088C22B09D36002386E2 /* Map+TryMap.swift */,
+				6287088C22B09D36002386E2 /* Map.swift */,
 				OBJ_25 /* Once.swift */,
 				OBJ_21 /* Publishers.swift */,
 				6287089222B0AFF7002386E2 /* Sequence.swift */,
 				OBJ_28 /* sink.swift */,
 				OBJ_26 /* SubscribeOn.swift */,
-				62C50D6022B25364006C6C09 /* Empty.swift */,
+				6229040D22B391670012FFC4 /* TryMap.swift */,
+				6229040F22B395540012FFC4 /* MapError.swift */,
+				6229041122B398BB0012FFC4 /* FlatMap.swift */,
+				6229041322B39CB70012FFC4 /* Merge+.swift */,
+				6229041522B39E2B0012FFC4 /* Merge.swift */,
 			);
 			path = Publishers;
 			sourceTree = "<group>";
@@ -424,9 +439,11 @@
 			buildActionMask = 0;
 			files = (
 				OBJ_65 /* AnyCancellable.swift in Sources */,
+				6229041022B395540012FFC4 /* MapError.swift in Sources */,
 				OBJ_66 /* AnyPublisher.swift in Sources */,
 				OBJ_67 /* AnySubject.swift in Sources */,
 				OBJ_68 /* AnySubscriber.swift in Sources */,
+				6229040E22B391670012FFC4 /* TryMap.swift in Sources */,
 				OBJ_69 /* Cancellable.swift in Sources */,
 				OBJ_70 /* CombineIdentifier.swift in Sources */,
 				OBJ_71 /* Completion.swift in Sources */,
@@ -436,8 +453,10 @@
 				OBJ_75 /* ImmediateScheduler.swift in Sources */,
 				OBJ_76 /* Publisher.swift in Sources */,
 				OBJ_77 /* Publishers.swift in Sources */,
+				6229041222B398BB0012FFC4 /* FlatMap.swift in Sources */,
 				OBJ_78 /* Autoconnect.swift in Sources */,
 				OBJ_79 /* Just.swift in Sources */,
+				6229041622B39E2B0012FFC4 /* Merge.swift in Sources */,
 				OBJ_80 /* Once.swift in Sources */,
 				6287089322B0AFF7002386E2 /* Sequence.swift in Sources */,
 				OBJ_81 /* SubscribeOn.swift in Sources */,
@@ -453,8 +472,9 @@
 				OBJ_90 /* Subscribers.swift in Sources */,
 				OBJ_91 /* Assign.swift in Sources */,
 				OBJ_92 /* Sink.swift in Sources */,
+				6229041422B39CB70012FFC4 /* Merge+.swift in Sources */,
 				66682E8D22AFEB63009DBDF6 /* CustomSubscription.swift in Sources */,
-				6287088D22B09D36002386E2 /* Map+TryMap.swift in Sources */,
+				6287088D22B09D36002386E2 /* Map.swift in Sources */,
 				OBJ_93 /* Subscription.swift in Sources */,
 				OBJ_94 /* Subscriptions.swift in Sources */,
 				OBJ_95 /* empty.swift in Sources */,
