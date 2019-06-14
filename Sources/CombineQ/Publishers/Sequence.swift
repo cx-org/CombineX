@@ -83,41 +83,27 @@ extension Publishers.Sequence {
         }
         
         private func slowPath(_ demand: Subscribers.Demand) {
-            guard demand > 0 else { return }
-            
             var iterator = self.elements.makeIterator()
             
             var totalDemand = demand
-            var sended: Subscribers.Demand = .max(0)
-            
-            while true {
-                
-                while sended < totalDemand {
-                    guard let element = iterator.next() else {
-                        if !self.state.isFinished {
-                            self.sub.receive(completion: .finished)
-                            self.state.store(.finished)
-                        }
-                        return
+            while totalDemand > 0 {
+                guard let element = iterator.next() else {
+                    if !self.state.isFinished {
+                        self.sub.receive(completion: .finished)
+                        self.state.store(.finished)
                     }
-                    
-                    if self.state.isFinished {
-                        return
-                    }
-                    if let demand = self.state.tryAdd(self.sub.receive(element)), demand < 0 {
-                        return
-                    }
-                    
-                    sended += 1
+                    return
                 }
                 
-                if let current = self.state.demand {
-                    if current <= 0 {
-                        return
-                    } else {
-                        totalDemand = current
-                    }
+                if self.state.isFinished {
+                    return
                 }
+                let newDemand = self.sub.receive(element)
+                guard let currentDemand = self.state.tryAdd(newDemand - 1), currentDemand > 0 else {
+                    return
+                }
+                
+                totalDemand = currentDemand
             }
         }
         
