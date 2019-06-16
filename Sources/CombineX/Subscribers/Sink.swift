@@ -85,7 +85,7 @@ extension Subscribers {
         /// - Returns: A `Demand` instance indicating how many more elements the subcriber expects to receive.
         final public func receive(_ value: Subscribers.Sink<Upstream>.Input) -> Subscribers.Demand {
             self.receiveValue(value)
-            return .max(0)
+            return .none
         }
         
         /// Tells the subscriber that the publisher has completed publishing, either normally or with an error.
