@@ -6,13 +6,12 @@ import CombineX
 import Combine
 #endif
 
-typealias Assign = CombineX.Subscribers.Assign
-
-class AssignTests: XCTestCase {
+class JustTests: XCTestCase {
     
-    func testAssign() {
+    func testJust() {
+        
         #if CombineX
-        print("combineX")
+        print("combine x")
         #else
         print("combine")
         #endif
