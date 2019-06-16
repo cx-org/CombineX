@@ -51,7 +51,6 @@ extension Subscribers {
             Global.RequiresImplementation()
         }
         
-        private let isCompleted = Atomic(value: false)
         private let subscription = Atomic<Subscription?>(value: nil)
         
         public init(object: Root, keyPath: ReferenceWritableKeyPath<Root, Input>) {
@@ -64,8 +63,9 @@ extension Subscribers {
         /// Use the received `Subscription` to request items from the publisher.
         /// - Parameter subscription: A subscription that represents the connection between publisher and subscriber.
         final public func receive(subscription: Subscription) {
-            Atomic.ifNil(self.subscription, store: subscription)
-            subscription.request(.unlimited)
+            if Atomic.ifNil(self.subscription, store: subscription) {
+                subscription.request(.unlimited)
+            }
         }
         
         /// Tells the subscriber that the publisher has produced an element.
@@ -73,7 +73,7 @@ extension Subscribers {
         /// - Parameter input: The published element.
         /// - Returns: A `Demand` instance indicating how many more elements the subcriber expects to receive.
         final public func receive(_ value: Input) -> Subscribers.Demand {
-            if self.isCompleted.load() || self.subscription.load() == nil {
+            if self.subscription.load() == nil {
                 return .none
             }
             
@@ -85,8 +85,6 @@ extension Subscribers {
         ///
         /// - Parameter completion: A `Completion` case indicating whether publishing completed normally or with an error.
         final public func receive(completion: Subscribers.Completion<Never>) {
-            self.isCompleted.store(true)
-            
             self.subscription.exchange(with: nil)?.cancel()
         }
         

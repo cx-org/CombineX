@@ -57,7 +57,7 @@ extension Publishers.MapError {
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
         
-        private var subscription: Subscription!
+        private let subscription = Atomic<Subscription?>(value: nil)
         
         override init(pub: Pub, sub: Sub) {
             super.init(pub: pub, sub: sub)
@@ -65,15 +65,15 @@ extension Publishers.MapError {
         }
         
         override func request(_ demand: Subscribers.Demand) {
-            self.subscription.request(demand)
+            self.subscription.load()?.request(demand)
         }
         
         override func cancel() {
-            self.subscription.cancel()
+            self.subscription.load()?.cancel()
         }
         
         func receive(subscription: Subscription) {
-            self.subscription = subscription
+            _ = Atomic.ifNil(self.subscription, store: subscription)
         }
         
         func receive(_ input: Input) -> Subscribers.Demand {

@@ -48,6 +48,9 @@
 		662C095022B28094006ECE08 /* testSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 662C094E22B28094006ECE08 /* testSubscription.swift */; };
 		662C095622B28802006ECE08 /* testSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 662C095522B28802006ECE08 /* testSequence.swift */; };
 		662C095722B28802006ECE08 /* testSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 662C095522B28802006ECE08 /* testSequence.swift */; };
+		662C095A22B3DFD3006ECE08 /* testFlatMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 662C095922B3DFD2006ECE08 /* testFlatMap.swift */; };
+		662C095B22B3DFD3006ECE08 /* testFlatMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 662C095922B3DFD2006ECE08 /* testFlatMap.swift */; };
+		66312F9322B5072B0081D8F1 /* testMerge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6229041722B3A2C50012FFC4 /* testMerge.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -136,6 +139,7 @@
 		662C094A22B14696006ECE08 /* testJust.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = testJust.swift; sourceTree = "<group>"; };
 		662C094E22B28094006ECE08 /* testSubscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = testSubscription.swift; sourceTree = "<group>"; };
 		662C095522B28802006ECE08 /* testSequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = testSequence.swift; sourceTree = "<group>"; };
+		662C095922B3DFD2006ECE08 /* testFlatMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = testFlatMap.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -261,6 +265,7 @@
 				662C095522B28802006ECE08 /* testSequence.swift */,
 				6229040222B37E3A0012FFC4 /* testMap.swift */,
 				6229041722B3A2C50012FFC4 /* testMerge.swift */,
+				662C095922B3DFD2006ECE08 /* testFlatMap.swift */,
 			);
 			path = combine;
 			sourceTree = "<group>";
@@ -468,6 +473,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				662C08AB22B06D54006ECE08 /* ViewController.swift in Sources */,
+				662C095A22B3DFD3006ECE08 /* testFlatMap.swift in Sources */,
 				662C094B22B14696006ECE08 /* testJust.swift in Sources */,
 				6229040322B37E3A0012FFC4 /* testMap.swift in Sources */,
 				662C095622B28802006ECE08 /* testSequence.swift in Sources */,
@@ -515,6 +521,8 @@
 				662C093A22B13752006ECE08 /* testAssign.swift in Sources */,
 				662C093C22B1385D006ECE08 /* AppDelegate.swift in Sources */,
 				662C093622B1373B006ECE08 /* AnotherSubscription.swift in Sources */,
+				66312F9322B5072B0081D8F1 /* testMerge.swift in Sources */,
+				662C095B22B3DFD3006ECE08 /* testFlatMap.swift in Sources */,
 				662C093B22B13777006ECE08 /* ViewController.swift in Sources */,
 				62C50D6422B2561B006C6C09 /* testEmpty.swift in Sources */,
 				662C095022B28094006ECE08 /* testSubscription.swift in Sources */,

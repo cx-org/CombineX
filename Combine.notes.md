@@ -54,3 +54,11 @@ enum State {
 
 - requestDemand 时如果 <0，会 crash
 - 即使在接受数据时 cancel subscription，finish 还是会到来。
+
+# Map
+- 如果第二次向 subscription request demand，如果 current demand 大于 0，只修改 demand，如果 current demand 小于等于 0，说明 subscription 在阻塞，修改后继续发送。
+
+# Flatmap
+
+- maxPublishers < 0 时就不 flapmap 了。
+- request demand 第一次请求 `maxPublishers`，然后每完成一个新生成的 `publisher` 再请求一个。

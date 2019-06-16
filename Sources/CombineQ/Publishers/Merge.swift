@@ -55,3 +55,47 @@ extension Publishers {
         }
     }
 }
+
+extension Publishers.Merge {
+    
+    private final class MergeSubscription<S>:
+        CustomSubscription<Publishers.Merge<A, B>, S>,
+        Subscriber
+    where
+        S : Subscriber,
+        B.Output == S.Input,
+        B.Failure == S.Failure
+    {
+        typealias Input = B.Output
+        typealias Failure = B.Failure
+        
+        private var subscription: Subscription!
+        
+        override init(pub: Pub, sub: Sub) {
+            super.init(pub: pub, sub: sub)
+            
+            
+//            Publishers.Sequence<[Publisher], A.Failure>(sequence: [pub.a, pub.b])
+        }
+        
+        override func request(_ demand: Subscribers.Demand) {
+            Global.RequiresImplementation()
+        }
+        
+        override func cancel() {
+            Global.RequiresImplementation()
+        }
+        
+        func receive(subscription: Subscription) {
+            self.subscription = subscription
+        }
+        
+        func receive(_ input: Input) -> Subscribers.Demand {
+            Global.RequiresImplementation()
+        }
+        
+        func receive(completion: Subscribers.Completion<A.Failure>) {
+            Global.RequiresImplementation()
+        }
+    }
+}

@@ -53,7 +53,7 @@ extension Publishers.TryMap {
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
         
-        private var subscription: Subscription!
+        private let subscription = Atomic<Subscription?>(value: nil)
         
         override init(pub: Pub, sub: Sub) {
             super.init(pub: pub, sub: sub)
@@ -61,15 +61,17 @@ extension Publishers.TryMap {
         }
         
         override func request(_ demand: Subscribers.Demand) {
-            self.subscription.request(demand)
+            self.subscription.load()?.request(demand)
         }
         
         override func cancel() {
-            self.subscription.cancel()
+            self.subscription.load()?.cancel()
         }
         
         func receive(subscription: Subscription) {
-            self.subscription = subscription
+            if Atomic.ifNil(self.subscription, store: subscription) {
+                self.sub.receive(subscription: self)
+            }
         }
         
         func receive(_ input: Input) -> Subscribers.Demand {

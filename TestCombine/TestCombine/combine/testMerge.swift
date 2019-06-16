@@ -37,11 +37,11 @@ func testMerge() {
 //        print("[AnySub] cancel subscription when receive value", subscription as Any)
 //        subscription?.cancel()
 //        Thread.sleep(forTimeInterval: 1.5)
-        return .max(1)
+        return .unlimited
     }, receiveCompletion: {
         print("[AnySub] receive completion", $0)
     })
     
-    let pub = pub1.merge(with: pub2)
-    pub.subscribe(sub)
+//    let pub = pub2.merge(with: pub1)
+//    pub.subscribe(sub)
 }

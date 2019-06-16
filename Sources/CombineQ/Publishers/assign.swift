@@ -10,7 +10,7 @@ extension Publisher where Self.Failure == Never {
         let assign = Subscribers.Assign(object: object, keyPath: keyPath)
         self.subscribe(assign)
         
-        // REMINDME: Not like `sink`, it returns an `AnyCancellable`.
+        #warning("Not like `sink`, it returns an `AnyCancellable`.")
         return AnyCancellable(assign)
     }
 }

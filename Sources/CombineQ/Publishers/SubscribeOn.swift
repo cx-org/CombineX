@@ -70,35 +70,6 @@ extension Publishers.SubscribeOn {
         
         override func request(_ demand: Subscribers.Demand) {
             Global.RequiresImplementation()
-            self.state.withLockMutating { __state in
-                switch __state {
-                case .waiting:
-                    guard demand > 0 else {
-                        return
-                    }
-                    
-                    let subscriber = AnySubscriber<Output, Failure>(
-                        receiveSubscription: { (subscription) in
-                            self.pub.scheduler.schedule {
-                                subscription.request(demand)
-                            }
-                        },
-                        receiveValue: { output in
-                            return .max(0)
-                        },
-                        receiveCompletion: { completion in
-                            
-                        }
-                    )
-
-                    self.pub.subscribe(subscriber)
-                case .subscribing(let currentDemand):
-                    __state = .subscribing(currentDemand + demand)
-                case .finished:
-                    break
-                }
-                
-            }
         }
         
         private func receive(subscription: Subscription) {

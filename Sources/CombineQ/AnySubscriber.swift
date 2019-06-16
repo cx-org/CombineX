@@ -58,7 +58,7 @@ public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertibl
         self.receiveValueBody = s.receive(_:)
         self.receiveCompletionBody = s.receive(completion:)
         
-        // REMINDME: It behaves differently than the system `Combine`.
+        #warning("It behaves differently than the system `Combine`.")
         self.combineIdentifier = CombineIdentifier()
     }
     

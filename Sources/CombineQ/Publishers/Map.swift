@@ -33,7 +33,7 @@ extension Publishers {
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, Upstream.Failure == S.Failure {
             let subscription = MapSubscription(pub: self, sub: subscriber)
-            subscriber.receive(subscription: subscription)
+            self.upstream.subscribe(subscription)
         }
     }
 }
@@ -52,30 +52,31 @@ extension Publishers.Map {
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
         
-        private var subscription: Subscription!
-        
-        override init(pub: Pub, sub: Sub) {
-            super.init(pub: pub, sub: sub)
-            self.pub.upstream.subscribe(self)
-        }
+        private let subscription = Atomic<Subscription?>(value: nil)
         
         override func request(_ demand: Subscribers.Demand) {
-            self.subscription.request(demand)
+            self.subscription.load()?.request(demand)
         }
         
         override func cancel() {
-            self.subscription.cancel()
+            self.subscription.exchange(with: nil)?.cancel()
         }
         
         func receive(subscription: Subscription) {
-            self.subscription = subscription
+            if Atomic.ifNil(self.subscription, store: subscription) {
+                self.sub.receive(subscription: self)
+            }
         }
         
         func receive(_ input: Input) -> Subscribers.Demand {
-            self.sub.receive(self.pub.transform(input))
+            guard self.subscription.load() != nil else {
+                return .none
+            }
+            return self.sub.receive(self.pub.transform(input))
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
+            self.subscription.exchange(with: nil)?.cancel()
             self.sub.receive(completion: completion)
         }
     }

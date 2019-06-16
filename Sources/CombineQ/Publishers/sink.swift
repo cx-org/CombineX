@@ -10,7 +10,7 @@ extension Publisher {
         let sink = Subscribers.Sink<Self>(receiveCompletion: receiveCompletion, receiveValue: receiveValue)
         self.subscribe(sink)
         
-        // REMINDME: Not like `assign`, it returns a `Sink`.
+        #warning("Not like `assign`, it returns a `Sink`.")
         return sink
     }
 }

@@ -54,7 +54,7 @@ extension Publishers.Just {
         override func request(_ demand: Subscribers.Demand) {
             if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(demand)) {
                 guard demand > 0 else {
-                    // REMINDME: Combine will crashe here.
+                    #warning("Combine will crashe here.")
                     fatalError("trying to request '<= 0' values from Just")
                 }
                 

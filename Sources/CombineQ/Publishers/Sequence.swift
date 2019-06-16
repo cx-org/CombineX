@@ -3,7 +3,6 @@ extension Publishers {
     /// A publisher that publishes a given sequence of elements.
     ///
     /// When the publisher exhausts the elements in the sequence, the next request causes the publisher to finish.
-    // REMINDME: There is a bug in combine source code.
     public struct Sequence<Elements, Failure> : Publisher where Elements : Swift.Sequence, Failure : Error {
         
         /// The kind of values published by this publisher.
@@ -68,34 +67,34 @@ extension Publishers.Sequence {
         }
         
         private func fastPath() {
-            if let next = self.iterator.next() {
-                if self.state.isFinished {
+            while let next = self.iterator.next() {
+                guard self.state.isSubscribing else {
                     return
-                } else {
-                    _ = self.sub.receive(next)
                 }
+                
+                _ = self.sub.receive(next)
             }
 
-            if self.state.isFinished {
-                return
+            if self.state.isSubscribing {
+                self.sub.receive(completion: .finished)
             }
-            self.sub.receive(completion: .finished)
         }
         
         private func slowPath(_ demand: Subscribers.Demand) {
             var totalDemand = demand
             while totalDemand > 0 {
                 guard let element = iterator.next() else {
-                    if !self.state.isFinished {
+                    if self.state.isSubscribing {
                         self.sub.receive(completion: .finished)
                         self.state.store(.finished)
                     }
                     return
                 }
                 
-                if self.state.isFinished {
+                guard self.state.isSubscribing else {
                     return
                 }
+                
                 let demand = self.sub.receive(element)
                 guard let currentDemand = self.state.tryAdd(demand - 1)?.after, currentDemand > 0 else {
                     return
@@ -110,7 +109,6 @@ extension Publishers.Sequence {
         }
     }
 }
-
 
 extension Sequence {
     

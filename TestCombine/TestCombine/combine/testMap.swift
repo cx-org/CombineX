@@ -39,7 +39,7 @@ func testMap() {
 //            s.request(.max(1))
 //        }
     }, receiveValue: { i in
-        print("[AnySub] receive value", i)
+        print("[AnySub] receive value", i, CFAbsoluteTimeGetCurrent())
         
         //        print("[AnySub] cancel subscription when receive value", subscription as Any)
         //        subscription?.cancel()

@@ -123,12 +123,15 @@ extension Atomic where Value: BinaryInteger {
 
 extension Atomic {
     
-    class func ifNil(_ atomic: Atomic<Value?>, store value: Value) {
+    class func ifNil(_ atomic: Atomic<Value?>, store value: Value) -> Bool {
         atomic.lock.lock(); defer { atomic.lock.unlock() }
         
         if atomic.value == nil {
             atomic.value = value
+            return true
         }
+        
+        return false
     }
 }
 
