@@ -1,7 +1,7 @@
 import XCTest
 
-import CombineQTests
+import CombineXTests
 
 var tests = [XCTestCaseEntry]()
-tests += CombineQTests.allTests()
+tests += CombineXTests.allTests()
 XCTMain(tests)

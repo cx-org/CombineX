@@ -3,7 +3,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "CombineQ",
+    name: "CombineX",
     platforms: [
         .macOS(.v10_12),
         .iOS(.v10),
@@ -11,11 +11,11 @@ let package = Package(
         .watchOS(.v3)
     ],
     products: [
-        .library(name: "CombineQ", targets: ["CombineQ"]),
+        .library(name: "CombineX", targets: ["CombineX"]),
     ],
     targets: [
-        .target(name: "CombineQ", dependencies: []),
-        .testTarget(name: "CombineQTests", dependencies: ["CombineQ"]),
+        .target(name: "CombineX", dependencies: []),
+        .testTarget(name: "CombineXTests", dependencies: ["CombineX"]),
     ],
     swiftLanguageVersions: [
         .v5
