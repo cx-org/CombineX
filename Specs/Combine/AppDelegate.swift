@@ -1,6 +1,6 @@
 //
 //  AppDelegate.swift
-//  Specs
+//  Combine
 //
 //  Created by Quentin Jin on 2019/6/16.
 //  Copyright © 2019 Quentin Jin. All rights reserved.
@@ -11,9 +11,10 @@ import UIKit
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
+
+
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        
         return true
     }
 

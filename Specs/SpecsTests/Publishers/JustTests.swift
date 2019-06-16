@@ -9,11 +9,5 @@ import Combine
 class JustTests: XCTestCase {
     
     func testJust() {
-        
-        #if CombineX
-        print("combine x")
-        #else
-        print("combine")
-        #endif
     }
 }
