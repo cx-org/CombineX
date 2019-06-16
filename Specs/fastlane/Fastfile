@@ -22,10 +22,10 @@ platform :ios do
 
   lane :test do
     scan(
-      scheme: "Combine"
+      scheme: "Specs"
     )
     scan(
-      scheme: "Specs"
+      scheme: "CombineSpecs"
     )
   end
 end

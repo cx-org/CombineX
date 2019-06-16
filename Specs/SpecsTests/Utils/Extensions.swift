@@ -1,4 +1,8 @@
-@testable import CombineX
+#if CombineX
+import CombineX
+#else
+import Combine
+#endif
 
 // MARK: - Subscribers.Completion
 
