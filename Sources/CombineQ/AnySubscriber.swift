@@ -64,13 +64,13 @@ public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertibl
     
     public init<S>(_ s: S) where Input == S.Output, Failure == S.Failure, S : Subject {
         self.receiveSubscriptionBody = {
-            #warning("need test")
+            Global.RequiresImplementation()
             $0.request(.unlimited)
         }
         
         self.receiveValueBody = { value in
+            Global.RequiresImplementation()
             s.send(value)
-            #warning("need test")
             return .unlimited
         }
 

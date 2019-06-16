@@ -18,6 +18,6 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        testSink()
+        testSink2()
     }
 }
