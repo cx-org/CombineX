@@ -76,6 +76,8 @@ extension Subscribers {
         final public func receive(subscription: Subscription) {
             if Atomic.ifNil(self.subscription, store: subscription) {
                 subscription.request(.unlimited)
+            } else {
+                subscription.cancel()
             }
         }
         

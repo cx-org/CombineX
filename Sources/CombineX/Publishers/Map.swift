@@ -1,3 +1,5 @@
+import Foundation
+
 extension Publisher {
     
     /// Transforms all elements from the upstream publisher with a provided closure.
@@ -52,11 +54,13 @@ extension Publishers.Map {
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
         
-        private let subscription = Atomic<Subscription?>(value: nil)
-        
         typealias Pub = Publishers.Map<Upstream, Output>
         typealias Sub = S
 
+        var lock = NSLock()
+        var isCancelled = false
+        var subscription: Subscription?
+        
         var pub: Pub?
         var sub: Sub?
         
@@ -66,30 +70,52 @@ extension Publishers.Map {
         }
         
         func request(_ demand: Subscribers.Demand) {
-            self.subscription.load()?.request(demand)
+            self.lock
+                .withLock {
+                    self.subscription
+                }?
+                .request(demand)
         }
         
         func cancel() {
-            self.subscription.exchange(with: nil)?.cancel()
+            self.lock.withLock {
+                self.isCancelled = true
+                self.subscription?.cancel()
+                self.subscription = nil
+            }
             self.pub = nil
             self.sub = nil
         }
         
         func receive(subscription: Subscription) {
-            if Atomic.ifNil(self.subscription, store: subscription) {
-                self.sub?.receive(subscription: self)
+            self.lock.lock()
+            
+            if self.isCancelled {
+                self.lock.unlock()
+                return
             }
+            
+            if self.subscription != nil {
+                subscription.cancel()
+                self.lock.unlock()
+                return
+            }
+            
+            self.subscription = subscription
+            self.lock.unlock()
+            
+            self.sub?.receive(subscription: self)
         }
         
         func receive(_ input: Input) -> Subscribers.Demand {
-            guard self.subscription.load() != nil else {
+            self.lock.lock()
+            
+            if self.isCancelled {
+                self.lock.unlock()
                 return .none
             }
             
-            if
-                let transform = self.pub?.transform,
-                let demand = self.sub?.receive(transform(input))
-            {
+            if let transform = self.pub?.transform, let demand = self.sub?.receive(transform(input)) {
                 return demand
             }
             
@@ -97,10 +123,18 @@ extension Publishers.Map {
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
-            if let subscription = self.subscription.exchange(with: nil) {
-                subscription.cancel()
-                self.sub?.receive(completion: completion)
+            self.lock.lock()
+            
+            if self.isCancelled {
+                self.lock.unlock()
+                return
             }
+            
+            self.subscription?.cancel()
+            self.subscription = nil
+            self.lock.unlock()
+            
+            self.sub?.receive(completion: completion)
         }
     }
 }
