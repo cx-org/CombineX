@@ -42,7 +42,7 @@ extension Publishers {
         public func receive<S>(subscriber: S)
         where S : Subscriber, S.Input == Output, S.Failure == Failure
         {
-            let subscription = OnceSubscriptions(pub: self, sub: subscriber)
+            let subscription = OnceSubscriptions(once: self.result, sub: subscriber)
             subscriber.receive(subscription: subscription)
         }
     }
@@ -51,36 +51,46 @@ extension Publishers {
 extension Publishers.Once {
     
     private final class OnceSubscriptions<S>:
-        CustomSubscription<Publishers.Once<Output, Failure>, S>
+        Subscription
     where
         S : Subscriber,
         S.Input == Output,
         S.Failure == Failure
     {
         
-        let state = Atomic<State>(value: .waiting)
+        let state = Atomic<SubscriptionState>(value: .waiting)
+        let once: Result<Output, Failure>
         
-        override func request(_ demand: Subscribers.Demand) {
+        var sub: S?
+        
+        init(once: Result<Output, Failure>, sub: S) {
+            self.once = once
+            self.sub = sub
+        }
+        
+        
+        func request(_ demand: Subscribers.Demand) {
             if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(demand)) {
                 
                 guard demand > 0 else {
                     fatalError("trying to request '<= 0' values from Once")
                 }
                 
-                switch self.pub.result {
+                switch self.once {
                 case .success(let output):
-                    _ = self.sub.receive(output)
-                    self.sub.receive(completion: .finished)
+                    _ = self.sub?.receive(output)
+                    self.sub?.receive(completion: .finished)
                 case .failure(let error):
-                    self.sub.receive(completion: .failure(error))
+                    self.sub?.receive(completion: .failure(error))
                 }
                 
                 self.state.store(.finished)
             }
         }
         
-        override func cancel() {
+        func cancel() {
             self.state.store(.finished)
+            self.sub = nil
         }
     }
 }

@@ -25,7 +25,7 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Failure == S.Failure, S : Subscriber, Elements.Element == S.Input {
-            let subscription = SequenceSubscription(pub: self, sub: subscriber)
+            let subscription = SequenceSubscription(iterator: self.sequence.makeIterator(), sub: subscriber)
             subscriber.receive(subscription: subscription)
         }
     }
@@ -34,23 +34,24 @@ extension Publishers {
 extension Publishers.Sequence {
     
     private final class SequenceSubscription<S>:
-        CustomSubscription<Publishers.Sequence<Elements, Failure>, S>
+        Subscription
     where
         S : Subscriber,
         S.Input == Output,
         S.Failure == Failure
     {
         
-        let state = Atomic<State>(value: .waiting)
+        let state = Atomic<SubscriptionState>(value: .waiting)
         
         var iterator: Elements.Iterator
+        var sub: S?
         
-        override init(pub: Pub, sub: Sub) {
-            self.iterator = pub.sequence.makeIterator()
-            super.init(pub: pub, sub: sub)
+        init(iterator: Elements.Iterator, sub: S) {
+            self.iterator = iterator
+            self.sub = sub
         }
         
-        override func request(_ demand: Subscribers.Demand) {
+        func request(_ demand: Subscribers.Demand) {
             if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(demand)) {
                 
                 switch demand {
@@ -72,11 +73,11 @@ extension Publishers.Sequence {
                     return
                 }
                 
-                _ = self.sub.receive(next)
+                _ = self.sub?.receive(next)
             }
 
             if self.state.isSubscribing {
-                self.sub.receive(completion: .finished)
+                self.sub?.receive(completion: .finished)
             }
         }
         
@@ -85,7 +86,7 @@ extension Publishers.Sequence {
             while totalDemand > 0 {
                 guard let element = iterator.next() else {
                     if self.state.isSubscribing {
-                        self.sub.receive(completion: .finished)
+                        self.sub?.receive(completion: .finished)
                         self.state.store(.finished)
                     }
                     return
@@ -95,7 +96,7 @@ extension Publishers.Sequence {
                     return
                 }
                 
-                let demand = self.sub.receive(element)
+                let demand = self.sub?.receive(element) ?? .none
                 guard let currentDemand = self.state.tryAdd(demand - 1)?.after, currentDemand > 0 else {
                     return
                 }
@@ -104,8 +105,9 @@ extension Publishers.Sequence {
             }
         }
         
-        override func cancel() {
+        func cancel() {
             self.state.store(.finished)
+            self.sub = nil
         }
     }
 }

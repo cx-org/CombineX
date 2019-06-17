@@ -21,6 +21,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		6229E66522B73500002CBEC2 /* Locking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6229E66422B73500002CBEC2 /* Locking.swift */; };
 		OBJ_100 /* MapError.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_31 /* MapError.swift */; };
 		OBJ_101 /* Merge+.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_32 /* Merge+.swift */; };
 		OBJ_102 /* Merge.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_33 /* Merge.swift */; };
@@ -59,7 +60,6 @@
 		OBJ_88 /* CustomCombineIdentifierConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_17 /* CustomCombineIdentifierConvertible.swift */; };
 		OBJ_89 /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_19 /* Atomic.swift */; };
 		OBJ_90 /* Bag.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_20 /* Bag.swift */; };
-		OBJ_91 /* CustomSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_21 /* CustomSubscription.swift */; };
 		OBJ_92 /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_22 /* Global.swift */; };
 		OBJ_93 /* SubscriptionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_23 /* SubscriptionState.swift */; };
 		OBJ_94 /* Publisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_24 /* Publisher.swift */; };
@@ -88,6 +88,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		6229E66422B73500002CBEC2 /* Locking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Locking.swift; sourceTree = "<group>"; };
 		"CombineX::CombineX::Product" /* CombineX.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CombineX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		"CombineX::CombineXTests::Product" /* CombineXTests.xctest */ = {isa = PBXFileReference; lastKnownFileType = file; path = CombineXTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_10 /* AnyPublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyPublisher.swift; sourceTree = "<group>"; };
@@ -100,7 +101,6 @@
 		OBJ_17 /* CustomCombineIdentifierConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCombineIdentifierConvertible.swift; sourceTree = "<group>"; };
 		OBJ_19 /* Atomic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Atomic.swift; sourceTree = "<group>"; };
 		OBJ_20 /* Bag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bag.swift; sourceTree = "<group>"; };
-		OBJ_21 /* CustomSubscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSubscription.swift; sourceTree = "<group>"; };
 		OBJ_22 /* Global.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
 		OBJ_23 /* SubscriptionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionState.swift; sourceTree = "<group>"; };
 		OBJ_24 /* Publisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Publisher.swift; sourceTree = "<group>"; };
@@ -166,9 +166,9 @@
 			children = (
 				OBJ_19 /* Atomic.swift */,
 				OBJ_20 /* Bag.swift */,
-				OBJ_21 /* CustomSubscription.swift */,
 				OBJ_22 /* Global.swift */,
 				OBJ_23 /* SubscriptionState.swift */,
+				6229E66422B73500002CBEC2 /* Locking.swift */,
 			);
 			path = Internal;
 			sourceTree = "<group>";
@@ -212,7 +212,7 @@
 			path = Subjects;
 			sourceTree = "<group>";
 		};
-		OBJ_5 /*  */ = {
+		OBJ_5 = {
 			isa = PBXGroup;
 			children = (
 				OBJ_6 /* Package.swift */,
@@ -224,7 +224,6 @@
 				OBJ_73 /* test.sh */,
 				OBJ_74 /* combine.swift.api */,
 			);
-			name = "";
 			sourceTree = "<group>";
 		};
 		OBJ_50 /* Subscribers */ = {
@@ -377,7 +376,7 @@
 				English,
 				en,
 			);
-			mainGroup = OBJ_5 /*  */;
+			mainGroup = OBJ_5;
 			productRefGroup = OBJ_68 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -422,12 +421,12 @@
 				OBJ_88 /* CustomCombineIdentifierConvertible.swift in Sources */,
 				OBJ_89 /* Atomic.swift in Sources */,
 				OBJ_90 /* Bag.swift in Sources */,
-				OBJ_91 /* CustomSubscription.swift in Sources */,
 				OBJ_92 /* Global.swift in Sources */,
 				OBJ_93 /* SubscriptionState.swift in Sources */,
 				OBJ_94 /* Publisher.swift in Sources */,
 				OBJ_95 /* Autoconnect.swift in Sources */,
 				OBJ_96 /* Empty.swift in Sources */,
+				6229E66522B73500002CBEC2 /* Locking.swift in Sources */,
 				OBJ_97 /* FlatMap.swift in Sources */,
 				OBJ_98 /* Just.swift in Sources */,
 				OBJ_99 /* Map.swift in Sources */,

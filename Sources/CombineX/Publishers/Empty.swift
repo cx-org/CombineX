@@ -35,7 +35,7 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
-            let subscription = EmptySubscription(pub: self, sub: subscriber)
+            let subscription = EmptySubscription(completeImmediately: self.completeImmediately, sub: subscriber)
             subscriber.receive(subscription: subscription)
         }
         
@@ -56,32 +56,41 @@ extension Publishers {
 extension Publishers.Empty {
     
     private final class EmptySubscription<S>:
-        CustomSubscription<Publishers.Empty<Output, Failure>, S>
+        Subscription
     where
         S : Subscriber,
         S.Input == Output,
         S.Failure == Failure
     {
         
-        let state = Atomic<State>(value: .waiting)
+        let state = Atomic<SubscriptionState>(value: .waiting)
+        let completeImmediately: Bool
         
-        override func request(_ demand: Subscribers.Demand) {
+        var sub: S?
+        
+        init(completeImmediately: Bool, sub: S) {
+            self.completeImmediately = completeImmediately
+            self.sub = sub
+        }
+        
+        func request(_ demand: Subscribers.Demand) {
             if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(demand)) {
                 
                 guard demand > 0 else {
                     fatalError("trying to request '<= 0' values from Empty")
                 }
                 
-                if self.pub.completeImmediately {
-                    self.sub.receive(completion: .finished)
+                if self.completeImmediately {
+                    self.sub?.receive(completion: .finished)
                 }
                 
                 self.state.store(.finished)
             }
         }
         
-        override func cancel() {
+        func cancel() {
             self.state.store(.finished)
+            self.sub = nil
         }
     }
 }

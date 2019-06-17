@@ -1,9 +1,12 @@
+import Foundation
+
 /// A subject that passes along values and completion.
 ///
 /// Use a `PassthroughSubject` in unit tests when you want a publisher than can publish specific values on-demand during tests.
 final public class PassthroughSubject<Output, Failure> : Subject where Failure : Error {
     
-    private let subscriptions = Atomic<[Inner]>(value: [])
+    private let lock = NSRecursiveLock()
+    private var subscriptions: [Inner] = []
     
     public init() {
     }
@@ -16,29 +19,40 @@ final public class PassthroughSubject<Output, Failure> : Subject where Failure :
     ///                   once attached it can begin to receive values.
     final public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
         let subscription = Inner(pub: self, sub: AnySubscriber(subscriber))
-        self.subscriptions.withLockMutating {
-            $0.append(subscription)
+        self.lock.withLock {
+            self.subscriptions.append(subscription)
         }
+        subscriber.receive(subscription: subscription)
     }
     
     /// Sends a value to the subscriber.
     ///
     /// - Parameter value: The value to send.
     final public func send(_ input: Output) {
-        for subscription in self.subscriptions.load() {
-            _ = subscription.sub.receive(input)
+        let subscriptions = self.lock.withLock {
+            self.subscriptions.filter { $0.demand > 0 }
         }
-        Global.RequiresImplementation()
+        
+        for subscription in subscriptions {
+            let more = subscription.sub?.receive(input) ?? .none
+            self.lock.withLock {
+                subscription.demand += (more - 1)
+            }
+        }
     }
     
     /// Sends a completion signal to the subscriber.
     ///
     /// - Parameter completion: A `Completion` instance which indicates whether publishing has finished normally or failed with an error.
     final public func send(completion: Subscribers.Completion<Failure>) {
-        for subscription in self.subscriptions.exchange(with: []) {
-            subscription.sub.receive(completion: completion)
+        let subscriptions = self.lock.withLock {
+            self.subscriptions
         }
-        Global.RequiresImplementation()
+        
+        for subscription in subscriptions {
+            subscription.sub?.receive(completion: completion)
+            subscription.cancel()
+        }
     }
 }
 
@@ -49,8 +63,10 @@ extension PassthroughSubject {
         typealias Pub = PassthroughSubject<Output, Failure>
         typealias Sub = AnySubscriber<Output, Failure>
         
-        let pub: Pub
-        let sub: Sub
+        var pub: Pub?
+        var sub: Sub?
+        
+        var demand: Subscribers.Demand = .none
         
         init(pub: Pub, sub: Sub) {
             self.pub = pub
@@ -58,11 +74,18 @@ extension PassthroughSubject {
         }
 
         func request(_ demand: Subscribers.Demand) {
-            Global.RequiresImplementation()
+            self.pub?.lock.withLock {
+                self.demand += demand
+            }
         }
         
         func cancel() {
-            Global.RequiresImplementation()
+            self.pub?.lock.withLock {
+                self.pub?.subscriptions.removeAll(where: { $0 === self })
+            }
+            
+            self.pub = nil
+            self.sub = nil
         }
     }
 }

@@ -34,7 +34,7 @@ extension Publishers {
         public func receive<S>(subscriber: S)
         where S : Subscriber, S.Input == Output, S.Failure == Never
         {
-            let subscription = JustSubscription(pub: self, sub: subscriber)
+            let subscription = JustSubscription(just: self.output, sub: subscriber)
             subscriber.receive(subscription: subscription)
         }
     }
@@ -43,33 +43,38 @@ extension Publishers {
 extension Publishers.Just {
     
     private final class JustSubscription<S>:
-        CustomSubscription<Publishers.Just<Output>, S>
+        Subscription
     where
         S: Subscriber,
         S.Input == Output,
         S.Failure == Never
     {
-        let state = Atomic<State>(value: .waiting)
         
-        override func request(_ demand: Subscribers.Demand) {
+        let state = Atomic<SubscriptionState>(value: .waiting)
+        let just: Output
+        
+        var sub: S?
+        
+        init(just: Output, sub: S) {
+            self.just = just
+            self.sub = sub
+        }
+        
+        func request(_ demand: Subscribers.Demand) {
             if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(demand)) {
                 guard demand > 0 else {
                     fatalError("trying to request '<= 0' values from Just")
                 }
                 
-                _ = self.sub.receive(self.pub.output)
-                self.sub.receive(completion: .finished)
-                
+                _ = self.sub?.receive(just)
+                self.sub?.receive(completion: .finished)
                 self.state.store(.finished)
             }
         }
         
-        override func cancel() {
+        func cancel() {
             self.state.store(.finished)
-        }
-        
-        deinit {
-            print("JustSubscription deinit")
+            self.sub = nil
         }
     }
 }

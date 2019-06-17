@@ -59,7 +59,7 @@ extension Publishers {
 extension Publishers.Merge {
     
     private final class MergeSubscription<S>:
-        CustomSubscription<Publishers.Merge<A, B>, S>,
+        Subscription,
         Subscriber
     where
         S : Subscriber,
@@ -71,18 +71,11 @@ extension Publishers.Merge {
         
         private var subscription: Subscription!
         
-        override init(pub: Pub, sub: Sub) {
-            super.init(pub: pub, sub: sub)
-            
-            
-//            Publishers.Sequence<[Publisher], A.Failure>(sequence: [pub.a, pub.b])
-        }
-        
-        override func request(_ demand: Subscribers.Demand) {
+        func request(_ demand: Subscribers.Demand) {
             Global.RequiresImplementation()
         }
         
-        override func cancel() {
+        func cancel() {
             Global.RequiresImplementation()
         }
         

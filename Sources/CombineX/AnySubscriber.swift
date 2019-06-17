@@ -64,13 +64,11 @@ public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertibl
     public init<S>(_ s: S) where Input == S.Output, Failure == S.Failure, S : Subject {
         self.receiveSubscriptionBody = {
             $0.request(.unlimited)
-            Global.RequiresImplementation()
         }
         
         self.receiveValueBody = { value in
-//            s.send(value)
-//            return .unlimited
-            Global.RequiresImplementation()
+            s.send(value)
+            return .none
         }
 
         self.receiveCompletionBody = s.send(completion:)
@@ -105,7 +103,7 @@ public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertibl
     /// - Parameter input: The published element.
     /// - Returns: A `Demand` instance indicating how many more elements the subcriber expects to receive.
     public func receive(_ value: Input) -> Subscribers.Demand {
-        return self.receiveValueBody?(value) ?? .unlimited
+        return self.receiveValueBody?(value) ?? .none
     }
     
     /// Tells the subscriber that the publisher has completed publishing, either normally or with an error.

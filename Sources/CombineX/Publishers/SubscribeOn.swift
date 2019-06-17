@@ -50,8 +50,7 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
-            let subscription = SubscribeOnSubscriptions(pub: self, sub: subscriber)
-            subscriber.receive(subscription: subscription)
+            Global.RequiresImplementation()
         }
     }
 }
@@ -59,28 +58,28 @@ extension Publishers {
 extension Publishers.SubscribeOn {
     
     private final class SubscribeOnSubscriptions<S>:
-        CustomSubscription<Publishers.SubscribeOn<Upstream, Context>, S>
+        Subscription
     where
         S: Subscriber,
         S.Input == Output,
         S.Failure == Failure
     {
         
-        let state = Atomic<State>(value: .waiting)
+        let state = Atomic<SubscriptionState>(value: .waiting)
         
-        override func request(_ demand: Subscribers.Demand) {
+        func request(_ demand: Subscribers.Demand) {
             Global.RequiresImplementation()
         }
         
-        private func receive(subscription: Subscription) {
+        func receive(subscription: Subscription) {
             Global.RequiresImplementation()
         }
         
-        public func receive(_ value: Output) -> Subscribers.Demand {
+        func receive(_ value: Output) -> Subscribers.Demand {
             Global.RequiresImplementation()
         }
         
-        override func cancel() {
+        func cancel() {
             self.state.store(.finished)
         }
     }
