@@ -1,6 +1,6 @@
 # CombineX
 
-CombineX is an open source impletation for Apple's [Combine](https://developer.apple.com/documentation/combine) specs.
+CombineX is an open source implementation for Apple's [Combine](https://developer.apple.com/documentation/combine) specs.
 
 ## Notice
 
