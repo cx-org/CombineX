@@ -2,24 +2,42 @@
 
 CombineX is an open source impletation for Apple's [Combine](https://developer.apple.com/documentation/combine) specs.
 
+## Notice
+
+This is an experimental project, **DO NOT use it in production!**
+
+## Contribute
+
+CombineX is always looking for collaborator! 
+
+You can:
+
+1. Implement new operators.
+2. Add more compatibility tests to find different behavior between CombienX and Combine.
+3. Fix bugs.
+4. ...Anything you think can make CombineX better!
+
+Since some people may not have macOS 10.15 beta installed, the recommended contributing way is: 
+
+1. Fork the project.
+2. Open `Specs/Specs.xcworkspace`, make your changes under `CombineX.xcodeproje`. 
+3. All tests go `Specs/SpecsTests`. Make sure both scheme `Specs` and scheme `CombineSpecs` pass the test you wrote.
+
 ## Why
 
 1. Combine is closed source.
 2. Combine is apple platform only.
 3. Combine needs macOS 10.15, iOS 13.
-4. Study Reactive.
 
-## Notice
+When CombineX is release, all you need to do is:
 
-This is an experimental project, so **DO NOT use it in production!**
-
-## Contribute
-
-Always welcome!
-
-1. Fork the project.
-2. Add your changes.
-3. All tests go `Specs/SpecsTests`. Make sure both scheme `Specs` and scheme `CombineSpecs` pass the test you wrote.
+```swift
+#if can_use_combine
+import Combine
+#else
+import CombineX
+#endif
+```
 
 ## State
 
