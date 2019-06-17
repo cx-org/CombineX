@@ -86,11 +86,13 @@ extension Subscribers {
         /// - Parameter completion: A `Completion` case indicating whether publishing completed normally or with an error.
         final public func receive(completion: Subscribers.Completion<Never>) {
             self.subscription.exchange(with: nil)?.cancel()
+            self.object = nil
         }
         
         /// Cancel the activity.
         final public func cancel() {
             self.subscription.exchange(with: nil)?.cancel()
+            self.object = nil
         }
         
     }

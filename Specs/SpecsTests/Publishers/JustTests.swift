@@ -36,6 +36,7 @@ class JustTests: XCTestCase {
         do {
             let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
                 subscription = s
+                s.request(.max(1))
             }, receiveValue: {
                 print("receive value", $0)
                 return .none
@@ -47,11 +48,8 @@ class JustTests: XCTestCase {
             just.subscribe(sub)
         }
         
-        XCTAssertNotNil(subscriber)
-        
-        subscription?.cancel()
-        
         XCTAssertNil(subscriber)
+        subscription?.cancel()
     }
     
     func testConcurrent() {

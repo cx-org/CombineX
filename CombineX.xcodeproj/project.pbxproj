@@ -160,6 +160,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6279184322B783BC00203B96 /* a+ */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_56 /* Demand.swift */,
+				OBJ_57 /* Subscriptions.swift */,
+				OBJ_58 /* empty.swift */,
+			);
+			name = "a+";
+			sourceTree = "<group>";
+		};
 		OBJ_18 /* Internal */ = {
 			isa = PBXGroup;
 			children = (
@@ -237,9 +247,7 @@
 		OBJ_55 /* Subscriptions */ = {
 			isa = PBXGroup;
 			children = (
-				OBJ_56 /* Demand.swift */,
-				OBJ_57 /* Subscriptions.swift */,
-				OBJ_58 /* empty.swift */,
+				6279184322B783BC00203B96 /* a+ */,
 			);
 			path = Subscriptions;
 			sourceTree = "<group>";

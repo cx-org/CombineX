@@ -69,6 +69,7 @@ extension Publishers.Just {
                 _ = self.sub?.receive(just)
                 self.sub?.receive(completion: .finished)
                 self.state.store(.finished)
+                self.sub = nil
             }
         }
 

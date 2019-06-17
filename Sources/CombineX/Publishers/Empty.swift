@@ -35,8 +35,10 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
-            let subscription = EmptySubscription(completeImmediately: self.completeImmediately, sub: subscriber)
-            subscriber.receive(subscription: subscription)
+            subscriber.receive(subscription: Subscriptions.empty)
+            if completeImmediately {
+                subscriber.receive(completion: .finished)
+            }
         }
         
         /// Returns a Boolean value indicating whether two values are equal.
@@ -52,47 +54,3 @@ extension Publishers {
         }
     }
 }
-
-extension Publishers.Empty {
-    
-    private final class EmptySubscription<S>:
-        Subscription
-    where
-        S : Subscriber,
-        S.Input == Output,
-        S.Failure == Failure
-    {
-        
-        let state = Atomic<SubscriptionState>(value: .waiting)
-        let completeImmediately: Bool
-        
-        var sub: S?
-        
-        init(completeImmediately: Bool, sub: S) {
-            self.completeImmediately = completeImmediately
-            self.sub = sub
-        }
-        
-        func request(_ demand: Subscribers.Demand) {
-            if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(demand)) {
-                
-                guard demand > 0 else {
-                    fatalError("trying to request '<= 0' values from Empty")
-                }
-                
-                if self.completeImmediately {
-                    self.sub?.receive(completion: .finished)
-                }
-                
-                self.state.store(.finished)
-            }
-        }
-        
-        func cancel() {
-            self.state.store(.finished)
-            self.sub = nil
-        }
-    }
-}
-
-

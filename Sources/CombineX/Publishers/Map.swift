@@ -57,8 +57,8 @@ extension Publishers.Map {
         typealias Pub = Publishers.Map<Upstream, Output>
         typealias Sub = S
 
-        var pub: Pub
-        var sub: Sub
+        var pub: Pub?
+        var sub: Sub?
         
         init(pub: Pub, sub: Sub) {
             self.pub = pub
@@ -71,11 +71,13 @@ extension Publishers.Map {
         
         func cancel() {
             self.subscription.exchange(with: nil)?.cancel()
+            self.pub = nil
+            self.sub = nil
         }
         
         func receive(subscription: Subscription) {
             if Atomic.ifNil(self.subscription, store: subscription) {
-                self.sub.receive(subscription: self)
+                self.sub?.receive(subscription: self)
             }
         }
         
@@ -83,12 +85,22 @@ extension Publishers.Map {
             guard self.subscription.load() != nil else {
                 return .none
             }
-            return self.sub.receive(self.pub.transform(input))
+            
+            if
+                let transform = self.pub?.transform,
+                let demand = self.sub?.receive(transform(input))
+            {
+                return demand
+            }
+            
+            return .none
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
-            self.subscription.exchange(with: nil)?.cancel()
-            self.sub.receive(completion: completion)
+            if let subscription = self.subscription.exchange(with: nil) {
+                subscription.cancel()
+                self.sub?.receive(completion: completion)
+            }
         }
     }
 }

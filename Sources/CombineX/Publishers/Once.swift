@@ -84,6 +84,7 @@ extension Publishers.Once {
                 }
                 
                 self.state.store(.finished)
+                self.sub = nil
             }
         }
         

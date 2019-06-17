@@ -38,7 +38,7 @@ extension Publishers {
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Failure == S.Failure, S : Subscriber, Upstream.Output == S.Input {
             let subscription = MapErrorSubscription(pub: self, sub: subscriber)
-            subscriber.receive(subscription: subscription)
+            self.upstream.subscribe(subscription)
         }
     }
 }
@@ -62,13 +62,12 @@ extension Publishers.MapError {
         typealias Pub = Publishers.MapError<Upstream, S.Failure>
         typealias Sub = S
         
-        let pub: Pub
-        let sub: Sub
+        var pub: Pub?
+        var sub: Sub?
         
         init(pub: Pub, sub: Sub) {
             self.pub = pub
             self.sub = sub
-            self.pub.upstream.subscribe(self)
         }
         
         func request(_ demand: Subscribers.Demand) {
@@ -77,23 +76,29 @@ extension Publishers.MapError {
         
         func cancel() {
             self.subscription.load()?.cancel()
+            self.pub = nil
+            self.sub = nil
         }
         
         func receive(subscription: Subscription) {
-            _ = Atomic.ifNil(self.subscription, store: subscription)
+            if Atomic.ifNil(self.subscription, store: subscription) {
+                self.sub?.receive(subscription: self)
+            }
         }
         
         func receive(_ input: Input) -> Subscribers.Demand {
-            return self.sub.receive(input)
+            return self.sub?.receive(input) ?? .none
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
-            switch completion {
-            case .finished:
-                self.sub.receive(completion: .finished)
-            case .failure(let e):
-                self.sub.receive(completion: .failure(self.pub.transform(e)))
-            }
+//            switch completion {
+//            case .finished:
+//                self.sub.receive(completion: .finished)
+//            case .failure(let e):
+//                self.sub.receive(completion: .failure(self.pub.transform(e)))
+//            }
+            
+            Global.RequiresImplementation()
         }
     }
 }

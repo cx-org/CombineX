@@ -78,6 +78,8 @@ extension Publishers.Sequence {
 
             if self.state.isSubscribing {
                 self.sub?.receive(completion: .finished)
+                self.state.store(.finished)
+                self.sub = nil
             }
         }
         
@@ -88,6 +90,7 @@ extension Publishers.Sequence {
                     if self.state.isSubscribing {
                         self.sub?.receive(completion: .finished)
                         self.state.store(.finished)
+                        self.sub = nil
                     }
                     return
                 }
