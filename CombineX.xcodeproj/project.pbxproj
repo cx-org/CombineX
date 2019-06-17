@@ -137,7 +137,6 @@
 		OBJ_67 /* XCTestManifests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTestManifests.swift; sourceTree = "<group>"; };
 		OBJ_71 /* Specs */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Specs; sourceTree = SOURCE_ROOT; };
 		OBJ_72 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		OBJ_73 /* test.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = test.sh; sourceTree = "<group>"; };
 		OBJ_74 /* combine.swift.api */ = {isa = PBXFileReference; lastKnownFileType = text; path = combine.swift.api; sourceTree = "<group>"; };
 		OBJ_9 /* AnyCancellable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyCancellable.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -221,7 +220,6 @@
 				OBJ_68 /* Products */,
 				OBJ_71 /* Specs */,
 				OBJ_72 /* README.md */,
-				OBJ_73 /* test.sh */,
 				OBJ_74 /* combine.swift.api */,
 			);
 			sourceTree = "<group>";

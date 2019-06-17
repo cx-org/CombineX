@@ -10,10 +10,12 @@ class SinkTests: XCTestCase {
     
     func testSubscribe() {
         
-//        let sink = Subscribers.Sink
+        let pub = PassthroughSubject<Int, Never>()
+        let sink = pub.sink { (i) in
+            print("sink value", i)
+        }
+        sink.cancel()
         
-    }
-    
-    func testCancel() {
+        pub.send(1)
     }
 }

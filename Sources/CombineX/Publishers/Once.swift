@@ -68,7 +68,6 @@ extension Publishers.Once {
             self.sub = sub
         }
         
-        
         func request(_ demand: Subscribers.Demand) {
             if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(demand)) {
                 

@@ -98,10 +98,8 @@ extension Subscribers {
         
         /// Cancel the activity.
         final public func cancel() {
-        }
-        
-        deinit {
             self.subscription.exchange(with: nil)?.cancel()
         }
+        
     }
 }
