@@ -50,7 +50,7 @@ import CombineX
 |`AnySubject`| done |   |   |
 |`Cancellable`| done |   |   |
 |`CombineIdentifier`| done |   |   |
-|`ConnectablePublisher`|   |   |   |
+|`ConnectablePublisher`| done |   |   |
 |`CustomCombineIdentifierConvertible`| done |   |   |
 |`Publisher`| done |   |   |
 |`Scheduler`| done |   |   |
