@@ -105,6 +105,10 @@ extension Publishers.Sequence {
                 }
                 
                 totalDemand = currentDemand
+                
+                if totalDemand == .unlimited {
+                    return
+                }
             }
         }
         

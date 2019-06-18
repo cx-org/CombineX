@@ -62,13 +62,13 @@ extension Publishers.FlatMap {
         
         let lock = Lock(recursive: true)
         
-        // MARK: for upstream
+        // for upstream
         let upstreamState = Atomic<MapSubscriberState>(value: .waiting)
         var children: [ChildSubscriber] = []
         
-        // MARK: for downstream
+        // for downstream
         let downstreamState = Atomic<SubscriptionState>(value: .waiting)
-        var buffer: [P.Output] = []
+        var buffer = CircularBuffer<P.Output>()
         
         typealias Pub = Publishers.FlatMap<P, Upstream>
         typealias Sub = S
@@ -97,104 +97,135 @@ extension Publishers.FlatMap {
         }
         
         func fastPath() {
+            var buffer = self.downstreamState.withLockVoid { () -> CircularBuffer<P.Output> in
+                let copy = self.buffer
+                self.buffer = CircularBuffer<P.Output>()
+                return copy
+            }
+
+            while let next = buffer.popFirst() {
+                guard self.downstreamState.isSubscribing else {
+                    return
+                }
+                _ = self.sub?.receive(next)
+            }
             
-//            var iterator = self.downstreamState.withLockVoid {
-//                self.buffer.makeIterator
-//            }
-//
-//            while let next = iterator.next() {
-//                guard self.state.isSubscribing else {
-//                    return
-//                }
-//
-//                _ = self.sub?.receive(next)
-//            }
-//
-//            if self.state.isSubscribing {
-//                self.sub?.receive(completion: .finished)
-//            }
+            if self.upstreamState.isFinished && self.upstreamState.withLockVoid({ self.children.isEmpty }) {
+                self.sub?.receive(completion: .finished)
+                self.cancel()
+            }
         }
         
         func slowPath(_ demand: Subscribers.Demand) {
-//            var iterator = self.buffer.load().makeIterator()
-//            var totalDemand = demand
-//
-//            while totalDemand > 0 {
-//                guard let element = iterator.next(), self.state.isSubscribing else {
-//                    return
-//                }
-//
-//                let demand = self.sub?.receive(element) ?? .none
-//                guard let currentDemand = self.state.tryAdd(demand - 1)?.after, currentDemand > 0 else {
-//                    return
-//                }
-//
-//                totalDemand = currentDemand
-//            }
+            guard demand < .unlimited else {
+                self.fastPath()
+                return
+            }
+
+            var totalDemand = demand
+            while totalDemand > 0 {
+                guard let element = self.downstreamState.withLockVoid({ self.buffer.popFirst() }) else {
+                    return
+                }
+                
+                guard self.downstreamState.isSubscribing else {
+                    return
+                }
+
+                let demand = self.sub?.receive(element) ?? .none
+                guard let currentDemand = self.downstreamState.tryAdd(demand - 1)?.after, currentDemand > 0 else {
+                    return
+                }
+                
+                totalDemand = currentDemand
+                
+                if totalDemand == .unlimited {
+                    self.fastPath()
+                    return
+                }
+            }
+            
+            if self.upstreamState.isFinished && self.upstreamState.withLockVoid({ self.children.isEmpty }) {
+                self.sub?.receive(completion: .finished)
+                self.cancel()
+            }
         }
         
         // MARK: Subscription
         func request(_ demand: Subscribers.Demand) {
-//            if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(demand)) {
-//
-//                switch demand {
-//                case .unlimited:
-//                    self.fastPath()
-//                case .max(let amount):
-//                    if amount > 0 {
-//                        self.slowPath(demand)
-//                    }
-//                }
-//            } else if let demands = self.state.tryAdd(demand), demands.before <= 0 {
-//                self.slowPath(demands.after)
-//            }
+            if self.downstreamState.compareAndStore(expected: .waiting, newVaue: .subscribing(demand)) {
+
+                switch demand {
+                case .unlimited:
+                    self.fastPath()
+                case .max(let amount):
+                    if amount > 0 {
+                        self.slowPath(demand)
+                    }
+                }
+            } else if let demands = self.downstreamState.tryAdd(demand), demands.before <= 0 {
+                self.slowPath(demands.after)
+            }
         }
         
         func cancel() {
-//            self.state.store(.finished)
-//
-//            for child in self.children.exchange(with: []) {
-//                child.subscription.exchange(with: nil)?.cancel()
-//            }
-//            self.subscription.exchange(with: nil)?.cancel()
+            self.upstreamState.finishIfSubscribing()?.cancel()
+        
+            self.pub = nil
+            self.sub = nil
+            
+            let children = self.upstreamState.withLockVoid { () -> [ChildSubscriber] in
+                let copy = self.children
+                self.children = []
+                return copy
+            }
+            
+            for child in children {
+                child.subscription.exchange(with: nil)?.cancel()
+            }
+            
+            self.downstreamState.withLockVoid {
+                self.buffer = CircularBuffer()
+            }
         }
         
         // MARK: ChildSubsciber
         func receive(_ input: P.Output, from child: ChildSubscriber) -> Subscribers.Demand {
-//            guard self.state.isSubscribing else {
-//                return .none
-//            }
-//
-//            self.buffer.withLockMutating {
-//                $0.append(input)
-//            }
-//            self.drain()
+            guard self.downstreamState.isSubscribing else {
+                return .none
+            }
+            
+            self.downstreamState.withLockVoid {
+                self.buffer.append(input)
+            }
+            
+            self.drain()
             return .max(1)
         }
         
         func receive(completion: Subscribers.Completion<P.Failure>, from child: ChildSubscriber) {
-//            guard self.state.isSubscribing else {
-//                return
-//            }
-//
-//            switch completion {
-//            case .failure(let error):
-//                self.sub?.receive(completion: .failure(error))
-//                self.state.store(.finished)
-//            case .finished:
-//                self.children.withLockMutating {
-//                    $0.removeAll(where: { $0 === child })
-//                }
-//                self.drain()
-//                self.subscription.load()?.request(.max(1))
-//            }
+            guard self.downstreamState.isSubscribing else {
+                return
+            }
+
+            switch completion {
+            case .finished:
+                self.upstreamState.withLockVoid {
+                    self.children.removeAll(where: { $0 === child })
+                }
+                self.drain()
+                self.upstreamState.subscription?.request(.max(1))
+            case .failure(let error):
+                self.sub?.receive(completion: .failure(error))
+                self.cancel()
+            }
         }
         
         // MARK: Subscriber
         func receive(subscription: Subscription) {
             if upstreamState.compareAndStore(expected: .waiting, newVaue: .subscribing(subscription)) {
-                subscription.request(self.maxPublishers)
                 self.sub?.receive(subscription: self)
+                subscription.request(self.maxPublishers)
             } else {
                 subscription.cancel()
             }
@@ -226,6 +257,23 @@ extension Publishers.FlatMap {
                     self.drain()
                 case .failure(let error):
                     self.sub?.receive(completion: .failure(error))
+                    
+                    self.pub = nil
+                    self.sub = nil
+                    
+                    let children = self.upstreamState.withLockVoid { () -> [ChildSubscriber] in
+                        let copy = self.children
+                        self.children = []
+                        return copy
+                    }
+                    
+                    for child in children {
+                        child.subscription.exchange(with: nil)?.cancel()
+                    }
+                    
+                    self.downstreamState.withLockVoid {
+                        self.buffer = CircularBuffer()
+                    }
                 }
             }
         }
@@ -247,6 +295,8 @@ extension Publishers.FlatMap {
             func receive(subscription: Subscription) {
                 if Atomic.ifNil(self.subscription, store: subscription) {
                     subscription.request(.max(1))
+                } else {
+                    subscription.cancel()
                 }
             }
             

@@ -40,9 +40,9 @@ final class Atomic<Value> {
         return try body(&self.value)
     }
     
-    func withLockVoid(_ body: () throws -> Void) rethrows {
+    func withLockVoid<Result>(_ body: () throws -> Result) rethrows -> Result {
         lock.lock(); defer { lock.unlock() }
-        try body()
+        return try body()
     }
 }
 

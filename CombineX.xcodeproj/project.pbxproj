@@ -23,6 +23,7 @@
 /* Begin PBXBuildFile section */
 		6229E66522B73500002CBEC2 /* Locking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6229E66422B73500002CBEC2 /* Locking.swift */; };
 		66D385FD22B91128001B8189 /* MapSubscriberState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D385FC22B91128001B8189 /* MapSubscriberState.swift */; };
+		66D3860722B931EE001B8189 /* CircularBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D3860622B931EE001B8189 /* CircularBuffer.swift */; };
 		OBJ_100 /* MapError.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_31 /* MapError.swift */; };
 		OBJ_101 /* Merge+.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_32 /* Merge+.swift */; };
 		OBJ_102 /* Merge.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_33 /* Merge.swift */; };
@@ -91,6 +92,7 @@
 /* Begin PBXFileReference section */
 		6229E66422B73500002CBEC2 /* Locking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Locking.swift; sourceTree = "<group>"; };
 		66D385FC22B91128001B8189 /* MapSubscriberState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapSubscriberState.swift; sourceTree = "<group>"; };
+		66D3860622B931EE001B8189 /* CircularBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularBuffer.swift; sourceTree = "<group>"; };
 		"CombineX::CombineX::Product" /* CombineX.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CombineX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		"CombineX::CombineXTests::Product" /* CombineXTests.xctest */ = {isa = PBXFileReference; lastKnownFileType = file; path = CombineXTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_10 /* AnyPublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyPublisher.swift; sourceTree = "<group>"; };
@@ -171,6 +173,7 @@
 				OBJ_23 /* SubscriptionState.swift */,
 				6229E66422B73500002CBEC2 /* Locking.swift */,
 				66D385FC22B91128001B8189 /* MapSubscriberState.swift */,
+				66D3860622B931EE001B8189 /* CircularBuffer.swift */,
 			);
 			path = Internal;
 			sourceTree = "<group>";
@@ -441,6 +444,7 @@
 				OBJ_107 /* TryMap.swift in Sources */,
 				OBJ_108 /* assign.swift in Sources */,
 				OBJ_109 /* sink.swift in Sources */,
+				66D3860722B931EE001B8189 /* CircularBuffer.swift in Sources */,
 				OBJ_110 /* Scheduler.swift in Sources */,
 				OBJ_111 /* SchedulerTimeIntervalConvertible.swift in Sources */,
 				OBJ_112 /* ImmediateScheduler.swift in Sources */,
