@@ -66,11 +66,11 @@ import CombineX
 |:--|:--|:--|:--|
 |`Autoconnect`|   |   |   |
 |`Empty`| done | done |   |
-|`FlatMap`| wip |   |   |
+|`FlatMap`| done | basic |   |
 |`Just`| done | done |   |
 |`Map`| done |   |   |
 |`MapError`| done |   |   |
-|`Merge`|   |   | Waiting for `FlatMap` |
+|`Merge`| done |   |   |
 |`Once`| done | done |   |
 |`Publishers`| done  |   |   |
 |`Sequence`| done | done |   |

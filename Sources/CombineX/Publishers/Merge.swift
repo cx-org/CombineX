@@ -15,9 +15,17 @@ extension Publishers {
         
         public let b: B
         
+        let pub: AnyPublisher<A.Output, A.Failure>
+        
         public init(_ a: A, _ b: B) {
             self.a = a
             self.b = b
+            
+            
+            self.pub = Publishers
+                .Sequence(sequence: [a.eraseToAnyPublisher(), b.eraseToAnyPublisher()])
+                .flatMap { $0 }
+                .eraseToAnyPublisher()
         }
         
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
@@ -27,7 +35,7 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, B.Failure == S.Failure, B.Output == S.Input {
-            Global.RequiresImplementation()
+            self.pub.subscribe(subscriber)
         }
         
         public func merge<P>(with other: P) -> Publishers.Merge3<A, B, P> where P : Publisher, B.Failure == P.Failure, B.Output == P.Output {
@@ -51,43 +59,6 @@ extension Publishers {
         }
         
         public func merge<Z, Y, X, W, V, U>(with z: Z, _ y: Y, _ x: X, _ w: W, _ v: V, _ u: U) -> Publishers.Merge8<A, B, Z, Y, X, W, V, U> where Z : Publisher, Y : Publisher, X : Publisher, W : Publisher, V : Publisher, U : Publisher, B.Failure == Z.Failure, B.Output == Z.Output, Z.Failure == Y.Failure, Z.Output == Y.Output, Y.Failure == X.Failure, Y.Output == X.Output, X.Failure == W.Failure, X.Output == W.Output, W.Failure == V.Failure, W.Output == V.Output, V.Failure == U.Failure, V.Output == U.Output {
-            Global.RequiresImplementation()
-        }
-    }
-}
-
-extension Publishers.Merge {
-    
-    private final class MergeSubscription<S>:
-        Subscription,
-        Subscriber
-    where
-        S : Subscriber,
-        B.Output == S.Input,
-        B.Failure == S.Failure
-    {
-        typealias Input = B.Output
-        typealias Failure = B.Failure
-        
-        private var subscription: Subscription!
-        
-        func request(_ demand: Subscribers.Demand) {
-            Global.RequiresImplementation()
-        }
-        
-        func cancel() {
-            Global.RequiresImplementation()
-        }
-        
-        func receive(subscription: Subscription) {
-            self.subscription = subscription
-        }
-        
-        func receive(_ input: Input) -> Subscribers.Demand {
-            Global.RequiresImplementation()
-        }
-        
-        func receive(completion: Subscribers.Completion<A.Failure>) {
             Global.RequiresImplementation()
         }
     }
