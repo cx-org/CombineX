@@ -1,4 +1,4 @@
-enum MediumSubscriberState {
+enum MapSubscriberState {
     
     // waiting for subscription
     case waiting
@@ -9,7 +9,7 @@ enum MediumSubscriberState {
     case finished
 }
 
-extension MediumSubscriberState {
+extension MapSubscriberState {
     
     var isWaiting: Bool {
         switch self {
@@ -42,9 +42,9 @@ extension MediumSubscriberState {
     }
 }
 
-extension MediumSubscriberState: Equatable {
+extension MapSubscriberState: Equatable {
     
-    static func == (lhs: MediumSubscriberState, rhs: MediumSubscriberState) -> Bool {
+    static func == (lhs: MapSubscriberState, rhs: MapSubscriberState) -> Bool {
         switch (lhs, rhs) {
         case (.waiting, .waiting):
             return true
@@ -58,7 +58,7 @@ extension MediumSubscriberState: Equatable {
     }
 }
 
-extension Atomic where Value == MediumSubscriberState {
+extension Atomic where Value == MapSubscriberState {
     
     var isWaiting: Bool {
         switch self.load() {
@@ -91,7 +91,7 @@ extension Atomic where Value == MediumSubscriberState {
     }
 }
 
-extension Atomic where Value == MediumSubscriberState {
+extension Atomic where Value == MapSubscriberState {
     
     func finishIfSubscribing() -> Subscription? {
         return self.withLockMutating {
