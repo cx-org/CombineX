@@ -115,6 +115,9 @@ extension Publishers.TryMap {
                 case .failure(let error):
                     self.sub?.receive(completion: .failure(error))
                 }
+                
+                self.pub = nil
+                self.sub = nil
             }
         }
     }

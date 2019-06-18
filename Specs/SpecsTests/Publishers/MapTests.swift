@@ -72,4 +72,47 @@ class MapTests: XCTestCase {
         XCTAssertNil(closureObj)
         XCTAssertNil(subObj)
     }
+    
+    func testShouldFreePubAndSubWhenFinished() {
+        
+        let subject = PassthroughSubject<Int, Never>()
+        
+        var subscription: Subscription?
+        
+        weak var closureObj: CustomObject?
+        weak var subObj: AnyObject?
+        
+        do {
+            let pObj = CustomObject()
+            closureObj = pObj
+            
+            let pub = subject.map { (v) -> Int in
+                
+                pObj.fn()
+                return v
+            }
+            
+            let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
+                subscription = s
+                s.request(.max(1))
+            }, receiveValue: { v in
+                return .none
+            }, receiveCompletion: { s in
+                
+            })
+            
+            subObj = sub
+            pub.subscribe(sub)
+        }
+        
+        XCTAssertNotNil(closureObj)
+        XCTAssertNotNil(subObj)
+        
+        subject.send(completion: .finished)
+    
+        XCTAssertNil(closureObj)
+        XCTAssertNil(subObj)
+        
+        _ = subscription
+    }
 }

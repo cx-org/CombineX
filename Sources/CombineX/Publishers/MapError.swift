@@ -111,6 +111,9 @@ extension Publishers.MapError {
                 case .failure(let e):
                     self.sub?.receive(completion: .failure(transform(e)))
                 }
+                
+                self.pub = nil
+                self.sub = nil
             }
         }
     }

@@ -60,27 +60,33 @@ extension Publishers.FlatMap {
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
         
+        let lock = Lock(recursive: true)
+        
         // MARK: for upstream
-        let subscription = Atomic<Subscription?>(value: nil)
+        let upstreamState = Atomic<MapSubscriberState>(value: .waiting)
+        var children: [ChildSubscriber] = []
         
         // MARK: for downstream
-        let state = Atomic<SubscriptionState>(value: .waiting)
-        let buffer = Atomic<[P.Output]>(value: [])
-        
-        let children = Atomic<[ChildSubscriber]>(value: [])
+        let downstreamState = Atomic<SubscriptionState>(value: .waiting)
+        var buffer: [P.Output] = []
         
         typealias Pub = Publishers.FlatMap<P, Upstream>
         typealias Sub = S
         
-        let pub: Pub
-        let sub: Sub
+        var pub: Pub?
+        var sub: Sub?
+        
+        let maxPublishers: Subscribers.Demand
+        
         init(pub: Pub, sub: Sub) {
             self.pub = pub
             self.sub = sub
+            
+            self.maxPublishers = pub.maxPublishers
         }
         
         func drain() {
-            if let demand = self.state.demand {
+            if let demand = self.downstreamState.demand {
                 switch demand {
                 case .unlimited:
                     self.fastPath()
@@ -91,126 +97,135 @@ extension Publishers.FlatMap {
         }
         
         func fastPath() {
-            var iterator = self.buffer.load().makeIterator()
-            while let next = iterator.next() {
-                guard self.state.isSubscribing else {
-                    return
-                }
-                
-                _ = self.sub.receive(next)
-            }
             
-            if self.state.isSubscribing {
-                self.sub.receive(completion: .finished)
-            }
+//            var iterator = self.downstreamState.withLockVoid {
+//                self.buffer.makeIterator
+//            }
+//
+//            while let next = iterator.next() {
+//                guard self.state.isSubscribing else {
+//                    return
+//                }
+//
+//                _ = self.sub?.receive(next)
+//            }
+//
+//            if self.state.isSubscribing {
+//                self.sub?.receive(completion: .finished)
+//            }
         }
         
         func slowPath(_ demand: Subscribers.Demand) {
-            var iterator = self.buffer.load().makeIterator()
-            var totalDemand = demand
-            
-            while totalDemand > 0 {
-                guard let element = iterator.next(), self.state.isSubscribing else {
-                    return
-                }
-                
-                let demand = self.sub.receive(element)
-                guard let currentDemand = self.state.tryAdd(demand - 1)?.after, currentDemand > 0 else {
-                    return
-                }
-                
-                totalDemand = currentDemand
-            }
+//            var iterator = self.buffer.load().makeIterator()
+//            var totalDemand = demand
+//
+//            while totalDemand > 0 {
+//                guard let element = iterator.next(), self.state.isSubscribing else {
+//                    return
+//                }
+//
+//                let demand = self.sub?.receive(element) ?? .none
+//                guard let currentDemand = self.state.tryAdd(demand - 1)?.after, currentDemand > 0 else {
+//                    return
+//                }
+//
+//                totalDemand = currentDemand
+//            }
         }
         
         // MARK: Subscription
         func request(_ demand: Subscribers.Demand) {
-            if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(demand)) {
-                
-                switch demand {
-                case .unlimited:
-                    self.fastPath()
-                case .max(let amount):
-                    if amount > 0 {
-                        self.slowPath(demand)
-                    }
-                }
-            } else if let demands = self.state.tryAdd(demand), demands.before <= 0 {
-                self.slowPath(demands.after)
-            }
+//            if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(demand)) {
+//
+//                switch demand {
+//                case .unlimited:
+//                    self.fastPath()
+//                case .max(let amount):
+//                    if amount > 0 {
+//                        self.slowPath(demand)
+//                    }
+//                }
+//            } else if let demands = self.state.tryAdd(demand), demands.before <= 0 {
+//                self.slowPath(demands.after)
+//            }
         }
         
         func cancel() {
-            self.state.store(.finished)
-            
-            for child in self.children.exchange(with: []) {
-                child.subscription.exchange(with: nil)?.cancel()
-            }
-            self.subscription.exchange(with: nil)?.cancel()
+//            self.state.store(.finished)
+//
+//            for child in self.children.exchange(with: []) {
+//                child.subscription.exchange(with: nil)?.cancel()
+//            }
+//            self.subscription.exchange(with: nil)?.cancel()
         }
         
         // MARK: ChildSubsciber
         func receive(_ input: P.Output, from child: ChildSubscriber) -> Subscribers.Demand {
-            guard self.state.isSubscribing else {
-                return .none
-            }
-            
-            self.buffer.withLockMutating {
-                $0.append(input)
-            }
-            self.drain()
+//            guard self.state.isSubscribing else {
+//                return .none
+//            }
+//
+//            self.buffer.withLockMutating {
+//                $0.append(input)
+//            }
+//            self.drain()
             return .max(1)
         }
         
         func receive(completion: Subscribers.Completion<P.Failure>, from child: ChildSubscriber) {
-            guard self.state.isSubscribing else {
-                return
-            }
-            
-            switch completion {
-            case .failure(let error):
-                self.sub.receive(completion: .failure(error))
-                self.state.store(.finished)
-            case .finished:
-                self.children.withLockMutating {
-                    $0.removeAll(where: { $0 === child })
-                }
-                self.drain()
-                self.subscription.load()?.request(.max(1))
-            }
+//            guard self.state.isSubscribing else {
+//                return
+//            }
+//
+//            switch completion {
+//            case .failure(let error):
+//                self.sub?.receive(completion: .failure(error))
+//                self.state.store(.finished)
+//            case .finished:
+//                self.children.withLockMutating {
+//                    $0.removeAll(where: { $0 === child })
+//                }
+//                self.drain()
+//                self.subscription.load()?.request(.max(1))
+//            }
         }
         
         // MARK: Subscriber
         func receive(subscription: Subscription) {
-            if Atomic.ifNil(self.subscription, store: subscription) {
-                subscription.request(self.pub.maxPublishers)
-                self.sub.receive(subscription: self)
+            if upstreamState.compareAndStore(expected: .waiting, newVaue: .subscribing(subscription)) {
+                subscription.request(self.maxPublishers)
+                self.sub?.receive(subscription: self)
+            } else {
+                subscription.cancel()
             }
         }
         
         func receive(_ input: Input) -> Subscribers.Demand {
-            guard self.subscription.load() != nil, self.state.isSubscribing else {
+            guard self.upstreamState.isSubscribing else {
                 return .none
             }
             
-            let p = self.pub.transform(input)
-            let s = ChildSubscriber(parent: self)
-            self.children.withLockMutating {
-                $0.append(s)
+            guard let pub = self.pub else {
+                return .none
             }
-            p.subscribe(s)
+            
+            let s = ChildSubscriber(parent: self)
+            self.upstreamState.withLockVoid {
+                self.children.append(s)
+            }
+            pub.transform(input).subscribe(s)
             return .none
         }
         
         func receive(completion: Subscribers.Completion<P.Failure>) {
-            if let subscription = self.subscription.exchange(with: nil) {
+            if let subscription = self.upstreamState.finishIfSubscribing() {
                 subscription.cancel()
                 
                 switch completion {
                 case .finished:
                     self.drain()
                 case .failure(let error):
-                    self.sub.receive(completion: .failure(error))
+                    self.sub?.receive(completion: .failure(error))
                 }
             }
         }

@@ -39,6 +39,11 @@ final class Atomic<Value> {
         lock.lock(); defer { lock.unlock() }
         return try body(&self.value)
     }
+    
+    func withLockVoid(_ body: () throws -> Void) rethrows {
+        lock.lock(); defer { lock.unlock() }
+        try body()
+    }
 }
 
 extension Atomic where Value: Equatable {

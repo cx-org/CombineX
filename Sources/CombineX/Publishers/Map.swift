@@ -102,6 +102,8 @@ extension Publishers.Map {
             if let subscription = self.state.finishIfSubscribing() {
                 subscription.cancel()
                 self.sub?.receive(completion: completion)
+                self.pub = nil
+                self.sub = nil
             }
         }
     }
