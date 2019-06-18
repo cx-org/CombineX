@@ -57,7 +57,6 @@ extension Publishers.Map {
         typealias Pub = Publishers.Map<Upstream, Output>
         typealias Sub = S
 
-        var lock = NSLock()
         var isCancelled = false
         var subscription: Subscription?
         
@@ -70,48 +69,34 @@ extension Publishers.Map {
         }
         
         func request(_ demand: Subscribers.Demand) {
-            self.lock
-                .withLock {
-                    self.subscription
-                }?
-                .request(demand)
+            self.subscription?.request(demand)
         }
         
         func cancel() {
-            self.lock.withLock {
-                self.isCancelled = true
-                self.subscription?.cancel()
-                self.subscription = nil
-            }
+            self.isCancelled = true
+            self.subscription?.cancel()
+            self.subscription = nil
+            
             self.pub = nil
             self.sub = nil
         }
         
         func receive(subscription: Subscription) {
-            self.lock.lock()
-            
             if self.isCancelled {
-                self.lock.unlock()
                 return
             }
-            
-            if self.subscription != nil {
+        
+            guard self.subscription == nil else {
                 subscription.cancel()
-                self.lock.unlock()
                 return
             }
             
             self.subscription = subscription
-            self.lock.unlock()
-            
             self.sub?.receive(subscription: self)
         }
         
         func receive(_ input: Input) -> Subscribers.Demand {
-            self.lock.lock()
-            
             if self.isCancelled {
-                self.lock.unlock()
                 return .none
             }
             
@@ -123,16 +108,12 @@ extension Publishers.Map {
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
-            self.lock.lock()
-            
             if self.isCancelled {
-                self.lock.unlock()
                 return
             }
             
             self.subscription?.cancel()
             self.subscription = nil
-            self.lock.unlock()
             
             self.sub?.receive(completion: completion)
         }

@@ -8,31 +8,89 @@ import Combine
 
 class MapTests: XCTestCase {
     
-    func testMap() {
+    func testExpectMapValueFromUpstream() {
         
-        let pub = PassthroughSubject<Int, Never>().map { $0 }
+        let pub = PassthroughSubject<Int, CustomError>()
+        
+        let sub = CustomSubscriber<Int, CustomError>(receiveSubscription: { (s) in
+            s.request(.unlimited)
+        }, receiveValue: { v in
+            return .none
+        }, receiveCompletion: { c in
+        })
+    
+        pub.map { $0 * 2 }.subscribe(sub)
+        
+        let nums = [1, 2, 3]
+        for num in nums {
+            pub.send(num)
+        }
+        
+        for (num, event) in zip(nums, sub.events) {
+            XCTAssertEqual(event, .value(num * 2))
+        }
+    }
+    
+    func testShouldFreePubAndSubWhenCancel() {
+        weak var pubObj: AnyObject?
+        weak var closureObj: CustomObject?
+        weak var subObj: AnyObject?
         
         var subscription: Subscription?
-        weak var subscriber: CustomSubscriber<Int, Never>?
+        
         do {
+            let pObj = CustomObject()
+            closureObj = pObj
+            
+            let subject = PassthroughSubject<Int, Never>()
+            pubObj = subject
+            
+            let pub = subject.map { (v) -> Int in
+                
+                pObj.fn()
+                return v
+            }
+            
             let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
                 subscription = s
                 s.request(.max(1))
             }, receiveValue: { v in
-                print("receive value", v)
-                return .max(1)
-            }, receiveCompletion: { c in
-                print("receive completion", c)
+                return .none
+            }, receiveCompletion: { s in
+                
             })
             
+            subObj = sub
             pub.subscribe(sub)
-            subscriber = sub
         }
         
-        XCTAssertNotNil(subscriber)
-        
+        XCTAssertNotNil(pubObj)
+        XCTAssertNotNil(closureObj)
+        XCTAssertNotNil(subObj)
         subscription?.cancel()
+        XCTAssertNil(pubObj)
+        XCTAssertNil(closureObj)
+        XCTAssertNil(subObj)
+    }
+    
+    func testExpectCancelThenRequestAgain() {
+        var subscription: Subscription?
         
-        XCTAssertNil(subscriber)
+        let subject = Publishers.Sequence<[Int], Never>(sequence: [1, 2, 3])
+        let pub = subject.map { $0 }
+
+        let sub = CustomSubscriber<Int, Never>(receiveSubscription: { s in
+            subscription = s
+            s.request(.max(1))
+        }, receiveValue: { v in
+            print("receive value", v)
+            return .none
+        }, receiveCompletion: { s in
+        })
+        
+        pub.receive(subscriber: sub)
+
+        subscription?.cancel()
+        subscription?.request(.max(1))
     }
 }

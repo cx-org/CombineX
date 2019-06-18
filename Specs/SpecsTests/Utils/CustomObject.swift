@@ -1,7 +1,7 @@
 class CustomObject {
     
-    let fnBody: (() -> Void)?
-    let deinitBody: (() -> Void)?
+    var fnBody: (() -> Void)?
+    var deinitBody: (() -> Void)?
     
     init(fn: (() -> Void)? = nil, deinit: (() -> Void)? = nil) {
         self.fnBody = fn

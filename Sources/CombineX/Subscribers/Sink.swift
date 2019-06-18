@@ -41,7 +41,7 @@ extension Subscribers {
         /// The conversion of `p` to a string in the assignment to `s` uses the
         /// `Point` type's `description` property.
         final public var description: String {
-            return "[Sink]: \(self.combineIdentifier)"
+            return "[Sink]"
         }
         
         /// The custom mirror for this instance.

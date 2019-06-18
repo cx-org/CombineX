@@ -2,16 +2,12 @@ import Foundation
 
 final class Atomic<Value> {
     
-    private let lock: NSLocking
+    private let lock: Lock
     private var value: Value
     
-    init(value: Value, recursive: Bool = false) {
-        if recursive {
-            self.lock = NSRecursiveLock()
-        } else {
-            self.lock = NSLock()
-        }
+    init(value: Value) {
         self.value = value
+        self.lock = Lock()
     }
     
     func load() -> Value {
@@ -51,12 +47,13 @@ extension Atomic where Value: Equatable {
     ///
     /// - Returns: `true` if the store occurred.
     func compareAndStore(expected: Value, newVaue: Value) -> Bool {
-        lock.lock(); defer { lock.unlock() }
-        if self.value == expected {
-            self.value = newVaue
-            return true
+        return self.withLockMutating {
+            if $0 == expected {
+                $0 = newVaue
+                return true
+            }
+            return false
         }
-        return false
     }
 }
 

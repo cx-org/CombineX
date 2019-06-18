@@ -8,36 +8,50 @@ import Combine
 
 class SinkTests: XCTestCase {
     
-    func testSubscribe() {
-        
+    func testShouldReceiveValuesAndCompletion() {
         let pub = PassthroughSubject<Int, Never>()
-        let sink = pub.sink { (i) in
-            print("sink value", i)
-        }
-        sink.cancel()
+        
+        var valueCount = 0
+        var completionCount = 0
+        
+        let sink = Subscribers.Sink<PassthroughSubject<Int, Never>>(receiveCompletion: { (c) in
+            completionCount += 1
+        }, receiveValue: { v in
+            valueCount += 1
+        })
+        
+        pub.subscribe(sink)
         
         pub.send(1)
+        pub.send(1)
+        pub.send(completion: .finished)
+        pub.send(1)
+        pub.send(completion: .finished)
+        
+        XCTAssert(valueCount == 2)
+        XCTAssert(completionCount == 1)
     }
     
-    func testSubscription() {
+    func testSubscriptionShouldBeReleaseWhenReceiveCompletion() {
         
-        let sink = Subscribers.Sink<Publishers.Just<Int>>.init(receiveCompletion: {
-            print("receive completion", $0)
-        }, receiveValue: {
-            print("receive value", $0)
-        })
+        let sink = Subscribers.Sink<Publishers.Just<Int>>(
+            receiveCompletion: { c in
+            },
+            receiveValue: { v in
+            }
+        )
         
         weak var subscription: CustomSubscription?
         
         do {
-            let s = CustomSubscription(request: { (demand) in
-                print("request demand", demand)
-            }, cancel: {
-                print("cancel")
-            })
+            let s = CustomSubscription(
+                request: { (demand) in
+                },
+                cancel: {
+                }
+            )
             
             sink.receive(subscription: s)
-            
             subscription = s
         }
         

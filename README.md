@@ -32,7 +32,7 @@ Since some people may not have macOS 10.15 beta installed, the recommended contr
 When CombineX is release, all you need to do is:
 
 ```swift
-#if can_use_combine
+#if CAN_USE_COMBINE
 import Combine
 #else
 import CombineX
@@ -65,19 +65,19 @@ import CombineX
 | API | Status | Test | Notes |
 |:--|:--|:--|:--|
 |`Autoconnect`|   |   |   |
-|`Empty`| done |   |   |
+|`Empty`| done | done |   |
 |`FlatMap`| wip |   |   |
-|`Just`| done |   |   |
+|`Just`| done | done |   |
 |`Map`| done |   |   |
 |`MapError`| done |   |   |
 |`Merge`|   |   | Waiting for `FlatMap` |
-|`Once`| done |   |   |
+|`Once`| done | done |   |
 |`Publishers`| done  |   |   |
-|`Sequence`| done |   |   |
+|`Sequence`| done | done |   |
 |`SubscribeOn`|   |   |   |
 |`TryMap`| done |   |   |
-|`assign`| done |   |   |
-|`sink`| done |   |   |
+|`assign`| done | done |   |
+|`sink`| done | done |   |
 
 ### Schedulers
 
@@ -89,21 +89,21 @@ import CombineX
 
 | API | Status | Test | Notes |
 |:--|:--|:--|:--|
-|`CurrentValueSubject`|   |   |   |
-|`PassthroughSubject`| done |   |   |
+|`CurrentValueSubject`| done | done |   |
+|`PassthroughSubject`| done | done |   |
 
 ### Subscribers
 
 | API | Status | Test | Notes |
 |:--|:--|:--|:--|
-|`Assign`| done  |   |   |
-|`Sink`| done  |   |   |
-|`Subscribers`| done  |   |   |
+|`Assign`| done | done  |   |
+|`Demand`| done | almost done |   |
+|`Sink`| done | done |   |
+|`Subscribers`| done  |   | no need for test |
 
 ### Subscriptions
 
 | API | Status | Test | Notes |
 |:--|:--|:--|:--|
-|`Demand`| done  |   |   |
-|`Subscriptions`| done  |   |   |
 |`empty`| done  |   |   |
+|`Subscriptions`| done  |   | no need for test |

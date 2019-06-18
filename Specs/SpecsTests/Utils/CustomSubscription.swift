@@ -6,8 +6,8 @@ import Combine
 
 class CustomSubscription: Subscription {
     
-    let requestBody: ((Subscribers.Demand) -> Void)?
-    let cancelBody: (() -> Void)?
+    var requestBody: ((Subscribers.Demand) -> Void)?
+    var cancelBody: (() -> Void)?
     
     init(request: ((Subscribers.Demand) -> Void)? = nil, cancel: (() -> Void)? = nil) {
         self.requestBody = request

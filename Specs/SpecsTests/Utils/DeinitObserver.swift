@@ -1,8 +1,8 @@
 import Foundation
 
-#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
+#if canImport(ObjectiveC)
 
-private var deinitObserverKey: Void = ()
+private var deinit_observer_key: Void = ()
 
 class DeinitObserver {
     
@@ -15,7 +15,7 @@ class DeinitObserver {
     @discardableResult
     static func observe(_ observable: AnyObject, whenDeinit body: @escaping () -> Void) -> DeinitObserver {
         let observer = DeinitObserver(body)
-        objc_setAssociatedObject(observable, &deinitObserverKey, observer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        objc_setAssociatedObject(observable, &deinit_observer_key, observer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         return observer
     }
     

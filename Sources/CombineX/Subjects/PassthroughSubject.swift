@@ -5,7 +5,7 @@ import Foundation
 /// Use a `PassthroughSubject` in unit tests when you want a publisher than can publish specific values on-demand during tests.
 final public class PassthroughSubject<Output, Failure> : Subject where Failure : Error {
     
-    private let lock = NSRecursiveLock()
+    private let lock = Lock()
     private var subscriptions: [Inner] = []
     
     public init() {
@@ -32,7 +32,7 @@ final public class PassthroughSubject<Output, Failure> : Subject where Failure :
         let subscriptions = self.lock.withLock {
             self.subscriptions.filter { $0.demand > 0 }
         }
-        
+
         for subscription in subscriptions {
             let more = subscription.sub?.receive(input) ?? .none
             self.lock.withLock {
@@ -52,6 +52,12 @@ final public class PassthroughSubject<Output, Failure> : Subject where Failure :
         for subscription in subscriptions {
             subscription.sub?.receive(completion: completion)
             subscription.cancel()
+        }
+    }
+    
+    private func removeSubscription(_ subscription: Inner) {
+        self.lock.withLock {
+            self.subscriptions.removeAll(where: { $0 === subscription })
         }
     }
 }
@@ -80,9 +86,7 @@ extension PassthroughSubject {
         }
         
         func cancel() {
-            self.pub?.lock.withLock {
-                self.pub?.subscriptions.removeAll(where: { $0 === self })
-            }
+            self.pub?.removeSubscription(self)
             
             self.pub = nil
             self.sub = nil

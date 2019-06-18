@@ -8,11 +8,9 @@ import Combine
 
 class JustTests: XCTestCase {
     
-    func testJust() {
+    func testShouldSendValueThenSendCompletion() {
         let just = Publishers.Just(1)
-        
         var count = 0
-        
         _ = just.sink(
             receiveCompletion: { (completion) in
                 count += 1
@@ -27,21 +25,17 @@ class JustTests: XCTestCase {
         XCTAssertEqual(count, 2)
     }
     
-    func testCancelWhenComplete() {
+    func testShouldFreeSubWhenComplete() {
         let just = Publishers.Just(1)
         
-        var subscription: Subscription?
         weak var subscriber: CustomSubscriber<Int, Never>?
         
         do {
             let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
-                subscription = s
                 s.request(.max(1))
-            }, receiveValue: {
-                print("receive value", $0)
+            }, receiveValue: { v in
                 return .none
-            }, receiveCompletion: {
-                print("receive completion", $0)
+            }, receiveCompletion: { s in
             })
             
             subscriber = sub
@@ -49,15 +43,49 @@ class JustTests: XCTestCase {
         }
         
         XCTAssertNil(subscriber)
+    }
+    
+    func testShouldFreeSubAndDontFreeJustObjWhenCancel() {
+        weak var pubObj: NSObject?
+        weak var subObj: AnyObject?
+        
+        var subscription: Subscription?
+        
+        do {
+            let pObj = NSObject()
+            pubObj = pObj
+            
+            let pub = Publishers.Just(pObj)
+            
+            let sub = CustomSubscriber<NSObject, Never>(receiveSubscription: { (s) in
+                subscription = s
+                s.request(.max(1))
+            }, receiveValue: { v in
+                return .none
+            }, receiveCompletion: { s in
+                
+            })
+            
+            subObj = sub
+            pub.subscribe(sub)
+        }
+        
+        XCTAssertNotNil(pubObj)
+        XCTAssertNil(subObj)
+        
         subscription?.cancel()
+        
+        XCTAssertNotNil(pubObj)
+        XCTAssertNil(subObj)
     }
     
     func testConcurrent() {
         let just = Publishers.Just(42)
         
-        let g = DispatchGroup()
+        var count = 0
         
-        let sub = AnySubscriber<Int, Never>.init(receiveSubscription: { (s) in
+        let g = DispatchGroup()
+        let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
             for _ in 0..<100 {
                 g.enter()
                 DispatchQueue.global().async {
@@ -65,15 +93,16 @@ class JustTests: XCTestCase {
                     s.request(.max(1))
                 }
             }
-        }, receiveValue: { val in
-            print("receive value", val)
+        }, receiveValue: { v in
+            count += 1
             return .none
-        }, receiveCompletion: { completion in
-            print("receive compeltion")
+        }, receiveCompletion: { c in
         })
         
         just.subscribe(sub)
         
         g.wait()
+     
+        XCTAssertEqual(count, 1)
     }
 }
