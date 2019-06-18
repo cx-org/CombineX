@@ -57,8 +57,7 @@ extension Publishers.Map {
         typealias Pub = Publishers.Map<Upstream, Output>
         typealias Sub = S
 
-        var isCancelled = false
-        var subscription: Subscription?
+        let state = Atomic<MediumSubscriberState>(value: .waiting)
         
         var pub: Pub?
         var sub: Sub?
@@ -69,34 +68,26 @@ extension Publishers.Map {
         }
         
         func request(_ demand: Subscribers.Demand) {
-            self.subscription?.request(demand)
+            self.state.subscription?.request(demand)
         }
         
         func cancel() {
-            self.isCancelled = true
-            self.subscription?.cancel()
-            self.subscription = nil
+            self.state.finishIfSubscribing()?.cancel()
             
             self.pub = nil
             self.sub = nil
         }
         
         func receive(subscription: Subscription) {
-            if self.isCancelled {
-                return
-            }
-        
-            guard self.subscription == nil else {
+            if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(subscription)) {
+                self.sub?.receive(subscription: self)
+            } else {
                 subscription.cancel()
-                return
             }
-            
-            self.subscription = subscription
-            self.sub?.receive(subscription: self)
         }
         
         func receive(_ input: Input) -> Subscribers.Demand {
-            if self.isCancelled {
+            guard self.state.isSubscribing else {
                 return .none
             }
             
@@ -108,14 +99,10 @@ extension Publishers.Map {
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
-            if self.isCancelled {
-                return
+            if let subscription = self.state.finishIfSubscribing() {
+                subscription.cancel()
+                self.sub?.receive(completion: completion)
             }
-            
-            self.subscription?.cancel()
-            self.subscription = nil
-            
-            self.sub?.receive(completion: completion)
         }
     }
 }

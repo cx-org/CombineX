@@ -34,7 +34,7 @@ extension Publishers {
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, S.Failure == Publishers.TryMap<Upstream, Output>.Failure {
             let subscription = TryMapSubscription(pub: self, sub: subscriber)
-            subscriber.receive(subscription: subscription)
+            self.upstream.subscribe(subscription)
         }
     }
 }
@@ -56,47 +56,65 @@ extension Publishers.TryMap {
         typealias Pub = Publishers.TryMap<Upstream, Output>
         typealias Sub = S
         
-        private let subscription = Atomic<Subscription?>(value: nil)
+        let state = Atomic<MediumSubscriberState>(value: .waiting)
         
-        var pub: Pub
-        var sub: Sub
+        var pub: Pub?
+        var sub: Sub?
         
         init(pub: Pub, sub: Sub) {
             self.pub = pub
             self.sub = sub
-            
-            pub.upstream.subscribe(self)
         }
         
         func request(_ demand: Subscribers.Demand) {
-            self.subscription.load()?.request(demand)
+            self.state.subscription?.request(demand)
         }
         
         func cancel() {
-            self.subscription.load()?.cancel()
+            self.state.finishIfSubscribing()?.cancel()
+            
+            self.pub = nil
+            self.sub = nil
         }
         
         func receive(subscription: Subscription) {
-            if Atomic.ifNil(self.subscription, store: subscription) {
-                self.sub.receive(subscription: self)
+            if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(subscription)) {
+                self.sub?.receive(subscription: self)
+            } else {
+                subscription.cancel()
             }
         }
         
         func receive(_ input: Input) -> Subscribers.Demand {
+            guard self.state.isSubscribing else {
+                return .none
+            }
+            
+            guard let transform = self.pub?.transform else {
+                return .none
+            }
+            
             do {
-                return self.sub.receive(try self.pub.transform(input))
+                return self.sub?.receive(try transform(input)) ?? .none
             } catch {
-                self.sub.receive(completion: .failure(error))
+                if let subscription = self.state.finishIfSubscribing() {
+                    subscription.cancel()
+                    self.sub?.receive(completion: .failure(error))
+                }
                 return .none
             }
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
-            switch completion {
-            case .finished:
-                self.sub.receive(completion: .finished)
-            case .failure(let e):
-                self.sub.receive(completion: .failure(e))
+            if let subscription = self.state.finishIfSubscribing() {
+                subscription.cancel()
+                
+                switch completion {
+                case .finished:
+                    self.sub?.receive(completion: .finished)
+                case .failure(let error):
+                    self.sub?.receive(completion: .failure(error))
+                }
             }
         }
     }

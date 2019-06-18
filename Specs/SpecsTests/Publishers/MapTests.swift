@@ -72,25 +72,4 @@ class MapTests: XCTestCase {
         XCTAssertNil(closureObj)
         XCTAssertNil(subObj)
     }
-    
-    func testExpectCancelThenRequestAgain() {
-        var subscription: Subscription?
-        
-        let subject = Publishers.Sequence<[Int], Never>(sequence: [1, 2, 3])
-        let pub = subject.map { $0 }
-
-        let sub = CustomSubscriber<Int, Never>(receiveSubscription: { s in
-            subscription = s
-            s.request(.max(1))
-        }, receiveValue: { v in
-            print("receive value", v)
-            return .none
-        }, receiveCompletion: { s in
-        })
-        
-        pub.receive(subscriber: sub)
-
-        subscription?.cancel()
-        subscription?.request(.max(1))
-    }
 }

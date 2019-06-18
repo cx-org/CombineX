@@ -57,10 +57,10 @@ extension Publishers.MapError {
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
         
-        private let subscription = Atomic<Subscription?>(value: nil)
-        
         typealias Pub = Publishers.MapError<Upstream, S.Failure>
         typealias Sub = S
+        
+        let state = Atomic<MediumSubscriberState>(value: .waiting)
         
         var pub: Pub?
         var sub: Sub?
@@ -71,34 +71,47 @@ extension Publishers.MapError {
         }
         
         func request(_ demand: Subscribers.Demand) {
-            self.subscription.load()?.request(demand)
+            self.state.subscription?.request(demand)
         }
         
         func cancel() {
-            self.subscription.load()?.cancel()
+            self.state.finishIfSubscribing()?.cancel()
+
             self.pub = nil
             self.sub = nil
         }
         
         func receive(subscription: Subscription) {
-            if Atomic.ifNil(self.subscription, store: subscription) {
+            if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(subscription)) {
                 self.sub?.receive(subscription: self)
+            } else {
+                subscription.cancel()
             }
         }
         
         func receive(_ input: Input) -> Subscribers.Demand {
+            guard self.state.isSubscribing else {
+                return .none
+            }
+            
             return self.sub?.receive(input) ?? .none
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
-//            switch completion {
-//            case .finished:
-//                self.sub.receive(completion: .finished)
-//            case .failure(let e):
-//                self.sub.receive(completion: .failure(self.pub.transform(e)))
-//            }
-            
-            Global.RequiresImplementation()
+            if let subscription = self.state.finishIfSubscribing() {
+                subscription.cancel()
+                
+                guard let transform = self.pub?.transform else {
+                    return
+                }
+                
+                switch completion {
+                case .finished:
+                    self.sub?.receive(completion: .finished)
+                case .failure(let e):
+                    self.sub?.receive(completion: .failure(transform(e)))
+                }
+            }
         }
     }
 }
