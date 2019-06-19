@@ -102,6 +102,5 @@ extension Subscribers {
         final public func cancel() {
             self.subscription.exchange(with: nil)?.cancel()
         }
-        
     }
 }

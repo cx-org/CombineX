@@ -8,7 +8,7 @@ import Combine
 
 class SubscriptionTests: XCTestCase {
     
-    func testCancel() {
+    func testSubscriptionShouldReleaseSubscriberAfterCancelled() {
         
         var subscription: Subscription?
         weak var subscriber: CustomSubscriber<Int, Never>?
