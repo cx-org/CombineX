@@ -84,14 +84,16 @@ extension Publishers.Sequence {
         }
         
         private func slowPath(_ demand: Subscribers.Demand) {
+            defer {
+                if self.state.finishIfSubscribing() {
+                    self.sub?.receive(completion: .finished)
+                    self.sub = nil
+                }
+            }
+            
             var totalDemand = demand
             while totalDemand > 0 {
                 guard let element = iterator.next() else {
-                    if self.state.isSubscribing {
-                        self.sub?.receive(completion: .finished)
-                        self.state.store(.finished)
-                        self.sub = nil
-                    }
                     return
                 }
                 

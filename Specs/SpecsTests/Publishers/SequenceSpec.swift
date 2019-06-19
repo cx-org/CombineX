@@ -11,6 +11,23 @@ class SequenceSpec: QuickSpec {
     
     override func spec() {
         
+        it("it") {
+            let nums = [1, 2, 3, 4, 5]
+            
+            let pub = Publishers.Sequence<[Int], Never>(sequence: nums)
+            
+            let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
+                s.request(.max(5))
+            }, receiveValue: { v in
+                return .none
+            }, receiveCompletion: { c in
+            })
+            
+            pub.subscribe(sub)
+            
+            print(sub.events)
+        }
+        
         it("should recevie value as many as demand") {
             let nums = [1, 2, 3, 4, 5]
             let pub = Publishers.Sequence<[Int], Never>(sequence: nums)

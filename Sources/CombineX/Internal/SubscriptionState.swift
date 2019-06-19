@@ -102,5 +102,14 @@ extension Atomic where Value == SubscriptionState {
             }
         }
     }
-    
+
+    func finishIfSubscribing() -> Bool {
+        return self.withLockMutating {
+            if $0.isSubscribing {
+                $0 = .finished
+                return true
+            }
+            return false
+        }
+    }
 }
