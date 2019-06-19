@@ -25,7 +25,7 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Failure == S.Failure, S : Subscriber, Elements.Element == S.Input {
-            let subscription = SequenceSubscription(iterator: self.sequence.makeIterator(), sub: subscriber)
+            let subscription = SequenceSubscription(sequence: self.sequence, sub: subscriber)
             subscriber.receive(subscription: subscription)
         }
     }
@@ -43,11 +43,11 @@ extension Publishers.Sequence {
         
         let state = Atomic<SubscriptionState>(value: .waiting)
         
-        var iterator: Elements.Iterator
+        var iterator: PeekableIterator<Elements.Element>
         var sub: S?
         
-        init(iterator: Elements.Iterator, sub: S) {
-            self.iterator = iterator
+        init(sequence: Elements, sub: S) {
+            self.iterator = PeekableIterator(sequence.makeIterator())
             self.sub = sub
         }
         
@@ -68,12 +68,12 @@ extension Publishers.Sequence {
         }
         
         private func fastPath() {
-            while let next = self.iterator.next() {
+            while let element = self.iterator.next() {
                 guard self.state.isSubscribing else {
                     return
                 }
                 
-                _ = self.sub?.receive(next)
+                _ = self.sub?.receive(element)
             }
 
             if self.state.isSubscribing {
@@ -84,16 +84,13 @@ extension Publishers.Sequence {
         }
         
         private func slowPath(_ demand: Subscribers.Demand) {
-            defer {
-                if self.state.finishIfSubscribing() {
-                    self.sub?.receive(completion: .finished)
-                    self.sub = nil
-                }
-            }
-            
             var totalDemand = demand
             while totalDemand > 0 {
-                guard let element = iterator.next() else {
+                guard let element = self.iterator.next() else {
+                    if self.state.finishIfSubscribing() {
+                        self.sub?.receive(completion: .finished)
+                        self.sub = nil
+                    }
                     return
                 }
                 
@@ -103,6 +100,14 @@ extension Publishers.Sequence {
                 
                 let demand = self.sub?.receive(element) ?? .none
                 guard let currentDemand = self.state.tryAdd(demand - 1)?.after, currentDemand > 0 else {
+                    
+                    if self.iterator.peek() == nil {
+                        if self.state.finishIfSubscribing() {
+                            self.sub?.receive(completion: .finished)
+                            self.sub = nil
+                        }
+                    }
+                    
                     return
                 }
                 

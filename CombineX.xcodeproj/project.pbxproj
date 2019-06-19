@@ -24,6 +24,7 @@
 		6229E66522B73500002CBEC2 /* Locking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6229E66422B73500002CBEC2 /* Locking.swift */; };
 		66D385FD22B91128001B8189 /* MapSubscriberState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D385FC22B91128001B8189 /* MapSubscriberState.swift */; };
 		66D3860722B931EE001B8189 /* CircularBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D3860622B931EE001B8189 /* CircularBuffer.swift */; };
+		66D3861122BA56BE001B8189 /* PeekableIterator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D3861022BA56BE001B8189 /* PeekableIterator.swift */; };
 		OBJ_100 /* MapError.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_31 /* MapError.swift */; };
 		OBJ_101 /* Merge+.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_32 /* Merge+.swift */; };
 		OBJ_102 /* Merge.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_33 /* Merge.swift */; };
@@ -93,6 +94,7 @@
 		6229E66422B73500002CBEC2 /* Locking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Locking.swift; sourceTree = "<group>"; };
 		66D385FC22B91128001B8189 /* MapSubscriberState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapSubscriberState.swift; sourceTree = "<group>"; };
 		66D3860622B931EE001B8189 /* CircularBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularBuffer.swift; sourceTree = "<group>"; };
+		66D3861022BA56BE001B8189 /* PeekableIterator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeekableIterator.swift; sourceTree = "<group>"; };
 		"CombineX::CombineX::Product" /* CombineX.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CombineX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		"CombineX::CombineXTests::Product" /* CombineXTests.xctest */ = {isa = PBXFileReference; lastKnownFileType = file; path = CombineXTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_10 /* AnyPublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyPublisher.swift; sourceTree = "<group>"; };
@@ -174,6 +176,7 @@
 				6229E66422B73500002CBEC2 /* Locking.swift */,
 				66D385FC22B91128001B8189 /* MapSubscriberState.swift */,
 				66D3860622B931EE001B8189 /* CircularBuffer.swift */,
+				66D3861022BA56BE001B8189 /* PeekableIterator.swift */,
 			);
 			path = Internal;
 			sourceTree = "<group>";
@@ -433,6 +436,7 @@
 				6229E66522B73500002CBEC2 /* Locking.swift in Sources */,
 				OBJ_97 /* FlatMap.swift in Sources */,
 				OBJ_98 /* Just.swift in Sources */,
+				66D3861122BA56BE001B8189 /* PeekableIterator.swift in Sources */,
 				OBJ_99 /* Map.swift in Sources */,
 				OBJ_100 /* MapError.swift in Sources */,
 				OBJ_101 /* Merge+.swift in Sources */,

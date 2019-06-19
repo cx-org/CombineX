@@ -10,7 +10,7 @@ import Combine
 class SequenceSpec: QuickSpec {
     
     override func spec() {
-        
+    
         it("it") {
             let nums = [1, 2, 3, 4, 5]
             
