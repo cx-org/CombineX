@@ -256,15 +256,15 @@
 		66312FC322B665630081D8F1 /* SpecsTests */ = {
 			isa = PBXGroup;
 			children = (
-				6229E66622B7384A002CBEC2 /* Subjects */,
-				6631305422B695080081D8F1 /* Subscribers */,
-				6631302822B691AA0081D8F1 /* Helpers */,
-				66312FCF22B6659F0081D8F1 /* Publishers */,
 				66312FC622B665630081D8F1 /* Info.plist */,
 				6229E64C22B720E1002CBEC2 /* AnyCancellableSpec.swift */,
 				6229E65622B72969002CBEC2 /* AnySubscriberSpec.swift */,
-				6229E65C22B72EA3002CBEC2 /* SubscriptionSpec.swift */,
 				625EC8B822B8B32A006DB4D5 /* DemandSpec.swift */,
+				6229E65C22B72EA3002CBEC2 /* SubscriptionSpec.swift */,
+				6631302822B691AA0081D8F1 /* Helpers */,
+				66312FCF22B6659F0081D8F1 /* Publishers */,
+				6229E66622B7384A002CBEC2 /* Subjects */,
+				6631305422B695080081D8F1 /* Subscribers */,
 			);
 			path = SpecsTests;
 			sourceTree = "<group>";

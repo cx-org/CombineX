@@ -1,7 +1,21 @@
 import XCTest
+import Quick
 
-import CombineXTests
+@testable import CombineXTests
 
-var tests = [XCTestCaseEntry]()
-tests += CombineXTests.allTests()
-XCTMain(tests)
+QCKMain([
+    AnyCancellableSpec.self,
+    AnySubscriberSpec.self,
+    AssignSpec.self,
+    CurrentValueSubjectSpec.self,
+    DemandSpec.self,
+    EmptySpec.self,
+    FlatMapSpec.self,
+    JustSpec.self,
+    MapSpec.self,
+    OnceSpec.self,
+    PassthroughSubjectSpec.self,
+    SinkSpec.self,
+    SequenceSpec.self,
+    SubscriptionSpec.self,
+])
