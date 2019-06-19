@@ -7,6 +7,7 @@ QCKMain([
     AnyCancellableSpec.self,
     AnySubscriberSpec.self,
     AssignSpec.self,
+    CombineIdentifierSpec.self,
     CurrentValueSubjectSpec.self,
     DemandSpec.self,
     EmptySpec.self,

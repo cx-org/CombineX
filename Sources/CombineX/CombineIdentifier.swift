@@ -1,15 +1,17 @@
 import Foundation
 
+private let counter = Atomic<UInt>(value: 0)
+
 public struct CombineIdentifier : Hashable, CustomStringConvertible {
     
-    private let anyHashable: AnyHashable
+    private let id: UInt
     
     public init() {
-        self.anyHashable = UUID()
+        self.id = counter.add(1)
     }
     
     public init(_ obj: AnyObject) {
-        self.anyHashable = ObjectIdentifier(obj)
+        self.id = UInt(bitPattern: ObjectIdentifier(obj))
     }
     
     /// A textual representation of this instance.
@@ -36,7 +38,7 @@ public struct CombineIdentifier : Hashable, CustomStringConvertible {
     /// The conversion of `p` to a string in the assignment to `s` uses the
     /// `Point` type's `description` property.
     public var description: String {
-        return self.anyHashable.description
+        return "0x" + String(self.id, radix: 16)
     }
     
     /// The hash value.
@@ -47,7 +49,7 @@ public struct CombineIdentifier : Hashable, CustomStringConvertible {
     /// - Important: `hashValue` is deprecated as a `Hashable` requirement. To
     ///   conform to `Hashable`, implement the `hash(into:)` requirement instead.
     public var hashValue: Int {
-        return self.anyHashable.hashValue
+        return self.id.hashValue
     }
     
     /// Hashes the essential components of this value by feeding them into the
@@ -64,7 +66,7 @@ public struct CombineIdentifier : Hashable, CustomStringConvertible {
     /// - Parameter hasher: The hasher to use when combining the components
     ///   of this instance.
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(self.anyHashable)
+        hasher.combine(self.id)
     }
     
     /// Returns a Boolean value indicating whether two values are equal.
@@ -76,6 +78,6 @@ public struct CombineIdentifier : Hashable, CustomStringConvertible {
     ///   - lhs: A value to compare.
     ///   - rhs: Another value to compare.
     public static func == (a: CombineIdentifier, b: CombineIdentifier) -> Bool {
-        return a.anyHashable == b.anyHashable
+        return a.id == b.id
     }
 }
