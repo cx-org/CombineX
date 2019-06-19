@@ -20,3 +20,11 @@ extension Subject {
         return AnySubject(self)
     }
 }
+
+extension Subject where Self.Output == Void {
+    
+    /// Signals subscribers.
+    public func send() {
+        self.send(())
+    }
+}

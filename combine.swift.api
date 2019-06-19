@@ -1385,6 +1385,8 @@ extension Publishers {
 
         public let transform: (A.Output, B.Output) -> Output
 
+        public init(_ a: A, _ b: B, transform: @escaping (A.Output, B.Output) -> Output)
+
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
         /// - SeeAlso: `subscribe(_:)`
@@ -1409,6 +1411,8 @@ extension Publishers {
         public let c: C
 
         public let transform: (A.Output, B.Output, C.Output) -> Output
+
+        public init(_ a: A, _ b: B, _ c: C, transform: @escaping (A.Output, B.Output, C.Output) -> Output)
 
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
@@ -1437,6 +1441,8 @@ extension Publishers {
 
         public let transform: (A.Output, B.Output, C.Output, D.Output) -> Output
 
+        public init(_ a: A, _ b: B, _ c: C, _ d: D, transform: @escaping (A.Output, B.Output, C.Output, D.Output) -> Output)
+
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
         /// - SeeAlso: `subscribe(_:)`
@@ -1459,6 +1465,8 @@ extension Publishers {
         public let b: B
 
         public let transform: (A.Output, B.Output) throws -> Output
+
+        public init(_ a: A, _ b: B, transform: @escaping (A.Output, B.Output) throws -> Output)
 
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
@@ -1484,6 +1492,9 @@ extension Publishers {
         public let c: C
 
         public let transform: (A.Output, B.Output, C.Output) throws -> Output
+
+        public init(_ a: A, _ b: B, _ c: C, transform: @escaping (A.Output, B.Output, C.Output) throws -> Output)
+
 
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
@@ -1511,6 +1522,8 @@ extension Publishers {
         public let d: D
 
         public let transform: (A.Output, B.Output, C.Output, D.Output) throws -> Output
+
+        public init(_ a: A, _ b: B, _ c: C, _ d: D, transform: @escaping (A.Output, B.Output, C.Output, D.Output) throws -> Output)
 
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
@@ -1628,6 +1641,10 @@ extension Publishers {
     /// A publisher that eventually produces one value and then finishes or fails.
     final public class Future<Output, Failure> : Publisher where Failure : Error {
 
+        public typealias Promise = (Result<Output, Failure>) -> Void
+
+        public init(_ attemptToFulfill: @escaping (@escaping Publishers.Future<Output, Failure>.Promise) -> Void)
+
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
         /// - SeeAlso: `subscribe(_:)`
@@ -1635,8 +1652,6 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         final public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber
-
-        public init(_ attemptToFulfill: @escaping (@escaping (Result<Output, Failure>) -> Void) -> Void)
     }
 }
 
@@ -2090,32 +2105,6 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, S.Failure == Publishers.TryScan<Upstream, Output>.Failure
-    }
-}
-
-extension Publishers {
-
-    /// A publisher that publishes the number of elements received from the upstream publisher.
-    public struct Count<Upstream> : Publisher where Upstream : Publisher {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = Int
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Upstream.Failure
-
-        /// The publisher from which this publisher receives elements.
-        public let upstream: Upstream
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, S.Input == Publishers.Count<Upstream>.Output
     }
 }
 
@@ -3136,11 +3125,11 @@ extension Publishers.Just {
 
     public func min(by areInIncreasingOrder: (Output, Output) -> Bool) -> Publishers.Just<Output>
 
-    public func tryMin(by areInIncreasingOrder: (Output, Output) throws -> Bool) -> Publishers.Just<Output>
+    public func tryMin(by areInIncreasingOrder: (Output, Output) throws -> Bool) -> Publishers.Optional<Output>
 
     public func max(by areInIncreasingOrder: (Output, Output) -> Bool) -> Publishers.Just<Output>
 
-    public func tryMax(by areInIncreasingOrder: (Output, Output) throws -> Bool) -> Publishers.Just<Output>
+    public func tryMax(by areInIncreasingOrder: (Output, Output) throws -> Bool) -> Publishers.Optional<Output>
 
     public func prepend(_ elements: Output...) -> Publishers.Sequence<[Output], Publishers.Just<Output>.Failure>
 
