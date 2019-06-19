@@ -8,12 +8,11 @@ matrix:
     - os: linux
       sudo: required
       dist: xenial
-      env: 
-        - SWIFT_VERSION="swift-5.1-DEVELOPMENT-SNAPSHOT-2019-06-18-a"
+      env: SWIFT_VERSION="swift-5.1-DEVELOPMENT-SNAPSHOT-2019-06-18-a"
     # - os: osx
     #   osx_image: xcode11.0
 
-cache: bundler
+# cache: bundler
 
 before_install:
   # - gem update --system
