@@ -8,6 +8,7 @@ matrix:
     - os: linux
       sudo: required
       dist: trusty
+      env: SWIFT_VERSION="5.1"
     # - os: osx
     #   osx_image: xcode11.0
 
