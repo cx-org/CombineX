@@ -1,10 +1,10 @@
 import Quick
 import Nimble
 
-#if CombineX
-import CombineX
-#else
+#if USE_COMBINE
 import Combine
+#else
+import CombineX
 #endif
 
 class JustSpec: QuickSpec {

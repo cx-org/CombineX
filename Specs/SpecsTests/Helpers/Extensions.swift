@@ -1,7 +1,7 @@
-#if CombineX
-import CombineX
-#else
+#if USE_COMBINE
 import Combine
+#else
+import CombineX
 #endif
 
 // MARK: - Subscribers.Completion
