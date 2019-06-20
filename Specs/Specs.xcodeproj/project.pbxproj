@@ -122,6 +122,8 @@
 		24866D1AB0596539DB204DCB /* Pods_SpecsTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpecsTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		56797039B4CBC89F01ABD727 /* Pods-Specs.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Specs.debug.xcconfig"; path = "Target Support Files/Pods-Specs/Pods-Specs.debug.xcconfig"; sourceTree = "<group>"; };
 		62125ACF22BB3081005B57AE /* Typealias.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typealias.swift; sourceTree = "<group>"; };
+		62125AD722BB9269005B57AE /* Specs.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Specs.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		62125AD822BB9336005B57AE /* Combine.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Combine.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		6229E64C22B720E1002CBEC2 /* AnyCancellableSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyCancellableSpec.swift; sourceTree = "<group>"; };
 		6229E65322B72319002CBEC2 /* CustomObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomObject.swift; sourceTree = "<group>"; };
 		6229E65622B72969002CBEC2 /* AnySubscriberSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnySubscriberSpec.swift; sourceTree = "<group>"; };
@@ -223,6 +225,8 @@
 		66312FA122B665620081D8F1 = {
 			isa = PBXGroup;
 			children = (
+				62125AD822BB9336005B57AE /* Combine.playground */,
+				62125AD722BB9269005B57AE /* Specs.playground */,
 				66312FD622B66AC70081D8F1 /* CombineX.xcodeproj */,
 				66312FAC22B665620081D8F1 /* Specs */,
 				66312FC322B665630081D8F1 /* SpecsTests */,
