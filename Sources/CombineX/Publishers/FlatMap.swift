@@ -68,7 +68,13 @@ extension Publishers.FlatMap {
         
         // for downstream
         let downstreamState = Atomic<SubscriptionState>(value: .waiting)
-        var buffer = CircularBuffer<P.Output>()
+        
+        // for self
+        enum State: Int {
+            case free
+            case busy
+        }
+        let state = Atomic<State>(value: .free)
         
         typealias Pub = Publishers.FlatMap<P, Upstream>
         typealias Sub = S
@@ -85,184 +91,219 @@ extension Publishers.FlatMap {
             self.maxPublishers = pub.maxPublishers
         }
         
-        func drain() {
-            if let demand = self.downstreamState.demand {
-                switch demand {
-                case .unlimited:
-                    self.fastPath()
-                case .max:
-                    self.slowPath(demand)
-                }
-            }
+        func drain(_ demand: Subscribers.Demand? = nil ) {
+            Global.RequiresImplementation()
+//            if let demand = (demand ?? self.downstreamState.demand) {
+//                switch demand {
+//                case .unlimited:
+//                    self.fastPath()
+//                case .max:
+//                    self.slowPath(demand)
+//                }
+//            }
         }
         
         func fastPath() {
-            var buffer = self.downstreamState.withLockVoid { () -> CircularBuffer<P.Output> in
-                let copy = self.buffer
-                self.buffer = CircularBuffer<P.Output>()
-                return copy
-            }
-
-            while let next = buffer.popFirst() {
-                guard self.downstreamState.isSubscribing else {
-                    return
-                }
-                _ = self.sub?.receive(next)
-            }
-            
-            let upstreamDone = self.upstreamState.withLock {
-                $0.isFinished && self.children.isEmpty
-            }
-            
-            if upstreamDone {
-                guard self.downstreamState.isSubscribing else {
-                    return
-                }
-                self.sub?.receive(completion: .finished)
-                
-                self.pub = nil
-                self.sub = nil
-            }
+            Global.RequiresImplementation()
+//            let children = self.upstreamState.withLockVoid {
+//                self.children
+//            }
+//
+//            for child in children {
+//                if let input = child.buffer.load() {
+//                    guard self.downstreamState.isSubscribing else {
+//                        return
+//                    }
+//                    _ = self.sub?.receive(input)
+//                }
+//            }
+//
+//            let upstreamDone = self.upstreamState.withLock {
+//                $0.isFinished && self.children.isEmpty
+//            }
+//
+//            if upstreamDone {
+//                guard self.downstreamState.isSubscribing else {
+//                    return
+//                }
+//                self.sub?.receive(completion: .finished)
+//
+//                self.pub = nil
+//                self.sub = nil
+//            }
         }
         
         func slowPath(_ demand: Subscribers.Demand) {
-            guard demand < .unlimited else {
-                self.fastPath()
-                return
-            }
-            
-            let sendFinishIfDone = {
-                let done = self.upstreamState.withLock {
-                    $0.isFinished && self.children.isEmpty
-                }
-                
-                if done {
-                    self.sub?.receive(completion: .finished)
-                    
-                    self.pub = nil
-                    self.sub = nil
-                }
-            }
-
-            var totalDemand = demand
-            while totalDemand > 0 {
-                guard let element = self.downstreamState.withLockVoid({ self.buffer.popFirst() }) else {
-                    
-                    sendFinishIfDone()
-                    
-                    return
-                }
-                
-                guard self.downstreamState.isSubscribing else {
-                    return
-                }
-
-                let demand = self.sub?.receive(element) ?? .none
-                guard let currentDemand = self.downstreamState.tryAdd(demand - 1)?.after, currentDemand > 0 else {
-                    
-                    if self.buffer.isEmpty {
-                        sendFinishIfDone()
-                    }
-                    
-                    return
-                }
-                
-                totalDemand = currentDemand
-                
-                if totalDemand == .unlimited {
-                    self.fastPath()
-                    return
-                }
-            }
+            Global.RequiresImplementation()
+//            let sendFinishIfDone = {
+//                let done = self.upstreamState.withLock {
+//                    $0.isFinished && self.children.isEmpty
+//                }
+//
+//                if done {
+//                    self.sub?.receive(completion: .finished)
+//
+//                    self.pub = nil
+//                    self.sub = nil
+//                }
+//            }
+//
+//            var totalDemand = demand
+//
+//            let children = self.upstreamState.withLockVoid {
+//                self.children
+//            }
+//
+//            for child in children {
+//                if totalDemand > 0 {
+//                    if let input = child.buffer.load() {
+//
+//                        let demand = self.sub?.receive(input) ?? .none
+//
+//                        totalDemand = self.downstreamState.tryAdd(demand - 1)?.after
+//                    }
+//                }
+//            }
+//
+//            while totalDemand > 0 {
+//                guard let element = self.downstreamState.withLockVoid({ self.buffer.popFirst() }) else {
+//
+//                    sendFinishIfDone()
+//
+//                    return
+//                }
+//
+//                guard self.downstreamState.isSubscribing else {
+//                    return
+//                }
+//
+//                let demand = self.sub?.receive(element) ?? .none
+//                guard let currentDemand = self.downstreamState.tryAdd(demand - 1)?.after, currentDemand > 0 else {
+//
+//                    return
+//                }
+//
+//                totalDemand = currentDemand
+//
+//                if totalDemand == .unlimited {
+//                    self.fastPath()
+//                    return
+//                }
+//            }
         }
         
         // MARK: Subscription
         func request(_ demand: Subscribers.Demand) {
-            if self.downstreamState.compareAndStore(expected: .waiting, newVaue: .subscribing(demand)) {
-
-                switch demand {
-                case .unlimited:
-                    self.fastPath()
-                case .max(let amount):
-                    if amount > 0 {
-                        self.slowPath(demand)
-                    }
-                }
-            } else if let demands = self.downstreamState.tryAdd(demand), demands.before <= 0 {
-                self.slowPath(demands.after)
-            }
+            Global.RequiresImplementation()
+//            if self.downstreamState.compareAndStore(expected: .waiting, newVaue: .subscribing(demand)) {
+//
+//                switch demand {
+//                case .unlimited:
+//                    self.fastPath()
+//                case .max(let amount):
+//                    if amount > 0 {
+//                        self.slowPath(demand)
+//                    }
+//                }
+//            } else if let demands = self.downstreamState.tryAdd(demand), demands.before <= 0 {
+//                self.drain(demands.after)
+//            }
         }
         
         func cancel() {
-            self.upstreamState.finishIfSubscribing()?.cancel()
-        
-            self.pub = nil
-            self.sub = nil
-            
-            let children = self.upstreamState.withLockVoid { () -> [ChildSubscriber] in
-                let copy = self.children
-                self.children = []
-                return copy
-            }
-            
-            for child in children {
-                child.subscription.exchange(with: nil)?.cancel()
-            }
-            
-            self.downstreamState.withLockVoid {
-                self.buffer = CircularBuffer()
-            }
+            Global.RequiresImplementation()
+//            self.upstreamState.finishIfSubscribing()?.cancel()
+//
+//            self.pub = nil
+//            self.sub = nil
+//
+//            let children = self.upstreamState.withLockVoid { () -> [ChildSubscriber] in
+//                let copy = self.children
+//                self.children = []
+//                return copy
+//            }
+//
+//            for child in children {
+//                child.subscription.exchange(with: nil)?.cancel()
+//            }
         }
         
         // MARK: ChildSubsciber
         func receive(_ input: P.Output, from child: ChildSubscriber) -> Subscribers.Demand {
-            guard self.downstreamState.isSubscribing else {
-                return .none
-            }
-            
-            self.downstreamState.withLockVoid {
-                self.buffer.append(input)
-            }
-            
-            self.drain()
-            return .max(1)
+            Global.RequiresImplementation()
+//            guard let currentDemand = self.downstreamState.demand else {
+//                return .none
+//            }
+//
+//            if currentDemand > 0 {
+//                if self.state.compareAndStore(expected: .free, newVaue: .busy) {
+//
+//                    let demand = self.sub?.receive(input) ?? .none
+//
+//                    if let current = self.downstreamState.tryAdd(demand - 1)?.after, current > 0 {
+//                        self.drain(current)
+//                    }
+//
+//                    self.state.store(.free)
+//                    return .max(1)
+//                } else {
+//
+//                }
+//            } else {
+//                _ = Atomic.ifNil(child.buffer, store: input)
+//            }
+//
+//            if self.state.compareAndStore(expected: .free, newVaue: .busy) {
+//                guard let currentDemand = self.downstreamState.demand else {
+//                    return .none
+//                }
+//                if currentDemand > 0 && child.buffer.load() == nil {
+//                    let demand = self.sub?.receive(input) ?? .none
+//                    _ = self.downstreamState.tryAdd(demand)
+//
+//                    return .max(1)
+//                } else {
+//                    child.buffer.store(input)
+//                }
+//                self.state.store(.free)
+//            } else {
+//                child.buffer.store(input)
+//            }
+//
+//            return .max(1)
         }
         
         func receive(completion: Subscribers.Completion<P.Failure>, from child: ChildSubscriber) {
-            guard self.downstreamState.isSubscribing else {
-                return
-            }
-
-            switch completion {
-            case .finished:
-                self.upstreamState.withLockVoid {
-                    self.children.removeAll(where: { $0 === child })
-                }
-                
-                self.drain()
-                self.upstreamState.subscription?.request(.max(1))
-            case .failure(let error):
-                
-                self.sub?.receive(completion: .failure(error))
-                
-                let children = self.upstreamState.withLockVoid { () -> [ChildSubscriber] in
-                    let copy = self.children
-                    self.children = []
-                    return copy
-                }
-                
-                for child in children {
-                    child.subscription.exchange(with: nil)?.cancel()
-                }
-                
-                self.downstreamState.withLockVoid {
-                    self.buffer = CircularBuffer()
-                }
-                
-                
-                self.pub = nil
-                self.sub = nil
-            }
+            Global.RequiresImplementation()
+//            guard self.downstreamState.isSubscribing else {
+//                return
+//            }
+//
+//            switch completion {
+//            case .finished:
+//                self.upstreamState.withLockVoid {
+//                    self.children.removeAll(where: { $0 === child })
+//                }
+//
+//                self.drain()
+//                self.upstreamState.subscription?.request(.max(1))
+//            case .failure(let error):
+//
+//                self.sub?.receive(completion: .failure(error))
+//
+//                let children = self.upstreamState.withLockVoid { () -> [ChildSubscriber] in
+//                    let copy = self.children
+//                    self.children = []
+//                    return copy
+//                }
+//
+//                for child in children {
+//                    child.subscription.exchange(with: nil)?.cancel()
+//                }
+//
+//                self.pub = nil
+//                self.sub = nil
+//            }
         }
         
         // MARK: Subscriber
@@ -293,33 +334,31 @@ extension Publishers.FlatMap {
         }
         
         func receive(completion: Subscribers.Completion<P.Failure>) {
-            if let subscription = self.upstreamState.finishIfSubscribing() {
-                subscription.cancel()
-                
-                switch completion {
-                case .finished:
-                    self.drain()
-                case .failure(let error):
-                    self.sub?.receive(completion: .failure(error))
-                    
-                    let children = self.upstreamState.withLockVoid { () -> [ChildSubscriber] in
-                        let copy = self.children
-                        self.children = []
-                        return copy
-                    }
-                    
-                    for child in children {
-                        child.subscription.exchange(with: nil)?.cancel()
-                    }
-                    
-                    self.downstreamState.withLockVoid {
-                        self.buffer = CircularBuffer()
-                    }
-                    
-                    self.pub = nil
-                    self.sub = nil
-                }
-            }
+            Global.RequiresImplementation()
+            
+//            if let subscription = self.upstreamState.finishIfSubscribing() {
+//                subscription.cancel()
+//
+//                switch completion {
+//                case .finished:
+//                    self.drain()
+//                case .failure(let error):
+//                    self.sub?.receive(completion: .failure(error))
+//
+//                    let children = self.upstreamState.withLockVoid { () -> [ChildSubscriber] in
+//                        let copy = self.children
+//                        self.children = []
+//                        return copy
+//                    }
+//
+//                    for child in children {
+//                        child.subscription.exchange(with: nil)?.cancel()
+//                    }
+//
+//                    self.pub = nil
+//                    self.sub = nil
+//                }
+//            }
         }
         
         // MARK: - ChildSubscriber
@@ -331,6 +370,7 @@ extension Publishers.FlatMap {
             let parent: FlatMapSubscription
             
             let subscription = Atomic<Subscription?>(value: nil)
+            let buffer = Atomic<Input?>(value: nil)
             
             init(parent: FlatMapSubscription) {
                 self.parent = parent

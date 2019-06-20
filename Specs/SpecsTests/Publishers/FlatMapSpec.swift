@@ -11,7 +11,7 @@ class FlatMapSpec: QuickSpec {
     
     override func spec() {
         
-        it("should receive sub-subscriber's value") {
+        xit("should receive sub-subscriber's value") {
             let sequence = Publishers.Sequence<[Int], Never>(sequence: [1, 2, 3])
             
             let pub = sequence
@@ -31,7 +31,7 @@ class FlatMapSpec: QuickSpec {
             expect(sub._events.count).to(equal(10))
         }
         
-        it("should receive value as demand") {
+        xit("should receive value as demand") {
             let sequence = Publishers.Sequence<[Int], Never>(sequence: [1, 2, 3, 4, 5])
             
             let pub = sequence
@@ -91,7 +91,7 @@ class FlatMapSpec: QuickSpec {
             expect(sub._events).to(equal(events))
         }
         
-        fit("should work well when concurrent flatmap") {
+        xit("should work well when concurrent flatmap") {
             let sequence = Publishers.Sequence<[Int], Never>(sequence: [1, 2, 3])
 
             let sema = DispatchSemaphore(value: 0)
