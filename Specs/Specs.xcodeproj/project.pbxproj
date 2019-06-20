@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		62125AD022BB3081005B57AE /* Typealias.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62125ACF22BB3081005B57AE /* Typealias.swift */; };
+		62125AD122BB3081005B57AE /* Typealias.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62125ACF22BB3081005B57AE /* Typealias.swift */; };
 		6229E64D22B720E1002CBEC2 /* AnyCancellableSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6229E64C22B720E1002CBEC2 /* AnyCancellableSpec.swift */; };
 		6229E64E22B720E1002CBEC2 /* AnyCancellableSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6229E64C22B720E1002CBEC2 /* AnyCancellableSpec.swift */; };
 		6229E65422B72319002CBEC2 /* CustomObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6229E65322B72319002CBEC2 /* CustomObject.swift */; };
@@ -119,6 +121,7 @@
 		1B1FB4D6EB31D6D3F7200E16 /* Pods-CombineSpecs.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CombineSpecs.debug.xcconfig"; path = "Target Support Files/Pods-CombineSpecs/Pods-CombineSpecs.debug.xcconfig"; sourceTree = "<group>"; };
 		24866D1AB0596539DB204DCB /* Pods_SpecsTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpecsTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		56797039B4CBC89F01ABD727 /* Pods-Specs.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Specs.debug.xcconfig"; path = "Target Support Files/Pods-Specs/Pods-Specs.debug.xcconfig"; sourceTree = "<group>"; };
+		62125ACF22BB3081005B57AE /* Typealias.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typealias.swift; sourceTree = "<group>"; };
 		6229E64C22B720E1002CBEC2 /* AnyCancellableSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyCancellableSpec.swift; sourceTree = "<group>"; };
 		6229E65322B72319002CBEC2 /* CustomObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomObject.swift; sourceTree = "<group>"; };
 		6229E65622B72969002CBEC2 /* AnySubscriberSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnySubscriberSpec.swift; sourceTree = "<group>"; };
@@ -315,6 +318,7 @@
 				6229E65F22B72F04002CBEC2 /* DeinitObserver.swift */,
 				62B3D8BE22B757A4001FA5FE /* CustomSubsciber.swift */,
 				62A4A4FA22B87371009AD6FE /* CustomError.swift */,
+				62125ACF22BB3081005B57AE /* Typealias.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -704,6 +708,7 @@
 				625EC8B922B8B32A006DB4D5 /* DemandSpec.swift in Sources */,
 				6229E64D22B720E1002CBEC2 /* AnyCancellableSpec.swift in Sources */,
 				6229E65A22B729F1002CBEC2 /* CustomSubscription.swift in Sources */,
+				62125AD022BB3081005B57AE /* Typealias.swift in Sources */,
 				6631302A22B691C80081D8F1 /* Extensions.swift in Sources */,
 				6229E65722B72969002CBEC2 /* AnySubscriberSpec.swift in Sources */,
 				66D3860022B9271F001B8189 /* FlatMapSpec.swift in Sources */,
@@ -742,6 +747,7 @@
 				625EC8BA22B8B32A006DB4D5 /* DemandSpec.swift in Sources */,
 				6229E64E22B720E1002CBEC2 /* AnyCancellableSpec.swift in Sources */,
 				6229E65B22B729F1002CBEC2 /* CustomSubscription.swift in Sources */,
+				62125AD122BB3081005B57AE /* Typealias.swift in Sources */,
 				6631305322B693940081D8F1 /* Extensions.swift in Sources */,
 				6229E65822B72969002CBEC2 /* AnySubscriberSpec.swift in Sources */,
 				66D3860122B9271F001B8189 /* FlatMapSpec.swift in Sources */,

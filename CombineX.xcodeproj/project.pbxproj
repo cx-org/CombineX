@@ -24,7 +24,7 @@
 		6229E66522B73500002CBEC2 /* Locking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6229E66422B73500002CBEC2 /* Locking.swift */; };
 		6615FEC922BA87A2000201AF /* Count.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6615FEC822BA87A2000201AF /* Count.swift */; };
 		6615FECB22BA892C000201AF /* Published.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6615FECA22BA892C000201AF /* Published.swift */; };
-		66D385FD22B91128001B8189 /* MapSubscriberState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D385FC22B91128001B8189 /* MapSubscriberState.swift */; };
+		66D385FD22B91128001B8189 /* RelaySubscriberState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D385FC22B91128001B8189 /* RelaySubscriberState.swift */; };
 		66D3860722B931EE001B8189 /* CircularBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D3860622B931EE001B8189 /* CircularBuffer.swift */; };
 		66D3861122BA56BE001B8189 /* PeekableIterator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D3861022BA56BE001B8189 /* PeekableIterator.swift */; };
 		OBJ_100 /* MapError.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_31 /* MapError.swift */; };
@@ -96,7 +96,7 @@
 		6229E66422B73500002CBEC2 /* Locking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Locking.swift; sourceTree = "<group>"; };
 		6615FEC822BA87A2000201AF /* Count.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Count.swift; sourceTree = "<group>"; };
 		6615FECA22BA892C000201AF /* Published.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Published.swift; sourceTree = "<group>"; };
-		66D385FC22B91128001B8189 /* MapSubscriberState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapSubscriberState.swift; sourceTree = "<group>"; };
+		66D385FC22B91128001B8189 /* RelaySubscriberState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelaySubscriberState.swift; sourceTree = "<group>"; };
 		66D3860622B931EE001B8189 /* CircularBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularBuffer.swift; sourceTree = "<group>"; };
 		66D3861022BA56BE001B8189 /* PeekableIterator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeekableIterator.swift; sourceTree = "<group>"; };
 		"CombineX::CombineX::Product" /* CombineX.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CombineX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -147,7 +147,7 @@
 		OBJ_67 /* XCTestManifests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTestManifests.swift; sourceTree = "<group>"; };
 		OBJ_71 /* Specs */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Specs; sourceTree = SOURCE_ROOT; };
 		OBJ_72 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		OBJ_74 /* combine.swift.api */ = {isa = PBXFileReference; lastKnownFileType = text; path = combine.swift.api; sourceTree = "<group>"; };
+		OBJ_74 /* combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = combine.swift; sourceTree = "<group>"; };
 		OBJ_9 /* AnyCancellable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyCancellable.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -178,7 +178,7 @@
 				OBJ_22 /* Global.swift */,
 				OBJ_23 /* SubscriptionState.swift */,
 				6229E66422B73500002CBEC2 /* Locking.swift */,
-				66D385FC22B91128001B8189 /* MapSubscriberState.swift */,
+				66D385FC22B91128001B8189 /* RelaySubscriberState.swift */,
 				66D3860622B931EE001B8189 /* CircularBuffer.swift */,
 				66D3861022BA56BE001B8189 /* PeekableIterator.swift */,
 			);
@@ -234,7 +234,7 @@
 				OBJ_68 /* Products */,
 				OBJ_71 /* Specs */,
 				OBJ_72 /* README.md */,
-				OBJ_74 /* combine.swift.api */,
+				OBJ_74 /* combine.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -470,7 +470,7 @@
 				OBJ_121 /* Demand.swift in Sources */,
 				OBJ_122 /* Subscriptions.swift in Sources */,
 				OBJ_123 /* empty.swift in Sources */,
-				66D385FD22B91128001B8189 /* MapSubscriberState.swift in Sources */,
+				66D385FD22B91128001B8189 /* RelaySubscriberState.swift in Sources */,
 				6615FEC922BA87A2000201AF /* Count.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

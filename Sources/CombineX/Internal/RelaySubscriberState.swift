@@ -1,4 +1,4 @@
-enum MapSubscriberState {
+enum RelaySubscriberState {
     
     // waiting for subscription
     case waiting
@@ -9,7 +9,7 @@ enum MapSubscriberState {
     case finished
 }
 
-extension MapSubscriberState {
+extension RelaySubscriberState {
     
     var isWaiting: Bool {
         switch self {
@@ -42,9 +42,9 @@ extension MapSubscriberState {
     }
 }
 
-extension MapSubscriberState: Equatable {
+extension RelaySubscriberState: Equatable {
     
-    static func == (lhs: MapSubscriberState, rhs: MapSubscriberState) -> Bool {
+    static func == (lhs: RelaySubscriberState, rhs: RelaySubscriberState) -> Bool {
         switch (lhs, rhs) {
         case (.waiting, .waiting):
             return true
@@ -58,7 +58,7 @@ extension MapSubscriberState: Equatable {
     }
 }
 
-extension Atomic where Value == MapSubscriberState {
+extension Atomic where Value == RelaySubscriberState {
     
     var isWaiting: Bool {
         switch self.load() {
@@ -91,7 +91,7 @@ extension Atomic where Value == MapSubscriberState {
     }
 }
 
-extension Atomic where Value == MapSubscriberState {
+extension Atomic where Value == RelaySubscriberState {
     
     func finishIfSubscribing() -> Subscription? {
         return self.withLockMutating {

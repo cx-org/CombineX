@@ -37,7 +37,7 @@ class PassthroughSubjectSpec: QuickSpec {
                 subject.send(i)
             }
             
-            expect(sub.events.count).to(equal(4))
+            expect(sub._events.count).to(equal(4))
             
             subscription?.request(.max(5))
             
@@ -45,7 +45,7 @@ class PassthroughSubjectSpec: QuickSpec {
                 subject.send(i)
             }
             
-            expect(sub.events.count).to(equal(9))
+            expect(sub._events.count).to(equal(9))
         }
         
         it("should not send value to subscriber before it request") {
@@ -63,11 +63,11 @@ class PassthroughSubjectSpec: QuickSpec {
             subject.send(1)
             subject.send(1)
             
-            XCTAssert(sub.events.isEmpty)
+            XCTAssert(sub._events.isEmpty)
             
             subject.send(completion: .finished)
             
-            let last = sub.events.last
+            let last = sub._events.last
             
             expect(last).notTo(beNil())
             expect(last!).to(equal(.completion(.finished)))
@@ -91,7 +91,7 @@ class PassthroughSubjectSpec: QuickSpec {
                 subject.send(i)
             }
             
-            expect(sub.events.count).to(equal(1))
+            expect(sub._events.count).to(equal(1))
         }
         
         it("should work well with multi subscriber") {
@@ -118,7 +118,7 @@ class PassthroughSubjectSpec: QuickSpec {
             }
             
             for (i, sub) in zip(nums, subs) {
-                expect(sub.events.count).to(equal(i))
+                expect(sub._events.count).to(equal(i))
             }
             
         }

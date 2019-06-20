@@ -63,7 +63,7 @@ extension Publishers.FlatMap {
         let lock = Lock(recursive: true)
         
         // for upstream
-        let upstreamState = Atomic<MapSubscriberState>(value: .waiting)
+        let upstreamState = Atomic<RelaySubscriberState>(value: .waiting)
         var children: [ChildSubscriber] = []
         
         // for downstream
@@ -110,9 +110,18 @@ extension Publishers.FlatMap {
                 _ = self.sub?.receive(next)
             }
             
-            if self.upstreamState.isFinished && self.upstreamState.withLockVoid({ self.children.isEmpty }) {
+            let upstreamDone = self.upstreamState.withLock {
+                $0.isFinished && self.children.isEmpty
+            }
+            
+            if upstreamDone {
+                guard self.downstreamState.isSubscribing else {
+                    return
+                }
                 self.sub?.receive(completion: .finished)
-                self.cancel()
+                
+                self.pub = nil
+                self.sub = nil
             }
         }
         
@@ -121,10 +130,26 @@ extension Publishers.FlatMap {
                 self.fastPath()
                 return
             }
+            
+            let sendFinishIfDone = {
+                let done = self.upstreamState.withLock {
+                    $0.isFinished && self.children.isEmpty
+                }
+                
+                if done {
+                    self.sub?.receive(completion: .finished)
+                    
+                    self.pub = nil
+                    self.sub = nil
+                }
+            }
 
             var totalDemand = demand
             while totalDemand > 0 {
                 guard let element = self.downstreamState.withLockVoid({ self.buffer.popFirst() }) else {
+                    
+                    sendFinishIfDone()
+                    
                     return
                 }
                 
@@ -134,6 +159,11 @@ extension Publishers.FlatMap {
 
                 let demand = self.sub?.receive(element) ?? .none
                 guard let currentDemand = self.downstreamState.tryAdd(demand - 1)?.after, currentDemand > 0 else {
+                    
+                    if self.buffer.isEmpty {
+                        sendFinishIfDone()
+                    }
+                    
                     return
                 }
                 
@@ -143,11 +173,6 @@ extension Publishers.FlatMap {
                     self.fastPath()
                     return
                 }
-            }
-            
-            if self.upstreamState.isFinished && self.upstreamState.withLockVoid({ self.children.isEmpty }) {
-                self.sub?.receive(completion: .finished)
-                self.cancel()
             }
         }
         
@@ -213,11 +238,30 @@ extension Publishers.FlatMap {
                 self.upstreamState.withLockVoid {
                     self.children.removeAll(where: { $0 === child })
                 }
+                
                 self.drain()
                 self.upstreamState.subscription?.request(.max(1))
             case .failure(let error):
+                
                 self.sub?.receive(completion: .failure(error))
-                self.cancel()
+                
+                let children = self.upstreamState.withLockVoid { () -> [ChildSubscriber] in
+                    let copy = self.children
+                    self.children = []
+                    return copy
+                }
+                
+                for child in children {
+                    child.subscription.exchange(with: nil)?.cancel()
+                }
+                
+                self.downstreamState.withLockVoid {
+                    self.buffer = CircularBuffer()
+                }
+                
+                
+                self.pub = nil
+                self.sub = nil
             }
         }
         
@@ -258,9 +302,6 @@ extension Publishers.FlatMap {
                 case .failure(let error):
                     self.sub?.receive(completion: .failure(error))
                     
-                    self.pub = nil
-                    self.sub = nil
-                    
                     let children = self.upstreamState.withLockVoid { () -> [ChildSubscriber] in
                         let copy = self.children
                         self.children = []
@@ -274,6 +315,9 @@ extension Publishers.FlatMap {
                     self.downstreamState.withLockVoid {
                         self.buffer = CircularBuffer()
                     }
+                    
+                    self.pub = nil
+                    self.sub = nil
                 }
             }
         }

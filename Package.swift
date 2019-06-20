@@ -19,7 +19,7 @@ let package = Package(
     ],
     targets: [
         .target(name: "CombineX", dependencies: []),
-        .testTarget(name: "CombineXTests", dependencies: ["CombineX", "Quick", "Nimble"], path: "./Specs/SpecsTests"),
+        .testTarget(name: "CombineXTests", dependencies: ["CombineX", "Quick", "Nimble"], path: "Specs/SpecsTests"),
     ],
     swiftLanguageVersions: [
         .v5

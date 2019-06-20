@@ -1,11 +1,14 @@
 struct PeekableIterator<Element>: IteratorProtocol {
     
-    var iterator: AnyIterator<Element>
-    var buffer: CircularBuffer<Element>
+    private var iterator: AnyIterator<Element>
+    private var buffer: CircularBuffer<Element>
+    
+    var consumedCount: Int
     
     init<I: IteratorProtocol>(_ iterator: I) where I.Element == Element {
         self.iterator = AnyIterator(iterator)
         self.buffer = CircularBuffer()
+        self.consumedCount = 0
     }
     
     mutating func peek() -> Element? {
@@ -17,9 +20,12 @@ struct PeekableIterator<Element>: IteratorProtocol {
     }
 
     mutating func next() -> Element? {
-        if let value = self.buffer.popFirst() {
-            return value
+        let value = self.buffer.popFirst() ?? self.iterator.next()
+        
+        if value != nil {
+            self.consumedCount += 1
         }
-        return self.iterator.next()
+        
+        return value
     }
 }

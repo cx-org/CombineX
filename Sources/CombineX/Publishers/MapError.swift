@@ -60,7 +60,7 @@ extension Publishers.MapError {
         typealias Pub = Publishers.MapError<Upstream, S.Failure>
         typealias Sub = S
         
-        let state = Atomic<MapSubscriberState>(value: .waiting)
+        let state = Atomic<RelaySubscriberState>(value: .waiting)
         
         var pub: Pub?
         var sub: Sub?

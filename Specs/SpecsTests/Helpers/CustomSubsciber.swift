@@ -1,3 +1,5 @@
+import Foundation
+
 #if USE_COMBINE
 import Combine
 #else
@@ -15,7 +17,17 @@ class CustomSubscriber<Input, Failure>: Subscriber where Failure : Error {
         case completion(Subscribers.Completion<Failure>)
     }
     
-    var events: [Event] = []
+    let lock = NSLock()
+    var _events: [Event] = []
+    
+    var events: [Event] {
+        self.lock.lock()
+        defer {
+            self.lock.unlock()
+        }
+        
+        return self._events
+    }
     
     init(receiveSubscription: ((Subscription) -> Void)? = nil, receiveValue: ((Input) -> Subscribers.Demand)? = nil, receiveCompletion: ((Subscribers.Completion<Failure>) -> Void)? = nil) {
         self.receiveSubscriptionBody = receiveSubscription
@@ -28,12 +40,16 @@ class CustomSubscriber<Input, Failure>: Subscriber where Failure : Error {
     }
     
     func receive(_ value: Input) -> Subscribers.Demand {
-        self.events.append(.value(value))
+        self.lock.lock()
+        self._events.append(.value(value))
+        self.lock.unlock()
         return self.receiveValueBody?(value) ?? .none
     }
     
     func receive(completion: Subscribers.Completion<Failure>) {
-        self.events.append(.completion(completion))
+        self.lock.lock()
+        self._events.append(.completion(completion))
+        self.lock.unlock()
         self.receiveCompletionBody?(completion)
     }
 }
@@ -55,6 +71,18 @@ extension CustomSubscriber.Event: Equatable where Input: Equatable, Failure: Equ
             }
         default:
             return false
+        }
+    }
+}
+
+extension CustomSubscriber.Event: CustomStringConvertible {
+    
+    var description: String {
+        switch self {
+        case .value(let i):
+            return "\(i)"
+        case .completion(let c):
+            return "\(c)"
         }
     }
 }
