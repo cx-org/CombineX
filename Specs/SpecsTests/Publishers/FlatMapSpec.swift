@@ -107,7 +107,7 @@ class FlatMapSpec: QuickSpec {
             expect(sub._events).to(equal(events))
         }
         
-        fit("should work well when concurrent flatmap") {
+        it("should work well when concurrent flatmap") {
             let sequence = Publishers.Sequence<[Int], Never>(sequence: [0, 1, 2])
 
             let subjects = [

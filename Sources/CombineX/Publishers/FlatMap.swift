@@ -114,6 +114,7 @@ extension Publishers.FlatMap {
             self.lock.lock()
             
             self.state = .finished
+            
             let children = self.children
             self.children = []
             
@@ -140,6 +141,7 @@ extension Publishers.FlatMap {
         }
         
         func receive(_ input: Input) -> Subscribers.Demand {
+            
             // Against misbehaving upstream
             guard self.upstreamState.isSubscribing else {
                 return .none
@@ -148,14 +150,19 @@ extension Publishers.FlatMap {
             guard let pub = self.pub else {
                 return .none
             }
-            
+
+            let child = ChildSubscriber(parent: self)
             
             self.lock.lock()
-            let s = ChildSubscriber(parent: self)
-            self.children.append(s)
+            if self.state.isFinished {
+                self.lock.unlock()
+                return .none
+            }
+
+            self.children.append(child)
             self.lock.unlock()
             
-            pub.transform(input).subscribe(s)
+            pub.transform(input).subscribe(child)
             return .none
         }
         
@@ -167,50 +174,46 @@ extension Publishers.FlatMap {
             subscription.cancel()
             
             self.lock.lock()
-            defer {
-                self.lock.unlock()
-            }
             
             switch completion {
             case .finished:
                 
                 if self.children.isEmpty {
-                    self.lock.lock()
-                    defer {
-                        self.lock.unlock()
-                    }
-                    
+
                     guard self.state.isSubscribing else {
+                        self.lock.unlock()
                         return
                     }
                     
                     self.state = .finished
                     self.sub?.receive(completion: .finished)
+                    self.lock.unlock()
                     
                     self.pub = nil
                     self.sub = nil
-                }
-            case .failure(let error):
-                self.lock.lock()
-                defer {
+                } else {
                     self.lock.unlock()
                 }
-                
+            case .failure(let error):
                 guard self.state.isSubscribing else {
+                    self.lock.unlock()
                     return
                 }
                 
                 self.state = .finished
                 self.sub?.receive(completion: .failure(error))
                 
-                self.pub = nil
-                self.sub = nil
-                
                 let children = self.children
                 self.children = []
+                
+                self.lock.unlock()
+                
                 children.forEach {
                     $0.subscription.exchange(with: nil)?.cancel()
                 }
+                
+                self.pub = nil
+                self.sub = nil
             }
         }
         
@@ -243,11 +246,9 @@ extension Publishers.FlatMap {
         
         func receive(completion: Subscribers.Completion<P.Failure>, from child: ChildSubscriber) {
             self.lock.lock()
-            defer {
-                self.lock.unlock()
-            }
             
             guard self.state.isSubscribing else {
+                self.lock.unlock()
                 return
             }
             
@@ -256,39 +257,45 @@ extension Publishers.FlatMap {
                 self.children.removeAll(where: { $0 === child })
                 
                 if let subscription = self.upstreamState.subscription {
+                    self.lock.unlock()
+                    
                     subscription.request(.max(1))
                 } else {
                     if self.children.isEmpty {
-                        self.lock.lock()
-                        defer {
-                            self.lock.unlock()
-                        }
-                        guard self.state.isSubscribing else {
-                            return
-                        }
                         self.state = .finished
                         self.sub?.receive(completion: .finished)
+                        let children = self.children
+                        self.children = []
+                        
+                        self.lock.unlock()
+                        
+                        children.forEach {
+                            $0.subscription.exchange(with: nil)?.cancel()
+                        }
                         
                         self.pub = nil
                         self.sub = nil
+                    } else {
+                        self.lock.unlock()
                     }
                 }
             case .failure(let error):
-                guard self.state.isSubscribing else {
-                    return
-                }
                 self.state = .finished
                 self.sub?.receive(completion: .failure(error))
 
-                self.pub = nil
-                self.sub = nil
-                
                 let children = self.children
                 self.children = []
+                
+                self.lock.unlock()
                 
                 children.forEach {
                     $0.subscription.exchange(with: nil)?.cancel()
                 }
+                
+                self.upstreamState.finishIfSubscribing()?.cancel()
+                
+                self.pub = nil
+                self.sub = nil
             }
         }
         
@@ -301,12 +308,7 @@ extension Publishers.FlatMap {
             }
         }
         
-        func fastPath() {
-            self.lock.lock()
-            defer {
-                self.lock.unlock()
-            }
-            
+        private func fastPath() {
             for child in self.children {
                 guard let input = child.buffer else {
                     continue
@@ -319,12 +321,7 @@ extension Publishers.FlatMap {
             }
         }
         
-        func slowPath(_ demand: Subscribers.Demand) {
-            self.lock.lock()
-            defer {
-                self.lock.unlock()
-            }
-            
+        private func slowPath(_ demand: Subscribers.Demand) {
             var current = demand
             
             for child in self.children {
