@@ -10,6 +10,21 @@ extension Publisher {
     }
 }
 
+extension Publishers.TryCompactMap {
+    
+    public func compactMap<T>(_ transform: @escaping (Output) throws -> T?) -> Publishers.TryCompactMap<Upstream, T> {
+        
+        let newTransform: (Upstream.Output) throws -> T? = {
+            if let output = try self.transform($0) {
+                return try transform(output)
+            }
+            return nil
+        }
+        
+        return self.upstream.tryCompactMap(newTransform)
+    }
+}
+
 extension Publishers {
     
     /// A publisher that republishes all non-`nil` results of calling an error-throwing closure with each received element.

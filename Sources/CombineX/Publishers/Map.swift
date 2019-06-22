@@ -11,6 +11,23 @@ extension Publisher {
     }
 }
 
+extension Publishers.Map {
+    
+    public func map<T>(_ transform: @escaping (Output) -> T) -> Publishers.Map<Upstream, T> {
+        let newTransform: (Upstream.Output) -> T = {
+            transform(self.transform($0))
+        }
+        return self.upstream.map(newTransform)
+    }
+    
+    public func tryMap<T>(_ transform: @escaping (Output) throws -> T) -> Publishers.TryMap<Upstream, T> {
+        let newTransform: (Upstream.Output) throws -> T = {
+            try transform(self.transform($0))
+        }
+        return self.upstream.tryMap(newTransform)
+    }
+}
+
 extension Publishers {
     
     /// A publisher that transforms all elements from the upstream publisher with a provided closure.

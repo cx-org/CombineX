@@ -9,6 +9,29 @@ extension Publisher {
     }
 }
 
+extension Publishers.CompactMap {
+    
+    public func compactMap<T>(_ transform: @escaping (Output) -> T?) -> Publishers.CompactMap<Upstream, T> {
+        let newTransform: (Upstream.Output) -> T? = {
+            if let output = self.transform($0) {
+                return transform(output)
+            }
+            return nil
+        }
+        return self.upstream.compactMap(newTransform)
+    }
+    
+    public func map<T>(_ transform: @escaping (Output) -> T) -> Publishers.CompactMap<Upstream, T> {
+        let newTransform: (Upstream.Output) -> T? = {
+            if let output = self.transform($0) {
+                return transform(output)
+            }
+            return nil
+        }
+        return self.upstream.compactMap(newTransform)
+    }
+}
+
 extension Publishers {
     
     /// A publisher that republishes all non-`nil` results of calling a closure with each received element.

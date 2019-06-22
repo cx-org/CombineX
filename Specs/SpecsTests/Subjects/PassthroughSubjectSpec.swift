@@ -1,3 +1,4 @@
+import Foundation
 import Quick
 import Nimble
 
@@ -54,7 +55,7 @@ class PassthroughSubjectSpec: QuickSpec {
             
             let sub = CustomSubscriber<Int, CustomError>(receiveSubscription: { (s) in
             }, receiveValue: { v in
-                XCTFail("Should not receive value")
+                fail("Should not receive value")
                 return .none
             }, receiveCompletion: { s in
             })
@@ -63,7 +64,7 @@ class PassthroughSubjectSpec: QuickSpec {
             subject.send(1)
             subject.send(1)
             
-            XCTAssert(sub._events.isEmpty)
+            expect(sub.events).to(beEmpty())
             
             subject.send(completion: .finished)
             

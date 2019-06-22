@@ -3284,18 +3284,6 @@ extension Publishers.Optional where Failure == Never {
     public func setFailureType<E>(to failureType: E.Type) -> Publishers.Optional<Output, E> where E : Error
 }
 
-extension Publishers.CompactMap {
-
-    public func compactMap<T>(_ transform: @escaping (Output) -> T?) -> Publishers.CompactMap<Upstream, T>
-
-    public func map<T>(_ transform: @escaping (Output) -> T) -> Publishers.CompactMap<Upstream, T>
-}
-
-extension Publishers.TryCompactMap {
-
-    public func compactMap<T>(_ transform: @escaping (Output) throws -> T?) -> Publishers.TryCompactMap<Upstream, T>
-}
-
 extension Publishers.Merge : Equatable where A : Equatable, B : Equatable {
 
     /// Returns a Boolean value that indicates whether two publishers are equivalent.
@@ -3570,13 +3558,6 @@ extension Publishers.Last : Equatable where Upstream : Equatable {
     ///   - rhs: Another last publisher to compare for equality.
     /// - Returns: `true` if the two publishers have equal upstream publishers, `false` otherwise.
     public static func == (lhs: Publishers.Last<Upstream>, rhs: Publishers.Last<Upstream>) -> Bool
-}
-
-extension Publishers.TryMap {
-
-    public func map<T>(_ transform: @escaping (Output) -> T) -> Publishers.TryMap<Upstream, T>
-
-    public func tryMap<T>(_ transform: @escaping (Output) throws -> T) -> Publishers.TryMap<Upstream, T>
 }
 
 extension Publishers.Sequence {
