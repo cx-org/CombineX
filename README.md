@@ -70,25 +70,25 @@ Since some people may not have macOS 10.15 beta installed, the recommended contr
 |`Subscriber`| done | no need |   |
 |`Subscription`| done | no need |   |
 
-
 ### Publishers
 
 | API | Status | Test | Notes |
 |:--|:--|:--|:--|
 |`Autoconnect`|   |   |   |
+|`CompactMap`| done | done |   |
+|`Count`|   |   |   |
 |`Empty`| done | done |   |
-|`FlatMap`| done | basic |   |
+|`FlatMap`| done | done |   |
 |`Just`| done | done |   |
 |`Map`| done | done |   |
 |`MapError`| done |   |   |
 |`Merge`| done |   |   |
 |`Once`| done | done |   |
-|`Publishers`| done |   |   |
+|`Publishers`| done | no need |   |
 |`Sequence`| done | done |   |
 |`SubscribeOn`|   |   |   |
+|`TryCompactMapSpec`| done | done |   |
 |`TryMap`| done |   |   |
-|`assign`| done | done |   |
-|`sink`| done | done |   |
 
 ### Schedulers
 

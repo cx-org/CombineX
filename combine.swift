@@ -401,21 +401,7 @@ extension Publisher {
     public func tryReduce<T>(_ initialResult: T, _ nextPartialResult: @escaping (T, Self.Output) throws -> T) -> Publishers.TryReduce<Self, T>
 }
 
-extension Publisher {
 
-    /// Calls a closure with each received element and publishes any returned optional that has a value.
-    ///
-    /// - Parameter transform: A closure that receives a value and returns an optional value.
-    /// - Returns: A publisher that republishes all non-`nil` results of calling the transform closure.
-    public func compactMap<T>(_ transform: @escaping (Self.Output) -> T?) -> Publishers.CompactMap<Self, T>
-
-    /// Calls an error-throwing closure with each received element and publishes any returned optional that has a value.
-    ///
-    /// If the closure throws an error, the publisher cancels the upstream and sends the thrown error to the downstream receiver as a `Failure`.
-    /// - Parameter transform: an error-throwing closure that receives a value and returns an optional value.
-    /// - Returns: A publisher that republishes all non-`nil` results of calling the transform closure.
-    public func tryCompactMap<T>(_ transform: @escaping (Self.Output) throws -> T?) -> Publishers.TryCompactMap<Self, T>
-}
 
 extension Publisher {
 
@@ -1051,32 +1037,6 @@ extension Publishers {
 }
 
 extension Publishers {
-
-    /// A publisher that republishes all elements that match a provided closure.
-    public struct Filter<Upstream> : Publisher where Upstream : Publisher {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = Upstream.Output
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Upstream.Failure
-
-        /// The publisher from which this publisher receives elements.
-        public let upstream: Upstream
-
-        /// A closure that indicates whether to republish an element.
-        public let isIncluded: (Upstream.Output) -> Bool
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input
-    }
 
     /// A publisher that republishes all elements that match a provided error-throwing closure.
     public struct TryFilter<Upstream> : Publisher where Upstream : Publisher {
@@ -2007,57 +1967,6 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, S.Failure == Publishers.TryReduce<Upstream, Output>.Failure
-    }
-}
-
-extension Publishers {
-
-    /// A publisher that republishes all non-`nil` results of calling a closure with each received element.
-    public struct CompactMap<Upstream, Output> : Publisher where Upstream : Publisher {
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Upstream.Failure
-
-        /// The publisher from which this publisher receives elements.
-        public let upstream: Upstream
-
-        /// A closure that receives values from the upstream publisher and returns optional values.
-        public let transform: (Upstream.Output) -> Output?
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, Upstream.Failure == S.Failure
-    }
-
-    /// A publisher that republishes all non-`nil` results of calling an error-throwing closure with each received element.
-    public struct TryCompactMap<Upstream, Output> : Publisher where Upstream : Publisher {
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Error
-
-        /// The publisher from which this publisher receives elements.
-        public let upstream: Upstream
-
-        /// an error-throwing closure that receives values from the upstream publisher and returns optional values.
-        ///
-        /// If this closure throws an error, the publisher fails.
-        public let transform: (Upstream.Output) throws -> Output?
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, S.Failure == Publishers.TryCompactMap<Upstream, Output>.Failure
     }
 }
 
@@ -3099,8 +3008,6 @@ extension Publishers {
 
 extension Publishers.Filter {
 
-    public func filter(_ isIncluded: @escaping (Publishers.Filter<Upstream>.Output) -> Bool) -> Publishers.Filter<Upstream>
-
     public func tryFilter(_ isIncluded: @escaping (Publishers.Filter<Upstream>.Output) throws -> Bool) -> Publishers.TryFilter<Upstream>
 }
 
@@ -3663,13 +3570,6 @@ extension Publishers.Last : Equatable where Upstream : Equatable {
     ///   - rhs: Another last publisher to compare for equality.
     /// - Returns: `true` if the two publishers have equal upstream publishers, `false` otherwise.
     public static func == (lhs: Publishers.Last<Upstream>, rhs: Publishers.Last<Upstream>) -> Bool
-}
-
-extension Publishers.Map {
-
-    public func map<T>(_ transform: @escaping (Output) -> T) -> Publishers.Map<Upstream, T>
-
-    public func tryMap<T>(_ transform: @escaping (Output) throws -> T) -> Publishers.TryMap<Upstream, T>
 }
 
 extension Publishers.TryMap {

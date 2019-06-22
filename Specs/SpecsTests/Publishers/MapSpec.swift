@@ -29,7 +29,7 @@ class MapSpec: QuickSpec {
                 pub.send(num)
             }
             
-            for (num, event) in zip(nums, sub._events) {
+            for (num, event) in zip(nums, sub.events) {
                 expect(event).to(equal(.value(num * 2)))
             }
         }

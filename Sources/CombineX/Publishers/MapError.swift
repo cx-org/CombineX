@@ -101,15 +101,15 @@ extension Publishers.MapError {
             if let subscription = self.state.finishIfSubscribing() {
                 subscription.cancel()
                 
-                guard let transform = self.pub?.transform else {
+                guard let pub = self.pub, let sub = self.sub else {
                     return
                 }
                 
                 switch completion {
                 case .finished:
-                    self.sub?.receive(completion: .finished)
+                    sub.receive(completion: .finished)
                 case .failure(let e):
-                    self.sub?.receive(completion: .failure(transform(e)))
+                    sub.receive(completion: .failure(pub.transform(e)))
                 }
                 
                 self.pub = nil

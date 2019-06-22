@@ -1,20 +1,18 @@
-import Foundation
-
 extension Publisher {
     
-    /// Transforms all elements from the upstream publisher with a provided closure.
+    /// Calls a closure with each received element and publishes any returned optional that has a value.
     ///
-    /// - Parameter transform: A closure that takes one element as its parameter and returns a new element.
-    /// - Returns: A publisher that uses the provided closure to map elements from the upstream publisher to new elements that it then publishes.
-    public func map<T>(_ transform: @escaping (Self.Output) -> T) -> Publishers.Map<Self, T> {
-        return Publishers.Map<Self, T>(upstream: self, transform: transform)
+    /// - Parameter transform: A closure that receives a value and returns an optional value.
+    /// - Returns: A publisher that republishes all non-`nil` results of calling the transform closure.
+    public func compactMap<T>(_ transform: @escaping (Self.Output) -> T?) -> Publishers.CompactMap<Self, T> {
+        return Publishers.CompactMap(upstream: self, transform: transform)
     }
 }
 
 extension Publishers {
     
-    /// A publisher that transforms all elements from the upstream publisher with a provided closure.
-    public struct Map<Upstream, Output> : Publisher where Upstream : Publisher {
+    /// A publisher that republishes all non-`nil` results of calling a closure with each received element.
+    public struct CompactMap<Upstream, Output> : Publisher where Upstream : Publisher {
         
         /// The kind of errors this publisher might publish.
         ///
@@ -24,8 +22,8 @@ extension Publishers {
         /// The publisher from which this publisher receives elements.
         public let upstream: Upstream
         
-        /// The closure that transforms elements from the upstream publisher.
-        public let transform: (Upstream.Output) -> Output
+        /// A closure that receives values from the upstream publisher and returns optional values.
+        public let transform: (Upstream.Output) -> Output?
         
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
@@ -34,15 +32,15 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, Upstream.Failure == S.Failure {
-            let subscription = MapSubscription(pub: self, sub: subscriber)
+            let subscription = CompacMapSubscription(pub: self, sub: subscriber)
             self.upstream.subscribe(subscription)
         }
     }
 }
 
-extension Publishers.Map {
+extension Publishers.CompactMap {
     
-    private final class MapSubscription<S>:
+    private final class CompacMapSubscription<S>:
         Subscription,
         Subscriber
     where
@@ -54,9 +52,9 @@ extension Publishers.Map {
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
         
-        typealias Pub = Publishers.Map<Upstream, Output>
+        typealias Pub = Publishers.CompactMap<Upstream, Output>
         typealias Sub = S
-
+        
         let state = Atomic<RelaySubscriberState>(value: .waiting)
         
         var pub: Pub?
@@ -95,7 +93,11 @@ extension Publishers.Map {
                 return .none
             }
             
-            return sub.receive(pub.transform(input))
+            if let transformed = pub.transform(input) {
+                return sub.receive(transformed)
+            } else {
+                return .max(1)
+            }
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {

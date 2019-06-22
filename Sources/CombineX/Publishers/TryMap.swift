@@ -90,16 +90,16 @@ extension Publishers.TryMap {
                 return .none
             }
             
-            guard let transform = self.pub?.transform else {
+            guard let pub = self.pub, let sub = self.sub else {
                 return .none
             }
             
             do {
-                return self.sub?.receive(try transform(input)) ?? .none
+                return sub.receive(try pub.transform(input))
             } catch {
                 if let subscription = self.state.finishIfSubscribing() {
                     subscription.cancel()
-                    self.sub?.receive(completion: .failure(error))
+                    sub.receive(completion: .failure(error))
                 }
                 return .none
             }

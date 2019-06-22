@@ -27,6 +27,9 @@
 		66D385FD22B91128001B8189 /* RelaySubscriberState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D385FC22B91128001B8189 /* RelaySubscriberState.swift */; };
 		66D3860722B931EE001B8189 /* CircularBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D3860622B931EE001B8189 /* CircularBuffer.swift */; };
 		66D3861122BA56BE001B8189 /* PeekableIterator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D3861022BA56BE001B8189 /* PeekableIterator.swift */; };
+		66F1198C22BE5E2000D744BB /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F1198B22BE5E2000D744BB /* Filter.swift */; };
+		66F1198E22BE624800D744BB /* CompactMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F1198D22BE624800D744BB /* CompactMap.swift */; };
+		66F1199722BE7A9100D744BB /* TryCompectMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F1199622BE7A9100D744BB /* TryCompectMap.swift */; };
 		OBJ_100 /* MapError.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_31 /* MapError.swift */; };
 		OBJ_101 /* Merge+.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_32 /* Merge+.swift */; };
 		OBJ_102 /* Merge.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_33 /* Merge.swift */; };
@@ -99,6 +102,9 @@
 		66D385FC22B91128001B8189 /* RelaySubscriberState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelaySubscriberState.swift; sourceTree = "<group>"; };
 		66D3860622B931EE001B8189 /* CircularBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularBuffer.swift; sourceTree = "<group>"; };
 		66D3861022BA56BE001B8189 /* PeekableIterator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeekableIterator.swift; sourceTree = "<group>"; };
+		66F1198B22BE5E2000D744BB /* Filter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
+		66F1198D22BE624800D744BB /* CompactMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompactMap.swift; sourceTree = "<group>"; };
+		66F1199622BE7A9100D744BB /* TryCompectMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TryCompectMap.swift; sourceTree = "<group>"; };
 		"CombineX::CombineX::Product" /* CombineX.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CombineX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		"CombineX::CombineXTests::Product" /* CombineXTests.xctest */ = {isa = PBXFileReference; lastKnownFileType = file; path = CombineXTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_10 /* AnyPublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyPublisher.swift; sourceTree = "<group>"; };
@@ -188,22 +194,25 @@
 		OBJ_25 /* Publishers */ = {
 			isa = PBXGroup;
 			children = (
+				OBJ_39 /* assign.swift */,
 				OBJ_26 /* Autoconnect.swift */,
+				66F1198D22BE624800D744BB /* CompactMap.swift */,
+				6615FEC822BA87A2000201AF /* Count.swift */,
 				OBJ_27 /* Empty.swift */,
+				66F1198B22BE5E2000D744BB /* Filter.swift */,
 				OBJ_28 /* FlatMap.swift */,
 				OBJ_29 /* Just.swift */,
 				OBJ_30 /* Map.swift */,
 				OBJ_31 /* MapError.swift */,
-				OBJ_32 /* Merge+.swift */,
 				OBJ_33 /* Merge.swift */,
+				OBJ_32 /* Merge+.swift */,
 				OBJ_34 /* Once.swift */,
 				OBJ_35 /* Publishers.swift */,
 				OBJ_36 /* Sequence.swift */,
+				OBJ_40 /* sink.swift */,
 				OBJ_37 /* SubscribeOn.swift */,
 				OBJ_38 /* TryMap.swift */,
-				OBJ_39 /* assign.swift */,
-				OBJ_40 /* sink.swift */,
-				6615FEC822BA87A2000201AF /* Count.swift */,
+				66F1199622BE7A9100D744BB /* TryCompectMap.swift */,
 			);
 			path = Publishers;
 			sourceTree = "<group>";
@@ -424,6 +433,7 @@
 			buildActionMask = 0;
 			files = (
 				OBJ_80 /* AnyCancellable.swift in Sources */,
+				66F1198C22BE5E2000D744BB /* Filter.swift in Sources */,
 				OBJ_81 /* AnyPublisher.swift in Sources */,
 				OBJ_82 /* AnySubject.swift in Sources */,
 				OBJ_83 /* AnySubscriber.swift in Sources */,
@@ -441,6 +451,7 @@
 				OBJ_96 /* Empty.swift in Sources */,
 				6229E66522B73500002CBEC2 /* Locking.swift in Sources */,
 				OBJ_97 /* FlatMap.swift in Sources */,
+				66F1198E22BE624800D744BB /* CompactMap.swift in Sources */,
 				OBJ_98 /* Just.swift in Sources */,
 				66D3861122BA56BE001B8189 /* PeekableIterator.swift in Sources */,
 				OBJ_99 /* Map.swift in Sources */,
@@ -451,6 +462,7 @@
 				OBJ_104 /* Publishers.swift in Sources */,
 				OBJ_105 /* Sequence.swift in Sources */,
 				OBJ_106 /* SubscribeOn.swift in Sources */,
+				66F1199722BE7A9100D744BB /* TryCompectMap.swift in Sources */,
 				OBJ_107 /* TryMap.swift in Sources */,
 				OBJ_108 /* assign.swift in Sources */,
 				OBJ_109 /* sink.swift in Sources */,

@@ -8,6 +8,7 @@ QCKMain([
     AnySubscriberSpec.self,
     AssignSpec.self,
     CombineIdentifierSpec.self,
+    CompactMapSpec.self,
     CurrentValueSubjectSpec.self,
     DemandSpec.self,
     EmptySpec.self,
