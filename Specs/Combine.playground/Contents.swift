@@ -43,30 +43,21 @@ pub.subscribe(sub)
 
 subscription?.request(.max(1))
 
+subjects[0].send(0)
+subjects[1].send(1)
+subjects[2].send(2)
+
 //subjects[0].send(1)
 //subjects[0].send(2)
 //subjects[0].send(3)
 
-//subscription?.request(.max(1))
+subscription?.request(.max(1))
+subscription?.request(.max(1))
+subscription?.request(.max(1))
 
 print("send more")
 
-DispatchQueue.global().async {
-    print("send 1", Date())
-    subjects[0].send(1)
-    print("send 1 end", Date())
-}
-DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) {
-    
-    for i in 0..<1000 {
-        subjects[1].send(i)
-    }
-}
 
-DispatchQueue.global().asyncAfter(deadline: .now() + 2) {
-    print("request more")
-    subscription?.request(.unlimited)
-}
 
 //DispatchQueue.global().async {
 //    print("send 3", Date())

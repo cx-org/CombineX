@@ -5,9 +5,9 @@ final class Atomic<Value> {
     private let lock: Lock
     private var value: Value
     
-    init(value: Value) {
+    init(value: Value, recursive: Bool = false) {
         self.value = value
-        self.lock = Lock()
+        self.lock = Lock(recursive: recursive)
     }
     
     func load() -> Value {

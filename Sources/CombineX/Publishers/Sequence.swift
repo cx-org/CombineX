@@ -53,17 +53,20 @@ extension Publishers.Sequence {
         
         func request(_ demand: Subscribers.Demand) {
             if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(demand)) {
-                
-                switch demand {
-                case .unlimited:
-                    self.fastPath()
-                case .max(let amount):
-                    if amount > 0 {
-                        self.slowPath(demand)
-                    }
-                }
+                self.drain(demand)
             } else if let demand = self.state.tryAdd(demand), demand.before <= 0 {
-                self.slowPath(demand.after)
+                self.drain(demand.after)
+            }
+        }
+        
+        private func drain(_ demand: Subscribers.Demand) {
+            switch demand {
+            case .unlimited:
+                self.fastPath()
+            case .max(let amount):
+                if amount > 0 {
+                    self.slowPath(demand)
+                }
             }
         }
         

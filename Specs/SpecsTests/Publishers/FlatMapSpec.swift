@@ -11,7 +11,7 @@ class FlatMapSpec: QuickSpec {
     
     override func spec() {
         
-        xit("should receive sub-subscriber's value") {
+        it("should receive sub-subscriber's value") {
             let sequence = Publishers.Sequence<[Int], Never>(sequence: [1, 2, 3])
             
             let pub = sequence
@@ -31,7 +31,7 @@ class FlatMapSpec: QuickSpec {
             expect(sub._events.count).to(equal(10))
         }
         
-        xit("should receive value as demand") {
+        it("should receive value as demand") {
             let sequence = Publishers.Sequence<[Int], Never>(sequence: [1, 2, 3, 4, 5])
             
             let pub = sequence
@@ -62,16 +62,18 @@ class FlatMapSpec: QuickSpec {
             expect(sub._events.count).to(equal(received.max))
         }
         
-        // MARK: Combine's behavior is strange.
-        xit("should complete when a sub-publisher send an error") {
-            let sequence = Publishers.Sequence<[Int], CustomError>(sequence: [1, 2, 3, 4, 5])
+        it("should complete when a sub-publisher send an error") {
+            let sequence = Publishers.Sequence<[Int], CustomError>(sequence: [0, 1, 2])
+            
+            let subjects = [
+                PassthroughSubject<Int, CustomError>(),
+                PassthroughSubject<Int, CustomError>(),
+                PassthroughSubject<Int, CustomError>(),
+            ]
             
             let pub = sequence
-                .flatMap { i -> AnyPublisher<Int, CustomError> in
-                    if i == 4 {
-                        return Publishers.Once<Int, CustomError>(.failure(CustomError.e1)).eraseToAnyPublisher()
-                    }
-                    return Publishers.Sequence<[Int], CustomError>(sequence: [i, i, i]).eraseToAnyPublisher()
+                .flatMap {
+                    return subjects[$0]
                 }
             
             let sub = CustomSubscriber<Int, CustomError>(receiveSubscription: { s in
@@ -83,60 +85,62 @@ class FlatMapSpec: QuickSpec {
             
             pub.subscribe(sub)
             
+            3.times {
+                subjects[0].send(0)
+                subjects[1].send(1)
+                subjects[2].send(2)
+            }
+            
+            subjects[1].send(completion: .failure(.e1))
+            
+            3.times {
+                subjects[0].send(0)
+                subjects[1].send(1)
+                subjects[2].send(2)
+            }
+            
             expect(sub._events.count).to(equal(10))
 
-            var events = [1, 2, 3].flatMap { [$0, $0, $0] }.map { CustomSubscriber<Int, CustomError>.Event.value($0) }
+            var events = [0, 1, 2].flatMap { _ in [0, 1, 2] }.map { CustomSubscriber<Int, CustomError>.Event.value($0) }
             events.append(CustomSubscriber<Int, CustomError>.Event.completion(.failure(.e1)))
 
             expect(sub._events).to(equal(events))
         }
         
-        xit("should work well when concurrent flatmap") {
-            let sequence = Publishers.Sequence<[Int], Never>(sequence: [1, 2, 3])
+        fit("should work well when concurrent flatmap") {
+            let sequence = Publishers.Sequence<[Int], Never>(sequence: [0, 1, 2])
 
-            let sema = DispatchSemaphore(value: 0)
+            let subjects = [
+                PassthroughSubject<Int, Never>(),
+                PassthroughSubject<Int, Never>(),
+                PassthroughSubject<Int, Never>(),
+            ]
             
             let pub = sequence.flatMap { (i) -> PassthroughSubject<Int, Never> in
-                let subject = PassthroughSubject<Int, Never>()
-            
-                let g = DispatchGroup()
-                for _ in 0..<3 {
-                    g.enter()
-                    DispatchQueue.global().async {
-                        subject.send(i)
-                        g.leave()
-                    }
-                }
-                
-                g.notify(queue: .global()) {
-                    subject.send(completion: .finished)
-                }
-                
-                return subject
+                return subjects[i]
             }
             
-            pub.sink(receiveCompletion: { (c) in
-                print("receive c", c)
-                sema.signal()
+            let sub = CustomSubscriber<Int, Never>(receiveSubscription: { s in
+                s.request(.max(10))
             }, receiveValue: { v in
                 print("receive v", v)
+                return .none
+            }, receiveCompletion: { c in
             })
-            
-//            let sub = CustomSubscriber<Int, Never>(receiveSubscription: { s in
-//                s.request(.max(1))
-//            }, receiveValue: { v in
-//                print("receive value", v)
-//                return .max(1)
-//            }, receiveCompletion: { c in
-//                print("receive completion", c)
-//                sema.signal()
-//            })
-//
-//            pub.subscribe(sub)
 
-            sema.wait()
+            pub.subscribe(sub)
             
-//            print(sub.events)
+            let g = DispatchGroup()
+            
+            20.times { i in
+                DispatchQueue.global().async(group: g) {
+                    subjects.randomElement()!.send(i)
+                }
+            }
+            
+            g.wait()
+            
+            expect(sub.events.count).to(equal(10))
         }
     }
 }
