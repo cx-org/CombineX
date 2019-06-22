@@ -30,6 +30,7 @@
 		66F1198C22BE5E2000D744BB /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F1198B22BE5E2000D744BB /* Filter.swift */; };
 		66F1198E22BE624800D744BB /* CompactMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F1198D22BE624800D744BB /* CompactMap.swift */; };
 		66F1199722BE7A9100D744BB /* TryCompectMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F1199622BE7A9100D744BB /* TryCompectMap.swift */; };
+		66F1199C22BE846600D744BB /* Coding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F1199B22BE846600D744BB /* Coding.swift */; };
 		OBJ_100 /* MapError.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_31 /* MapError.swift */; };
 		OBJ_101 /* Merge+.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_32 /* Merge+.swift */; };
 		OBJ_102 /* Merge.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_33 /* Merge.swift */; };
@@ -105,6 +106,7 @@
 		66F1198B22BE5E2000D744BB /* Filter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		66F1198D22BE624800D744BB /* CompactMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompactMap.swift; sourceTree = "<group>"; };
 		66F1199622BE7A9100D744BB /* TryCompectMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TryCompectMap.swift; sourceTree = "<group>"; };
+		66F1199B22BE846600D744BB /* Coding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coding.swift; sourceTree = "<group>"; };
 		"CombineX::CombineX::Product" /* CombineX.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CombineX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		"CombineX::CombineXTests::Product" /* CombineXTests.xctest */ = {isa = PBXFileReference; lastKnownFileType = file; path = CombineXTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_10 /* AnyPublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyPublisher.swift; sourceTree = "<group>"; };
@@ -326,6 +328,7 @@
 				OBJ_50 /* Subscribers */,
 				OBJ_55 /* Subscriptions */,
 				6615FECA22BA892C000201AF /* Published.swift */,
+				66F1199B22BE846600D744BB /* Coding.swift */,
 			);
 			name = CombineX;
 			path = Sources/CombineX;
@@ -438,6 +441,7 @@
 				OBJ_82 /* AnySubject.swift in Sources */,
 				OBJ_83 /* AnySubscriber.swift in Sources */,
 				OBJ_84 /* Cancellable.swift in Sources */,
+				66F1199C22BE846600D744BB /* Coding.swift in Sources */,
 				OBJ_85 /* CombineIdentifier.swift in Sources */,
 				OBJ_86 /* Completion.swift in Sources */,
 				OBJ_87 /* ConnectablePublisher.swift in Sources */,
