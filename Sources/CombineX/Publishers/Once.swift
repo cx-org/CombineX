@@ -42,7 +42,7 @@ extension Publishers {
         public func receive<S>(subscriber: S)
         where S : Subscriber, S.Input == Output, S.Failure == Failure
         {
-            let subscription = OnceSubscriptions(once: self.result, sub: subscriber)
+            let subscription = Inner(once: self.result, sub: subscriber)
             subscriber.receive(subscription: subscription)
         }
     }
@@ -50,8 +50,10 @@ extension Publishers {
 
 extension Publishers.Once {
     
-    private final class OnceSubscriptions<S>:
-        Subscription
+    private final class Inner<S>:
+        Subscription,
+        CustomStringConvertible,
+        CustomDebugStringConvertible
     where
         S : Subscriber,
         S.Input == Output,
@@ -91,6 +93,14 @@ extension Publishers.Once {
         func cancel() {
             self.state.store(.finished)
             self.sub = nil
+        }
+        
+        var description: String {
+            return "Once"
+        }
+        
+        var debugDescription: String {
+            return "Once"
         }
     }
 }

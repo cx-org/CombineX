@@ -25,7 +25,7 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Failure == S.Failure, S : Subscriber, Elements.Element == S.Input {
-            let subscription = SequenceSubscription(sequence: self.sequence, sub: subscriber)
+            let subscription = Inner(sequence: self.sequence, sub: subscriber)
             subscriber.receive(subscription: subscription)
         }
     }
@@ -33,8 +33,10 @@ extension Publishers {
 
 extension Publishers.Sequence {
     
-    private final class SequenceSubscription<S>:
-        Subscription
+    private final class Inner<S>:
+        Subscription,
+        CustomStringConvertible,
+        CustomDebugStringConvertible
     where
         S : Subscriber,
         S.Input == Output,
@@ -126,6 +128,14 @@ extension Publishers.Sequence {
         func cancel() {
             self.state.store(.finished)
             self.sub = nil
+        }
+        
+        var description: String {
+            return "Sequence"
+        }
+        
+        var debugDescription: String {
+            return "Sequence"
         }
     }
 }

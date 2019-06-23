@@ -55,7 +55,7 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
-            let subscription = PrintSubscription(pub: self, sub: subscriber)
+            let subscription = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(subscription)
         }
     }
@@ -63,9 +63,11 @@ extension Publishers {
 
 extension Publishers.Print {
     
-    private final class PrintSubscription<S>:
+    private final class Inner<S>:
         Subscription,
-        Subscriber
+        Subscriber,
+        CustomStringConvertible,
+        CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
@@ -116,7 +118,7 @@ extension Publishers.Print {
             self.state.finishIfSubscribing()?.cancel()
             
             self.pub = nil
-            self.sub = nil
+//            self.sub = nil
         }
         
         func receive(subscription: Subscription) {
@@ -156,8 +158,17 @@ extension Publishers.Print {
                 }
                 
                 self.sub?.receive(completion: completion)
-                self.sub = nil
+                self.pub = nil
+//                self.sub = nil
             }
+        }
+        
+        var description: String {
+            return "Print"
+        }
+        
+        var debugDescription: String {
+            return "Print"
         }
     }
 }

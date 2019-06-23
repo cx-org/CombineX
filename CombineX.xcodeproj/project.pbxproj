@@ -41,8 +41,6 @@
 		OBJ_105 /* Sequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_36 /* Sequence.swift */; };
 		OBJ_106 /* SubscribeOn.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_37 /* SubscribeOn.swift */; };
 		OBJ_107 /* TryMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_38 /* TryMap.swift */; };
-		OBJ_108 /* assign.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_39 /* assign.swift */; };
-		OBJ_109 /* sink.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_40 /* sink.swift */; };
 		OBJ_110 /* Scheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_41 /* Scheduler.swift */; };
 		OBJ_111 /* SchedulerTimeIntervalConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_42 /* SchedulerTimeIntervalConvertible.swift */; };
 		OBJ_112 /* ImmediateScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_44 /* ImmediateScheduler.swift */; };
@@ -139,8 +137,6 @@
 		OBJ_36 /* Sequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sequence.swift; sourceTree = "<group>"; };
 		OBJ_37 /* SubscribeOn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscribeOn.swift; sourceTree = "<group>"; };
 		OBJ_38 /* TryMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TryMap.swift; sourceTree = "<group>"; };
-		OBJ_39 /* assign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = assign.swift; sourceTree = "<group>"; };
-		OBJ_40 /* sink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sink.swift; sourceTree = "<group>"; };
 		OBJ_41 /* Scheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scheduler.swift; sourceTree = "<group>"; };
 		OBJ_42 /* SchedulerTimeIntervalConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchedulerTimeIntervalConvertible.swift; sourceTree = "<group>"; };
 		OBJ_44 /* ImmediateScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmediateScheduler.swift; sourceTree = "<group>"; };
@@ -200,7 +196,6 @@
 		OBJ_25 /* Publishers */ = {
 			isa = PBXGroup;
 			children = (
-				OBJ_39 /* assign.swift */,
 				OBJ_26 /* Autoconnect.swift */,
 				66F1198D22BE624800D744BB /* CompactMap.swift */,
 				6615FEC822BA87A2000201AF /* Count.swift */,
@@ -216,7 +211,6 @@
 				66CAF61E22BF38A400E8FAAC /* Print.swift */,
 				OBJ_35 /* Publishers.swift */,
 				OBJ_36 /* Sequence.swift */,
-				OBJ_40 /* sink.swift */,
 				OBJ_37 /* SubscribeOn.swift */,
 				66F1199622BE7A9100D744BB /* TryCompectMap.swift */,
 				66CAF61C22BF357100E8FAAC /* TryFilter.swift */,
@@ -476,8 +470,6 @@
 				66CAF61D22BF357100E8FAAC /* TryFilter.swift in Sources */,
 				66F1199722BE7A9100D744BB /* TryCompectMap.swift in Sources */,
 				OBJ_107 /* TryMap.swift in Sources */,
-				OBJ_108 /* assign.swift in Sources */,
-				OBJ_109 /* sink.swift in Sources */,
 				66D3860722B931EE001B8189 /* CircularBuffer.swift in Sources */,
 				OBJ_110 /* Scheduler.swift in Sources */,
 				OBJ_111 /* SchedulerTimeIntervalConvertible.swift in Sources */,

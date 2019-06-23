@@ -47,7 +47,9 @@ extension Publishers.MapError {
     
     private final class MapErrorSubscription<S>:
         Subscription,
-        Subscriber
+        Subscriber,
+        CustomStringConvertible,
+        CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
@@ -115,6 +117,14 @@ extension Publishers.MapError {
                 self.pub = nil
                 self.sub = nil
             }
+        }
+        
+        var description: String {
+            return "MapError"
+        }
+        
+        var debugDescription: String {
+            return "MapError"
         }
     }
 }

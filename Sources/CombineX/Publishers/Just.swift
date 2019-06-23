@@ -34,7 +34,7 @@ extension Publishers {
         public func receive<S>(subscriber: S)
         where S : Subscriber, S.Input == Output, S.Failure == Never
         {
-            let subscription = JustSubscription(just: self.output, sub: subscriber)
+            let subscription = Inner(just: self.output, sub: subscriber)
             subscriber.receive(subscription: subscription)
         }
     }
@@ -42,8 +42,10 @@ extension Publishers {
 
 extension Publishers.Just {
 
-    private final class JustSubscription<S>:
-        Subscription
+    private final class Inner<S>:
+        Subscription,
+        CustomStringConvertible,
+        CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
@@ -76,6 +78,14 @@ extension Publishers.Just {
         func cancel() {
             self.state.store(.finished)
             self.sub = nil
+        }
+        
+        var description: String {
+            return "Just"
+        }
+        
+        var debugDescription: String {
+            return "Just"
         }
     }
 }

@@ -34,24 +34,23 @@ class MapSpec: QuickSpec {
             }
         }
         
-        it("should free pub and sub when cancel") {
+        it("should release pub and sub when cancel") {
             
-            weak var pubObj: AnyObject?
+            weak var originalPubObj: AnyObject?
             weak var closureObj: CustomObject?
             weak var subObj: AnyObject?
             
             var subscription: Subscription?
             
             do {
-                let pObj = CustomObject()
-                closureObj = pObj
-                
                 let subject = PassthroughSubject<Int, Never>()
-                pubObj = subject
+                originalPubObj = subject
+                
+                let obj = CustomObject()
+                closureObj = obj
                 
                 let pub = subject.map { (v) -> Int in
-                    
-                    pObj.fn()
+                    obj.fn()
                     return v
                 }
                 
@@ -63,41 +62,41 @@ class MapSpec: QuickSpec {
                 }, receiveCompletion: { s in
                     
                 })
-                
                 subObj = sub
+                
                 pub.subscribe(sub)
             }
             
-            expect(pubObj).toNot(beNil())
+            expect(originalPubObj).toNot(beNil())
             expect(closureObj).toNot(beNil())
             expect(subObj).toNot(beNil())
             
             subscription?.cancel()
             
-            expect(pubObj).to(beNil())
+            expect(originalPubObj).to(beNil())
             expect(closureObj).to(beNil())
             expect(subObj).to(beNil())
         }
         
         it("should release pub and sub when finished") {
             
-            let subject = PassthroughSubject<Int, Never>()
-            
-            var subscription: Subscription?
-            
+            weak var originalPubObj: PassthroughSubject<Int, Never>?
             weak var closureObj: CustomObject?
             weak var subObj: AnyObject?
             
+            var subscription: Subscription?
+            
             do {
-                let pObj = CustomObject()
-                closureObj = pObj
+                let subject = PassthroughSubject<Int, Never>()
+                originalPubObj = subject
+                
+                let obj = CustomObject()
+                closureObj = obj
                 
                 let pub = subject.map { (v) -> Int in
-                    
-                    pObj.fn()
+                    obj.fn()
                     return v
                 }
-                
                 let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
                     subscription = s
                     s.request(.max(1))
@@ -106,16 +105,18 @@ class MapSpec: QuickSpec {
                 }, receiveCompletion: { s in
                     
                 })
-                
                 subObj = sub
+                
                 pub.subscribe(sub)
             }
             
+            expect(originalPubObj).toNot(beNil())
             expect(closureObj).toNot(beNil())
             expect(subObj).toNot(beNil())
             
-            subject.send(completion: .finished)
+            originalPubObj?.send(completion: .finished)
             
+            expect(originalPubObj).to(beNil())
             expect(closureObj).to(beNil())
             expect(subObj).to(beNil())
             

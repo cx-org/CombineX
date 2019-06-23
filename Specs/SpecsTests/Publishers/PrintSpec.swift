@@ -84,5 +84,101 @@ class PrintSpec: QuickSpec {
             
             subscription?.cancel()
         }
+        
+        it("should release pub and sub when finished") {
+            
+            class Stream: TextOutputStream {
+                func write(_ string: String) {
+                    print(string, terminator: "")
+                }
+            }
+            
+            weak var pubObj: PassthroughSubject<Int, Never>?
+            weak var streamObj: AnyObject?
+            weak var subObj: AnyObject?
+            
+            var subscription: Subscription?
+            
+            do {
+                let subject = PassthroughSubject<Int, Never>()
+                pubObj = subject
+                
+                let stream = Stream()
+                streamObj = stream
+                
+                let pub = subject.print("😈", to: stream)
+                let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
+                    subscription = s
+                    s.request(.max(1))
+                }, receiveValue: { v in
+                    return .none
+                }, receiveCompletion: { s in
+                })
+                subObj = sub
+                
+                pub.subscribe(sub)
+            }
+            
+            expect(pubObj).toNot(beNil())
+            expect(streamObj).toNot(beNil())
+            expect(subObj).toNot(beNil())
+            
+            pubObj?.send(completion: .finished)
+            
+            expect(pubObj).to(beNil())
+
+            expect(streamObj).toNot(beNil())
+            expect(subObj).toNot(beNil())
+            
+            _ = subscription
+        }
+        
+        fit("should release pub and sub when cancel") {
+            
+            class Stream: TextOutputStream {
+                func write(_ string: String) {
+                    print(string, terminator: "")
+                }
+            }
+            
+            weak var pubObj: PassthroughSubject<Int, Never>?
+            weak var streamObj: AnyObject?
+            weak var subObj: AnyObject?
+            
+            var subscription: Subscription?
+            
+            do {
+                let subject = PassthroughSubject<Int, Never>()
+                pubObj = subject
+                
+                let stream = Stream()
+                streamObj = stream
+                
+                let pub = subject.print("😈", to: stream)
+                let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
+                    subscription = s
+                    s.request(.max(1))
+                }, receiveValue: { v in
+                    return .none
+                }, receiveCompletion: { s in
+                })
+                subObj = sub
+                
+                pub.subscribe(sub)
+            }
+            
+            expect(pubObj).toNot(beNil())
+            expect(streamObj).toNot(beNil())
+            expect(subObj).toNot(beNil())
+            
+            subscription?.cancel()
+            
+            expect(pubObj).to(beNil())
+            
+            expect(streamObj).toNot(beNil())
+            expect(subObj).toNot(beNil())
+            
+            _ = subscription
+        }
     }
 }

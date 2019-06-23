@@ -42,7 +42,7 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, P.Output == S.Input, Upstream.Failure == S.Failure {
-            let subscription = FlatMapSubscription(pub: self, sub: subscriber)
+            let subscription = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(subscription)
         }
     }
@@ -50,9 +50,11 @@ extension Publishers {
 
 extension Publishers.FlatMap {
     
-    fileprivate final class FlatMapSubscription<S>:
+    final class Inner<S>:
         Subscription,
-        Subscriber
+        Subscriber,
+        CustomStringConvertible,
+        CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == P.Output,
@@ -355,18 +357,26 @@ extension Publishers.FlatMap {
             }
         }
         
+        var description: String {
+            return "FlatMap"
+        }
+        
+        var debugDescription: String {
+            return "FlatMap"
+        }
+        
         // MARK: - ChildSubscriber
         final class ChildSubscriber: Subscriber {
             
             typealias Input = P.Output
             typealias Failure = P.Failure
             
-            let parent: FlatMapSubscription
+            let parent: Inner
             
             let subscription = Atomic<Subscription?>(value: nil)
             var buffer: P.Output?
             
-            init(parent: FlatMapSubscription) {
+            init(parent: Inner) {
                 self.parent = parent
             }
             

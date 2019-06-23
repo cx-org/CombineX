@@ -1,3 +1,18 @@
+extension Publisher {
+    
+    /// Attaches a subscriber with closure-based behavior.
+    ///
+    /// This method creates the subscriber and immediately requests an unlimited number of values, prior to returning the subscriber.
+    /// - parameter receiveValue: The closure to execute on receipt of a value. If `nil`, the sink uses an empty closure.
+    /// - parameter receiveComplete: The closure to execute on completion. If `nil`, the sink uses an empty closure.
+    /// - Returns: A subscriber that performs the provided closures upon receiving values or completion.
+    public func sink(receiveCompletion: ((Subscribers.Completion<Self.Failure>) -> Void)? = nil, receiveValue: @escaping ((Self.Output) -> Void)) -> Subscribers.Sink<Self> {
+        let sink = Subscribers.Sink<Self>(receiveCompletion: receiveCompletion, receiveValue: receiveValue)
+        self.subscribe(sink)
+        return sink
+    }
+}
+
 extension Subscribers {
     
     /// A simple subscriber that requests an unlimited number of values upon subscription.
@@ -41,7 +56,7 @@ extension Subscribers {
         /// The conversion of `p` to a string in the assignment to `s` uses the
         /// `Point` type's `description` property.
         final public var description: String {
-            return "[Sink]"
+            return "Sink"
         }
         
         /// The custom mirror for this instance.
@@ -54,7 +69,7 @@ extension Subscribers {
         
         /// A custom playground description for this instance.
         final public var playgroundDescription: Any {
-            Global.RequiresImplementation()
+            return self.description
         }
         
         private let subscription = Atomic<Subscription?>(value: nil)

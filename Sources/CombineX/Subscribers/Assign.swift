@@ -1,3 +1,18 @@
+extension Publisher where Self.Failure == Never {
+    
+    /// Assigns the value of a KVO-compliant property from a publisher.
+    ///
+    /// - Parameters:
+    ///   - keyPath: The key path of the property to assign.
+    ///   - object: The object on which to assign the value.
+    /// - Returns: A cancellable instance; used when you end KVO-based assignment of the key path’s value.
+    public func assign<Root>(to keyPath: ReferenceWritableKeyPath<Root, Self.Output>, on object: Root) -> AnyCancellable {
+        let assign = Subscribers.Assign(object: object, keyPath: keyPath)
+        self.subscribe(assign)
+        return AnyCancellable(assign)
+    }
+}
+
 extension Subscribers {
     
     final public class Assign<Root, Input> : Subscriber, Cancellable, CustomStringConvertible, CustomReflectable, CustomPlaygroundDisplayConvertible {
@@ -35,7 +50,7 @@ extension Subscribers {
         /// The conversion of `p` to a string in the assignment to `s` uses the
         /// `Point` type's `description` property.
         final public var description: String {
-            return "[Assign]: \(self.combineIdentifier)"
+            return "Assign \(Root.self)"
         }
         
         /// The custom mirror for this instance.
@@ -48,7 +63,7 @@ extension Subscribers {
         
         /// A custom playground description for this instance.
         final public var playgroundDescription: Any {
-            Global.RequiresImplementation()
+            return self.description
         }
         
         private let subscription = Atomic<Subscription?>(value: nil)

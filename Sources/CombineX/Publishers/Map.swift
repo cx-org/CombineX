@@ -51,7 +51,7 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, Upstream.Failure == S.Failure {
-            let subscription = MapSubscription(pub: self, sub: subscriber)
+            let subscription = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(subscription)
         }
     }
@@ -59,9 +59,11 @@ extension Publishers {
 
 extension Publishers.Map {
     
-    private final class MapSubscription<S>:
+    private final class Inner<S>:
         Subscription,
-        Subscriber
+        Subscriber,
+        CustomStringConvertible,
+        CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
@@ -122,6 +124,14 @@ extension Publishers.Map {
                 self.pub = nil
                 self.sub = nil
             }
+        }
+        
+        var description: String {
+            return "Map"
+        }
+        
+        var debugDescription: String {
+            return "Map"
         }
     }
 }

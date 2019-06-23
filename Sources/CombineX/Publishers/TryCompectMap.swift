@@ -50,7 +50,7 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, S.Failure == Publishers.TryCompactMap<Upstream, Output>.Failure {
-            let subscription = TryCompactMapSubscription(pub: self, sub: subscriber)
+            let subscription = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(subscription)
         }
     }
@@ -58,9 +58,11 @@ extension Publishers {
 
 extension Publishers.TryCompactMap {
     
-    private final class TryCompactMapSubscription<S>:
+    private final class Inner<S>:
         Subscription,
-        Subscriber
+        Subscriber,
+        CustomStringConvertible,
+        CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
@@ -141,6 +143,14 @@ extension Publishers.TryCompactMap {
                 self.pub = nil
                 self.sub = nil
             }
+        }
+        
+        var description: String {
+            return "TryCompactMap"
+        }
+        
+        var debugDescription: String {
+            return "TryCompactMap"
         }
     }
 }
