@@ -1,3 +1,123 @@
+extension Publishers.Merge3 : Equatable where A : Equatable, B : Equatable, C : Equatable {
+    
+    /// Returns a Boolean value that indicates whether two publishers are equivalent.
+    ///
+    /// - Parameters:
+    ///   - lhs: A merging publisher to compare for equality.
+    ///   - rhs: Another merging publisher to compare for equality.
+    /// - Returns: `true` if the two merging publishers have equal source publishers, `false` otherwise.
+    public static func == (lhs: Publishers.Merge3<A, B, C>, rhs: Publishers.Merge3<A, B, C>) -> Bool {
+        return lhs.a == rhs.a
+            && lhs.b == rhs.b
+            && lhs.c == rhs.c
+    }
+}
+
+extension Publishers.Merge4 : Equatable where A : Equatable, B : Equatable, C : Equatable, D : Equatable {
+    
+    /// Returns a Boolean value that indicates whether two publishers are equivalent.
+    ///
+    /// - Parameters:
+    ///   - lhs: A merging publisher to compare for equality.
+    ///   - rhs: Another merging publisher to compare for equality.
+    /// - Returns: `true` if the two merging publishers have equal source publishers, `false` otherwise.
+    public static func == (lhs: Publishers.Merge4<A, B, C, D>, rhs: Publishers.Merge4<A, B, C, D>) -> Bool {
+        return lhs.a == rhs.a
+            && lhs.b == rhs.b
+            && lhs.c == rhs.c
+            && lhs.d == rhs.d
+    }
+}
+
+extension Publishers.Merge5 : Equatable where A : Equatable, B : Equatable, C : Equatable, D : Equatable, E : Equatable {
+    
+    /// Returns a Boolean value that indicates whether two publishers are equivalent.
+    ///
+    /// - Parameters:
+    ///   - lhs: A merging publisher to compare for equality.
+    ///   - rhs: Another merging publisher to compare for equality.
+    /// - Returns: `true` if the two merging publishers have equal source publishers, `false` otherwise.
+    public static func == (lhs: Publishers.Merge5<A, B, C, D, E>, rhs: Publishers.Merge5<A, B, C, D, E>) -> Bool {
+        return lhs.a == rhs.a
+            && lhs.b == rhs.b
+            && lhs.c == rhs.c
+            && lhs.d == rhs.d
+            && lhs.e == rhs.e
+    }
+}
+
+extension Publishers.Merge6 : Equatable where A : Equatable, B : Equatable, C : Equatable, D : Equatable, E : Equatable, F : Equatable {
+    
+    /// Returns a Boolean value that indicates whether two publishers are equivalent.
+    ///
+    /// - Parameters:
+    ///   - lhs: A merging publisher to compare for equality.
+    ///   - rhs: Another merging publisher to compare for equality.
+    /// - Returns: `true` if the two merging publishers have equal source publishers, `false` otherwise.
+    public static func == (lhs: Publishers.Merge6<A, B, C, D, E, F>, rhs: Publishers.Merge6<A, B, C, D, E, F>) -> Bool {
+        return lhs.a == rhs.a
+            && lhs.b == rhs.b
+            && lhs.c == rhs.c
+            && lhs.d == rhs.d
+            && lhs.e == rhs.e
+            && lhs.f == rhs.f
+    }
+}
+
+extension Publishers.Merge7 : Equatable where A : Equatable, B : Equatable, C : Equatable, D : Equatable, E : Equatable, F : Equatable, G : Equatable {
+    
+    /// Returns a Boolean value that indicates whether two publishers are equivalent.
+    ///
+    /// - Parameters:
+    ///   - lhs: A merging publisher to compare for equality.
+    ///   - rhs: Another merging publisher to compare for equality.
+    /// - Returns: `true` if the two merging publishers have equal source publishers, `false` otherwise.
+    public static func == (lhs: Publishers.Merge7<A, B, C, D, E, F, G>, rhs: Publishers.Merge7<A, B, C, D, E, F, G>) -> Bool {
+        return lhs.a == rhs.a
+            && lhs.b == rhs.b
+            && lhs.c == rhs.c
+            && lhs.d == rhs.d
+            && lhs.e == rhs.e
+            && lhs.f == rhs.f
+            && lhs.g == rhs.g
+    }
+}
+
+extension Publishers.Merge8 : Equatable where A : Equatable, B : Equatable, C : Equatable, D : Equatable, E : Equatable, F : Equatable, G : Equatable, H : Equatable {
+    
+    /// Returns a Boolean value that indicates whether two publishers are equivalent.
+    ///
+    /// - Parameters:
+    ///   - lhs: A merging publisher to compare for equality.
+    ///   - rhs: Another merging publisher to compare for equality.
+    /// - Returns: `true` if the two merging publishers have equal source publishers, `false` otherwise.
+    public static func == (lhs: Publishers.Merge8<A, B, C, D, E, F, G, H>, rhs: Publishers.Merge8<A, B, C, D, E, F, G, H>) -> Bool {
+        return lhs.a == rhs.a
+            && lhs.b == rhs.b
+            && lhs.c == rhs.c
+            && lhs.d == rhs.d
+            && lhs.e == rhs.e
+            && lhs.f == rhs.f
+            && lhs.g == rhs.g
+            && lhs.h == rhs.h
+    }
+}
+
+extension Publishers.MergeMany : Equatable where Upstream : Equatable {
+    
+    /// Returns a Boolean value indicating whether two values are equal.
+    ///
+    /// Equality is the inverse of inequality. For any values `a` and `b`,
+    /// `a == b` implies that `a != b` is `false`.
+    ///
+    /// - Parameters:
+    ///   - lhs: A value to compare.
+    ///   - rhs: Another value to compare.
+    public static func == (lhs: Publishers.MergeMany<Upstream>, rhs: Publishers.MergeMany<Upstream>) -> Bool {
+        return lhs.publishers == rhs.publishers
+    }
+}
+
 extension Publishers {
     
     /// A publisher created by applying the merge function to three upstream publishers.

@@ -1,6 +1,5 @@
 import Darwin
 
-
 extension Publisher {
 
     public func multicast<S>(_ createSubject: @escaping () -> S) -> Publishers.Multicast<Self, S> where S : Subject, Self.Failure == S.Failure, Self.Output == S.Output
@@ -36,23 +35,6 @@ extension Publisher {
     /// - Parameter predicate: A closure that takes an element as a parameter and returns a Boolean value indicating whether to drop the element from the publisher’s output.
     /// - Returns: A publisher that skips over elements until the provided closure returns `false`, and then republishes all remaining elements. If the predicate closure throws, the publisher fails with an error.
     public func tryDrop(while predicate: @escaping (Self.Output) throws -> Bool) -> Publishers.TryDropWhile<Self>
-}
-
-extension Publisher {
-
-    /// Republishes all elements that match a provided closure.
-    ///
-    /// - Parameter isIncluded: A closure that takes one element and returns a Boolean value indicating whether to republish the element.
-    /// - Returns: A publisher that republishes all elements that satisfy the closure.
-    public func filter(_ isIncluded: @escaping (Self.Output) -> Bool) -> Publishers.Filter<Self>
-
-    /// Republishes all elements that match a provided error-throwing closure.
-    ///
-    /// If the `isIncluded` closure throws an error, the publisher fails with that error.
-    ///
-    /// - Parameter isIncluded:  A closure that takes one element and returns a Boolean value indicating whether to republish the element.
-    /// - Returns:  A publisher that republishes all elements that satisfy the closure.
-    public func tryFilter(_ isIncluded: @escaping (Self.Output) throws -> Bool) -> Publishers.TryFilter<Self>
 }
 
 extension Publisher {
@@ -96,17 +78,6 @@ extension Publisher {
     /// - Parameter predicate:  A closure that evaluates each received element. Return `true` to continue, or `false` to cancel the upstream and complete. The closure may throw, in which case the publisher cancels the upstream publisher and fails with the thrown error.
     /// - Returns:  A publisher that publishes a Boolean value that indicates whether all received elements pass a given predicate.
     public func tryAllSatisfy(_ predicate: @escaping (Self.Output) throws -> Bool) -> Publishers.TryAllSatisfy<Self>
-}
-
-extension Publisher {
-
-    /// Attaches a subscriber with closure-based behavior.
-    ///
-    /// This method creates the subscriber and immediately requests an unlimited number of values, prior to returning the subscriber.
-    /// - parameter receiveValue: The closure to execute on receipt of a value. If `nil`, the sink uses an empty closure.
-    /// - parameter receiveComplete: The closure to execute on completion. If `nil`, the sink uses an empty closure.
-    /// - Returns: A subscriber that performs the provided closures upon receiving values or completion.
-    public func sink(receiveCompletion: ((Subscribers.Completion<Self.Failure>) -> Void)? = nil, receiveValue: @escaping ((Self.Output) -> Void)) -> Subscribers.Sink<Self>
 }
 
 extension Publisher where Self.Output : Equatable {
@@ -233,15 +204,6 @@ extension Publisher {
     /// - Parameter maxLength: The maximum number of elements to republish.
     /// - Returns: A publisher that publishes up to the specified number of elements before completing.
     public func prefix(_ maxLength: Int) -> Publishers.Output<Self>
-}
-
-extension Publisher {
-
-    /// Prints log messages for all publishing events.
-    ///
-    /// - Parameter prefix: A string with which to prefix all log messages. Defaults to an empty string.
-    /// - Returns: A publisher that prints log messages for all publishing events.
-    public func print(_ prefix: String = "", to stream: TextOutputStream? = nil) -> Publishers.Print<Self>
 }
 
 extension Publisher {
@@ -1038,35 +1000,6 @@ extension Publishers {
 
 extension Publishers {
 
-    /// A publisher that republishes all elements that match a provided error-throwing closure.
-    public struct TryFilter<Upstream> : Publisher where Upstream : Publisher {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = Upstream.Output
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Error
-
-        /// The publisher from which this publisher receives elements.
-        public let upstream: Upstream
-
-        /// A error-throwing closure that indicates whether to republish an element.
-        public let isIncluded: (Upstream.Output) throws -> Bool
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, S.Failure == Publishers.TryFilter<Upstream>.Failure
-    }
-}
-
-extension Publishers {
-
     /// A publisher that raises a debugger signal when a provided closure needs to stop the process in the debugger.
     ///
     /// When any of the provided closures returns `true`, this publisher raises the `SIGTRAP` signal to stop the process in the debugger.
@@ -1495,51 +1428,6 @@ extension Publishers {
     }
 }
 
-
-extension Publishers {
-
-    /// A publisher that prints log messages for all publishing events, optionally prefixed with a given string.
-    ///
-    /// This publisher prints log messages when receiving the following events:
-    /// * subscription
-    /// * value
-    /// * normal completion
-    /// * failure
-    /// * cancellation
-    public struct Print<Upstream> : Publisher where Upstream : Publisher {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = Upstream.Output
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Upstream.Failure
-
-        /// A string with which to prefix all log messages.
-        public let prefix: String
-
-        /// The publisher from which this publisher receives elements.
-        public let upstream: Upstream
-
-        public let stream: TextOutputStream?
-
-        /// Creates a publisher that prints log messages for all publishing events.
-        ///
-        /// - Parameters:
-        ///   - upstream: The publisher from which this publisher receives elements.
-        ///   - prefix: A string with which to prefix all log messages.
-        public init(upstream: Upstream, prefix: String, to stream: TextOutputStream? = nil)
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input
-    }
-}
 
 extension Publishers {
 
@@ -3006,18 +2894,6 @@ extension Publishers {
     }
 }
 
-extension Publishers.Filter {
-
-    public func tryFilter(_ isIncluded: @escaping (Publishers.Filter<Upstream>.Output) throws -> Bool) -> Publishers.TryFilter<Upstream>
-}
-
-extension Publishers.TryFilter {
-
-    public func filter(_ isIncluded: @escaping (Publishers.TryFilter<Upstream>.Output) -> Bool) -> Publishers.TryFilter<Upstream>
-
-    public func tryFilter(_ isIncluded: @escaping (Publishers.TryFilter<Upstream>.Output) throws -> Bool) -> Publishers.TryFilter<Upstream>
-}
-
 extension Publishers.Just {
 
     public func allSatisfy(_ predicate: (Output) -> Bool) -> Publishers.Just<Bool>
@@ -3282,96 +3158,6 @@ extension Publishers.Optional {
 extension Publishers.Optional where Failure == Never {
 
     public func setFailureType<E>(to failureType: E.Type) -> Publishers.Optional<Output, E> where E : Error
-}
-
-extension Publishers.Merge : Equatable where A : Equatable, B : Equatable {
-
-    /// Returns a Boolean value that indicates whether two publishers are equivalent.
-    ///
-    /// - Parameters:
-    ///   - lhs: A merging publisher to compare for equality.
-    ///   - rhs: Another merging publisher to compare for equality..
-    /// - Returns: `true` if the two merging - rhs: Another merging publisher to compare for equality.
-    public static func == (lhs: Publishers.Merge<A, B>, rhs: Publishers.Merge<A, B>) -> Bool
-}
-
-extension Publishers.Merge3 : Equatable where A : Equatable, B : Equatable, C : Equatable {
-
-    /// Returns a Boolean value that indicates whether two publishers are equivalent.
-    ///
-    /// - Parameters:
-    ///   - lhs: A merging publisher to compare for equality.
-    ///   - rhs: Another merging publisher to compare for equality.
-    /// - Returns: `true` if the two merging publishers have equal source publishers, `false` otherwise.
-    public static func == (lhs: Publishers.Merge3<A, B, C>, rhs: Publishers.Merge3<A, B, C>) -> Bool
-}
-
-extension Publishers.Merge4 : Equatable where A : Equatable, B : Equatable, C : Equatable, D : Equatable {
-
-    /// Returns a Boolean value that indicates whether two publishers are equivalent.
-    ///
-    /// - Parameters:
-    ///   - lhs: A merging publisher to compare for equality.
-    ///   - rhs: Another merging publisher to compare for equality.
-    /// - Returns: `true` if the two merging publishers have equal source publishers, `false` otherwise.
-    public static func == (lhs: Publishers.Merge4<A, B, C, D>, rhs: Publishers.Merge4<A, B, C, D>) -> Bool
-}
-
-extension Publishers.Merge5 : Equatable where A : Equatable, B : Equatable, C : Equatable, D : Equatable, E : Equatable {
-
-    /// Returns a Boolean value that indicates whether two publishers are equivalent.
-    ///
-    /// - Parameters:
-    ///   - lhs: A merging publisher to compare for equality.
-    ///   - rhs: Another merging publisher to compare for equality.
-    /// - Returns: `true` if the two merging publishers have equal source publishers, `false` otherwise.
-    public static func == (lhs: Publishers.Merge5<A, B, C, D, E>, rhs: Publishers.Merge5<A, B, C, D, E>) -> Bool
-}
-
-extension Publishers.Merge6 : Equatable where A : Equatable, B : Equatable, C : Equatable, D : Equatable, E : Equatable, F : Equatable {
-
-    /// Returns a Boolean value that indicates whether two publishers are equivalent.
-    ///
-    /// - Parameters:
-    ///   - lhs: A merging publisher to compare for equality.
-    ///   - rhs: Another merging publisher to compare for equality.
-    /// - Returns: `true` if the two merging publishers have equal source publishers, `false` otherwise.
-    public static func == (lhs: Publishers.Merge6<A, B, C, D, E, F>, rhs: Publishers.Merge6<A, B, C, D, E, F>) -> Bool
-}
-
-extension Publishers.Merge7 : Equatable where A : Equatable, B : Equatable, C : Equatable, D : Equatable, E : Equatable, F : Equatable, G : Equatable {
-
-    /// Returns a Boolean value that indicates whether two publishers are equivalent.
-    ///
-    /// - Parameters:
-    ///   - lhs: A merging publisher to compare for equality.
-    ///   - rhs: Another merging publisher to compare for equality.
-    /// - Returns: `true` if the two merging publishers have equal source publishers, `false` otherwise.
-    public static func == (lhs: Publishers.Merge7<A, B, C, D, E, F, G>, rhs: Publishers.Merge7<A, B, C, D, E, F, G>) -> Bool
-}
-
-extension Publishers.Merge8 : Equatable where A : Equatable, B : Equatable, C : Equatable, D : Equatable, E : Equatable, F : Equatable, G : Equatable, H : Equatable {
-
-    /// Returns a Boolean value that indicates whether two publishers are equivalent.
-    ///
-    /// - Parameters:
-    ///   - lhs: A merging publisher to compare for equality.
-    ///   - rhs: Another merging publisher to compare for equality.
-    /// - Returns: `true` if the two merging publishers have equal source publishers, `false` otherwise.
-    public static func == (lhs: Publishers.Merge8<A, B, C, D, E, F, G, H>, rhs: Publishers.Merge8<A, B, C, D, E, F, G, H>) -> Bool
-}
-
-extension Publishers.MergeMany : Equatable where Upstream : Equatable {
-
-    /// Returns a Boolean value indicating whether two values are equal.
-    ///
-    /// Equality is the inverse of inequality. For any values `a` and `b`,
-    /// `a == b` implies that `a != b` is `false`.
-    ///
-    /// - Parameters:
-    ///   - lhs: A value to compare.
-    ///   - rhs: Another value to compare.
-    public static func == (lhs: Publishers.MergeMany<Upstream>, rhs: Publishers.MergeMany<Upstream>) -> Bool
 }
 
 extension Publishers.Once {

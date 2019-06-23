@@ -6,7 +6,7 @@ import Foundation
 final public class PassthroughSubject<Output, Failure> : Subject where Failure : Error {
     
     private let lock = Lock()
-    private var subscriptions: [Inner] = []
+    private var subscriptions: [PassthroughSubjectSubscription] = []
     
     public init() {
     }
@@ -18,7 +18,7 @@ final public class PassthroughSubject<Output, Failure> : Subject where Failure :
     ///     - subscriber: The subscriber to attach to this `Publisher`.
     ///                   once attached it can begin to receive values.
     final public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
-        let subscription = Inner(pub: self, sub: AnySubscriber(subscriber))
+        let subscription = PassthroughSubjectSubscription(pub: self, sub: AnySubscriber(subscriber))
         self.lock.withLock {
             self.subscriptions.append(subscription)
         }
@@ -55,7 +55,7 @@ final public class PassthroughSubject<Output, Failure> : Subject where Failure :
         }
     }
     
-    private func removeSubscription(_ subscription: Inner) {
+    private func removeSubscription(_ subscription: PassthroughSubjectSubscription) {
         self.lock.withLock {
             self.subscriptions.removeAll(where: { $0 === subscription })
         }
@@ -64,7 +64,7 @@ final public class PassthroughSubject<Output, Failure> : Subject where Failure :
 
 extension PassthroughSubject {
     
-    private class Inner: Subscription {
+    private class PassthroughSubjectSubscription: Subscription, CustomStringConvertible, CustomDebugStringConvertible {
         
         typealias Pub = PassthroughSubject<Output, Failure>
         typealias Sub = AnySubscriber<Output, Failure>
@@ -90,6 +90,14 @@ extension PassthroughSubject {
             
             self.pub = nil
             self.sub = nil
+        }
+        
+        var description: String {
+            return "PassthroughSubject"
+        }
+        
+        var debugDescription: String {
+            return "PassthroughSubject"
         }
     }
 }

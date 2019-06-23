@@ -80,16 +80,19 @@ Since some people may not have macOS 10.15 beta installed, the recommended contr
 |`CompactMap`| done | done |   |
 |`Count`|   |   |   |
 |`Empty`| done | done |   |
+|`Filter`| done | done |   |
 |`FlatMap`| done | done |   |
 |`Just`| done | done |   |
 |`Map`| done | done |   |
 |`MapError`| done |   |   |
-|`Merge`| done |   |   |
+|`Merge`| done | basic |   |
 |`Once`| done | done |   |
+|`Print`| done | done |   |
 |`Publishers`| done | no need |   |
 |`Sequence`| done | done |   |
 |`SubscribeOn`|   |   |   |
 |`TryCompactMapSpec`| done | done |   |
+|`TryFilter`| done |   |   |
 |`TryMap`| done |   |   |
 
 ### Schedulers

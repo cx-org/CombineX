@@ -11,7 +11,7 @@ public struct AnyPublisher<Output, Failure> where Failure : Error {
     /// - Parameters:
     ///   - publisher: A publisher to wrap with a type-eraser.
     @inlinable public init<P>(_ publisher: P) where Output == P.Output, Failure == P.Failure, P : Publisher {
-        self.subscribeBody = publisher.receive(subscriber:)
+        self.subscribeBody = publisher.subscribe(_:)
     }
     
     /// Creates a type-erasing publisher implemented by the provided closure.

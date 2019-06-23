@@ -15,6 +15,7 @@ QCKMain([
     FlatMapSpec.self,
     JustSpec.self,
     MapSpec.self,
+    MergeSpec.self,
     OnceSpec.self,
     PassthroughSubjectSpec.self,
     SinkSpec.self,
