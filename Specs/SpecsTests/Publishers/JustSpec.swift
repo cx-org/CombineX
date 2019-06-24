@@ -92,7 +92,7 @@ class JustSpec: QuickSpec {
             expect(count).to(equal(1))
         }
         
-        #if canImport(ObjectiveC)
+        #if !SWIFT_PACKAGE
         // MARK: It should fatal error when request more demand 1
         it("should fatal error when request more demand 1") {
             let just = Publishers.Just(1)

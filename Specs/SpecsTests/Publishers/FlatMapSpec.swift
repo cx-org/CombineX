@@ -128,7 +128,6 @@ class FlatMapSpec: QuickSpec {
             let sub = CustomSubscriber<Int, Never>(receiveSubscription: { s in
                 s.request(.max(10))
             }, receiveValue: { v in
-                print("receive v", v)
                 return .none
             }, receiveCompletion: { c in
             })

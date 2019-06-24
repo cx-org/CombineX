@@ -199,10 +199,8 @@ class PassthroughSubjectSpec: QuickSpec {
             
             let pub = PassthroughSubject<Int, Never>()
             
-            let syncQ = DispatchQueue(label: UUID().uuidString)
-            
-            var enters: [CFAbsoluteTime?] = [nil, nil, nil]
-            var exits: [CFAbsoluteTime?] = [nil, nil, nil]
+            var enters: [Date?] = [nil, nil, nil]
+            var exits: [Date?] = [nil, nil, nil]
             
             let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
                 s.request(.unlimited)
@@ -216,18 +214,16 @@ class PassthroughSubjectSpec: QuickSpec {
             
             for i in 0..<3 {
                 DispatchQueue.global().async(group: g) {
-                    enters[i] = CFAbsoluteTimeGetCurrent()
+                    enters[i] = Date()
                     pub.send(i)
-                    exits[i] = CFAbsoluteTimeGetCurrent()
+                    exits[i] = Date()
                 }
             }
             
             g.wait()
             
-            syncQ.sync {
-                print(enters)
-                print(exits)
-            }
+//            print(enters)
+//            print(exits)
         }
     }
 }

@@ -136,7 +136,7 @@ class PrintSpec: QuickSpec {
             _ = subscription
         }
         
-        fit("should release pub and sub when cancel") {
+        it("should release pub and sub when cancel") {
             
             class Stream: TextOutputStream {
                 func write(_ string: String) {
