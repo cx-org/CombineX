@@ -65,7 +65,7 @@ extension Publishers.FlatMap {
         typealias Failure = Upstream.Failure
         
         // for upstream
-        let upstreamState = Atomic<RelaySubscriberState>(value: .waiting)
+        let upstreamState = Atomic<RelaySubscriptionState>(value: .waiting)
         
         // for downstream
         let lock = Lock(recursive: true)
@@ -381,7 +381,7 @@ extension Publishers.FlatMap {
             }
             
             func receive(subscription: Subscription) {
-                if Atomic.ifNil(self.subscription, store: subscription) {
+                if self.subscription.ifNilStore(subscription) {
                     subscription.request(.max(1))
                 } else {
                     subscription.cancel()

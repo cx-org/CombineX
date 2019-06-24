@@ -1,3 +1,4 @@
+import Foundation
 import Quick
 import Nimble
 
@@ -11,6 +12,7 @@ class MapSpec: QuickSpec {
     
     override func spec() {
         
+        // MARK: It should map value from upstream
         it("should map value from upstream") {
             
             let pub = PassthroughSubject<Int, CustomError>()
@@ -34,9 +36,10 @@ class MapSpec: QuickSpec {
             }
         }
         
-        it("should release pub and sub when cancel") {
+        // MARK: It should release upstream, transform closure and sub when cancel
+        it("should release upstream, transform closure and sub when cancel") {
             
-            weak var originalPubObj: AnyObject?
+            weak var upstreamObj: AnyObject?
             weak var closureObj: CustomObject?
             weak var subObj: AnyObject?
             
@@ -44,7 +47,7 @@ class MapSpec: QuickSpec {
             
             do {
                 let subject = PassthroughSubject<Int, Never>()
-                originalPubObj = subject
+                upstreamObj = subject
                 
                 let obj = CustomObject()
                 closureObj = obj
@@ -60,27 +63,27 @@ class MapSpec: QuickSpec {
                 }, receiveValue: { v in
                     return .none
                 }, receiveCompletion: { s in
-                    
                 })
                 subObj = sub
                 
                 pub.subscribe(sub)
             }
             
-            expect(originalPubObj).toNot(beNil())
+            expect(upstreamObj).toNot(beNil())
             expect(closureObj).toNot(beNil())
             expect(subObj).toNot(beNil())
             
             subscription?.cancel()
             
-            expect(originalPubObj).to(beNil())
+            expect(upstreamObj).to(beNil())
             expect(closureObj).to(beNil())
             expect(subObj).to(beNil())
         }
         
-        it("should release pub and sub when finished") {
+        // MARK: It should release upstream, transform closure and sub when finished
+        it("should release upstream, transform closure and sub when finished") {
             
-            weak var originalPubObj: PassthroughSubject<Int, Never>?
+            weak var upstreamObj: PassthroughSubject<Int, Never>?
             weak var closureObj: CustomObject?
             weak var subObj: AnyObject?
             
@@ -88,7 +91,7 @@ class MapSpec: QuickSpec {
             
             do {
                 let subject = PassthroughSubject<Int, Never>()
-                originalPubObj = subject
+                upstreamObj = subject
                 
                 let obj = CustomObject()
                 closureObj = obj
@@ -110,17 +113,42 @@ class MapSpec: QuickSpec {
                 pub.subscribe(sub)
             }
             
-            expect(originalPubObj).toNot(beNil())
+            expect(upstreamObj).toNot(beNil())
             expect(closureObj).toNot(beNil())
             expect(subObj).toNot(beNil())
             
-            originalPubObj?.send(completion: .finished)
+            upstreamObj?.send(completion: .finished)
             
-            expect(originalPubObj).to(beNil())
+            expect(upstreamObj).to(beNil())
             expect(closureObj).to(beNil())
             expect(subObj).to(beNil())
             
             _ = subscription
+        }
+        
+        // MARK: It should work well when upstream send value concurrently
+        it("should work well when upstream send value concurrently") {
+            let subject = CustomSubject<Int, Never>()
+            
+            let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
+                s.request(.max(5))
+            }, receiveValue: { v in
+                return .none
+            }, receiveCompletion: { c in
+            })
+            
+            subject.map { $0 }.subscribe(sub)
+        
+            let g = DispatchGroup()
+            20.times { i in
+                DispatchQueue.global().async(group: g) {
+                    subject.send(i)
+                }
+            }
+            
+            g.wait()
+            
+            expect(sub.events.count).to(equal(5))
         }
     }
     

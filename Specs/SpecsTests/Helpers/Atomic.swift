@@ -2,12 +2,17 @@ import Foundation
 
 final class Atomic<Value> {
     
-    private let lock: Lock
+    private let lock: NSLocking
     private var value: Value
     
     init(value: Value, recursive: Bool = false) {
         self.value = value
-        self.lock = Lock(recursive: recursive)
+        
+        if recursive {
+            self.lock = NSRecursiveLock()
+        } else {
+            self.lock = NSLock()
+        }
     }
     
     func load() -> Value {
@@ -123,10 +128,17 @@ extension Atomic where Value: BinaryInteger {
     }
 }
 
-extension Atomic where Value: OptionalProtocol {
+extension Atomic {
     
-    func ifNilStore(_ value: Value.Wrapped) -> Bool {
-        self.lock.lock(); defer { self.lock.unlock() }
-        return self.value.ifNilStore(value)
+    class func ifNil(_ atomic: Atomic<Value?>, store value: Value) -> Bool {
+        atomic.lock.lock(); defer { atomic.lock.unlock() }
+        
+        if atomic.value == nil {
+            atomic.value = value
+            return true
+        }
+        
+        return false
     }
 }
+

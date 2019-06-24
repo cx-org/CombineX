@@ -12,6 +12,7 @@ class OnceSpec: QuickSpec {
     
     override func spec() {
         
+        // MARK: It should send value then send completion
         it("should send value then send completion") {
             let once = Publishers.Once<Int, CustomError>(.success(1))
             var count = 0
@@ -29,6 +30,7 @@ class OnceSpec: QuickSpec {
             expect(count).to(equal(2))
         }
         
+        // MARK: It should send error
         it("should send error") {
             let once = Publishers.Once<Int, CustomError>(.failure(.e0))
             var count = 0
@@ -45,6 +47,7 @@ class OnceSpec: QuickSpec {
             expect(count).to(equal(1))
         }
         
+        // MARK: It should release sub after complete
         it("should release sub after complete") {
             let once = Publishers.Once<Int, CustomError>(.success(1))
             
@@ -65,6 +68,7 @@ class OnceSpec: QuickSpec {
             expect(subscriber).to(beNil())
         }
         
+        // MARK: It should work well when subscription request concurrently
         it("should work well when subscription request concurrently") {
             let once = Publishers.Once<Int, CustomError>(.success(1))
             

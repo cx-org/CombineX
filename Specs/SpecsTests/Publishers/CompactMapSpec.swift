@@ -11,6 +11,7 @@ class CompactMapSpec: QuickSpec {
     
     override func spec() {
         
+        // MARK: It should compact value from upstream
         it("should compact value from upstream") {
             let pub = PassthroughSubject<Int, Never>()
             
@@ -32,6 +33,7 @@ class CompactMapSpec: QuickSpec {
             expect(events).to(equal([.value(2), .value(4)]))
         }
         
+        // MARK: It should receive value as demand
         it("should receive value as demand") {
             let pub = PassthroughSubject<Int, Never>()
             

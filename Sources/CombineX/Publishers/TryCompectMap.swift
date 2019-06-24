@@ -75,7 +75,7 @@ extension Publishers.TryCompactMap {
         typealias Pub = Publishers.TryCompactMap<Upstream, Output>
         typealias Sub = S
         
-        let state = Atomic<RelaySubscriberState>(value: .waiting)
+        let state = Atomic<RelaySubscriptionState>(value: .waiting)
         
         var pub: Pub?
         var sub: Sub?

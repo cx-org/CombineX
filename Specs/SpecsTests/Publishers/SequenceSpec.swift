@@ -11,6 +11,7 @@ class SequenceSpec: QuickSpec {
     
     override func spec() {
         
+        // MARK: It should recevie value as many as demand
         it("should recevie value as many as demand") {
             let nums = [1, 2, 3, 4, 5]
             let pub = Publishers.Sequence<[Int], Never>(sequence: nums)
@@ -30,13 +31,14 @@ class SequenceSpec: QuickSpec {
                 pub.subscribe(sub)
                 
                 if i == 5 {
-                    expect(sub._events.count).to(equal(i + 1))
+                    expect(sub.events.count).to(equal(i + 1))
                 } else {
-                    expect(sub._events.count).to(equal(i))
+                    expect(sub.events.count).to(equal(i))
                 }
             }
         }
         
+        // MARK: It should release sub when cancel
         it("should release sub when cancel") {
             class Seq: Sequence, IteratorProtocol {
                 

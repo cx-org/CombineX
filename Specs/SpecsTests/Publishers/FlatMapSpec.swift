@@ -12,6 +12,7 @@ class FlatMapSpec: QuickSpec {
     
     override func spec() {
         
+        // MARK: It should receive sub-subscriber's value
         it("should receive sub-subscriber's value") {
             let sequence = Publishers.Sequence<[Int], Never>(sequence: [1, 2, 3])
             
@@ -29,9 +30,10 @@ class FlatMapSpec: QuickSpec {
             
             pub.subscribe(sub)
             
-            expect(sub._events.count).to(equal(10))
+            expect(sub.events.count).to(equal(10))
         }
         
+        // MARK: It should receive value as demand
         it("should receive value as demand") {
             let sequence = Publishers.Sequence<[Int], Never>(sequence: [1, 2, 3, 4, 5])
             
@@ -60,9 +62,10 @@ class FlatMapSpec: QuickSpec {
             
             pub.subscribe(sub)
             
-            expect(sub._events.count).to(equal(received.max))
+            expect(sub.events.count).to(equal(received.max))
         }
         
+        // MARK: It should complete when a sub-publisher send an error
         it("should complete when a sub-publisher send an error") {
             let sequence = Publishers.Sequence<[Int], CustomError>(sequence: [0, 1, 2])
             
@@ -100,24 +103,25 @@ class FlatMapSpec: QuickSpec {
                 subjects[2].send(2)
             }
             
-            expect(sub._events.count).to(equal(10))
+            expect(sub.events.count).to(equal(10))
 
             var events = [0, 1, 2].flatMap { _ in [0, 1, 2] }.map { CustomSubscriber<Int, CustomError>.Event.value($0) }
             events.append(CustomSubscriber<Int, CustomError>.Event.completion(.failure(.e1)))
 
-            expect(sub._events).to(equal(events))
+            expect(sub.events).to(equal(events))
         }
         
+        // MARK: It should work well when concurrent flatmap
         it("should work well when concurrent flatmap") {
             let sequence = Publishers.Sequence<[Int], Never>(sequence: [0, 1, 2])
 
             let subjects = [
-                PassthroughSubject<Int, Never>(),
-                PassthroughSubject<Int, Never>(),
-                PassthroughSubject<Int, Never>(),
+                CustomSubject<Int, Never>(),
+                CustomSubject<Int, Never>(),
+                CustomSubject<Int, Never>(),
             ]
-            
-            let pub = sequence.flatMap { (i) -> PassthroughSubject<Int, Never> in
+
+            let pub = sequence.flatMap { (i) -> CustomSubject<Int, Never> in
                 return subjects[i]
             }
             

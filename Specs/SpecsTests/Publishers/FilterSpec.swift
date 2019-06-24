@@ -11,6 +11,7 @@ class FilterSpec: QuickSpec {
     
     override func spec() {
         
+        // MARK: It should filter from upstream
         it("should filter from upstream") {
             let pub = PassthroughSubject<Int, Never>()
             
@@ -32,6 +33,7 @@ class FilterSpec: QuickSpec {
             expect(events).to(equal([.value(2), .value(4)]))
         }
         
+        // MARK: It should receive value as demand
         it("should receive value as demand") {
             let pub = PassthroughSubject<Int, Never>()
             

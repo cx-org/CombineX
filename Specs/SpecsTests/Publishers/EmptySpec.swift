@@ -11,6 +11,7 @@ class EmptySpec: QuickSpec {
     
     override func spec() {
         
+        // MARK: It should send completion immediately
         it("should send completion immediately") {
             let empty = Publishers.Empty<Int, Never>()
             
@@ -29,6 +30,7 @@ class EmptySpec: QuickSpec {
             expect(count).to(equal(1))
         }
         
+        // MARK: It should equal if 'immediately' are the same
         it("should equal if 'immediately' are the same") {
             
             let e1 = Publishers.Empty<Int, Never>()

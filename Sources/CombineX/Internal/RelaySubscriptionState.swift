@@ -1,4 +1,4 @@
-enum RelaySubscriberState {
+enum RelaySubscriptionState {
     
     // waiting for subscription
     case waiting
@@ -9,7 +9,7 @@ enum RelaySubscriberState {
     case finished
 }
 
-extension RelaySubscriberState {
+extension RelaySubscriptionState {
     
     var isWaiting: Bool {
         switch self {
@@ -42,9 +42,9 @@ extension RelaySubscriberState {
     }
 }
 
-extension RelaySubscriberState: Equatable {
+extension RelaySubscriptionState: Equatable {
     
-    static func == (lhs: RelaySubscriberState, rhs: RelaySubscriberState) -> Bool {
+    static func == (lhs: RelaySubscriptionState, rhs: RelaySubscriptionState) -> Bool {
         switch (lhs, rhs) {
         case (.waiting, .waiting):
             return true
@@ -58,7 +58,7 @@ extension RelaySubscriberState: Equatable {
     }
 }
 
-extension Atomic where Value == RelaySubscriberState {
+extension Atomic where Value == RelaySubscriptionState {
     
     var isWaiting: Bool {
         switch self.load() {
@@ -91,7 +91,7 @@ extension Atomic where Value == RelaySubscriberState {
     }
 }
 
-extension Atomic where Value == RelaySubscriberState {
+extension Atomic where Value == RelaySubscriptionState {
     
     func finishIfSubscribing() -> Subscription? {
         return self.withLockMutating {

@@ -29,19 +29,3 @@ class DeinitObserver {
         self.body?()
     }
 }
-
-let pub = PassthroughSubject<Int, Never>()
-
-do {
-    let cancel = pub.sink {
-        _ = $0
-    }
-    
-    DeinitObserver.observe(cancel) {
-        print("sink deinit")
-    }
-    
-    cancel.cancel()
-}
-
-print("combine x")

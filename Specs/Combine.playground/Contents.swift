@@ -30,17 +30,27 @@ class DeinitObserver {
     }
 }
 
-let pub = PassthroughSubject<Int, Never>()
+var count = 0
+let g = DispatchGroup()
+let q = DispatchQueue(label: UUID().uuidString)
 
-do {
-    
-    let cancel = pub.sink {
-        _ = $0
+let subject = PassthroughSubject<Int, Never>()
+let subscriber = AnySubscriber<Int, Never>(receiveSubscription: { (s) in
+    s.request(.max(5))
+}, receiveValue: { v in
+    q.sync {
+        count += 1
     }
-    
-    DeinitObserver.observe(cancel) {
-        print("sink deinit")
+    return .none
+}, receiveCompletion: { c in
+})
+subject.subscribe(subscriber)
+
+for i in 0..<1000 {
+    DispatchQueue.global().async(group: g) {
+        subject.send(i)
     }
-    
-    cancel.cancel()
 }
+
+g.wait()
+print("receive", count)

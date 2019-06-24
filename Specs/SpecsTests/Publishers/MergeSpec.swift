@@ -11,6 +11,7 @@ class MergeSpec: QuickSpec {
     
     override func spec() {
         
+        // MARK: It should merge 3 upstream
         it("should merge 3 upstream") {
             let subjects = [
                 PassthroughSubject<Int, CustomError>(),

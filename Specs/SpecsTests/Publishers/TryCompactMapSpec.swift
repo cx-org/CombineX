@@ -11,6 +11,7 @@ class TryCompactMapSpec: QuickSpec {
     
     override func spec() {
         
+        // MARK: It should try compact value from upstream
         it("should try compact value from upstream") {
             let pub = PassthroughSubject<Int, Never>()
             
@@ -32,6 +33,7 @@ class TryCompactMapSpec: QuickSpec {
             expect(events.count).to(equal(2))
         }
         
+        // MARK: It should receive value as demand
         it("should receive value as demand") {
             let pub = PassthroughSubject<Int, Never>()
             
@@ -53,6 +55,7 @@ class TryCompactMapSpec: QuickSpec {
             expect(events.count).to(equal(10))
         }
         
+        // MARK: It should receive complection if an error is thrown
         it("should receive complection if an error is thrown") {
             let pub = PassthroughSubject<Int, Never>()
             

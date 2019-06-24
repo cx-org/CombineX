@@ -20,6 +20,7 @@ class PrintSpec: QuickSpec {
     
     override func spec() {
         
+        // MARK: It should print as expect
         it("should print as expect") {
             
             let output = AppendableString()
@@ -61,6 +62,7 @@ class PrintSpec: QuickSpec {
             expect(output.string).to(equal(expected))
         }
         
+        // MARK: It should output to console if stream is nil
         it("should output to console if stream is nil") {
             let subject = PassthroughSubject<Int, CustomError>()
             let pub = subject.print("[Q]", to: nil)
@@ -85,6 +87,7 @@ class PrintSpec: QuickSpec {
             subscription?.cancel()
         }
         
+        // MARK: It should release pub and sub when finished
         it("should release pub and sub when finished") {
             
             class Stream: TextOutputStream {

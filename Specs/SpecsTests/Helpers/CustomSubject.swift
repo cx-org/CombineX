@@ -1,22 +1,21 @@
 import Foundation
 
-/// A subject that passes along values and completion.
+#if USE_COMBINE
+import Combine
+#else
+import CombineX
+#endif
+
+/// The same implementation as CombineX's `PassthroughSubject`.
 ///
-/// Use a `PassthroughSubject` in unit tests when you want a publisher than can publish specific values on-demand during tests.
-final public class PassthroughSubject<Output, Failure> : Subject where Failure : Error {
+/// Since Combine's `PassthroughSubject` 
+class CustomSubject<Output, Failure> : Subject where Failure : Error {
     
     private let subscriptions = Atomic<[Inner]>(value: [])
     
-    public init() {
-    }
+    init() {}
     
-    /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-    ///
-    /// - SeeAlso: `subscribe(_:)`
-    /// - Parameters:
-    ///     - subscriber: The subscriber to attach to this `Publisher`.
-    ///                   once attached it can begin to receive values.
-    final public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
+    func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
         let subscription = Inner(pub: self, sub: AnySubscriber(subscriber))
         self.subscriptions.withLockMutating {
             $0.append(subscription)
@@ -24,10 +23,7 @@ final public class PassthroughSubject<Output, Failure> : Subject where Failure :
         subscriber.receive(subscription: subscription)
     }
     
-    /// Sends a value to the subscriber.
-    ///
-    /// - Parameter value: The value to send.
-    final public func send(_ input: Output) {
+    func send(_ input: Output) {
         let subscriptions = self.subscriptions.load()
         
         for subscription in subscriptions {
@@ -35,17 +31,14 @@ final public class PassthroughSubject<Output, Failure> : Subject where Failure :
                 guard $0 > 0 else {
                     return
                 }
-            
+                
                 let more = subscription.sub?.receive(input) ?? .none
                 $0 += (more - 1)
             }
         }
     }
     
-    /// Sends a completion signal to the subscriber.
-    ///
-    /// - Parameter completion: A `Completion` instance which indicates whether publishing has finished normally or failed with an error.
-    final public func send(completion: Subscribers.Completion<Failure>) {
+    func send(completion: Subscribers.Completion<Failure>) {
         let subscriptions = self.subscriptions.exchange(with: [])
         
         for subscription in subscriptions {
@@ -63,11 +56,11 @@ final public class PassthroughSubject<Output, Failure> : Subject where Failure :
     }
 }
 
-extension PassthroughSubject {
+extension CustomSubject {
     
     private class Inner: Subscription, CustomStringConvertible, CustomDebugStringConvertible {
         
-        typealias Pub = PassthroughSubject<Output, Failure>
+        typealias Pub = CustomSubject<Output, Failure>
         typealias Sub = AnySubscriber<Output, Failure>
         
         var pub: Pub?

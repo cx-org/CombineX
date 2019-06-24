@@ -22,12 +22,13 @@
 
 /* Begin PBXBuildFile section */
 		6229E66522B73500002CBEC2 /* Locking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6229E66422B73500002CBEC2 /* Locking.swift */; };
+		623227B922C0BBD0006D907B /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 623227B822C0BBD0006D907B /* Extensions.swift */; };
+		623227C622C0D5CA006D907B /* OptionalProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 623227C522C0D5CA006D907B /* OptionalProtocol.swift */; };
 		6615FEC922BA87A2000201AF /* Count.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6615FEC822BA87A2000201AF /* Count.swift */; };
 		6615FECB22BA892C000201AF /* Published.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6615FECA22BA892C000201AF /* Published.swift */; };
 		66CAF61D22BF357100E8FAAC /* TryFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66CAF61C22BF357100E8FAAC /* TryFilter.swift */; };
 		66CAF61F22BF38A400E8FAAC /* Print.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66CAF61E22BF38A400E8FAAC /* Print.swift */; };
-		66D385FD22B91128001B8189 /* RelaySubscriberState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D385FC22B91128001B8189 /* RelaySubscriberState.swift */; };
-		66D3860722B931EE001B8189 /* CircularBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D3860622B931EE001B8189 /* CircularBuffer.swift */; };
+		66D385FD22B91128001B8189 /* RelaySubscriptionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D385FC22B91128001B8189 /* RelaySubscriptionState.swift */; };
 		66D3861122BA56BE001B8189 /* PeekableIterator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D3861022BA56BE001B8189 /* PeekableIterator.swift */; };
 		66F1198C22BE5E2000D744BB /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F1198B22BE5E2000D744BB /* Filter.swift */; };
 		66F1198E22BE624800D744BB /* CompactMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F1198D22BE624800D744BB /* CompactMap.swift */; };
@@ -68,7 +69,6 @@
 		OBJ_87 /* ConnectablePublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_16 /* ConnectablePublisher.swift */; };
 		OBJ_88 /* CustomCombineIdentifierConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_17 /* CustomCombineIdentifierConvertible.swift */; };
 		OBJ_89 /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_19 /* Atomic.swift */; };
-		OBJ_90 /* Bag.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_20 /* Bag.swift */; };
 		OBJ_92 /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_22 /* Global.swift */; };
 		OBJ_93 /* SubscriptionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_23 /* SubscriptionState.swift */; };
 		OBJ_94 /* Publisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_24 /* Publisher.swift */; };
@@ -98,12 +98,13 @@
 
 /* Begin PBXFileReference section */
 		6229E66422B73500002CBEC2 /* Locking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Locking.swift; sourceTree = "<group>"; };
+		623227B822C0BBD0006D907B /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		623227C522C0D5CA006D907B /* OptionalProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionalProtocol.swift; sourceTree = "<group>"; };
 		6615FEC822BA87A2000201AF /* Count.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Count.swift; sourceTree = "<group>"; };
 		6615FECA22BA892C000201AF /* Published.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Published.swift; sourceTree = "<group>"; };
 		66CAF61C22BF357100E8FAAC /* TryFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TryFilter.swift; sourceTree = "<group>"; };
 		66CAF61E22BF38A400E8FAAC /* Print.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Print.swift; sourceTree = "<group>"; };
-		66D385FC22B91128001B8189 /* RelaySubscriberState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelaySubscriberState.swift; sourceTree = "<group>"; };
-		66D3860622B931EE001B8189 /* CircularBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularBuffer.swift; sourceTree = "<group>"; };
+		66D385FC22B91128001B8189 /* RelaySubscriptionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelaySubscriptionState.swift; sourceTree = "<group>"; };
 		66D3861022BA56BE001B8189 /* PeekableIterator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeekableIterator.swift; sourceTree = "<group>"; };
 		66F1198B22BE5E2000D744BB /* Filter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		66F1198D22BE624800D744BB /* CompactMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompactMap.swift; sourceTree = "<group>"; };
@@ -120,7 +121,6 @@
 		OBJ_16 /* ConnectablePublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectablePublisher.swift; sourceTree = "<group>"; };
 		OBJ_17 /* CustomCombineIdentifierConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCombineIdentifierConvertible.swift; sourceTree = "<group>"; };
 		OBJ_19 /* Atomic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Atomic.swift; sourceTree = "<group>"; };
-		OBJ_20 /* Bag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bag.swift; sourceTree = "<group>"; };
 		OBJ_22 /* Global.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
 		OBJ_23 /* SubscriptionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionState.swift; sourceTree = "<group>"; };
 		OBJ_24 /* Publisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Publisher.swift; sourceTree = "<group>"; };
@@ -182,13 +182,13 @@
 			isa = PBXGroup;
 			children = (
 				OBJ_19 /* Atomic.swift */,
-				OBJ_20 /* Bag.swift */,
 				OBJ_22 /* Global.swift */,
 				OBJ_23 /* SubscriptionState.swift */,
 				6229E66422B73500002CBEC2 /* Locking.swift */,
-				66D385FC22B91128001B8189 /* RelaySubscriberState.swift */,
-				66D3860622B931EE001B8189 /* CircularBuffer.swift */,
+				66D385FC22B91128001B8189 /* RelaySubscriptionState.swift */,
 				66D3861022BA56BE001B8189 /* PeekableIterator.swift */,
+				623227B822C0BBD0006D907B /* Extensions.swift */,
+				623227C522C0D5CA006D907B /* OptionalProtocol.swift */,
 			);
 			path = Internal;
 			sourceTree = "<group>";
@@ -436,6 +436,7 @@
 			buildActionMask = 0;
 			files = (
 				OBJ_80 /* AnyCancellable.swift in Sources */,
+				623227B922C0BBD0006D907B /* Extensions.swift in Sources */,
 				66F1198C22BE5E2000D744BB /* Filter.swift in Sources */,
 				OBJ_81 /* AnyPublisher.swift in Sources */,
 				OBJ_82 /* AnySubject.swift in Sources */,
@@ -448,7 +449,6 @@
 				OBJ_87 /* ConnectablePublisher.swift in Sources */,
 				OBJ_88 /* CustomCombineIdentifierConvertible.swift in Sources */,
 				OBJ_89 /* Atomic.swift in Sources */,
-				OBJ_90 /* Bag.swift in Sources */,
 				OBJ_92 /* Global.swift in Sources */,
 				OBJ_93 /* SubscriptionState.swift in Sources */,
 				OBJ_94 /* Publisher.swift in Sources */,
@@ -470,7 +470,6 @@
 				66CAF61D22BF357100E8FAAC /* TryFilter.swift in Sources */,
 				66F1199722BE7A9100D744BB /* TryCompectMap.swift in Sources */,
 				OBJ_107 /* TryMap.swift in Sources */,
-				66D3860722B931EE001B8189 /* CircularBuffer.swift in Sources */,
 				OBJ_110 /* Scheduler.swift in Sources */,
 				OBJ_111 /* SchedulerTimeIntervalConvertible.swift in Sources */,
 				6615FECB22BA892C000201AF /* Published.swift in Sources */,
@@ -480,13 +479,14 @@
 				OBJ_115 /* PassthroughSubject.swift in Sources */,
 				OBJ_116 /* Subscriber.swift in Sources */,
 				OBJ_117 /* Assign.swift in Sources */,
+				623227C622C0D5CA006D907B /* OptionalProtocol.swift in Sources */,
 				OBJ_118 /* Sink.swift in Sources */,
 				OBJ_119 /* Subscribers.swift in Sources */,
 				OBJ_120 /* Subscription.swift in Sources */,
 				OBJ_121 /* Demand.swift in Sources */,
 				OBJ_122 /* Subscriptions.swift in Sources */,
 				OBJ_123 /* empty.swift in Sources */,
-				66D385FD22B91128001B8189 /* RelaySubscriberState.swift in Sources */,
+				66D385FD22B91128001B8189 /* RelaySubscriptionState.swift in Sources */,
 				6615FEC922BA87A2000201AF /* Count.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

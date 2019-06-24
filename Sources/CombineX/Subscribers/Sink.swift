@@ -89,7 +89,7 @@ extension Subscribers {
         /// Use the received `Subscription` to request items from the publisher.
         /// - Parameter subscription: A subscription that represents the connection between publisher and subscriber.
         final public func receive(subscription: Subscription) {
-            if Atomic.ifNil(self.subscription, store: subscription) {
+            if self.subscription.ifNilStore(subscription) {
                 subscription.request(.unlimited)
             } else {
                 subscription.cancel()

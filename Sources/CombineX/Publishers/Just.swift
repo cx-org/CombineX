@@ -63,13 +63,13 @@ extension Publishers.Just {
         }
 
         func request(_ demand: Subscribers.Demand) {
+            precondition(demand > 0, "trying to request '<= 0' values from Just")
+            
             if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(demand)) {
-                guard demand > 0 else {
-                    fatalError("trying to request '<= 0' values from Just")
-                }
-
+                
                 _ = self.sub?.receive(just)
                 self.sub?.receive(completion: .finished)
+                
                 self.state.store(.finished)
                 self.sub = nil
             }

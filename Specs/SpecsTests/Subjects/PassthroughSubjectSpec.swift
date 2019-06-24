@@ -16,16 +16,16 @@ class PassthroughSubjectSpec: QuickSpec {
             let subject = PassthroughSubject<Int, CustomError>()
             
             var subscription: Subscription?
-            var asked = false
+            var once = false
             
             let sub = CustomSubscriber<Int, CustomError>(receiveSubscription: { (s) in
                 subscription = s
                 s.request(.max(2))
             }, receiveValue: { v in
-                if asked {
+                if once {
                     return .none
                 } else {
-                    asked = true
+                    once = true
                     return .max(2)
                 }
             }, receiveCompletion: { s in
@@ -38,7 +38,7 @@ class PassthroughSubjectSpec: QuickSpec {
                 subject.send(i)
             }
             
-            expect(sub._events.count).to(equal(4))
+            expect(sub.events.count).to(equal(4))
             
             subscription?.request(.max(5))
             
@@ -46,7 +46,7 @@ class PassthroughSubjectSpec: QuickSpec {
                 subject.send(i)
             }
             
-            expect(sub._events.count).to(equal(9))
+            expect(sub.events.count).to(equal(9))
         }
         
         it("should not send value to subscriber before it request") {
@@ -68,7 +68,7 @@ class PassthroughSubjectSpec: QuickSpec {
             
             subject.send(completion: .finished)
             
-            let last = sub._events.last
+            let last = sub.events.last
             
             expect(last).notTo(beNil())
             expect(last!).to(equal(.completion(.finished)))
@@ -92,7 +92,7 @@ class PassthroughSubjectSpec: QuickSpec {
                 subject.send(i)
             }
             
-            expect(sub._events.count).to(equal(1))
+            expect(sub.events.count).to(equal(1))
         }
         
         it("should work well with multi subscriber") {
@@ -119,9 +119,8 @@ class PassthroughSubjectSpec: QuickSpec {
             }
             
             for (i, sub) in zip(nums, subs) {
-                expect(sub._events.count).to(equal(i))
+                expect(sub.events.count).to(equal(i))
             }
-            
         }
         
         it("should remove subscription when receive completion") {
@@ -169,41 +168,66 @@ class PassthroughSubjectSpec: QuickSpec {
             expect(subscriber).to(beNil())
         }
         
-        it("one subscriber should not block others") {
-            let g = DispatchGroup()
-            
-            let pub = PassthroughSubject<Int, Never>()
-            
-            let syncQ = DispatchQueue(label: UUID().uuidString)
-            var enters: [Date] = []
-            var exits: [Date] = []
-            
+        // TODO: Apple's combine seems to be thread-unsafe?
+        xit("should work well when send concurrently") {
+            let subject = PassthroughSubject<Int, Never>()
+  
             let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
-                s.request(.unlimited)
+                s.request(.max(5))
             }, receiveValue: { v in
-                syncQ.async(group: g) {
-                    enters.append(Date())
-                }
-                Thread.sleep(forTimeInterval: 1)
-                
-                syncQ.async(group: g) {
-                    exits.append(Date())
-                }
                 return .none
-            }, receiveCompletion: { s in
+            }, receiveCompletion: { c in
             })
-            pub.subscribe(sub)
             
-            for i in 0..<3 {
+            subject.subscribe(sub)
+            
+            let g = DispatchGroup()
+            100.times { i in
                 DispatchQueue.global().async(group: g) {
-                    pub.send(i)
+                    subject.send(i)
                 }
             }
             
             g.wait()
             
-            expect(enters.count).to(equal(exits.count))
-            expect(enters.last).to(beLessThan(exits.first!))
+            expect(sub.events.count).to(equal(5))
+        }
+        
+        // TODO: Apple's combine seems to be thread-unsafe? So the concurrent sending doesn't block each other?
+        xit("should not block when receving value") {
+            let g = DispatchGroup()
+            
+            let pub = PassthroughSubject<Int, Never>()
+            
+            let syncQ = DispatchQueue(label: UUID().uuidString)
+            
+            var enters: [CFAbsoluteTime?] = [nil, nil, nil]
+            var exits: [CFAbsoluteTime?] = [nil, nil, nil]
+            
+            let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
+                s.request(.unlimited)
+            }, receiveValue: { v in
+                Thread.sleep(forTimeInterval: 1)
+                return .none
+            }, receiveCompletion: { s in
+            })
+            
+            pub.subscribe(sub)
+            
+            for i in 0..<3 {
+                DispatchQueue.global().async(group: g) {
+                    enters[i] = CFAbsoluteTimeGetCurrent()
+                    pub.send(i)
+                    exits[i] = CFAbsoluteTimeGetCurrent()
+                }
+            }
+            
+            g.wait()
+            
+            syncQ.sync {
+                print(enters)
+                print(exits)
+            }
         }
     }
 }

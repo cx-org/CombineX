@@ -80,7 +80,7 @@ extension Publishers.Print {
         typealias Pub = Publishers.Print<Upstream>
         typealias Sub = S
         
-        let state = Atomic<RelaySubscriberState>(value: .waiting)
+        let state = Atomic<RelaySubscriptionState>(value: .waiting)
         
         let streamLock = Lock()
         
