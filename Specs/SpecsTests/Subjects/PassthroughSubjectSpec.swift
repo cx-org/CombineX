@@ -12,6 +12,7 @@ class PassthroughSubjectSpec: QuickSpec {
     
     override func spec() {
         
+        // MARK: It should send value to subscriber as many as it demand
         it("should send value to subscriber as many as it demand") {
             let subject = PassthroughSubject<Int, CustomError>()
             
@@ -49,6 +50,7 @@ class PassthroughSubjectSpec: QuickSpec {
             expect(sub.events.count).to(equal(9))
         }
         
+        // MARK: It should not send value to subscriber before it request
         it("should not send value to subscriber before it request") {
             
             let subject = PassthroughSubject<Int, CustomError>()
@@ -74,6 +76,7 @@ class PassthroughSubjectSpec: QuickSpec {
             expect(last!).to(equal(.completion(.finished)))
         }
         
+        // MARK: It should not receve value after receive completion
         it("should not receve value after receive completion") {
             let subject = PassthroughSubject<Int, Error>()
             
@@ -95,6 +98,7 @@ class PassthroughSubjectSpec: QuickSpec {
             expect(sub.events.count).to(equal(1))
         }
         
+        // MARK: It should work well with multi subscriber
         it("should work well with multi subscriber") {
             let subject = PassthroughSubject<Int, Error>()
             
@@ -123,6 +127,7 @@ class PassthroughSubjectSpec: QuickSpec {
             }
         }
         
+        // MARK: It should remove subscription when receive completion
         it("should remove subscription when receive completion") {
             let pub = PassthroughSubject<Int, Never>()
             
@@ -143,6 +148,7 @@ class PassthroughSubjectSpec: QuickSpec {
             expect(subscription).to(beNil())
         }
         
+        // MARK: It should remove subscriber when its subscription is cancelled
         it("should remove subscriber when its subscription is cancelled") {
             let pub = PassthroughSubject<Int, Never>()
             
@@ -168,7 +174,7 @@ class PassthroughSubjectSpec: QuickSpec {
             expect(subscriber).to(beNil())
         }
         
-        // TODO: Apple's combine seems to be thread-unsafe?
+        // MARK: It should work well when send concurrently
         xit("should work well when send concurrently") {
             let subject = PassthroughSubject<Int, Never>()
   
@@ -190,18 +196,19 @@ class PassthroughSubjectSpec: QuickSpec {
             
             g.wait()
             
+            // FIXME: Apple's combine seems to be thread-unsafe?
             expect(sub.events.count).to(equal(5))
         }
         
-        // TODO: Apple's combine seems to be thread-unsafe? So the concurrent sending doesn't block each other?
-        xit("should not block when receving value") {
+        // MARK: It should block when receving value if `PassthroughSubject` is thread-safe
+        xit("should block when receving value if PassthroughSubject is thread-safe") {
             let g = DispatchGroup()
             
             let pub = PassthroughSubject<Int, Never>()
             
             var enters: [Date?] = [nil, nil, nil]
             var exits: [Date?] = [nil, nil, nil]
-            
+
             let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
                 s.request(.unlimited)
             }, receiveValue: { v in
@@ -222,8 +229,9 @@ class PassthroughSubjectSpec: QuickSpec {
             
             g.wait()
             
-//            print(enters)
-//            print(exits)
+            // FIXME: Apple's combine seems to be thread-unsafe? So the concurrent sending doesn't block each other?
+            print(enters)
+            print(exits)
         }
     }
 }

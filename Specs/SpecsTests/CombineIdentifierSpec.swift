@@ -11,7 +11,8 @@ class CombineIdentifierSpec: QuickSpec {
     
     override func spec() {
         
-        it("should be different") {
+        // MARK: It should be different to each other
+        it("should be different to each other") {
             var set = Set<CombineIdentifier>()
             
             for _ in 0..<1000 {
@@ -21,6 +22,7 @@ class CombineIdentifierSpec: QuickSpec {
             expect(set.count).to(equal(1000))
         }
         
+        // MARK: It should use object's address as underlying id
         it("should use object's address as underlying id") {
             let obj = CustomObject()
             

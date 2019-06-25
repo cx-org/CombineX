@@ -7,15 +7,6 @@ import Combine
 import CombineX
 #endif
 
-class AppendableString: TextOutputStream {
-    
-    var string: String = ""
-    
-    func write(_ string: String) {
-        self.string += string
-    }
-}
-
 class PrintSpec: QuickSpec {
     
     override func spec() {
@@ -23,10 +14,17 @@ class PrintSpec: QuickSpec {
         // MARK: It should print as expect
         it("should print as expect") {
             
-            let output = AppendableString()
+            class Stream: TextOutputStream {
+                var output = ""
+                func write(_ string: String) {
+                    self.output.append(string)
+                }
+            }
+            
+            let stream = Stream()
             
             let subject = PassthroughSubject<Int, CustomError>()
-            let pub = subject.print("[Q]", to: output)
+            let pub = subject.print("[Q]", to: stream)
             
             var subscription: Subscription?
             let sub = CustomSubscriber<Int, CustomError>(receiveSubscription: { (s) in
@@ -58,41 +56,14 @@ class PrintSpec: QuickSpec {
             [Q]: receive cancel
             
             """
-
-            expect(output.string).to(equal(expected))
+            expect(stream.output).to(equal(expected))
         }
         
-        // MARK: It should output to console if stream is nil
-        it("should output to console if stream is nil") {
-            let subject = PassthroughSubject<Int, CustomError>()
-            let pub = subject.print("[Q]", to: nil)
+        // MARK: It should release upstream but not release stream and sub when finished
+        it("should release upstream but not release stream and sub when finished") {
             
-            var subscription: Subscription?
-            let sub = CustomSubscriber<Int, CustomError>(receiveSubscription: { (s) in
-                s.request(.unlimited)
-                subscription = s
-            }, receiveValue: { v in
-                return .max(1)
-            }, receiveCompletion: { c in
-            })
-            
-            pub.subscribe(sub)
-            
-            2.times {
-                subject.send($0)
-            }
-            subject.send(completion: .finished)
-            subject.send(completion: .finished)
-            
-            subscription?.cancel()
-        }
-        
-        // MARK: It should release pub and sub when finished
-        it("should release pub and sub when finished") {
-            
-            class Stream: TextOutputStream {
+            class Null: TextOutputStream {
                 func write(_ string: String) {
-                    print(string, terminator: "")
                 }
             }
             
@@ -106,7 +77,7 @@ class PrintSpec: QuickSpec {
                 let subject = PassthroughSubject<Int, Never>()
                 pubObj = subject
                 
-                let stream = Stream()
+                let stream = Null()
                 streamObj = stream
                 
                 let pub = subject.print("😈", to: stream)
@@ -128,19 +99,19 @@ class PrintSpec: QuickSpec {
             
             pubObj?.send(completion: .finished)
             
+            // FIXME: `Print` doesn't seems to release subscriber?
             expect(pubObj).to(beNil())
-
             expect(streamObj).toNot(beNil())
             expect(subObj).toNot(beNil())
             
             _ = subscription
         }
         
-        it("should release pub and sub when cancel") {
+        // MARK: It should release upstream but not release stream and sub when cancelled.
+        it("should release upstream but not release stream and sub when cancelled") {
             
-            class Stream: TextOutputStream {
+            class Null: TextOutputStream {
                 func write(_ string: String) {
-                    print(string, terminator: "")
                 }
             }
             
@@ -154,7 +125,7 @@ class PrintSpec: QuickSpec {
                 let subject = PassthroughSubject<Int, Never>()
                 pubObj = subject
                 
-                let stream = Stream()
+                let stream = Null()
                 streamObj = stream
                 
                 let pub = subject.print("😈", to: stream)
@@ -177,7 +148,8 @@ class PrintSpec: QuickSpec {
             subscription?.cancel()
             
             expect(pubObj).to(beNil())
-            
+
+            // FIXME: `Print` doesn't seems to release subscriber?
             expect(streamObj).toNot(beNil())
             expect(subObj).toNot(beNil())
             

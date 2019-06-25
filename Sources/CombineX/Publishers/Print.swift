@@ -84,21 +84,22 @@ extension Publishers.Print {
         
         let streamLock = Lock()
         
-        private lazy var stream: TextOutputStream = self.pub?.stream ?? ConsoleOutputStream()
+        var upstream: Upstream?
+        let prefix: String
+        var stream: TextOutputStream
         
-        var pub: Pub?
         var sub: Sub?
         
         init(pub: Pub, sub: Sub) {
-            self.pub = pub
             self.sub = sub
+        
+            self.upstream = pub.upstream
+            self.prefix = pub.prefix
+            self.stream = pub.stream ?? ConsoleOutputStream()
         }
         
         private func write(_ string: String) {
-            var output = string
-            if let prefix = self.pub?.prefix {
-                output = ("\(prefix): " + output + "\n")
-            }
+            var output = "\(self.prefix): \(string)\n"
             
             self.streamLock.lock()
             defer {
@@ -117,7 +118,7 @@ extension Publishers.Print {
             self.write("receive cancel")
             self.state.finishIfSubscribing()?.cancel()
             
-            self.pub = nil
+            self.upstream = nil
 //            self.sub = nil
         }
         
@@ -158,7 +159,7 @@ extension Publishers.Print {
                 }
                 
                 self.sub?.receive(completion: completion)
-                self.pub = nil
+                self.upstream = nil
 //                self.sub = nil
             }
         }

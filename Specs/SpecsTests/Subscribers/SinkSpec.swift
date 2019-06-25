@@ -11,6 +11,7 @@ class SinkSpec: QuickSpec {
     
     override func spec() {
         
+        // MARK: It should receive values and completion
         it("should receive values and completion") {
             let pub = PassthroughSubject<Int, Never>()
             
@@ -35,6 +36,7 @@ class SinkSpec: QuickSpec {
             expect(completionCount).to(equal(1))
         }
         
+        // MARK: It should release subscription when receive completion
         it("should release subscription when receive completion") {
             
             let sink = Subscribers.Sink<Publishers.Just<Int>>(

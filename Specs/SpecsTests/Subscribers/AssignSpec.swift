@@ -11,6 +11,7 @@ class AssignSpec: QuickSpec {
     
     override func spec() {
         
+        // MARK: It should bind value for key path when receive value and stop when complete
         it("should bind value for key path when receive value and stop when complete") {
             let subject = PassthroughSubject<Int, Never>()
             
@@ -33,6 +34,7 @@ class AssignSpec: QuickSpec {
             _ = cancellable
         }
         
+        // MARK: It should release root when complete
         it("should release root when complete") {
             let subject = PassthroughSubject<Int, Never>()
             
@@ -56,6 +58,7 @@ class AssignSpec: QuickSpec {
             
         }
         
+        // MARK: It should release root when cancel
         it("should release root when cancel") {
             let subject = PassthroughSubject<Int, Never>()
             

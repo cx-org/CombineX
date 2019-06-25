@@ -11,6 +11,7 @@ class CurrentValueSubjectSpec: QuickSpec {
     
     override func spec() {
         
+        // MARK: It should receive value when subscribe
         it("should receive value when subscribe") {
             
             let subject = CurrentValueSubject<Int, CustomError>(1)

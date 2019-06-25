@@ -36,15 +36,17 @@ let q = DispatchQueue(label: UUID().uuidString)
 
 let subject = PassthroughSubject<Int, Never>()
 let subscriber = AnySubscriber<Int, Never>(receiveSubscription: { (s) in
-    s.request(.max(5))
+    s.request(.unlimited)
 }, receiveValue: { v in
     q.sync {
         count += 1
     }
+    print("receive value", v)
     return .none
 }, receiveCompletion: { c in
+    print("receive completion", c)
 })
-subject.subscribe(subscriber)
+subject.prefix(5).subscribe(subscriber)
 
 for i in 0..<1000 {
     DispatchQueue.global().async(group: g) {
@@ -53,4 +55,9 @@ for i in 0..<1000 {
 }
 
 g.wait()
+
 print("receive", count)
+
+
+
+

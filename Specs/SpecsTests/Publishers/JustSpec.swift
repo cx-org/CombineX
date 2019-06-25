@@ -28,8 +28,8 @@ class JustSpec: QuickSpec {
             expect(count).to(equal(2))
         }
         
-        // MARK: It should release subscriber when complete
-        it("should release subscriber when complete") {
+        // MARK: It should release subscriber and not release just target when complete
+        it("should release subscriber and not release just target when complete") {
             
             var subscription: Subscription?
             weak var customObj: AnyObject?
