@@ -1,7 +1,7 @@
 extension Publisher {
     
     public func filter(_ isIncluded: @escaping (Self.Output) -> Bool) -> Publishers.Filter<Self> {
-        return Publishers.Filter(upstream: self, isIncluded: isIncluded)
+        return .init(upstream: self, isIncluded: isIncluded)
     }
 }
 

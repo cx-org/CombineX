@@ -2,13 +2,6 @@ import Darwin
 
 extension Publisher {
 
-    public func multicast<S>(_ createSubject: @escaping () -> S) -> Publishers.Multicast<Self, S> where S : Subject, Self.Failure == S.Failure, Self.Output == S.Output
-
-    public func multicast<S>(subject: S) -> Publishers.Multicast<Self, S> where S : Subject, Self.Failure == S.Failure, Self.Output == S.Output
-}
-
-extension Publisher {
-
     /// Measures and emits the time interval between events received from an upstream publisher.
     ///
     /// The output type of the returned scheduler is the time interval of the provided scheduler.
@@ -59,26 +52,6 @@ extension Publisher {
     public func breakpointOnError() -> Publishers.Breakpoint<Self>
 }
 
-extension Publisher {
-
-    /// Publishes a single Boolean value that indicates whether all received elements pass a given predicate.
-    ///
-    /// When this publisher receives an element, it runs the predicate against the element. If the predicate returns `false`, the publisher produces a `false` value and finishes. If the upstream publisher finishes normally, this publisher produces a `true` value and finishes.
-    /// As a `reduce`-style operator, this publisher produces at most one value.
-    /// Backpressure note: Upon receiving any request greater than zero, this publisher requests unlimited elements from the upstream publisher.
-    /// - Parameter predicate: A closure that evaluates each received element. Return `true` to continue, or `false` to cancel the upstream and complete.
-    /// - Returns: A publisher that publishes a Boolean value that indicates whether all received elements pass a given predicate.
-    public func allSatisfy(_ predicate: @escaping (Self.Output) -> Bool) -> Publishers.AllSatisfy<Self>
-
-    /// Publishes a single Boolean value that indicates whether all received elements pass a given error-throwing predicate.
-    ///
-    /// When this publisher receives an element, it runs the predicate against the element. If the predicate returns `false`, the publisher produces a `false` value and finishes. If the upstream publisher finishes normally, this publisher produces a `true` value and finishes. If the predicate throws an error, the publisher fails, passing the error to its downstream.
-    /// As a `reduce`-style operator, this publisher produces at most one value.
-    /// Backpressure note: Upon receiving any request greater than zero, this publisher requests unlimited elements from the upstream publisher.
-    /// - Parameter predicate:  A closure that evaluates each received element. Return `true` to continue, or `false` to cancel the upstream and complete. The closure may throw, in which case the publisher cancels the upstream publisher and fails with the thrown error.
-    /// - Returns:  A publisher that publishes a Boolean value that indicates whether all received elements pass a given predicate.
-    public func tryAllSatisfy(_ predicate: @escaping (Self.Output) throws -> Bool) -> Publishers.TryAllSatisfy<Self>
-}
 
 extension Publisher where Self.Output : Equatable {
 
@@ -225,17 +198,6 @@ extension Publisher {
     public func tryPrefix(while predicate: @escaping (Self.Output) throws -> Bool) -> Publishers.TryPrefixWhile<Self>
 }
 
-extension Publisher where Self.Failure == Never {
-
-    /// Changes the failure type declared by the upstream publisher.
-    ///
-    /// The publisher returned by this method cannot actually fail with the specified type and instead just finishes normally. Instead, you use this method when you need to match the error types of two mismatched publishers.
-    ///
-    /// - Parameter failureType: The `Failure` type presented by this publisher.
-    /// - Returns: A publisher that appears to send the specified failure type.
-    public func setFailureType<E>(to failureType: E.Type) -> Publishers.SetFailureType<Self, E> where E : Error
-}
-
 extension Publisher {
 
     /// Publishes a Boolean value upon receiving an element that satisfies the predicate closure.
@@ -251,18 +213,6 @@ extension Publisher {
     /// - Parameter predicate: A closure that takes an element as its parameter and returns a Boolean value indicating whether the element satisfies the closure’s comparison logic.
     /// - Returns: A publisher that emits the Boolean value `true` when the upstream publisher emits a matching value.
     public func tryContains(where predicate: @escaping (Self.Output) throws -> Bool) -> Publishers.TryContainsWhere<Self>
-}
-
-extension Publisher {
-
-    /// Attaches the specified subscriber to this publisher.
-    ///
-    /// Always call this function instead of `receive(subscriber:)`.
-    /// Adopters of `Publisher` must implement `receive(subscriber:)`. The implementation of `subscribe(_:)` in this extension calls through to `receive(subscriber:)`.
-    /// - SeeAlso: `receive(subscriber:)`
-    /// - Parameters:
-    ///     - subscriber: The subscriber to attach to this `Publisher`. After attaching, the subscriber can start to receive values.
-    public func subscribe<S>(_ subscriber: S) where S : Subscriber, Self.Failure == S.Failure, Self.Output == S.Input
 }
 
 extension Publisher where Self.Failure == Never {
@@ -305,27 +255,7 @@ extension Publisher {
     public func collect<S>(_ strategy: Publishers.TimeGroupingStrategy<S>, options: S.SchedulerOptions? = nil) -> Publishers.CollectByTime<Self, S> where S : Scheduler
 }
 
-extension Publisher {
 
-    /// Specifies the scheduler on which to receive elements from the publisher.
-    ///
-    /// You use the `receive(on:options:)` operator to receive results on a specific scheduler, such as performing UI work on the main run loop.
-    /// In contrast with `subscribe(on:options:)`, which affects upstream messages, `receive(on:options:)` changes the execution context of downstream messages. In the following example, requests to `jsonPublisher` are performed on `backgroundQueue`, but elements received from it are performed on `RunLoop.main`.
-    ///
-    ///     let jsonPublisher = MyJSONLoaderPublisher() // Some publisher.
-    ///     let labelUpdater = MyLabelUpdateSubscriber() // Some subscriber that updates the UI.
-    ///
-    ///     jsonPublisher
-    ///         .subscribe(on: backgroundQueue)
-    ///         .receiveOn(on: RunLoop.main)
-    ///         .subscribe(labelUpdater)
-    ///
-    /// - Parameters:
-    ///   - scheduler: The scheduler the publisher is to use for element delivery.
-    ///   - options: Scheduler options that customize the element delivery.
-    /// - Returns: A publisher that delivers elements using the specified scheduler.
-    public func receive<S>(on scheduler: S, options: S.SchedulerOptions? = nil) -> Publishers.ReceiveOn<Self, S> where S : Scheduler
-}
 
 extension Publisher {
 
@@ -336,127 +266,6 @@ extension Publisher {
     /// - Parameter publisher: A second publisher.
     /// - Returns: A publisher that republishes elements until the second publisher publishes an element.
     public func prefix<P>(untilOutputFrom publisher: P) -> Publishers.PrefixUntilOutput<Self, P> where P : Publisher
-}
-
-extension Publisher {
-
-    public func subscribe<S>(_ subject: S) -> AnyCancellable where S : Subject, Self.Failure == S.Failure, Self.Output == S.Output
-}
-
-extension Publisher {
-
-    /// Applies a closure that accumulates each element of a stream and publishes a final result upon completion.
-    ///
-    /// - Parameters:
-    ///   - initialResult: The value the closure receives the first time it is called.
-    ///   - nextPartialResult: A closure that takes the previously-accumulated value and the next element from the upstream publisher to produce a new value.
-    /// - Returns: A publisher that applies the closure to all received elements and produces an accumulated value when the upstream publisher finishes.
-    public func reduce<T>(_ initialResult: T, _ nextPartialResult: @escaping (T, Self.Output) -> T) -> Publishers.Reduce<Self, T>
-
-    /// Applies an error-throwing closure that accumulates each element of a stream and publishes a final result upon completion.
-    ///
-    /// If the closure throws an error, the publisher fails, passing the error to its subscriber.
-    /// - Parameters:
-    ///   - initialResult: The value the closure receives the first time it is called.
-    ///   - nextPartialResult: An error-throwing closure that takes the previously-accumulated value and the next element from the upstream publisher to produce a new value.
-    /// - Returns: A publisher that applies the closure to all received elements and produces an accumulated value when the upstream publisher finishes.
-    public func tryReduce<T>(_ initialResult: T, _ nextPartialResult: @escaping (T, Self.Output) throws -> T) -> Publishers.TryReduce<Self, T>
-}
-
-
-
-extension Publisher {
-
-    /// Combines elements from this publisher with those from another publisher, delivering an interleaved sequence of elements.
-    ///
-    /// The merged publisher continues to emit elements until all upstream publishers finish. If an upstream publisher produces an error, the merged publisher fails with that error.
-    /// - Parameter other: Another publisher.
-    /// - Returns: A publisher that emits an event when either upstream publisher emits an event.
-    public func merge<P>(with other: P) -> Publishers.Merge<Self, P> where P : Publisher, Self.Failure == P.Failure, Self.Output == P.Output
-
-    /// Combines elements from this publisher with those from two other publishers, delivering an interleaved sequence of elements.
-    ///
-    /// The merged publisher continues to emit elements until all upstream publishers finish. If an upstream publisher produces an error, the merged publisher fails with that error.
-    ///
-    /// - Parameters:
-    ///   - b: A second publisher.
-    ///   - c: A third publisher.
-    /// - Returns:  A publisher that emits an event when any upstream publisher emits
-    /// an event.
-    public func merge<B, C>(with b: B, _ c: C) -> Publishers.Merge3<Self, B, C> where B : Publisher, C : Publisher, Self.Failure == B.Failure, Self.Output == B.Output, B.Failure == C.Failure, B.Output == C.Output
-
-    /// Combines elements from this publisher with those from three other publishers, delivering
-    /// an interleaved sequence of elements.
-    ///
-    /// The merged publisher continues to emit elements until all upstream publishers finish. If an upstream publisher produces an error, the merged publisher fails with that error.
-    ///
-    /// - Parameters:
-    ///   - b: A second publisher.
-    ///   - c: A third publisher.
-    ///   - d: A fourth publisher.
-    /// - Returns: A publisher that emits an event when any upstream publisher emits an event.
-    public func merge<B, C, D>(with b: B, _ c: C, _ d: D) -> Publishers.Merge4<Self, B, C, D> where B : Publisher, C : Publisher, D : Publisher, Self.Failure == B.Failure, Self.Output == B.Output, B.Failure == C.Failure, B.Output == C.Output, C.Failure == D.Failure, C.Output == D.Output
-
-    /// Combines elements from this publisher with those from four other publishers, delivering an interleaved sequence of elements.
-    ///
-    /// The merged publisher continues to emit elements until all upstream publishers finish. If an upstream publisher produces an error, the merged publisher fails with that error.
-    ///
-    /// - Parameters:
-    ///   - b: A second publisher.
-    ///   - c: A third publisher.
-    ///   - d: A fourth publisher.
-    ///   - e: A fifth publisher.
-    /// - Returns: A publisher that emits an event when any upstream publisher emits an event.
-    public func merge<B, C, D, E>(with b: B, _ c: C, _ d: D, _ e: E) -> Publishers.Merge5<Self, B, C, D, E> where B : Publisher, C : Publisher, D : Publisher, E : Publisher, Self.Failure == B.Failure, Self.Output == B.Output, B.Failure == C.Failure, B.Output == C.Output, C.Failure == D.Failure, C.Output == D.Output, D.Failure == E.Failure, D.Output == E.Output
-
-    /// Combines elements from this publisher with those from five other publishers, delivering an interleaved sequence of elements.
-    ///
-    /// The merged publisher continues to emit elements until all upstream publishers finish. If an upstream publisher produces an error, the merged publisher fails with that error.
-    ///
-    /// - Parameters:
-    ///   - b: A second publisher.
-    ///   - c: A third publisher.
-    ///   - d: A fourth publisher.
-    ///   - e: A fifth publisher.
-    ///   - f: A sixth publisher.
-    /// - Returns: A publisher that emits an event when any upstream publisher emits an event.
-    public func merge<B, C, D, E, F>(with b: B, _ c: C, _ d: D, _ e: E, _ f: F) -> Publishers.Merge6<Self, B, C, D, E, F> where B : Publisher, C : Publisher, D : Publisher, E : Publisher, F : Publisher, Self.Failure == B.Failure, Self.Output == B.Output, B.Failure == C.Failure, B.Output == C.Output, C.Failure == D.Failure, C.Output == D.Output, D.Failure == E.Failure, D.Output == E.Output, E.Failure == F.Failure, E.Output == F.Output
-
-    /// Combines elements from this publisher with those from six other publishers, delivering an interleaved sequence of elements.
-    ///
-    /// The merged publisher continues to emit elements until all upstream publishers finish. If an upstream publisher produces an error, the merged publisher fails with that error.
-    ///
-    /// - Parameters:
-    ///   - b: A second publisher.
-    ///   - c: A third publisher.
-    ///   - d: A fourth publisher.
-    ///   - e: A fifth publisher.
-    ///   - f: A sixth publisher.
-    ///   - g: A seventh publisher.
-    /// - Returns: A publisher that emits an event when any upstream publisher emits an event.
-    public func merge<B, C, D, E, F, G>(with b: B, _ c: C, _ d: D, _ e: E, _ f: F, _ g: G) -> Publishers.Merge7<Self, B, C, D, E, F, G> where B : Publisher, C : Publisher, D : Publisher, E : Publisher, F : Publisher, G : Publisher, Self.Failure == B.Failure, Self.Output == B.Output, B.Failure == C.Failure, B.Output == C.Output, C.Failure == D.Failure, C.Output == D.Output, D.Failure == E.Failure, D.Output == E.Output, E.Failure == F.Failure, E.Output == F.Output, F.Failure == G.Failure, F.Output == G.Output
-
-    /// Combines elements from this publisher with those from seven other publishers, delivering an interleaved sequence of elements.
-    ///
-    /// The merged publisher continues to emit elements until all upstream publishers finish. If an upstream publisher produces an error, the merged publisher fails with that error.
-    ///
-    /// - Parameters:
-    ///   - b: A second publisher.
-    ///   - c: A third publisher.
-    ///   - d: A fourth publisher.
-    ///   - e: A fifth publisher.
-    ///   - f: A sixth publisher.
-    ///   - g: A seventh publisher.
-    ///   - h: An eighth publisher.
-    /// - Returns: A publisher that emits an event when any upstream publisher emits an event.
-    public func merge<B, C, D, E, F, G, H>(with b: B, _ c: C, _ d: D, _ e: E, _ f: F, _ g: G, _ h: H) -> Publishers.Merge8<Self, B, C, D, E, F, G, H> where B : Publisher, C : Publisher, D : Publisher, E : Publisher, F : Publisher, G : Publisher, H : Publisher, Self.Failure == B.Failure, Self.Output == B.Output, B.Failure == C.Failure, B.Output == C.Output, C.Failure == D.Failure, C.Output == D.Output, D.Failure == E.Failure, D.Output == E.Output, E.Failure == F.Failure, E.Output == F.Output, F.Failure == G.Failure, F.Output == G.Output, G.Failure == H.Failure, G.Output == H.Output
-
-    /// Combines elements from this publisher with those from another publisher of the same type, delivering an interleaved sequence of elements.
-    ///
-    /// - Parameter other: Another publisher of this publisher's type.
-    /// - Returns: A publisher that emits an event when either upstream publisher emits
-    /// an event.
-    public func merge(with other: Self) -> Publishers.MergeMany<Self>
 }
 
 extension Publisher {
@@ -637,19 +446,7 @@ extension Publisher {
     public func replaceEmpty(with output: Self.Output) -> Publishers.ReplaceEmpty<Self>
 }
 
-extension Publisher {
 
-    /// Raises a fatal error when its upstream publisher fails, and otherwise republishes all received input.
-    ///
-    /// Use this function for internal sanity checks that are active during testing but do not impact performance of shipping code.
-    ///
-    /// - Parameters:
-    ///   - prefix: A string used at the beginning of the fatal error message.
-    ///   - file: A filename used in the error message. This defaults to `#file`.
-    ///   - line: A line number used in the error message. This defaults to `#line`.
-    /// - Returns: A publisher that raises a fatal error when its upstream publisher fails.
-    public func assertNoFailure(_ prefix: String = "", file: StaticString = #file, line: UInt = #line) -> Publishers.AssertNoFailure<Self>
-}
 
 extension Publisher {
 
@@ -880,39 +677,6 @@ extension Publisher {
     public func tryFirst(where predicate: @escaping (Self.Output) throws -> Bool) -> Publishers.TryFirstWhere<Self>
 }
 
-/// A namespace for types related to the Publisher protocol.
-///
-/// The various operators defined as extensions on `Publisher` implement their functionality as classes or structures that extend this enumeration. For example, the `contains()` operator returns a `Publishers.Contains` instance.
-@available(OSX 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-public enum Publishers {
-}
-
-extension Publishers {
-
-    final public class Multicast<Upstream, SubjectType> : ConnectablePublisher where Upstream : Publisher, SubjectType : Subject, Upstream.Failure == SubjectType.Failure, Upstream.Output == SubjectType.Output {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = Upstream.Output
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Upstream.Failure
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        final public func receive<S>(subscriber: S) where S : Subscriber, SubjectType.Failure == S.Failure, SubjectType.Output == S.Input
-
-        /// Connects to the publisher and returns a `Cancellable` instance with which to cancel publishing.
-        ///
-        /// - Returns: A `Cancellable` instance that can be used to cancel publishing.
-        final public func connect() -> Cancellable
-    }
-}
 
 extension Publishers {
 
@@ -1075,65 +839,6 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, DeferredPublisher.Failure == S.Failure, DeferredPublisher.Output == S.Input
-    }
-}
-
-extension Publishers {
-
-    /// A publisher that publishes a single Boolean value that indicates whether all received elements pass a given predicate.
-    public struct AllSatisfy<Upstream> : Publisher where Upstream : Publisher {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = Bool
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Upstream.Failure
-
-        /// The publisher from which this publisher receives elements.
-        public let upstream: Upstream
-
-        /// A closure that evaluates each received element.
-        ///
-        ///  Return `true` to continue, or `false` to cancel the upstream and finish.
-        public let predicate: (Upstream.Output) -> Bool
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, S.Input == Publishers.AllSatisfy<Upstream>.Output
-    }
-
-    /// A publisher that publishes a single Boolean value that indicates whether all received elements pass a given error-throwing predicate.
-    public struct TryAllSatisfy<Upstream> : Publisher where Upstream : Publisher {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = Bool
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Error
-
-        /// The publisher from which this publisher receives elements.
-        public let upstream: Upstream
-
-        /// A closure that evaluates each received element.
-        ///
-        /// Return `true` to continue, or `false` to cancel the upstream and complete. The closure may throw, in which case the publisher cancels the upstream publisher and fails with the thrown error.
-        public let predicate: (Upstream.Output) throws -> Bool
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, S.Failure == Publishers.TryAllSatisfy<Upstream>.Failure, S.Input == Publishers.TryAllSatisfy<Upstream>.Output
     }
 }
 
@@ -1707,69 +1412,7 @@ extension Publishers {
     }
 }
 
-extension Publishers {
 
-    /// A publisher that publishes an optional value to each subscriber exactly once, if the optional has a value.
-    ///
-    /// If `result` is `.success`, and the value is non-nil, then `Optional` waits until receiving a request for at least 1 value before sending the output. If `result` is `.failure`, then `Optional` sends the failure immediately upon subscription. If `result` is `.success` and the value is nil, then `Optional` sends `.finished` immediately upon subscription.
-    ///
-    /// In contrast with `Just`, an `Optional` publisher can send an error.
-    /// In contrast with `Once`, an `Optional` publisher can send zero values and finish normally, or send zero values and fail with an error.
-    public struct Optional<Output, Failure> : Publisher where Failure : Error {
-
-        /// The result to deliver to each subscriber.
-        public let result: Result<Output?, Failure>
-
-        /// Creates a publisher to emit the optional value of a successful result, or fail with an error.
-        ///
-        /// - Parameter result: The result to deliver to each subscriber.
-        public init(_ result: Result<Output?, Failure>)
-
-        public init(_ output: Output?)
-
-        public init(_ failure: Failure)
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber
-    }
-}
-
-extension Publishers {
-
-    /// A publisher that delivers elements to its downstream subscriber on a specific scheduler.
-    public struct ReceiveOn<Upstream, Context> : Publisher where Upstream : Publisher, Context : Scheduler {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = Upstream.Output
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Upstream.Failure
-
-        /// The publisher from which this publisher receives elements.
-        public let upstream: Upstream
-
-        /// The scheduler the publisher is to use for element delivery.
-        public let scheduler: Context
-
-        /// Scheduler options that customize the delivery of elements.
-        public let options: Context.SchedulerOptions?
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input
-    }
-}
 
 extension Publishers {
 
@@ -1798,63 +1441,6 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input
-    }
-}
-
-extension Publishers {
-
-    /// A publisher that applies a closure to all received elements and produces an accumulated value when the upstream publisher finishes.
-    public struct Reduce<Upstream, Output> : Publisher where Upstream : Publisher {
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Upstream.Failure
-
-        /// The publisher from which this publisher receives elements.
-        public let upstream: Upstream
-
-        /// The initial value provided on the first invocation of the closure.
-        public let initial: Output
-
-        /// A closure that takes the previously-accumulated value and the next element from the upstream publisher to produce a new value.
-        public let nextPartialResult: (Output, Upstream.Output) -> Output
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, Upstream.Failure == S.Failure
-    }
-
-    /// A publisher that applies an error-throwing closure to all received elements and produces an accumulated value when the upstream publisher finishes.
-    public struct TryReduce<Upstream, Output> : Publisher where Upstream : Publisher {
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Error
-
-        /// The publisher from which this publisher receives elements.
-        public let upstream: Upstream
-
-        /// The initial value provided on the first invocation of the closure.
-        public let initial: Output
-
-        /// An error-throwing closure that takes the previously-accumulated value and the next element from the upstream to produce a new value.
-        ///
-        /// If this closure throws an error, the publisher fails and passes the error to its subscriber.
-        public let nextPartialResult: (Output, Upstream.Output) throws -> Output
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, S.Failure == Publishers.TryReduce<Upstream, Output>.Failure
     }
 }
 
@@ -2242,42 +1828,7 @@ extension Publishers {
     }
 }
 
-extension Publishers {
 
-    /// A publisher that raises a fatal error upon receiving any failure, and otherwise republishes all received input.
-    ///
-    /// Use this function for internal sanity checks that are active during testing but do not impact performance of shipping code. 
-    public struct AssertNoFailure<Upstream> : Publisher where Upstream : Publisher {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = Upstream.Output
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Never
-
-        /// The publisher from which this publisher receives elements.
-        public let upstream: Upstream
-
-        /// The string used at the beginning of the fatal error message.
-        public let prefix: String
-
-        /// The filename used in the error message.
-        public let file: StaticString
-
-        /// The line number used in the error message.
-        public let line: UInt
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, S.Failure == Publishers.AssertNoFailure<Upstream>.Failure
-    }
-}
 
 extension Publishers {
 
@@ -2419,37 +1970,6 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input
-    }
-}
-
-extension Publishers {
-
-    /// A publisher that immediately terminates with the specified error.
-    public struct Fail<Output, Failure> : Publisher where Failure : Error {
-
-        /// Creates a publisher that immediately terminates with the specified failure.
-        ///
-        /// - Parameter error: The failure to send when terminating the publisher.
-        public init(error: Failure)
-
-        /// Creates publisher with the given output type, that immediately terminates with the specified failure.
-        ///
-        /// Use this initializer to create a `Fail` publisher that can work with subscribers or publishers that expect a given output type.
-        /// - Parameters:
-        ///   - outputType: The output type exposed by this publisher.
-        ///   - failure: The failure to send when terminating the publisher.
-        public init(outputType: Output.Type, failure: Failure)
-
-        /// The failure to send when terminating the publisher.
-        public let error: Failure
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber
     }
 }
 
@@ -3161,28 +2681,6 @@ extension Publishers.Optional where Failure == Never {
 }
 
 extension Publishers.Once {
-
-    public func allSatisfy(_ predicate: (Output) -> Bool) -> Publishers.Once<Bool, Failure>
-
-    public func tryAllSatisfy(_ predicate: (Output) throws -> Bool) -> Publishers.Once<Bool, Error>
-
-    public func collect() -> Publishers.Once<[Output], Failure>
-
-    public func compactMap<T>(_ transform: (Output) -> T?) -> Publishers.Optional<T, Failure>
-
-    public func tryCompactMap<T>(_ transform: (Output) throws -> T?) -> Publishers.Optional<T, Error>
-
-    public func min(by areInIncreasingOrder: (Output, Output) -> Bool) -> Publishers.Once<Output, Failure>
-
-    public func tryMin(by areInIncreasingOrder: (Output, Output) throws -> Bool) -> Publishers.Once<Output, Failure>
-
-    public func max(by areInIncreasingOrder: (Output, Output) -> Bool) -> Publishers.Once<Output, Failure>
-
-    public func tryMax(by areInIncreasingOrder: (Output, Output) throws -> Bool) -> Publishers.Once<Output, Failure>
-
-    public func contains(where predicate: (Output) -> Bool) -> Publishers.Once<Bool, Failure>
-
-    public func tryContains(where predicate: (Output) throws -> Bool) -> Publishers.Once<Bool, Error>
 
     public func count() -> Publishers.Once<Int, Failure>
 

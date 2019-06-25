@@ -1,3 +1,110 @@
+extension Publishers.Once {
+    
+    public func allSatisfy(_ predicate: (Output) -> Bool) -> Publishers.Once<Bool, Failure> {
+        return .init(self.result.map(predicate))
+    }
+    
+    public func tryAllSatisfy(_ predicate: (Output) throws -> Bool) -> Publishers.Once<Bool, Error> {
+        let newResult: Result<Bool, Error>
+        
+        switch self.result {
+        case .success(let output):
+            newResult = Result {
+                try predicate(output)
+            }
+        case .failure(let error):
+            newResult = .failure(error)
+        }
+        
+        return .init(newResult)
+    }
+    
+    public func compactMap<T>(_ transform: (Output) -> T?) -> Publishers.Optional<T, Failure> {
+        return .init(self.result.map(transform))
+    }
+    
+    public func tryCompactMap<T>(_ transform: (Output) throws -> T?) -> Publishers.Optional<T, Error> {
+        let newResult: Result<T?, Error>
+
+        switch self.result {
+        case .success(let output):
+            newResult = Result {
+                try transform(output)
+            }
+        case .failure(let error):
+            newResult = .failure(error)
+        }
+        
+        return .init(newResult)
+    }
+    
+    public func collect() -> Publishers.Once<[Output], Failure> {
+        return .init(self.result.map({ [$0] }))
+    }
+    
+    public func min(by areInIncreasingOrder: (Output, Output) -> Bool) -> Publishers.Once<Output, Failure> {
+        return self
+    }
+    
+    public func tryMin(by areInIncreasingOrder: (Output, Output) throws -> Bool) -> Publishers.Once<Output, Failure> {
+        return self
+    }
+    
+    public func max(by areInIncreasingOrder: (Output, Output) -> Bool) -> Publishers.Once<Output, Failure> {
+        return self
+    }
+    
+    public func tryMax(by areInIncreasingOrder: (Output, Output) throws -> Bool) -> Publishers.Once<Output, Failure> {
+        return self
+    }
+    
+    public func contains(where predicate: (Output) -> Bool) -> Publishers.Once<Bool, Failure> {
+        return self.allSatisfy(predicate)
+    }
+    
+    public func tryContains(where predicate: (Output) throws -> Bool) -> Publishers.Once<Bool, Error> {
+        return self.tryAllSatisfy(predicate)
+    }
+}
+
+extension Publishers.Once : Equatable where Output : Equatable, Failure : Equatable {
+    
+    /// Returns a Boolean value indicating whether two values are equal.
+    ///
+    /// Equality is the inverse of inequality. For any values `a` and `b`,
+    /// `a == b` implies that `a != b` is `false`.
+    ///
+    /// - Parameters:
+    ///   - lhs: A value to compare.
+    ///   - rhs: Another value to compare.
+    public static func == (lhs: Publishers.Once<Output, Failure>, rhs: Publishers.Once<Output, Failure>) -> Bool {
+        return lhs.result == rhs.result
+    }
+}
+
+extension Publishers.Once where Output : Equatable {
+    
+    public func contains(_ output: Output) -> Publishers.Once<Bool, Failure> {
+        return Publishers.Once(self.result.map { $0 == output })
+    }
+    
+    public func removeDuplicates() -> Publishers.Once<Output, Failure> {
+        return self
+    }
+}
+
+extension Publishers.Once where Output : Comparable {
+    
+    public func min() -> Publishers.Once<Output, Failure> {
+        return self
+    }
+    
+    public func max() -> Publishers.Once<Output, Failure> {
+        return self
+    }
+}
+
+
 extension Publishers {
     
     /// A publisher that publishes an output to each subscriber exactly once then finishes, or fails immediately without producing any elements.
@@ -102,42 +209,5 @@ extension Publishers.Once {
         var debugDescription: String {
             return "Once"
         }
-    }
-}
-
-extension Publishers.Once : Equatable where Output : Equatable, Failure : Equatable {
-    
-    /// Returns a Boolean value indicating whether two values are equal.
-    ///
-    /// Equality is the inverse of inequality. For any values `a` and `b`,
-    /// `a == b` implies that `a != b` is `false`.
-    ///
-    /// - Parameters:
-    ///   - lhs: A value to compare.
-    ///   - rhs: Another value to compare.
-    public static func == (lhs: Publishers.Once<Output, Failure>, rhs: Publishers.Once<Output, Failure>) -> Bool {
-        return lhs.result == rhs.result
-    }
-}
-
-extension Publishers.Once where Output : Equatable {
-    
-    public func contains(_ output: Output) -> Publishers.Once<Bool, Failure> {
-        return Publishers.Once(self.result.map { $0 == output })
-    }
-    
-    public func removeDuplicates() -> Publishers.Once<Output, Failure> {
-        return self
-    }
-}
-
-extension Publishers.Once where Output : Comparable {
-    
-    public func min() -> Publishers.Once<Output, Failure> {
-        return self
-    }
-    
-    public func max() -> Publishers.Once<Output, Failure> {
-        return self
     }
 }

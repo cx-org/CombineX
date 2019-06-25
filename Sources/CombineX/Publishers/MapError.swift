@@ -7,7 +7,7 @@ extension Publisher {
     /// - Parameter transform: A closure that takes the upstream failure as a parameter and returns a new error for the publisher to terminate with.
     /// - Returns: A publisher that replaces any upstream failure with a new error produced by the `transform` closure.
     public func mapError<E>(_ transform: @escaping (Self.Failure) -> E) -> Publishers.MapError<Self, E> where E : Error {
-        return Publishers.MapError(upstream: self, transform)
+        return .init(upstream: self, transform)
     }
 }
 

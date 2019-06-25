@@ -5,7 +5,7 @@ extension Publisher {
     /// - Parameter prefix: A string with which to prefix all log messages. Defaults to an empty string.
     /// - Returns: A publisher that prints log messages for all publishing events.
     public func print(_ prefix: String = "", to stream: TextOutputStream? = nil) -> Publishers.Print<Self> {
-        return Publishers.Print(upstream: self, prefix: prefix, to: stream)
+        return .init(upstream: self, prefix: prefix, to: stream)
     }
 }
 

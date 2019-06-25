@@ -1,3 +1,104 @@
+extension Publisher {
+    
+    /// Combines elements from this publisher with those from two other publishers, delivering an interleaved sequence of elements.
+    ///
+    /// The merged publisher continues to emit elements until all upstream publishers finish. If an upstream publisher produces an error, the merged publisher fails with that error.
+    ///
+    /// - Parameters:
+    ///   - b: A second publisher.
+    ///   - c: A third publisher.
+    /// - Returns:  A publisher that emits an event when any upstream publisher emits
+    /// an event.
+    public func merge<B, C>(with b: B, _ c: C) -> Publishers.Merge3<Self, B, C> where B : Publisher, C : Publisher, Self.Failure == B.Failure, Self.Output == B.Output, B.Failure == C.Failure, B.Output == C.Output {
+        return .init(self, b, c)
+    }
+    
+    /// Combines elements from this publisher with those from three other publishers, delivering
+    /// an interleaved sequence of elements.
+    ///
+    /// The merged publisher continues to emit elements until all upstream publishers finish. If an upstream publisher produces an error, the merged publisher fails with that error.
+    ///
+    /// - Parameters:
+    ///   - b: A second publisher.
+    ///   - c: A third publisher.
+    ///   - d: A fourth publisher.
+    /// - Returns: A publisher that emits an event when any upstream publisher emits an event.
+    public func merge<B, C, D>(with b: B, _ c: C, _ d: D) -> Publishers.Merge4<Self, B, C, D> where B : Publisher, C : Publisher, D : Publisher, Self.Failure == B.Failure, Self.Output == B.Output, B.Failure == C.Failure, B.Output == C.Output, C.Failure == D.Failure, C.Output == D.Output {
+        return .init(self, b, c, d)
+    }
+    
+    /// Combines elements from this publisher with those from four other publishers, delivering an interleaved sequence of elements.
+    ///
+    /// The merged publisher continues to emit elements until all upstream publishers finish. If an upstream publisher produces an error, the merged publisher fails with that error.
+    ///
+    /// - Parameters:
+    ///   - b: A second publisher.
+    ///   - c: A third publisher.
+    ///   - d: A fourth publisher.
+    ///   - e: A fifth publisher.
+    /// - Returns: A publisher that emits an event when any upstream publisher emits an event.
+    public func merge<B, C, D, E>(with b: B, _ c: C, _ d: D, _ e: E) -> Publishers.Merge5<Self, B, C, D, E> where B : Publisher, C : Publisher, D : Publisher, E : Publisher, Self.Failure == B.Failure, Self.Output == B.Output, B.Failure == C.Failure, B.Output == C.Output, C.Failure == D.Failure, C.Output == D.Output, D.Failure == E.Failure, D.Output == E.Output {
+        return .init(self, b, c, d, e)
+    }
+    
+    /// Combines elements from this publisher with those from five other publishers, delivering an interleaved sequence of elements.
+    ///
+    /// The merged publisher continues to emit elements until all upstream publishers finish. If an upstream publisher produces an error, the merged publisher fails with that error.
+    ///
+    /// - Parameters:
+    ///   - b: A second publisher.
+    ///   - c: A third publisher.
+    ///   - d: A fourth publisher.
+    ///   - e: A fifth publisher.
+    ///   - f: A sixth publisher.
+    /// - Returns: A publisher that emits an event when any upstream publisher emits an event.
+    public func merge<B, C, D, E, F>(with b: B, _ c: C, _ d: D, _ e: E, _ f: F) -> Publishers.Merge6<Self, B, C, D, E, F> where B : Publisher, C : Publisher, D : Publisher, E : Publisher, F : Publisher, Self.Failure == B.Failure, Self.Output == B.Output, B.Failure == C.Failure, B.Output == C.Output, C.Failure == D.Failure, C.Output == D.Output, D.Failure == E.Failure, D.Output == E.Output, E.Failure == F.Failure, E.Output == F.Output {
+        return .init(self, b, c, d, e, f)
+    }
+    
+    /// Combines elements from this publisher with those from six other publishers, delivering an interleaved sequence of elements.
+    ///
+    /// The merged publisher continues to emit elements until all upstream publishers finish. If an upstream publisher produces an error, the merged publisher fails with that error.
+    ///
+    /// - Parameters:
+    ///   - b: A second publisher.
+    ///   - c: A third publisher.
+    ///   - d: A fourth publisher.
+    ///   - e: A fifth publisher.
+    ///   - f: A sixth publisher.
+    ///   - g: A seventh publisher.
+    /// - Returns: A publisher that emits an event when any upstream publisher emits an event.
+    public func merge<B, C, D, E, F, G>(with b: B, _ c: C, _ d: D, _ e: E, _ f: F, _ g: G) -> Publishers.Merge7<Self, B, C, D, E, F, G> where B : Publisher, C : Publisher, D : Publisher, E : Publisher, F : Publisher, G : Publisher, Self.Failure == B.Failure, Self.Output == B.Output, B.Failure == C.Failure, B.Output == C.Output, C.Failure == D.Failure, C.Output == D.Output, D.Failure == E.Failure, D.Output == E.Output, E.Failure == F.Failure, E.Output == F.Output, F.Failure == G.Failure, F.Output == G.Output {
+        return .init(self, b, c, d, e, f, g)
+    }
+    
+    /// Combines elements from this publisher with those from seven other publishers, delivering an interleaved sequence of elements.
+    ///
+    /// The merged publisher continues to emit elements until all upstream publishers finish. If an upstream publisher produces an error, the merged publisher fails with that error.
+    ///
+    /// - Parameters:
+    ///   - b: A second publisher.
+    ///   - c: A third publisher.
+    ///   - d: A fourth publisher.
+    ///   - e: A fifth publisher.
+    ///   - f: A sixth publisher.
+    ///   - g: A seventh publisher.
+    ///   - h: An eighth publisher.
+    /// - Returns: A publisher that emits an event when any upstream publisher emits an event.
+    public func merge<B, C, D, E, F, G, H>(with b: B, _ c: C, _ d: D, _ e: E, _ f: F, _ g: G, _ h: H) -> Publishers.Merge8<Self, B, C, D, E, F, G, H> where B : Publisher, C : Publisher, D : Publisher, E : Publisher, F : Publisher, G : Publisher, H : Publisher, Self.Failure == B.Failure, Self.Output == B.Output, B.Failure == C.Failure, B.Output == C.Output, C.Failure == D.Failure, C.Output == D.Output, D.Failure == E.Failure, D.Output == E.Output, E.Failure == F.Failure, E.Output == F.Output, F.Failure == G.Failure, F.Output == G.Output, G.Failure == H.Failure, G.Output == H.Output {
+        return .init(self, b, c, d, e, f, g, h)
+    }
+    
+    /// Combines elements from this publisher with those from another publisher of the same type, delivering an interleaved sequence of elements.
+    ///
+    /// - Parameter other: Another publisher of this publisher's type.
+    /// - Returns: A publisher that emits an event when either upstream publisher emits
+    /// an event.
+    public func merge(with other: Self) -> Publishers.MergeMany<Self> {
+        return .init(self, other)
+    }
+}
+
 extension Publishers.Merge3 : Equatable where A : Equatable, B : Equatable, C : Equatable {
     
     /// Returns a Boolean value that indicates whether two publishers are equivalent.
@@ -554,7 +655,7 @@ extension Publishers {
         }
         
         public func merge(with other: Upstream) -> Publishers.MergeMany<Upstream> {
-            return Publishers.MergeMany(Array(self.publishers) + [other])
+            return .init(Array(self.publishers) + [other])
         }
     }
 }

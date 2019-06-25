@@ -1,3 +1,16 @@
+extension Publisher {
+    
+    /// Combines elements from this publisher with those from another publisher, delivering an interleaved sequence of elements.
+    ///
+    /// The merged publisher continues to emit elements until all upstream publishers finish. If an upstream publisher produces an error, the merged publisher fails with that error.
+    /// - Parameter other: Another publisher.
+    /// - Returns: A publisher that emits an event when either upstream publisher emits an event.
+    public func merge<P>(with other: P) -> Publishers.Merge<Self, P> where P : Publisher, Self.Failure == P.Failure, Self.Output == P.Output {
+        return .init(self, other)
+    }
+}
+
+
 extension Publishers.Merge : Equatable where A : Equatable, B : Equatable {
     
     /// Returns a Boolean value that indicates whether two publishers are equivalent.
@@ -51,27 +64,27 @@ extension Publishers {
         }
         
         public func merge<P>(with other: P) -> Publishers.Merge3<A, B, P> where P : Publisher, B.Failure == P.Failure, B.Output == P.Output {
-            return Publishers.Merge3(self.a, self.b, other)
+            return .init(self.a, self.b, other)
         }
         
         public func merge<Z, Y>(with z: Z, _ y: Y) -> Publishers.Merge4<A, B, Z, Y> where Z : Publisher, Y : Publisher, B.Failure == Z.Failure, B.Output == Z.Output, Z.Failure == Y.Failure, Z.Output == Y.Output {
-            return Publishers.Merge4(self.a, self.b, z, y)
+            return .init(self.a, self.b, z, y)
         }
         
         public func merge<Z, Y, X>(with z: Z, _ y: Y, _ x: X) -> Publishers.Merge5<A, B, Z, Y, X> where Z : Publisher, Y : Publisher, X : Publisher, B.Failure == Z.Failure, B.Output == Z.Output, Z.Failure == Y.Failure, Z.Output == Y.Output, Y.Failure == X.Failure, Y.Output == X.Output {
-            return Publishers.Merge5(self.a, self.b, z, y, x)
+            return .init(self.a, self.b, z, y, x)
         }
         
         public func merge<Z, Y, X, W>(with z: Z, _ y: Y, _ x: X, _ w: W) -> Publishers.Merge6<A, B, Z, Y, X, W> where Z : Publisher, Y : Publisher, X : Publisher, W : Publisher, B.Failure == Z.Failure, B.Output == Z.Output, Z.Failure == Y.Failure, Z.Output == Y.Output, Y.Failure == X.Failure, Y.Output == X.Output, X.Failure == W.Failure, X.Output == W.Output {
-            return Publishers.Merge6(self.a, self.b, z, y, x, w)
+            return .init(self.a, self.b, z, y, x, w)
         }
         
         public func merge<Z, Y, X, W, V>(with z: Z, _ y: Y, _ x: X, _ w: W, _ v: V) -> Publishers.Merge7<A, B, Z, Y, X, W, V> where Z : Publisher, Y : Publisher, X : Publisher, W : Publisher, V : Publisher, B.Failure == Z.Failure, B.Output == Z.Output, Z.Failure == Y.Failure, Z.Output == Y.Output, Y.Failure == X.Failure, Y.Output == X.Output, X.Failure == W.Failure, X.Output == W.Output, W.Failure == V.Failure, W.Output == V.Output {
-            return Publishers.Merge7(self.a, self.b, z, y, x, w, v)
+            return .init(self.a, self.b, z, y, x, w, v)
         }
         
         public func merge<Z, Y, X, W, V, U>(with z: Z, _ y: Y, _ x: X, _ w: W, _ v: V, _ u: U) -> Publishers.Merge8<A, B, Z, Y, X, W, V, U> where Z : Publisher, Y : Publisher, X : Publisher, W : Publisher, V : Publisher, U : Publisher, B.Failure == Z.Failure, B.Output == Z.Output, Z.Failure == Y.Failure, Z.Output == Y.Output, Y.Failure == X.Failure, Y.Output == X.Output, X.Failure == W.Failure, X.Output == W.Output, W.Failure == V.Failure, W.Output == V.Output, V.Failure == U.Failure, V.Output == U.Output {
-            return Publishers.Merge8(self.a, self.b, z, y, x, w, v, u)
+            return .init(self.a, self.b, z, y, x, w, v, u)
         }
     }
 }

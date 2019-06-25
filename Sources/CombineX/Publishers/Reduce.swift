@@ -1,37 +1,20 @@
-import Foundation
-
 extension Publisher {
     
-    /// Transforms all elements from the upstream publisher with a provided closure.
+    /// Applies a closure that accumulates each element of a stream and publishes a final result upon completion.
     ///
-    /// - Parameter transform: A closure that takes one element as its parameter and returns a new element.
-    /// - Returns: A publisher that uses the provided closure to map elements from the upstream publisher to new elements that it then publishes.
-    public func map<T>(_ transform: @escaping (Self.Output) -> T) -> Publishers.Map<Self, T> {
-        return .init(upstream: self, transform: transform)
-    }
-}
-
-extension Publishers.Map {
-    
-    public func map<T>(_ transform: @escaping (Output) -> T) -> Publishers.Map<Upstream, T> {
-        let newTransform: (Upstream.Output) -> T = {
-            transform(self.transform($0))
-        }
-        return self.upstream.map(newTransform)
-    }
-    
-    public func tryMap<T>(_ transform: @escaping (Output) throws -> T) -> Publishers.TryMap<Upstream, T> {
-        let newTransform: (Upstream.Output) throws -> T = {
-            try transform(self.transform($0))
-        }
-        return self.upstream.tryMap(newTransform)
+    /// - Parameters:
+    ///   - initialResult: The value the closure receives the first time it is called.
+    ///   - nextPartialResult: A closure that takes the previously-accumulated value and the next element from the upstream publisher to produce a new value.
+    /// - Returns: A publisher that applies the closure to all received elements and produces an accumulated value when the upstream publisher finishes.
+    public func reduce<T>(_ initialResult: T, _ nextPartialResult: @escaping (T, Self.Output) -> T) -> Publishers.Reduce<Self, T> {
+        return .init(upstream: self, initial: initialResult, nextPartialResult: nextPartialResult)
     }
 }
 
 extension Publishers {
     
-    /// A publisher that transforms all elements from the upstream publisher with a provided closure.
-    public struct Map<Upstream, Output> : Publisher where Upstream : Publisher {
+    /// A publisher that applies a closure to all received elements and produces an accumulated value when the upstream publisher finishes.
+    public struct Reduce<Upstream, Output> : Publisher where Upstream : Publisher {
         
         /// The kind of errors this publisher might publish.
         ///
@@ -41,8 +24,11 @@ extension Publishers {
         /// The publisher from which this publisher receives elements.
         public let upstream: Upstream
         
-        /// The closure that transforms elements from the upstream publisher.
-        public let transform: (Upstream.Output) -> Output
+        /// The initial value provided on the first invocation of the closure.
+        public let initial: Output
+        
+        /// A closure that takes the previously-accumulated value and the next element from the upstream publisher to produce a new value.
+        public let nextPartialResult: (Output, Upstream.Output) -> Output
         
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
@@ -57,7 +43,7 @@ extension Publishers {
     }
 }
 
-extension Publishers.Map {
+extension Publishers.Reduce {
     
     private final class Inner<S>:
         Subscription,
@@ -73,21 +59,26 @@ extension Publishers.Map {
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
         
-        typealias Pub = Publishers.Map<Upstream, Output>
+        typealias Pub = Publishers.Reduce<Upstream, Output>
         typealias Sub = S
-
+        
         let state = Atomic<RelaySubscriptionState>(value: .waiting)
         
         var pub: Pub?
         var sub: Sub?
         
+        let output: Atomic<Output>
+        
         init(pub: Pub, sub: Sub) {
             self.pub = pub
             self.sub = sub
+            
+            self.output = Atomic(value: pub.initial)
         }
         
         func request(_ demand: Subscribers.Demand) {
-            self.state.subscription?.request(demand)
+            precondition(demand > 0)
+            self.state.subscription?.request(.unlimited)
         }
         
         func cancel() {
@@ -110,28 +101,42 @@ extension Publishers.Map {
                 return .none
             }
             
-            guard let pub = self.pub, let sub = self.sub else {
+            guard let pub = self.pub else {
                 return .none
             }
             
-            return sub.receive(pub.transform(input))
+            self.output.withLockMutating {
+                $0 = pub.nextPartialResult($0, input)
+            }
+            
+            return .none
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
-            if let subscription = self.state.finishIfSubscribing() {
-                subscription.cancel()
-                self.sub?.receive(completion: completion)
-                self.pub = nil
-                self.sub = nil
+            guard let subscription = self.state.finishIfSubscribing() else {
+                return
             }
+            
+            subscription.cancel()
+            
+            switch completion {
+            case .failure(let e):
+                self.sub?.receive(completion: .failure(e))
+            case .finished:
+                _ = self.sub?.receive(self.output.load())
+                self.sub?.receive(completion: .finished)
+            }
+
+            self.pub = nil
+            self.sub = nil
         }
         
         var description: String {
-            return "Map"
+            return "Reduce"
         }
         
         var debugDescription: String {
-            return "Map"
+            return "Reduce"
         }
     }
 }

@@ -6,7 +6,7 @@ extension Publisher {
     /// - Parameter transform: A closure that takes one element as its parameter and returns a new element.
     /// - Returns: A publisher that uses the provided closure to map elements from the upstream publisher to new elements that it then publishes.
     public func tryMap<T>(_ transform: @escaping (Self.Output) throws -> T) -> Publishers.TryMap<Self, T> {
-        return Publishers.TryMap<Self, T>(upstream: self, transform: transform)
+        return .init(upstream: self, transform: transform)
     }
 }
 

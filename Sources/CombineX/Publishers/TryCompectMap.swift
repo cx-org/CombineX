@@ -6,7 +6,7 @@ extension Publisher {
     /// - Parameter transform: an error-throwing closure that receives a value and returns an optional value.
     /// - Returns: A publisher that republishes all non-`nil` results of calling the transform closure.
     public func tryCompactMap<T>(_ transform: @escaping (Self.Output) throws -> T?) -> Publishers.TryCompactMap<Self, T> {
-        return Publishers.TryCompactMap(upstream: self, transform: transform)
+        return .init(upstream: self, transform: transform)
     }
 }
 

@@ -76,10 +76,13 @@ Since some people may not have macOS 10.15 beta installed, the recommended contr
 
 | API | Status | Test | Notes |
 |:--|:--|:--|:--|
+|`AllSatisfy`| done |   |   |
+|`AssertNoFailure`| done |   |   |
 |`Autoconnect`|   |   |   |
 |`CompactMap`| done | done |   |
 |`Count`|   |   |   |
 |`Empty`| done | done |   |
+|`Fail`| done |   |   |
 |`Filter`| done | done |   |
 |`FlatMap`| done | done |   |
 |`Just`| done | done |   |
@@ -87,9 +90,14 @@ Since some people may not have macOS 10.15 beta installed, the recommended contr
 |`MapError`| done |   |   |
 |`Merge`| done | basic |   |
 |`Once`| done | done |   |
+|`Optional`| done | done |   |
 |`Print`| done | done |   |
 |`Publishers`| done | no need |   |
+|`Reduce`| done |   |   |
+|`TryAllSatisfy`| done |   |   |
+|`TryReduce`| done |   |   |
 |`Sequence`| done | done |   |
+|`SetFailureType`| done | done |   |
 |`SubscribeOn`|   |   |   |
 |`TryCompactMapSpec`| done | done |   |
 |`TryFilter`| done |   |   |

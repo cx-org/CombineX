@@ -13,6 +13,20 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        enum E: Error {
+            case e
+        }
+        
+        let sub = PassthroughSubject<Int, E>()
+        sub.assertNoFailure("[q]")
+            .sink(receiveCompletion: { (c) in
+                print("completion", c)
+            }, receiveValue: { v in
+                print("value", v)
+            })
+        sub.send(1)
+        sub.send(completion: .failure(E.e))
     }
 }
 
