@@ -18,15 +18,10 @@ class ViewController: UIViewController {
             case e
         }
         
-        let sub = PassthroughSubject<Int, E>()
-        sub.assertNoFailure("[q]")
-            .sink(receiveCompletion: { (c) in
-                print("completion", c)
-            }, receiveValue: { v in
-                print("value", v)
-            })
-        sub.send(1)
-        sub.send(completion: .failure(E.e))
+        Publishers.Once<Int, Never>(1).dropFirst(0)
+            .sink { (v) in
+                print("receive", v)
+            }
     }
 }
 

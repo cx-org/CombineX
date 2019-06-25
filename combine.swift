@@ -2416,68 +2416,6 @@ extension Publishers {
 
 extension Publishers.Just {
 
-    public func allSatisfy(_ predicate: (Output) -> Bool) -> Publishers.Just<Bool>
-
-    public func tryAllSatisfy(_ predicate: (Output) throws -> Bool) -> Publishers.Once<Bool, Error>
-
-    public func collect() -> Publishers.Just<[Output]>
-
-    public func compactMap<T>(_ transform: (Output) -> T?) -> Publishers.Optional<T, Publishers.Just<Output>.Failure>
-
-    public func tryCompactMap<T>(_ transform: (Output) throws -> T?) -> Publishers.Optional<T, Error>
-
-    public func min(by areInIncreasingOrder: (Output, Output) -> Bool) -> Publishers.Just<Output>
-
-    public func tryMin(by areInIncreasingOrder: (Output, Output) throws -> Bool) -> Publishers.Optional<Output>
-
-    public func max(by areInIncreasingOrder: (Output, Output) -> Bool) -> Publishers.Just<Output>
-
-    public func tryMax(by areInIncreasingOrder: (Output, Output) throws -> Bool) -> Publishers.Optional<Output>
-
-    public func prepend(_ elements: Output...) -> Publishers.Sequence<[Output], Publishers.Just<Output>.Failure>
-
-    public func prepend<S>(_ elements: S) -> Publishers.Sequence<[Output], Publishers.Just<Output>.Failure> where Output == S.Element, S : Sequence
-
-    public func append(_ elements: Output...) -> Publishers.Sequence<[Output], Publishers.Just<Output>.Failure>
-
-    public func append<S>(_ elements: S) -> Publishers.Sequence<[Output], Publishers.Just<Output>.Failure> where Output == S.Element, S : Sequence
-
-    public func contains(where predicate: (Output) -> Bool) -> Publishers.Just<Bool>
-
-    public func tryContains(where predicate: (Output) throws -> Bool) -> Publishers.Once<Bool, Error>
-
-    public func count() -> Publishers.Just<Int>
-
-    public func dropFirst(_ count: Int = 1) -> Publishers.Optional<Output, Publishers.Just<Output>.Failure>
-
-    public func drop(while predicate: (Output) -> Bool) -> Publishers.Optional<Output, Publishers.Just<Output>.Failure>
-
-    public func tryDrop(while predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error>
-
-    public func first() -> Publishers.Just<Output>
-
-    public func first(where predicate: (Output) -> Bool) -> Publishers.Optional<Output, Publishers.Just<Output>.Failure>
-
-    public func tryFirst(where predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error>
-
-    public func last() -> Publishers.Just<Output>
-
-    public func last(where predicate: (Output) -> Bool) -> Publishers.Optional<Output, Publishers.Just<Output>.Failure>
-
-    public func tryLast(where predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error>
-
-    public func filter(_ isIncluded: (Output) -> Bool) -> Publishers.Optional<Output, Publishers.Just<Output>.Failure>
-
-    public func tryFilter(_ isIncluded: (Output) throws -> Bool) -> Publishers.Optional<Output, Error>
-
-    public func ignoreOutput() -> Publishers.Empty<Output, Publishers.Just<Output>.Failure>
-
-    public func map<T>(_ transform: (Output) -> T) -> Publishers.Just<T>
-
-    public func tryMap<T>(_ transform: (Output) throws -> T) -> Publishers.Once<T, Error>
-
-    public func mapError<E>(_ transform: (Publishers.Just<Output>.Failure) -> E) -> Publishers.Once<Output, E> where E : Error
-
     public func output(at index: Int) -> Publishers.Optional<Output, Publishers.Just<Output>.Failure>
 
     public func output<R>(in range: R) -> Publishers.Optional<Output, Publishers.Just<Output>.Failure> where R : RangeExpression, R.Bound == Int
@@ -2487,10 +2425,6 @@ extension Publishers.Just {
     public func prefix(while predicate: (Output) -> Bool) -> Publishers.Optional<Output, Publishers.Just<Output>.Failure>
 
     public func tryPrefix(while predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error>
-
-    public func reduce<T>(_ initialResult: T, _ nextPartialResult: (T, Output) -> T) -> Publishers.Once<T, Publishers.Just<Output>.Failure>
-
-    public func tryReduce<T>(_ initialResult: T, _ nextPartialResult: (T, Output) throws -> T) -> Publishers.Once<T, Error>
 
     public func removeDuplicates(by predicate: (Output, Output) -> Bool) -> Publishers.Just<Output>
 
@@ -2507,8 +2441,6 @@ extension Publishers.Just {
     public func scan<T>(_ initialResult: T, _ nextPartialResult: (T, Output) -> T) -> Publishers.Once<T, Publishers.Just<Output>.Failure>
 
     public func tryScan<T>(_ initialResult: T, _ nextPartialResult: (T, Output) throws -> T) -> Publishers.Once<T, Error>
-
-    public func setFailureType<E>(to failureType: E.Type) -> Publishers.Once<Output, E> where E : Error
 }
 
 extension Publishers.Contains : Equatable where Upstream : Equatable {
@@ -2561,88 +2493,7 @@ extension Publishers.CollectByCount : Equatable where Upstream : Equatable {
     public static func == (lhs: Publishers.CollectByCount<Upstream>, rhs: Publishers.CollectByCount<Upstream>) -> Bool
 }
 
-extension Publishers.Optional : Equatable where Output : Equatable, Failure : Equatable {
-
-    /// Returns a Boolean value indicating whether two values are equal.
-    ///
-    /// Equality is the inverse of inequality. For any values `a` and `b`,
-    /// `a == b` implies that `a != b` is `false`.
-    ///
-    /// - Parameters:
-    ///   - lhs: A value to compare.
-    ///   - rhs: Another value to compare.
-    public static func == (lhs: Publishers.Optional<Output, Failure>, rhs: Publishers.Optional<Output, Failure>) -> Bool
-}
-
-extension Publishers.Optional where Output : Equatable {
-
-    public func contains(_ output: Output) -> Publishers.Optional<Bool, Failure>
-
-    public func removeDuplicates() -> Publishers.Optional<Output, Failure>
-}
-
-extension Publishers.Optional where Output : Comparable {
-
-    public func min() -> Publishers.Optional<Output, Failure>
-
-    public func max() -> Publishers.Optional<Output, Failure>
-}
-
 extension Publishers.Optional {
-
-    public func allSatisfy(_ predicate: (Output) -> Bool) -> Publishers.Optional<Bool, Failure>
-
-    public func tryAllSatisfy(_ predicate: (Output) throws -> Bool) -> Publishers.Optional<Bool, Error>
-
-    public func collect() -> Publishers.Optional<[Output], Failure>
-
-    public func compactMap<T>(_ transform: (Output) -> T?) -> Publishers.Optional<T, Failure>
-
-    public func tryCompactMap<T>(_ transform: (Output) throws -> T?) -> Publishers.Optional<T, Error>
-
-    public func min(by areInIncreasingOrder: (Output, Output) -> Bool) -> Publishers.Optional<Output, Failure>
-
-    public func tryMin(by areInIncreasingOrder: (Output, Output) throws -> Bool) -> Publishers.Optional<Output, Failure>
-
-    public func max(by areInIncreasingOrder: (Output, Output) -> Bool) -> Publishers.Optional<Output, Failure>
-
-    public func tryMax(by areInIncreasingOrder: (Output, Output) throws -> Bool) -> Publishers.Optional<Output, Failure>
-
-    public func contains(where predicate: (Output) -> Bool) -> Publishers.Optional<Bool, Failure>
-
-    public func tryContains(where predicate: (Output) throws -> Bool) -> Publishers.Optional<Bool, Error>
-
-    public func count() -> Publishers.Optional<Int, Failure>
-
-    public func dropFirst(_ count: Int = 1) -> Publishers.Optional<Output, Failure>
-
-    public func drop(while predicate: (Output) -> Bool) -> Publishers.Optional<Output, Failure>
-
-    public func tryDrop(while predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error>
-
-    public func first() -> Publishers.Optional<Output, Failure>
-
-    public func first(where predicate: (Output) -> Bool) -> Publishers.Optional<Output, Failure>
-
-    public func tryFirst(where predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error>
-
-    public func last() -> Publishers.Optional<Output, Failure>
-
-    public func last(where predicate: (Output) -> Bool) -> Publishers.Optional<Output, Failure>
-
-    public func tryLast(where predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error>
-
-    public func filter(_ isIncluded: (Output) -> Bool) -> Publishers.Optional<Output, Failure>
-
-    public func tryFilter(_ isIncluded: (Output) throws -> Bool) -> Publishers.Optional<Output, Error>
-
-    public func ignoreOutput() -> Publishers.Empty<Output, Failure>
-
-    public func map<T>(_ transform: (Output) -> T) -> Publishers.Optional<T, Failure>
-
-    public func tryMap<T>(_ transform: (Output) throws -> T) -> Publishers.Optional<T, Error>
-
-    public func mapError<E>(_ transform: (Failure) -> E) -> Publishers.Optional<Output, E> where E : Error
 
     public func output(at index: Int) -> Publishers.Optional<Output, Failure>
 
@@ -2653,14 +2504,6 @@ extension Publishers.Optional {
     public func prefix(while predicate: (Output) -> Bool) -> Publishers.Optional<Output, Failure>
 
     public func tryPrefix(while predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error>
-
-    public func reduce<T>(_ initialResult: T, _ nextPartialResult: (T, Output) -> T) -> Publishers.Optional<T, Failure>
-
-    public func tryReduce<T>(_ initialResult: T, _ nextPartialResult: (T, Output) throws -> T) -> Publishers.Optional<T, Error>
-
-    public func removeDuplicates(by predicate: (Output, Output) -> Bool) -> Publishers.Optional<Output, Failure>
-
-    public func tryRemoveDuplicates(by predicate: (Output, Output) throws -> Bool) -> Publishers.Optional<Output, Error>
 
     public func replaceError(with output: Output) -> Publishers.Optional<Output, Never>
 
@@ -2682,38 +2525,6 @@ extension Publishers.Optional where Failure == Never {
 
 extension Publishers.Once {
 
-    public func count() -> Publishers.Once<Int, Failure>
-
-    public func dropFirst(_ count: Int = 1) -> Publishers.Optional<Output, Failure>
-
-    public func drop(while predicate: (Output) -> Bool) -> Publishers.Optional<Output, Failure>
-
-    public func tryDrop(while predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error>
-
-    public func first() -> Publishers.Once<Output, Failure>
-
-    public func first(where predicate: (Output) -> Bool) -> Publishers.Optional<Output, Failure>
-
-    public func tryFirst(where predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error>
-
-    public func last() -> Publishers.Once<Output, Failure>
-
-    public func last(where predicate: (Output) -> Bool) -> Publishers.Optional<Output, Failure>
-
-    public func tryLast(where predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error>
-
-    public func filter(_ isIncluded: (Output) -> Bool) -> Publishers.Optional<Output, Failure>
-
-    public func tryFilter(_ isIncluded: (Output) throws -> Bool) -> Publishers.Optional<Output, Error>
-
-    public func ignoreOutput() -> Publishers.Empty<Output, Failure>
-
-    public func map<T>(_ transform: (Output) -> T) -> Publishers.Once<T, Failure>
-
-    public func tryMap<T>(_ transform: (Output) throws -> T) -> Publishers.Once<T, Error>
-
-    public func mapError<E>(_ transform: (Failure) -> E) -> Publishers.Once<Output, E> where E : Error
-
     public func output(at index: Int) -> Publishers.Optional<Output, Failure>
 
     public func output<R>(in range: R) -> Publishers.Optional<Output, Failure> where R : RangeExpression, R.Bound == Int
@@ -2723,10 +2534,6 @@ extension Publishers.Once {
     public func prefix(while predicate: (Output) -> Bool) -> Publishers.Optional<Output, Failure>
 
     public func tryPrefix(while predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error>
-
-    public func reduce<T>(_ initialResult: T, _ nextPartialResult: (T, Output) -> T) -> Publishers.Once<T, Failure>
-
-    public func tryReduce<T>(_ initialResult: T, _ nextPartialResult: (T, Output) throws -> T) -> Publishers.Once<T, Error>
 
     public func removeDuplicates(by predicate: (Output, Output) -> Bool) -> Publishers.Once<Output, Failure>
 
@@ -2743,11 +2550,6 @@ extension Publishers.Once {
     public func scan<T>(_ initialResult: T, _ nextPartialResult: (T, Output) -> T) -> Publishers.Once<T, Failure>
 
     public func tryScan<T>(_ initialResult: T, _ nextPartialResult: (T, Output) throws -> T) -> Publishers.Once<T, Error>
-}
-
-extension Publishers.Once where Failure == Never {
-
-    public func setFailureType<E>(to failureType: E.Type) -> Publishers.Once<Output, E> where E : Error
 }
 
 extension Publishers.IgnoreOutput : Equatable where Upstream : Equatable {

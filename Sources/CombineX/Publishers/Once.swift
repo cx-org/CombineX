@@ -5,18 +5,7 @@ extension Publishers.Once {
     }
     
     public func tryAllSatisfy(_ predicate: (Output) throws -> Bool) -> Publishers.Once<Bool, Error> {
-        let newResult: Result<Bool, Error>
-        
-        switch self.result {
-        case .success(let output):
-            newResult = Result {
-                try predicate(output)
-            }
-        case .failure(let error):
-            newResult = .failure(error)
-        }
-        
-        return .init(newResult)
+        return .init(self.result.tryMap(predicate))
     }
     
     public func compactMap<T>(_ transform: (Output) -> T?) -> Publishers.Optional<T, Failure> {
@@ -24,18 +13,7 @@ extension Publishers.Once {
     }
     
     public func tryCompactMap<T>(_ transform: (Output) throws -> T?) -> Publishers.Optional<T, Error> {
-        let newResult: Result<T?, Error>
-
-        switch self.result {
-        case .success(let output):
-            newResult = Result {
-                try transform(output)
-            }
-        case .failure(let error):
-            newResult = .failure(error)
-        }
-        
-        return .init(newResult)
+        return .init(self.result.tryMap(transform))
     }
     
     public func collect() -> Publishers.Once<[Output], Failure> {
@@ -64,6 +42,112 @@ extension Publishers.Once {
     
     public func tryContains(where predicate: (Output) throws -> Bool) -> Publishers.Once<Bool, Error> {
         return self.tryAllSatisfy(predicate)
+    }
+    
+    public func count() -> Publishers.Once<Int, Failure> {
+        return .init(self.result.map { _ in 1 })
+    }
+    
+    public func dropFirst(_ count: Int = 1) -> Publishers.Optional<Output, Failure> {
+        precondition(count >= 0)
+        
+        if count == 0 {
+            return self.compactMap { $0 }
+        } else {
+            return .init(self.result.map { _ in nil })
+        }
+    }
+    
+    public func drop(while predicate: (Output) -> Bool) -> Publishers.Optional<Output, Failure> {
+        return self.compactMap {
+            if predicate($0) {
+                return nil
+            } else {
+                return $0
+            }
+        }
+    }
+    
+    public func tryDrop(while predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error> {
+        return self.tryCompactMap {
+            if try predicate($0) {
+                return nil
+            } else {
+                return $0
+            }
+        }
+    }
+    
+    public func first() -> Publishers.Once<Output, Failure> {
+        return self
+    }
+    
+    public func first(where predicate: (Output) -> Bool) -> Publishers.Optional<Output, Failure> {
+        return self.compactMap {
+            if predicate($0) {
+                return $0
+            } else {
+                return nil
+            }
+        }
+    }
+    
+    public func tryFirst(where predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error> {
+        return self.tryCompactMap {
+            if try predicate($0) {
+                return $0
+            } else {
+                return nil
+            }
+        }
+    }
+    
+    public func last() -> Publishers.Once<Output, Failure> {
+        return self.first()
+    }
+    
+    public func last(where predicate: (Output) -> Bool) -> Publishers.Optional<Output, Failure> {
+        return self.first(where: predicate)
+    }
+    
+    public func tryLast(where predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error> {
+        return self.tryFirst(where: predicate)
+    }
+    
+    public func filter(_ isIncluded: (Output) -> Bool) -> Publishers.Optional<Output, Failure> {
+        return self.first(where: isIncluded)
+    }
+    
+    public func tryFilter(_ isIncluded: (Output) throws -> Bool) -> Publishers.Optional<Output, Error> {
+        return self.tryFirst(where: isIncluded)
+    }
+    
+    public func ignoreOutput() -> Publishers.Empty<Output, Failure> {
+        return .init()
+    }
+    
+    public func map<T>(_ transform: (Output) -> T) -> Publishers.Once<T, Failure> {
+        return .init(self.result.map(transform))
+    }
+    
+    public func tryMap<T>(_ transform: (Output) throws -> T) -> Publishers.Once<T, Error> {
+        return .init(self.result.tryMap(transform))
+    }
+    
+    public func mapError<E>(_ transform: (Failure) -> E) -> Publishers.Once<Output, E> where E : Error {
+        return .init(self.result.mapError(transform))
+    }
+
+    public func reduce<T>(_ initialResult: T, _ nextPartialResult: (T, Output) -> T) -> Publishers.Once<T, Failure> {
+        return .init(self.result.map {
+            nextPartialResult(initialResult, $0)
+        })
+    }
+    
+    public func tryReduce<T>(_ initialResult: T, _ nextPartialResult: (T, Output) throws -> T) -> Publishers.Once<T, Error> {
+        return .init(self.result.tryMap {
+            try nextPartialResult(initialResult, $0)
+        })
     }
 }
 
@@ -104,6 +188,13 @@ extension Publishers.Once where Output : Comparable {
     }
 }
 
+extension Publishers.Once where Failure == Never {
+    
+    public func setFailureType<E>(to failureType: E.Type) -> Publishers.Once<Output, E> where E : Error {
+        return self.mapError { _ -> E in
+        }
+    }
+}
 
 extension Publishers {
     

@@ -1,6 +1,6 @@
 # CombineX
 
-<img src="https://img.shields.io/travis/CombineSwift/CombineX.svg">
+<img src="https://img.shields.io/travis/luoxiu/CombineX.svg">
 
 CombineX is an open source implementation for Apple's [Combine](https://developer.apple.com/documentation/combine) specs.
 

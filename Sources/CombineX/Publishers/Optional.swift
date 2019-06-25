@@ -1,3 +1,224 @@
+extension Publishers.Optional {
+    
+    public func allSatisfy(_ predicate: (Output) -> Bool) -> Publishers.Optional<Bool, Failure> {
+        return .init(self.result.map {
+            if let success = $0 {
+                return predicate(success)
+            }
+            return false
+        })
+    }
+    
+    public func tryAllSatisfy(_ predicate: (Output) throws -> Bool) -> Publishers.Optional<Bool, Error> {
+        return .init(self.result.tryMap {
+            try $0.map { try predicate($0) }
+        })
+    }
+    
+    public func collect() -> Publishers.Optional<[Output], Failure> {
+        return .init(self.result.map {
+            $0.map { [$0] }
+        })
+    }
+    
+    public func compactMap<T>(_ transform: (Output) -> T?) -> Publishers.Optional<T, Failure> {
+        return .init(self.result.map {
+            $0.flatMap(transform)
+        })
+    }
+    
+    public func tryCompactMap<T>(_ transform: (Output) throws -> T?) -> Publishers.Optional<T, Error> {
+        return .init(self.result.tryMap {
+            try $0.flatMap(transform)
+        })
+    }
+    
+    public func min(by areInIncreasingOrder: (Output, Output) -> Bool) -> Publishers.Optional<Output, Failure> {
+        return self
+    }
+    
+    public func tryMin(by areInIncreasingOrder: (Output, Output) throws -> Bool) -> Publishers.Optional<Output, Failure> {
+        return self
+    }
+    
+    public func max(by areInIncreasingOrder: (Output, Output) -> Bool) -> Publishers.Optional<Output, Failure> {
+        return self
+    }
+    
+    public func tryMax(by areInIncreasingOrder: (Output, Output) throws -> Bool) -> Publishers.Optional<Output, Failure> {
+        return self
+    }
+    
+    public func contains(where predicate: (Output) -> Bool) -> Publishers.Optional<Bool, Failure> {
+        return self.allSatisfy(predicate)
+    }
+    
+    public func tryContains(where predicate: (Output) throws -> Bool) -> Publishers.Optional<Bool, Error> {
+        return self.tryAllSatisfy(predicate)
+    }
+    
+    public func count() -> Publishers.Optional<Int, Failure> {
+        return .init(self.result.map { _ in 1 })
+    }
+    
+    public func dropFirst(_ count: Int = 1) -> Publishers.Optional<Output, Failure> {
+        precondition(count >= 0)
+        
+        if count == 0 {
+            return self
+        } else {
+            return .init(self.result.map { _ in nil })
+        }
+    }
+    
+    public func drop(while predicate: (Output) -> Bool) -> Publishers.Optional<Output, Failure> {
+        return self.compactMap {
+            if predicate($0) {
+                return nil
+            } else {
+                return $0
+            }
+        }
+    }
+    
+    public func tryDrop(while predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error> {
+        return self.tryCompactMap {
+            if try predicate($0) {
+                return nil
+            } else {
+                return $0
+            }
+        }
+    }
+    
+    public func first() -> Publishers.Optional<Output, Failure> {
+        return self
+    }
+    
+    public func first(where predicate: (Output) -> Bool) -> Publishers.Optional<Output, Failure> {
+        return self.compactMap {
+            if predicate($0) {
+                return $0
+            } else {
+                return nil
+            }
+        }
+    }
+    
+    public func tryFirst(where predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error> {
+        return self.tryCompactMap {
+            if try predicate($0) {
+                return $0
+            } else {
+                return nil
+            }
+        }
+    }
+    
+    public func last() -> Publishers.Optional<Output, Failure> {
+        return self.first()
+    }
+    
+    public func last(where predicate: (Output) -> Bool) -> Publishers.Optional<Output, Failure> {
+        return self.first(where: predicate)
+    }
+    
+    public func tryLast(where predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error> {
+        return self.tryFirst(where: predicate)
+    }
+    
+    public func filter(_ isIncluded: (Output) -> Bool) -> Publishers.Optional<Output, Failure> {
+        return self.first(where: isIncluded)
+    }
+    
+    public func tryFilter(_ isIncluded: (Output) throws -> Bool) -> Publishers.Optional<Output, Error> {
+        return self.tryFirst(where: isIncluded)
+    }
+    
+    public func ignoreOutput() -> Publishers.Empty<Output, Failure> {
+        return .init()
+    }
+    
+    public func map<T>(_ transform: (Output) -> T) -> Publishers.Optional<T, Failure> {
+        return .init(self.result.map {
+            $0.map(transform)
+        })
+    }
+    
+    public func tryMap<T>(_ transform: (Output) throws -> T) -> Publishers.Optional<T, Error> {
+        return .init(self.result.tryMap {
+            try $0.map(transform)
+        })
+    }
+    
+    public func mapError<E>(_ transform: (Failure) -> E) -> Publishers.Optional<Output, E> where E : Error {
+        return .init(self.result.mapError(transform))
+    }
+
+    public func reduce<T>(_ initialResult: T, _ nextPartialResult: (T, Output) -> T) -> Publishers.Optional<T, Failure> {
+        return .init(self.result.map {
+            $0.map {
+                nextPartialResult(initialResult, $0)
+            }
+        })
+    }
+    
+    public func tryReduce<T>(_ initialResult: T, _ nextPartialResult: (T, Output) throws -> T) -> Publishers.Optional<T, Error> {
+        return .init(self.result.tryMap {
+            try $0.map {
+                try nextPartialResult(initialResult, $0)
+            }
+        })
+    }
+    
+    public func removeDuplicates(by predicate: (Output, Output) -> Bool) -> Publishers.Optional<Output, Failure> {
+        return self
+    }
+    
+    public func tryRemoveDuplicates(by predicate: (Output, Output) throws -> Bool) ->  Publishers.Optional<Output, Error> {
+        return self.mapError { $0 }
+    }
+}
+
+extension Publishers.Optional : Equatable where Output : Equatable, Failure : Equatable {
+    
+    /// Returns a Boolean value indicating whether two values are equal.
+    ///
+    /// Equality is the inverse of inequality. For any values `a` and `b`,
+    /// `a == b` implies that `a != b` is `false`.
+    ///
+    /// - Parameters:
+    ///   - lhs: A value to compare.
+    ///   - rhs: Another value to compare.
+    public static func == (lhs: Publishers.Optional<Output, Failure>, rhs: Publishers.Optional<Output, Failure>) -> Bool {
+        return lhs.result == rhs.result
+    }
+}
+
+extension Publishers.Optional where Output : Equatable {
+    
+    public func contains(_ output: Output) -> Publishers.Optional<Bool, Failure> {
+        return .init(self.result.map {
+            $0 == output
+        })
+    }
+    
+    public func removeDuplicates() -> Publishers.Optional<Output, Failure> {
+        return self
+    }
+}
+
+extension Publishers.Optional where Output : Comparable {
+    
+    public func min() -> Publishers.Optional<Output, Failure> {
+        return self
+    }
+    
+    public func max() -> Publishers.Optional<Output, Failure> {
+        return self
+    }
+}
+
 extension Publishers {
     
     /// A publisher that publishes an optional value to each subscriber exactly once, if the optional has a value.
