@@ -248,58 +248,7 @@ extension Publishers {
         public func receive<S>(subscriber: S)
         where S : Subscriber, S.Input == Output, S.Failure == Never
         {
-            let subscription = Inner(just: self.output, sub: subscriber)
-            subscriber.receive(subscription: subscription)
-        }
-    }
-}
-
-extension Publishers.Just {
-
-    private final class Inner<S>:
-        Subscription,
-        CustomStringConvertible,
-        CustomDebugStringConvertible
-    where
-        S: Subscriber,
-        S.Input == Output,
-        S.Failure == Never
-    {
-
-        let state = Atomic<SubscriptionState>(value: .waiting)
-        let just: Output
-
-        var sub: S?
-
-        init(just: Output, sub: S) {
-            self.just = just
-            self.sub = sub
-        }
-
-        func request(_ demand: Subscribers.Demand) {
-            precondition(demand > 0, "trying to request '<= 0' values from Just")
-            
-            if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(demand)) {
-                
-                _ = self.sub?.receive(just)
-                self.sub?.receive(completion: .finished)
-                
-                self.state.store(.finished)
-                self.sub = nil
-            }
-        }
-
-        func cancel() {
-            self.state.store(.finished)
-            self.sub = nil
-        }
-        
-        var description: String {
-            return "Just"
-        }
-        
-        var debugDescription: String {
-            return "Just"
+            Publishers.Once<Output, Never>(self.output).receive(subscriber: subscriber)
         }
     }
 }
