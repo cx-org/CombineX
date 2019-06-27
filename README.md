@@ -81,26 +81,34 @@ Since some people may not have macOS 10.15 beta installed, the recommended contr
 |`Autoconnect`|   |   |   |
 |`CompactMap`| done | done |   |
 |`Count`|   |   |   |
+|`Drop`| done |   |   |
+|`DropWhile`| done |   |   |
 |`Empty`| done | done |   |
 |`Fail`| done |   |   |
 |`Filter`| done | done |   |
+|`First`| done |   |   |
+|`FirstWhere`| done |   |   |
 |`FlatMap`| done | done |   |
 |`Just`| done | done |   |
+|`IgnoreOutput`| done |   |   |
 |`Map`| done | done |   |
 |`MapError`| done |   |   |
 |`Merge`| done | basic |   |
 |`Once`| done | done |   |
 |`Optional`| done | done |   |
+|`Output`| done | basic |   |
 |`Print`| done | done |   |
 |`Publishers`| done | no need |   |
 |`Reduce`| done |   |   |
 |`TryAllSatisfy`| done |   |   |
 |`TryReduce`| done |   |   |
 |`Sequence`| done | done |   |
-|`SetFailureType`| done | done |   |
+|`SetFailureType`| done |   |   |
 |`SubscribeOn`|   |   |   |
 |`TryCompactMapSpec`| done | done |   |
+|`TryDropWhere`| done | basic |   |
 |`TryFilter`| done |   |   |
+|`TryFirst`| done |   |   |
 |`TryMap`| done |   |   |
 
 ### Schedulers

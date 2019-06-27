@@ -1,3 +1,132 @@
+extension Publishers.Sequence : Equatable where Elements : Equatable {
+    
+    /// Returns a Boolean value indicating whether two values are equal.
+    ///
+    /// Equality is the inverse of inequality. For any values `a` and `b`,
+    /// `a == b` implies that `a != b` is `false`.
+    ///
+    /// - Parameters:
+    ///   - lhs: A value to compare.
+    ///   - rhs: Another value to compare.
+    public static func == (lhs: Publishers.Sequence<Elements, Failure>, rhs: Publishers.Sequence<Elements, Failure>) -> Bool {
+        return lhs.sequence == rhs.sequence
+    }
+}
+
+extension Publishers.Sequence where Elements : Collection {
+    
+    public func first() -> Publishers.Optional<Elements.Element, Failure> {
+        return .init(self.sequence.first)
+    }
+}
+
+extension Publishers.Sequence where Elements : Collection {
+    
+    public func count() -> Publishers.Once<Int, Failure> {
+        return .init(self.sequence.count)
+    }
+}
+
+
+extension Publishers.Sequence where Elements.Element : Comparable {
+    
+    public func min() -> Publishers.Optional<Elements.Element, Failure> {
+        return .init(self.sequence.min())
+    }
+    
+    public func max() -> Publishers.Optional<Elements.Element, Failure> {
+        return .init(self.sequence.max())
+    }
+}
+
+extension Publishers.Sequence where Elements.Element : Equatable {
+    
+    public func removeDuplicates() -> Publishers.Sequence<[Publishers.Sequence<Elements, Failure>.Output], Failure> {
+        Global.RequiresImplementation()
+    }
+    
+    public func contains(_ output: Elements.Element) -> Publishers.Once<Bool, Failure> {
+        return .init(self.sequence.contains(output))
+    }
+}
+
+
+extension Publishers.Sequence where Elements : Collection {
+    
+    public func output(at index: Elements.Index) -> Publishers.Optional<Publishers.Sequence<Elements, Failure>.Output, Failure> {
+        return .init(self.sequence[index])
+    }
+    
+    public func output(in range: Range<Elements.Index>) -> Publishers.Sequence<[Publishers.Sequence<Elements, Failure>.Output], Failure> {
+        return .init(sequence: Array(self.sequence[range]))
+    }
+}
+
+extension Publishers.Sequence where Elements : BidirectionalCollection {
+    
+    public func last() -> Publishers.Optional<Publishers.Sequence<Elements, Failure>.Output, Failure> {
+        return .init(self.sequence.last)
+    }
+    
+    public func last(where predicate: (Publishers.Sequence<Elements, Failure>.Output) -> Bool) -> Publishers.Optional<Publishers.Sequence<Elements, Failure>.Output, Failure> {
+        return .init(self.sequence.last(where: predicate))
+    }
+    
+    public func tryLast(where predicate: (Publishers.Sequence<Elements, Failure>.Output) throws -> Bool) -> Publishers.Optional<Publishers.Sequence<Elements, Failure>.Output, Error> {
+        do {
+            let output = try self.sequence.last(where: predicate)
+            return .init(output)
+        } catch {
+            return .init(error)
+        }
+    }
+}
+
+extension Publishers.Sequence where Elements : RandomAccessCollection {
+    
+    public func output(at index: Elements.Index) -> Publishers.Optional<Publishers.Sequence<Elements, Failure>.Output, Failure> {
+        return .init(self.sequence[index])
+    }
+    
+    public func output(in range: Range<Elements.Index>) -> Publishers.Sequence<[Publishers.Sequence<Elements, Failure>.Output], Failure> {
+        return .init(sequence: Array(self.sequence[range]))
+    }
+}
+
+extension Publishers.Sequence where Elements : RandomAccessCollection {
+    
+    public func count() -> Publishers.Optional<Int, Failure> {
+        return .init(self.sequence.count)
+    }
+}
+
+extension Publishers.Sequence where Elements : RangeReplaceableCollection {
+    
+    public func prepend(_ elements: Publishers.Sequence<Elements, Failure>.Output...) -> Publishers.Sequence<Elements, Failure> {
+        return .init(sequence: elements + self.sequence)
+    }
+    
+    public func prepend<S>(_ elements: S) -> Publishers.Sequence<Elements, Failure> where S : Sequence, Elements.Element == S.Element {
+        return .init(sequence: elements + self.sequence)
+    }
+    
+    public func prepend(_ publisher: Publishers.Sequence<Elements, Failure>) -> Publishers.Sequence<Elements, Failure> {
+        return .init(sequence: publisher.sequence + self.sequence)
+    }
+    
+    public func append(_ elements: Publishers.Sequence<Elements, Failure>.Output...) -> Publishers.Sequence<Elements, Failure> {
+        return .init(sequence: self.sequence + elements)
+    }
+    
+    public func append<S>(_ elements: S) -> Publishers.Sequence<Elements, Failure> where S : Sequence, Elements.Element == S.Element {
+        return .init(sequence: self.sequence + elements)
+    }
+    
+    public func append(_ publisher: Publishers.Sequence<Elements, Failure>) -> Publishers.Sequence<Elements, Failure> {
+        return .init(sequence: self.sequence + publisher.sequence)
+    }
+}
+
 extension Publishers {
     
     /// A publisher that publishes a given sequence of elements.
