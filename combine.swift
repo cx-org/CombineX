@@ -271,15 +271,6 @@ extension Publisher {
 
 extension Publisher {
 
-    /// Publishes the number of elements received from the upstream publisher.
-    ///
-    /// - Returns: A publisher that consumes all elements until the upstream publisher finishes, then emits a single
-    /// value with the total number of elements received.
-    public func count() -> Publishers.Count<Self>
-}
-
-extension Publisher {
-
     /// Only publishes the last element of a stream that satisfies a predicate closure, after the stream finishes.
     /// - Parameter predicate: A closure that takes an element as its parameter and returns a Boolean value indicating whether to publish the element.
     /// - Returns: A publisher that only publishes the last element satisfying the given predicate.
