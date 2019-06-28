@@ -80,7 +80,7 @@ Since some people may not have macOS 10.15 beta installed, the recommended contr
 |`AssertNoFailure`| done |   |   |
 |`Autoconnect`|   |   |   |
 |`CompactMap`| done | done |   |
-|`Count`|   |   |   |
+|`Count`| done | basic |   |
 |`Drop`| done |   |   |
 |`DropWhile`| done |   |   |
 |`Empty`| done | done |   |
