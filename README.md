@@ -93,6 +93,7 @@ Since some people may not have macOS 10.15 beta installed, the recommended contr
 |`IgnoreOutput`| done |   |   |
 |`Map`| done | done |   |
 |`MapError`| done |   |   |
+|`MeasureInterval`| done |   |   |
 |`Merge`| done | basic |   |
 |`Once`| done | done |   |
 |`Optional`| done | done |   |

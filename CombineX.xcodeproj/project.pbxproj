@@ -42,6 +42,8 @@
 		629182CC22C2154F00F3565F /* TryReduce.swift in Sources */ = {isa = PBXBuildFile; fileRef = 629182CB22C2154F00F3565F /* TryReduce.swift */; };
 		629182CE22C21F7100F3565F /* AssertNoFailure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 629182CD22C21F7100F3565F /* AssertNoFailure.swift */; };
 		629182D022C221F400F3565F /* ReceiveOn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 629182CF22C221F400F3565F /* ReceiveOn.swift */; };
+		62A73FB722C5F414007C962C /* MeasureInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62A73FB622C5F414007C962C /* MeasureInterval.swift */; };
+		62A73FB922C5F4A1007C962C /* DispatchQueueScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62A73FB822C5F4A1007C962C /* DispatchQueueScheduler.swift */; };
 		6615FEC922BA87A2000201AF /* Count.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6615FEC822BA87A2000201AF /* Count.swift */; };
 		6615FECB22BA892C000201AF /* Published.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6615FECA22BA892C000201AF /* Published.swift */; };
 		66CAF61D22BF357100E8FAAC /* TryFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66CAF61C22BF357100E8FAAC /* TryFilter.swift */; };
@@ -136,6 +138,8 @@
 		629182CB22C2154F00F3565F /* TryReduce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TryReduce.swift; sourceTree = "<group>"; };
 		629182CD22C21F7100F3565F /* AssertNoFailure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssertNoFailure.swift; sourceTree = "<group>"; };
 		629182CF22C221F400F3565F /* ReceiveOn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveOn.swift; sourceTree = "<group>"; };
+		62A73FB622C5F414007C962C /* MeasureInterval.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeasureInterval.swift; sourceTree = "<group>"; };
+		62A73FB822C5F4A1007C962C /* DispatchQueueScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchQueueScheduler.swift; sourceTree = "<group>"; };
 		6615FEC822BA87A2000201AF /* Count.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Count.swift; sourceTree = "<group>"; };
 		6615FECA22BA892C000201AF /* Published.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Published.swift; sourceTree = "<group>"; };
 		66CAF61C22BF357100E8FAAC /* TryFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TryFilter.swift; sourceTree = "<group>"; };
@@ -232,6 +236,7 @@
 		OBJ_25 /* Publishers */ = {
 			isa = PBXGroup;
 			children = (
+				62A73FB622C5F414007C962C /* MeasureInterval.swift */,
 				629182C522C2134100F3565F /* AllSatisfy.swift */,
 				629182CD22C21F7100F3565F /* AssertNoFailure.swift */,
 				OBJ_26 /* Autoconnect.swift */,
@@ -277,6 +282,7 @@
 			isa = PBXGroup;
 			children = (
 				OBJ_44 /* ImmediateScheduler.swift */,
+				62A73FB822C5F4A1007C962C /* DispatchQueueScheduler.swift */,
 			);
 			path = Schedulers;
 			sourceTree = "<group>";
@@ -534,6 +540,7 @@
 				OBJ_110 /* Scheduler.swift in Sources */,
 				6219B14822C46868002EC61B /* DropWhile.swift in Sources */,
 				6219B14222C462B5002EC61B /* TryDropWhile.swift in Sources */,
+				62A73FB922C5F4A1007C962C /* DispatchQueueScheduler.swift in Sources */,
 				OBJ_111 /* SchedulerTimeIntervalConvertible.swift in Sources */,
 				6615FECB22BA892C000201AF /* Published.swift in Sources */,
 				OBJ_112 /* ImmediateScheduler.swift in Sources */,
@@ -552,6 +559,7 @@
 				OBJ_120 /* Subscription.swift in Sources */,
 				OBJ_121 /* Demand.swift in Sources */,
 				6219B12F22C44B77002EC61B /* Output.swift in Sources */,
+				62A73FB722C5F414007C962C /* MeasureInterval.swift in Sources */,
 				629182D022C221F400F3565F /* ReceiveOn.swift in Sources */,
 				OBJ_122 /* Subscriptions.swift in Sources */,
 				629182CA22C2151200F3565F /* Reduce.swift in Sources */,

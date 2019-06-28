@@ -45,6 +45,12 @@
 		6279184222B77FE600203B96 /* MapSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6279184022B77FE600203B96 /* MapSpec.swift */; };
 		62A4A4FB22B87371009AD6FE /* CustomError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62A4A4FA22B87371009AD6FE /* CustomError.swift */; };
 		62A4A4FC22B87371009AD6FE /* CustomError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62A4A4FA22B87371009AD6FE /* CustomError.swift */; };
+		62A73FC022C5FAA0007C962C /* ImmediateSchedulerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62A73FBF22C5FAA0007C962C /* ImmediateSchedulerSpec.swift */; };
+		62A73FC122C5FAA0007C962C /* ImmediateSchedulerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62A73FBF22C5FAA0007C962C /* ImmediateSchedulerSpec.swift */; };
+		62A73FC322C5FEEC007C962C /* DispatchScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62A73FC222C5FEEC007C962C /* DispatchScheduler.swift */; };
+		62A73FC422C5FEEC007C962C /* DispatchScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62A73FC222C5FEEC007C962C /* DispatchScheduler.swift */; };
+		62A73FC722C60AF0007C962C /* CustomScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62A73FC622C60AF0007C962C /* CustomScheduler.swift */; };
+		62A73FC822C60AF0007C962C /* CustomScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62A73FC622C60AF0007C962C /* CustomScheduler.swift */; };
 		62B3D8B822B755FB001FA5FE /* AssignSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62B3D8B722B755FB001FA5FE /* AssignSpec.swift */; };
 		62B3D8B922B755FB001FA5FE /* AssignSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62B3D8B722B755FB001FA5FE /* AssignSpec.swift */; };
 		62B3D8BF22B757A4001FA5FE /* CustomSubsciber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62B3D8BE22B757A4001FA5FE /* CustomSubsciber.swift */; };
@@ -160,6 +166,9 @@
 		6279183922B77EAC00203B96 /* EmptySpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptySpec.swift; sourceTree = "<group>"; };
 		6279184022B77FE600203B96 /* MapSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapSpec.swift; sourceTree = "<group>"; };
 		62A4A4FA22B87371009AD6FE /* CustomError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomError.swift; sourceTree = "<group>"; };
+		62A73FBF22C5FAA0007C962C /* ImmediateSchedulerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmediateSchedulerSpec.swift; sourceTree = "<group>"; };
+		62A73FC222C5FEEC007C962C /* DispatchScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchScheduler.swift; sourceTree = "<group>"; };
+		62A73FC622C60AF0007C962C /* CustomScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomScheduler.swift; sourceTree = "<group>"; };
 		62B3D8B722B755FB001FA5FE /* AssignSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssignSpec.swift; sourceTree = "<group>"; };
 		62B3D8BE22B757A4001FA5FE /* CustomSubsciber.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSubsciber.swift; sourceTree = "<group>"; };
 		6615FECC22BA8C5A000201AF /* CombineIdentifierSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineIdentifierSpec.swift; sourceTree = "<group>"; };
@@ -249,6 +258,15 @@
 			path = Subjects;
 			sourceTree = "<group>";
 		};
+		62A73FBA22C5FA90007C962C /* Scheduler */ = {
+			isa = PBXGroup;
+			children = (
+				62A73FBF22C5FAA0007C962C /* ImmediateSchedulerSpec.swift */,
+				62A73FC222C5FEEC007C962C /* DispatchScheduler.swift */,
+			);
+			path = Scheduler;
+			sourceTree = "<group>";
+		};
 		66312FA122B665620081D8F1 = {
 			isa = PBXGroup;
 			children = (
@@ -293,6 +311,7 @@
 		66312FC322B665630081D8F1 /* SpecsTests */ = {
 			isa = PBXGroup;
 			children = (
+				62A73FBA22C5FA90007C962C /* Scheduler */,
 				66312FC622B665630081D8F1 /* Info.plist */,
 				6229E64C22B720E1002CBEC2 /* AnyCancellableSpec.swift */,
 				6229E65622B72969002CBEC2 /* AnySubscriberSpec.swift */,
@@ -359,6 +378,7 @@
 				62125ACF22BB3081005B57AE /* Typealias.swift */,
 				623227BB22C0CC73006D907B /* CustomSubject.swift */,
 				623227C222C0D077006D907B /* Atomic.swift */,
+				62A73FC622C60AF0007C962C /* CustomScheduler.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -744,14 +764,17 @@
 				6229E65D22B72EA3002CBEC2 /* SubscriptionSpec.swift in Sources */,
 				625EC8BD22B8D5CE006DB4D5 /* OnceSpec.swift in Sources */,
 				66F1199022BE65C500D744BB /* CompactMapSpec.swift in Sources */,
+				62A73FC322C5FEEC007C962C /* DispatchScheduler.swift in Sources */,
 				6279184122B77FE600203B96 /* MapSpec.swift in Sources */,
 				62A4A4FB22B87371009AD6FE /* CustomError.swift in Sources */,
 				66F1199922BE7B6100D744BB /* TryCompactMapSpec.swift in Sources */,
+				62A73FC722C60AF0007C962C /* CustomScheduler.swift in Sources */,
 				66CAF62422BF3A0800E8FAAC /* PrintSpec.swift in Sources */,
 				6615FECD22BA8C5A000201AF /* CombineIdentifierSpec.swift in Sources */,
 				625EC8B922B8B32A006DB4D5 /* DemandSpec.swift in Sources */,
 				6229E64D22B720E1002CBEC2 /* AnyCancellableSpec.swift in Sources */,
 				6229E65A22B729F1002CBEC2 /* CustomSubscription.swift in Sources */,
+				62A73FC022C5FAA0007C962C /* ImmediateSchedulerSpec.swift in Sources */,
 				62125AD022BB3081005B57AE /* Typealias.swift in Sources */,
 				6631302A22B691C80081D8F1 /* Extensions.swift in Sources */,
 				6229E65722B72969002CBEC2 /* AnySubscriberSpec.swift in Sources */,
@@ -792,14 +815,17 @@
 				6229E65E22B72EA3002CBEC2 /* SubscriptionSpec.swift in Sources */,
 				625EC8BE22B8D5CE006DB4D5 /* OnceSpec.swift in Sources */,
 				66F1199122BE65C500D744BB /* CompactMapSpec.swift in Sources */,
+				62A73FC422C5FEEC007C962C /* DispatchScheduler.swift in Sources */,
 				6279184222B77FE600203B96 /* MapSpec.swift in Sources */,
 				62A4A4FC22B87371009AD6FE /* CustomError.swift in Sources */,
 				66F1199A22BE7B6100D744BB /* TryCompactMapSpec.swift in Sources */,
+				62A73FC822C60AF0007C962C /* CustomScheduler.swift in Sources */,
 				66CAF62522BF3A0800E8FAAC /* PrintSpec.swift in Sources */,
 				6615FECE22BA8C5A000201AF /* CombineIdentifierSpec.swift in Sources */,
 				625EC8BA22B8B32A006DB4D5 /* DemandSpec.swift in Sources */,
 				6229E64E22B720E1002CBEC2 /* AnyCancellableSpec.swift in Sources */,
 				6229E65B22B729F1002CBEC2 /* CustomSubscription.swift in Sources */,
+				62A73FC122C5FAA0007C962C /* ImmediateSchedulerSpec.swift in Sources */,
 				62125AD122BB3081005B57AE /* Typealias.swift in Sources */,
 				6631305322B693940081D8F1 /* Extensions.swift in Sources */,
 				6229E65822B72969002CBEC2 /* AnySubscriberSpec.swift in Sources */,
