@@ -1,3 +1,14 @@
+extension Publisher {
+    
+    /// Omits the specified number of elements before republishing subsequent elements.
+    ///
+    /// - Parameter count: The number of elements to omit.
+    /// - Returns: A publisher that does not republish the first `count` elements.
+    public func dropFirst(_ count: Int = 1) -> Publishers.Drop<Self> {
+        return .init(upstream: self, count: count)
+    }
+}
+
 extension Publishers.Drop : Equatable where Upstream : Equatable {
     
     /// Returns a Boolean value that indicates whether the two publishers are equivalent.

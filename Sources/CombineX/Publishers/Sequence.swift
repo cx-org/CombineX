@@ -42,7 +42,21 @@ extension Publishers.Sequence where Elements.Element : Comparable {
 extension Publishers.Sequence where Elements.Element : Equatable {
     
     public func removeDuplicates() -> Publishers.Sequence<[Publishers.Sequence<Elements, Failure>.Output], Failure> {
-        Global.RequiresImplementation()
+        
+        let lock = Lock()
+        var previous: Elements.Element?
+        let newSequence = self.sequence.lazy.compactMap { element -> Elements.Element? in
+            lock.withLock {
+                defer {
+                    previous = element
+                }
+                guard let prev = previous else {
+                    return element
+                }
+                return element == prev ? nil : element
+            }
+        }
+        return .init(sequence: Array(newSequence))
     }
     
     public func contains(_ output: Elements.Element) -> Publishers.Once<Bool, Failure> {

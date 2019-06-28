@@ -79,6 +79,7 @@ Since some people may not have macOS 10.15 beta installed, the recommended contr
 |`AllSatisfy`| done |   |   |
 |`AssertNoFailure`| done |   |   |
 |`Autoconnect`|   |   |   |
+|`Breakpoint`|   |   |   |
 |`CompactMap`| done | done |   |
 |`Count`| done | basic |   |
 |`Drop`| done |   |   |
@@ -93,7 +94,7 @@ Since some people may not have macOS 10.15 beta installed, the recommended contr
 |`IgnoreOutput`| done |   |   |
 |`Map`| done | done |   |
 |`MapError`| done |   |   |
-|`MeasureInterval`| done |   |   |
+|`MeasureInterval`| done | basic |   |
 |`Merge`| done | basic |   |
 |`Once`| done | done |   |
 |`Optional`| done | done |   |

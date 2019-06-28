@@ -113,14 +113,14 @@ public struct CustomScheduler: Scheduler {
         self.dispatchQueue = dispatchQueue
     }
     
-    public static let main = DispatchScheduler(dispatchQueue: .main)
+    public static let main = CustomScheduler(dispatchQueue: .main)
     
-    public static func serial(label: String) -> DispatchScheduler {
-        return DispatchScheduler(dispatchQueue: DispatchQueue(label: label))
+    public static func serial(label: String) -> CustomScheduler {
+        return CustomScheduler(dispatchQueue: DispatchQueue(label: label))
     }
     
-    public static func global(qos: DispatchQoS.QoSClass = .default) -> DispatchScheduler {
-        return DispatchScheduler(dispatchQueue: DispatchQueue.global(qos: qos))
+    public static func global(qos: DispatchQoS.QoSClass = .default) -> CustomScheduler {
+        return CustomScheduler(dispatchQueue: DispatchQueue.global(qos: qos))
     }
     
     public let minimumTolerance: SchedulerTimeType.Stride = .seconds(0)

@@ -2,44 +2,6 @@ import Darwin
 
 extension Publisher {
 
-    /// Raises a debugger signal when a provided closure needs to stop the process in the debugger.
-    ///
-    /// When any of the provided closures returns `true`, this publisher raises the `SIGTRAP` signal to stop the process in the debugger.
-    /// Otherwise, this publisher passes through values and completions as-is.
-    ///
-    /// - Parameters:
-    ///   - receiveSubscription: A closure that executes when when the publisher receives a subscription. Return `true` from this closure to raise `SIGTRAP`, or false to continue.
-    ///   - receiveOutput: A closure that executes when when the publisher receives a value. Return `true` from this closure to raise `SIGTRAP`, or false to continue.
-    ///   - receiveCompletion: A closure that executes when when the publisher receives a completion. Return `true` from this closure to raise `SIGTRAP`, or false to continue.
-    /// - Returns: A publisher that raises a debugger signal when one of the provided closures returns `true`.
-    public func breakpoint(receiveSubscription: ((Subscription) -> Bool)? = nil, receiveOutput: ((Self.Output) -> Bool)? = nil, receiveCompletion: ((Subscribers.Completion<Self.Failure>) -> Bool)? = nil) -> Publishers.Breakpoint<Self>
-
-    /// Raises a debugger signal upon receiving a failure.
-    ///
-    /// When the upstream publisher fails with an error, this publisher raises the `SIGTRAP` signal, which stops the process in the debugger.
-    /// Otherwise, this publisher passes through values and completions as-is.
-    /// - Returns: A publisher that raises a debugger signal upon receiving a failure.
-    public func breakpointOnError() -> Publishers.Breakpoint<Self>
-}
-
-
-extension Publisher where Self.Output : Equatable {
-
-    /// Publishes only elements that don’t match the previous element.
-    ///
-    /// - Returns: A publisher that consumes — rather than publishes — duplicate elements.
-    public func removeDuplicates() -> Publishers.RemoveDuplicates<Self>
-}
-
-extension Publisher {
-
-    public func removeDuplicates(by predicate: @escaping (Self.Output, Self.Output) -> Bool) -> Publishers.RemoveDuplicates<Self>
-
-    public func tryRemoveDuplicates(by predicate: @escaping (Self.Output, Self.Output) throws -> Bool) -> Publishers.TryRemoveDuplicates<Self>
-}
-
-extension Publisher {
-
     /// Decodes the output from upstream using a specified `TopLevelDecoder`.
     /// For example, use `JSONDecoder`.
     public func decode<Item, Coder>(type: Item.Type, decoder: Coder) -> Publishers.Decode<Self, Item, Coder> where Item : Decodable, Coder : TopLevelDecoder, Self.Output == Coder.Input
@@ -566,67 +528,6 @@ extension Publisher {
     public func delay<S>(for interval: S.SchedulerTimeType.Stride, tolerance: S.SchedulerTimeType.Stride? = nil, scheduler: S, options: S.SchedulerOptions? = nil) -> Publishers.Delay<Self, S> where S : Scheduler
 }
 
-extension Publisher {
-
-    /// Omits the specified number of elements before republishing subsequent elements.
-    ///
-    /// - Parameter count: The number of elements to omit.
-    /// - Returns: A publisher that does not republish the first `count` elements.
-    public func dropFirst(_ count: Int = 1) -> Publishers.Drop<Self>
-}
-
-extension Publisher {
-
-    public func eraseToAnyPublisher() -> AnyPublisher<Self.Output, Self.Failure>
-}
-
-extension Publishers {
-
-    /// A publisher that raises a debugger signal when a provided closure needs to stop the process in the debugger.
-    ///
-    /// When any of the provided closures returns `true`, this publisher raises the `SIGTRAP` signal to stop the process in the debugger.
-    /// Otherwise, this publisher passes through values and completions as-is.
-    public struct Breakpoint<Upstream> : Publisher where Upstream : Publisher {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = Upstream.Output
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Upstream.Failure
-
-        /// The publisher from which this publisher receives elements.
-        public let upstream: Upstream
-
-        /// A closure that executes when the publisher receives a subscription, and can raise a debugger signal by returning a true Boolean value.
-        public let receiveSubscription: ((Subscription) -> Bool)?
-
-        /// A closure that executes when the publisher receives output from the upstream publisher, and can raise a debugger signal by returning a true Boolean value.
-        public let receiveOutput: ((Upstream.Output) -> Bool)?
-
-        /// A closure that executes when the publisher receives completion, and can raise a debugger signal by returning a true Boolean value.
-        public let receiveCompletion: ((Subscribers.Completion<Upstream.Failure>) -> Bool)?
-
-        /// Creates a breakpoint publisher with the provided upstream publisher and breakpoint-raising closures.
-        ///
-        /// - Parameters:
-        ///   - upstream: The publisher from which this publisher receives elements.
-        ///   - receiveSubscription: A closure that executes when the publisher receives a subscription, and can raise a debugger signal by returning a true Boolean value.
-        ///   - receiveOutput: A closure that executes when the publisher receives output from the upstream publisher, and can raise a debugger signal by returning a true Boolean value.
-        ///   - receiveCompletion: A closure that executes when the publisher receives completion, and can raise a debugger signal by returning a true Boolean value.
-        public init(upstream: Upstream, receiveSubscription: ((Subscription) -> Bool)? = nil, receiveOutput: ((Upstream.Output) -> Bool)? = nil, receiveCompletion: ((Subscribers.Completion<Publishers.Breakpoint<Upstream>.Failure>) -> Bool)? = nil)
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input
-    }
-}
-
 extension Publishers {
 
     /// A publisher that awaits subscription before running the supplied closure to create a publisher for the new subscriber.
@@ -657,55 +558,6 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, DeferredPublisher.Failure == S.Failure, DeferredPublisher.Output == S.Input
-    }
-}
-
-extension Publishers {
-
-    public struct RemoveDuplicates<Upstream> : Publisher where Upstream : Publisher {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = Upstream.Output
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Upstream.Failure
-
-        public let upstream: Upstream
-
-        public let predicate: (Upstream.Output, Upstream.Output) -> Bool
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input
-    }
-
-    public struct TryRemoveDuplicates<Upstream> : Publisher where Upstream : Publisher {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = Upstream.Output
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Error
-
-        public let upstream: Upstream
-
-        public let predicate: (Upstream.Output, Upstream.Output) throws -> Bool
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, S.Failure == Publishers.TryRemoveDuplicates<Upstream>.Failure
     }
 }
 

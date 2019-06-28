@@ -1,0 +1,62 @@
+extension Publisher where Self.Output : Equatable {
+    
+    /// Publishes only elements that don’t match the previous element.
+    ///
+    /// - Returns: A publisher that consumes — rather than publishes — duplicate elements.
+    public func removeDuplicates() -> Publishers.RemoveDuplicates<Self> {
+        return .init(upstream: self, predicate: ==)
+    }
+}
+
+extension Publisher {
+    
+    public func removeDuplicates(by predicate: @escaping (Self.Output, Self.Output) -> Bool) -> Publishers.RemoveDuplicates<Self> {
+        return .init(upstream: self, predicate: predicate)
+    }
+}
+
+extension Publishers {
+    
+    public struct RemoveDuplicates<Upstream> : Publisher where Upstream : Publisher {
+        
+        /// The kind of values published by this publisher.
+        public typealias Output = Upstream.Output
+        
+        /// The kind of errors this publisher might publish.
+        ///
+        /// Use `Never` if this `Publisher` does not publish errors.
+        public typealias Failure = Upstream.Failure
+        
+        public let upstream: Upstream
+        
+        public let predicate: (Upstream.Output, Upstream.Output) -> Bool
+        
+        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
+        ///
+        /// - SeeAlso: `subscribe(_:)`
+        /// - Parameters:
+        ///     - subscriber: The subscriber to attach to this `Publisher`.
+        ///                   once attached it can begin to receive values.
+        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
+            let lock = Lock()
+            var previous: Output? = nil
+            
+            self.upstream
+                .filter { (output) -> Bool in
+                    lock.withLock {
+                        defer {
+                            previous = output
+                        }
+                        
+                        guard let prev = previous else {
+                            previous = output
+                            return true
+                        }
+                        
+                        return !self.predicate(prev, output)
+                    }
+                }
+                .receive(subscriber: subscriber)
+        }
+    }
+}
