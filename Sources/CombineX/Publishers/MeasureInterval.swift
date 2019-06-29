@@ -71,7 +71,7 @@ extension Publishers.MeasureInterval {
         typealias Pub = Publishers.MeasureInterval<Upstream, Context>
         typealias Sub = S
         
-        let state = Atomic<RelaySubscriptionState>(value: .waiting)
+        let state = Atomic<RelayState>(value: .waiting)
         
         var pub: Pub?
         var sub: Sub?
@@ -90,14 +90,14 @@ extension Publishers.MeasureInterval {
         }
         
         func cancel() {
-            self.state.finishIfSubscribing()?.cancel()
+            self.state.finishIfRelaying()?.cancel()
             
             self.pub = nil
             self.sub = nil
         }
         
         func receive(subscription: Subscription) {
-            if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(subscription)) {
+            if self.state.compareAndStore(expected: .waiting, newVaue: .relaying(subscription)) {
                 self.sub?.receive(subscription: self)
             } else {
                 subscription.cancel()
@@ -106,7 +106,7 @@ extension Publishers.MeasureInterval {
         
         func receive(_ input: Input) -> Subscribers.Demand {
             let internval = self.state.withLock { state -> Context.SchedulerTimeType.Stride? in
-                guard state.isSubscribing else {
+                guard state.isRelaying else {
                     return nil
                 }
                 
@@ -128,7 +128,7 @@ extension Publishers.MeasureInterval {
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
-            if let subscription = self.state.finishIfSubscribing() {
+            if let subscription = self.state.finishIfRelaying() {
                 subscription.cancel()
                 self.sub?.receive(completion: completion)
                 self.pub = nil

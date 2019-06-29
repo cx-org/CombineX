@@ -62,7 +62,7 @@ extension Publishers.Reduce {
         typealias Pub = Publishers.Reduce<Upstream, Output>
         typealias Sub = S
         
-        let state = Atomic<RelaySubscriptionState>(value: .waiting)
+        let state = Atomic<RelayState>(value: .waiting)
         
         var pub: Pub?
         var sub: Sub?
@@ -82,14 +82,14 @@ extension Publishers.Reduce {
         }
         
         func cancel() {
-            self.state.finishIfSubscribing()?.cancel()
+            self.state.finishIfRelaying()?.cancel()
             
             self.pub = nil
             self.sub = nil
         }
         
         func receive(subscription: Subscription) {
-            if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(subscription)) {
+            if self.state.compareAndStore(expected: .waiting, newVaue: .relaying(subscription)) {
                 self.sub?.receive(subscription: self)
             } else {
                 subscription.cancel()
@@ -97,7 +97,7 @@ extension Publishers.Reduce {
         }
         
         func receive(_ input: Input) -> Subscribers.Demand {
-            guard self.state.isSubscribing else {
+            guard self.state.isRelaying else {
                 return .none
             }
             
@@ -113,7 +113,7 @@ extension Publishers.Reduce {
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
-            guard let subscription = self.state.finishIfSubscribing() else {
+            guard let subscription = self.state.finishIfRelaying() else {
                 return
             }
             

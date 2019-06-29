@@ -66,7 +66,7 @@ extension Publishers.TryReduce {
         typealias Pub = Publishers.TryReduce<Upstream, Output>
         typealias Sub = S
         
-        let state = Atomic<RelaySubscriptionState>(value: .waiting)
+        let state = Atomic<RelayState>(value: .waiting)
         
         var pub: Pub?
         var sub: Sub?
@@ -86,14 +86,14 @@ extension Publishers.TryReduce {
         }
         
         func cancel() {
-            self.state.finishIfSubscribing()?.cancel()
+            self.state.finishIfRelaying()?.cancel()
             
             self.pub = nil
             self.sub = nil
         }
         
         func receive(subscription: Subscription) {
-            if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(subscription)) {
+            if self.state.compareAndStore(expected: .waiting, newVaue: .relaying(subscription)) {
                 self.sub?.receive(subscription: self)
             } else {
                 subscription.cancel()
@@ -101,7 +101,7 @@ extension Publishers.TryReduce {
         }
         
         func receive(_ input: Input) -> Subscribers.Demand {
-            guard self.state.isSubscribing else {
+            guard self.state.isRelaying else {
                 return .none
             }
             
@@ -114,7 +114,7 @@ extension Publishers.TryReduce {
                     let next = try pub.nextPartialResult($0, input)
                     $0 = next
                 } catch {
-                    if let subscription = self.state.finishIfSubscribing() {
+                    if let subscription = self.state.finishIfRelaying() {
                         subscription.cancel()
                         sub.receive(completion: .failure(error))
                     }
@@ -125,7 +125,7 @@ extension Publishers.TryReduce {
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
-            guard let subscription = self.state.finishIfSubscribing() else {
+            guard let subscription = self.state.finishIfRelaying() else {
                 return
             }
             

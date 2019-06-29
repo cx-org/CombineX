@@ -1,15 +1,15 @@
-enum RelaySubscriptionState {
+enum RelayState {
     
     // waiting for subscription
     case waiting
     
-    case subscribing(Subscription)
+    case relaying(Subscription)
     
     // completed or cancelled
     case finished
 }
 
-extension RelaySubscriptionState {
+extension RelayState {
     
     var isWaiting: Bool {
         switch self {
@@ -18,9 +18,9 @@ extension RelaySubscriptionState {
         }
     }
     
-    var isSubscribing: Bool {
+    var isRelaying: Bool {
         switch self {
-        case .subscribing:  return true
+        case .relaying:  return true
         default:            return false
         }
     }
@@ -34,7 +34,7 @@ extension RelaySubscriptionState {
     
     var subscription: Subscription? {
         switch self {
-        case .subscribing(let subscription):
+        case .relaying(let subscription):
             return subscription
         default:
             return nil
@@ -42,23 +42,7 @@ extension RelaySubscriptionState {
     }
 }
 
-extension RelaySubscriptionState: Equatable {
-    
-    static func == (lhs: RelaySubscriptionState, rhs: RelaySubscriptionState) -> Bool {
-        switch (lhs, rhs) {
-        case (.waiting, .waiting):
-            return true
-        case (.subscribing(let d0), .subscribing(let d1)):
-            return (d0 as AnyObject) === (d1 as AnyObject)
-        case (.finished, .finished):
-            return true
-        default:
-            return false
-        }
-    }
-}
-
-extension Atomic where Value == RelaySubscriptionState {
+extension Atomic where Value == RelayState {
     
     var isWaiting: Bool {
         switch self.load() {
@@ -67,9 +51,9 @@ extension Atomic where Value == RelaySubscriptionState {
         }
     }
     
-    var isSubscribing: Bool {
+    var isRelaying: Bool {
         switch self.load() {
-        case .subscribing:  return true
+        case .relaying:  return true
         default:            return false
         }
     }
@@ -83,7 +67,7 @@ extension Atomic where Value == RelaySubscriptionState {
     
     var subscription: Subscription? {
         switch self.load() {
-        case .subscribing(let subscription):
+        case .relaying(let subscription):
             return subscription
         default:
             return nil
@@ -91,15 +75,42 @@ extension Atomic where Value == RelaySubscriptionState {
     }
 }
 
-extension Atomic where Value == RelaySubscriptionState {
+extension RelayState {
     
-    func finishIfSubscribing() -> Subscription? {
+    mutating func finishIfRelaying() -> Subscription? {
+        if let subscription = self.subscription {
+            self = .finished
+            return subscription
+        }
+        return nil
+    }
+}
+
+extension Atomic where Value == RelayState {
+    
+    func finishIfRelaying() -> Subscription? {
         return self.withLockMutating {
             if let subscription = $0.subscription {
                 $0 = .finished
                 return subscription
             }
             return nil
+        }
+    }
+}
+
+extension RelayState: Equatable {
+    
+    static func == (lhs: RelayState, rhs: RelayState) -> Bool {
+        switch (lhs, rhs) {
+        case (.waiting, .waiting):
+            return true
+        case (.relaying(let d0), .relaying(let d1)):
+            return (d0 as AnyObject) === (d1 as AnyObject)
+        case (.finished, .finished):
+            return true
+        default:
+            return false
         }
     }
 }

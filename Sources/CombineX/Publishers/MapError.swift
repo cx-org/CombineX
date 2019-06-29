@@ -62,7 +62,7 @@ extension Publishers.MapError {
         typealias Pub = Publishers.MapError<Upstream, S.Failure>
         typealias Sub = S
         
-        let state = Atomic<RelaySubscriptionState>(value: .waiting)
+        let state = Atomic<RelayState>(value: .waiting)
         
         var pub: Pub?
         var sub: Sub?
@@ -77,14 +77,14 @@ extension Publishers.MapError {
         }
         
         func cancel() {
-            self.state.finishIfSubscribing()?.cancel()
+            self.state.finishIfRelaying()?.cancel()
 
             self.pub = nil
             self.sub = nil
         }
         
         func receive(subscription: Subscription) {
-            if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(subscription)) {
+            if self.state.compareAndStore(expected: .waiting, newVaue: .relaying(subscription)) {
                 self.sub?.receive(subscription: self)
             } else {
                 subscription.cancel()
@@ -92,7 +92,7 @@ extension Publishers.MapError {
         }
         
         func receive(_ input: Input) -> Subscribers.Demand {
-            guard self.state.isSubscribing else {
+            guard self.state.isRelaying else {
                 return .none
             }
             
@@ -100,7 +100,7 @@ extension Publishers.MapError {
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
-            if let subscription = self.state.finishIfSubscribing() {
+            if let subscription = self.state.finishIfRelaying() {
                 subscription.cancel()
                 
                 guard let pub = self.pub, let sub = self.sub else {

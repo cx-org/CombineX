@@ -109,7 +109,7 @@ extension Publishers.Breakpoint {
         typealias Pub = Publishers.Breakpoint<Upstream>
         typealias Sub = S
         
-        let state = Atomic<RelaySubscriptionState>(value: .waiting)
+        let state = Atomic<RelayState>(value: .waiting)
         
         var pub: Pub?
         var sub: Sub?
@@ -124,14 +124,14 @@ extension Publishers.Breakpoint {
         }
         
         func cancel() {
-            self.state.finishIfSubscribing()?.cancel()
+            self.state.finishIfRelaying()?.cancel()
             
             self.pub = nil
             self.sub = nil
         }
         
         func receive(subscription: Subscription) {
-            if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(subscription)) {
+            if self.state.compareAndStore(expected: .waiting, newVaue: .relaying(subscription)) {
                 
                 if let receiveSubscription = self.pub?.receiveSubscription, receiveSubscription(subscription) {
                     Signal.sigtrap.raise()
@@ -143,7 +143,7 @@ extension Publishers.Breakpoint {
         }
         
         func receive(_ input: Input) -> Subscribers.Demand {
-            guard self.state.isSubscribing else {
+            guard self.state.isRelaying else {
                 return .none
             }
             
@@ -158,7 +158,7 @@ extension Publishers.Breakpoint {
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
-            if let subscription = self.state.finishIfSubscribing() {
+            if let subscription = self.state.finishIfRelaying() {
                 subscription.cancel()
                 
                 if let receiveCompletion = self.pub?.receiveCompletion, receiveCompletion(completion) {

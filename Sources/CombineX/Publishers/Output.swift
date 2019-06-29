@@ -109,7 +109,7 @@ extension Publishers.Output {
         typealias Sub = S
         
         let lock = Lock()
-        var state = RelaySubscriptionState.waiting
+        var state = RelayState.waiting
         var count = 0
         
         var pub: Pub?
@@ -144,7 +144,7 @@ extension Publishers.Output {
             self.lock.lock()
             
             if self.state.isWaiting {
-                self.state = .subscribing(subscription)
+                self.state = .relaying(subscription)
                 self.lock.unlock()
                 
                 self.sub?.receive(subscription: self)
@@ -158,7 +158,7 @@ extension Publishers.Output {
             self.lock.lock()
             
             guard
-                self.state.isSubscribing,
+                self.state.isRelaying,
                 let range = self.pub?.range,
                 let sub = self.sub,
                 range.contains(self.count)

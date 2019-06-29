@@ -65,7 +65,7 @@ extension Publishers.FlatMap {
         typealias Failure = Upstream.Failure
         
         // for upstream
-        let upstreamState = Atomic<RelaySubscriptionState>(value: .waiting)
+        let upstreamState = Atomic<RelayState>(value: .waiting)
         
         // for downstream
         let lock = Lock(recursive: true)
@@ -126,7 +126,7 @@ extension Publishers.FlatMap {
                 $0.subscription.exchange(with: nil)?.cancel()
             }
             
-            self.upstreamState.finishIfSubscribing()?.cancel()
+            self.upstreamState.finishIfRelaying()?.cancel()
             
             self.pub = nil
             self.sub = nil
@@ -134,7 +134,7 @@ extension Publishers.FlatMap {
         
         // MARK: Subscriber
         func receive(subscription: Subscription) {
-            if upstreamState.compareAndStore(expected: .waiting, newVaue: .subscribing(subscription)) {
+            if upstreamState.compareAndStore(expected: .waiting, newVaue: .relaying(subscription)) {
                 self.sub?.receive(subscription: self)
                 subscription.request(self.maxPublishers)
             } else {
@@ -145,7 +145,7 @@ extension Publishers.FlatMap {
         func receive(_ input: Input) -> Subscribers.Demand {
             
             // Against misbehaving upstream
-            guard self.upstreamState.isSubscribing else {
+            guard self.upstreamState.isRelaying else {
                 return .none
             }
             
@@ -169,7 +169,7 @@ extension Publishers.FlatMap {
         }
         
         func receive(completion: Subscribers.Completion<P.Failure>) {
-            guard let subscription = self.upstreamState.finishIfSubscribing() else {
+            guard let subscription = self.upstreamState.finishIfRelaying() else {
                 return
             }
             
@@ -294,7 +294,7 @@ extension Publishers.FlatMap {
                     $0.subscription.exchange(with: nil)?.cancel()
                 }
                 
-                self.upstreamState.finishIfSubscribing()?.cancel()
+                self.upstreamState.finishIfRelaying()?.cancel()
                 
                 self.pub = nil
                 self.sub = nil

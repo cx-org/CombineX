@@ -75,7 +75,7 @@ extension Publishers.TryCompactMap {
         typealias Pub = Publishers.TryCompactMap<Upstream, Output>
         typealias Sub = S
         
-        let state = Atomic<RelaySubscriptionState>(value: .waiting)
+        let state = Atomic<RelayState>(value: .waiting)
         
         var pub: Pub?
         var sub: Sub?
@@ -90,14 +90,14 @@ extension Publishers.TryCompactMap {
         }
         
         func cancel() {
-            self.state.finishIfSubscribing()?.cancel()
+            self.state.finishIfRelaying()?.cancel()
             
             self.pub = nil
             self.sub = nil
         }
         
         func receive(subscription: Subscription) {
-            if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(subscription)) {
+            if self.state.compareAndStore(expected: .waiting, newVaue: .relaying(subscription)) {
                 self.sub?.receive(subscription: self)
             } else {
                 subscription.cancel()
@@ -105,7 +105,7 @@ extension Publishers.TryCompactMap {
         }
         
         func receive(_ input: Input) -> Subscribers.Demand {
-            guard self.state.isSubscribing else {
+            guard self.state.isRelaying else {
                 return .none
             }
             
@@ -121,7 +121,7 @@ extension Publishers.TryCompactMap {
                     return .max(1)
                 }
             } catch {
-                if let subscription = self.state.finishIfSubscribing() {
+                if let subscription = self.state.finishIfRelaying() {
                     subscription.cancel()
                     sub.receive(completion: .failure(error))
                 }
@@ -130,7 +130,7 @@ extension Publishers.TryCompactMap {
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
-            if let subscription = self.state.finishIfSubscribing() {
+            if let subscription = self.state.finishIfRelaying() {
                 subscription.cancel()
                 
                 switch completion {

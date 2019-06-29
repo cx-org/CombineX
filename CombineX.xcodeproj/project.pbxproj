@@ -49,9 +49,11 @@
 		62A73FD622C61865007C962C /* TryRemoveDuplicates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62A73FD522C61865007C962C /* TryRemoveDuplicates.swift */; };
 		6615FEC922BA87A2000201AF /* Count.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6615FEC822BA87A2000201AF /* Count.swift */; };
 		6615FECB22BA892C000201AF /* Published.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6615FECA22BA892C000201AF /* Published.swift */; };
+		66BD1DE922C6499500FF1457 /* Catch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66BD1DE822C6499500FF1457 /* Catch.swift */; };
+		66BD1DEB22C64CB200FF1457 /* Concatenate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66BD1DEA22C64CB200FF1457 /* Concatenate.swift */; };
 		66CAF61D22BF357100E8FAAC /* TryFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66CAF61C22BF357100E8FAAC /* TryFilter.swift */; };
 		66CAF61F22BF38A400E8FAAC /* Print.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66CAF61E22BF38A400E8FAAC /* Print.swift */; };
-		66D385FD22B91128001B8189 /* RelaySubscriptionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D385FC22B91128001B8189 /* RelaySubscriptionState.swift */; };
+		66D385FD22B91128001B8189 /* RelayState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D385FC22B91128001B8189 /* RelayState.swift */; };
 		66D3861122BA56BE001B8189 /* PeekableIterator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D3861022BA56BE001B8189 /* PeekableIterator.swift */; };
 		66F1198C22BE5E2000D744BB /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F1198B22BE5E2000D744BB /* Filter.swift */; };
 		66F1198E22BE624800D744BB /* CompactMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F1198D22BE624800D744BB /* CompactMap.swift */; };
@@ -148,9 +150,11 @@
 		62A73FD522C61865007C962C /* TryRemoveDuplicates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TryRemoveDuplicates.swift; sourceTree = "<group>"; };
 		6615FEC822BA87A2000201AF /* Count.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Count.swift; sourceTree = "<group>"; };
 		6615FECA22BA892C000201AF /* Published.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Published.swift; sourceTree = "<group>"; };
+		66BD1DE822C6499500FF1457 /* Catch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Catch.swift; sourceTree = "<group>"; };
+		66BD1DEA22C64CB200FF1457 /* Concatenate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Concatenate.swift; sourceTree = "<group>"; };
 		66CAF61C22BF357100E8FAAC /* TryFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TryFilter.swift; sourceTree = "<group>"; };
 		66CAF61E22BF38A400E8FAAC /* Print.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Print.swift; sourceTree = "<group>"; };
-		66D385FC22B91128001B8189 /* RelaySubscriptionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelaySubscriptionState.swift; sourceTree = "<group>"; };
+		66D385FC22B91128001B8189 /* RelayState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelayState.swift; sourceTree = "<group>"; };
 		66D3861022BA56BE001B8189 /* PeekableIterator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeekableIterator.swift; sourceTree = "<group>"; };
 		66F1198B22BE5E2000D744BB /* Filter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		66F1198D22BE624800D744BB /* CompactMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompactMap.swift; sourceTree = "<group>"; };
@@ -231,7 +235,7 @@
 				OBJ_22 /* Global.swift */,
 				OBJ_23 /* SubscriptionState.swift */,
 				6229E66422B73500002CBEC2 /* Lock.swift */,
-				66D385FC22B91128001B8189 /* RelaySubscriptionState.swift */,
+				66D385FC22B91128001B8189 /* RelayState.swift */,
 				66D3861022BA56BE001B8189 /* PeekableIterator.swift */,
 				623227B822C0BBD0006D907B /* Extensions.swift */,
 				623227C522C0D5CA006D907B /* OptionalProtocol.swift */,
@@ -283,6 +287,8 @@
 				62A73FD122C61077007C962C /* BreakPoint.swift */,
 				62A73FD322C61803007C962C /* RemoveDuplicates.swift */,
 				62A73FD522C61865007C962C /* TryRemoveDuplicates.swift */,
+				66BD1DE822C6499500FF1457 /* Catch.swift */,
+				66BD1DEA22C64CB200FF1457 /* Concatenate.swift */,
 			);
 			path = Publishers;
 			sourceTree = "<group>";
@@ -543,8 +549,10 @@
 				OBJ_104 /* Publishers.swift in Sources */,
 				6219B14C22C46BA0002EC61B /* IgnoreOutput.swift in Sources */,
 				629182C222C206CE00F3565F /* Optional.swift in Sources */,
+				66BD1DEB22C64CB200FF1457 /* Concatenate.swift in Sources */,
 				OBJ_105 /* Sequence.swift in Sources */,
 				OBJ_106 /* SubscribeOn.swift in Sources */,
+				66BD1DE922C6499500FF1457 /* Catch.swift in Sources */,
 				66CAF61D22BF357100E8FAAC /* TryFilter.swift in Sources */,
 				66F1199722BE7A9100D744BB /* TryCompectMap.swift in Sources */,
 				OBJ_107 /* TryMap.swift in Sources */,
@@ -577,7 +585,7 @@
 				629182CA22C2151200F3565F /* Reduce.swift in Sources */,
 				OBJ_123 /* empty.swift in Sources */,
 				629182C022C205E400F3565F /* Fail.swift in Sources */,
-				66D385FD22B91128001B8189 /* RelaySubscriptionState.swift in Sources */,
+				66D385FD22B91128001B8189 /* RelayState.swift in Sources */,
 				6219B14A22C468F8002EC61B /* Drop.swift in Sources */,
 				6615FEC922BA87A2000201AF /* Count.swift in Sources */,
 			);

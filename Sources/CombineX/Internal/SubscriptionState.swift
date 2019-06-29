@@ -40,22 +40,6 @@ extension SubscriptionState {
     }
 }
 
-extension SubscriptionState: Equatable {
-    
-    static func == (lhs: SubscriptionState, rhs: SubscriptionState) -> Bool {
-        switch (lhs, rhs) {
-        case (.waiting, .waiting):
-            return true
-        case (.subscribing(let d0), .subscribing(let d1)):
-            return d0 == d1
-        case (.finished, .finished):
-            return true
-        default:
-            return false
-        }
-    }
-}
-
 extension Atomic where Value == SubscriptionState {
     
     var isWaiting: Bool {
@@ -81,6 +65,45 @@ extension Atomic where Value == SubscriptionState {
     
     var demand: Subscribers.Demand? {
         return self.load().demand
+    }
+}
+
+extension SubscriptionState: Equatable {
+    
+    static func == (lhs: SubscriptionState, rhs: SubscriptionState) -> Bool {
+        switch (lhs, rhs) {
+        case (.waiting, .waiting):
+            return true
+        case (.subscribing(let d0), .subscribing(let d1)):
+            return d0 == d1
+        case (.finished, .finished):
+            return true
+        default:
+            return false
+        }
+    }
+}
+
+extension SubscriptionState {
+    
+    typealias TryAdd = (before: Subscribers.Demand, after: Subscribers.Demand)
+    
+    mutating func tryAdd(_ demand: Subscribers.Demand) -> TryAdd? {
+        if let old = self.demand {
+            let new = old + demand
+            self = .subscribing(new)
+            return (old, new)
+        } else {
+            return nil
+        }
+    }
+    
+    mutating func finishIfSubscribing() -> Bool {
+        if self.isSubscribing {
+            self = .finished
+            return true
+        }
+        return false
     }
 }
 

@@ -80,7 +80,7 @@ extension Publishers.Print {
         typealias Pub = Publishers.Print<Upstream>
         typealias Sub = S
         
-        let state = Atomic<RelaySubscriptionState>(value: .waiting)
+        let state = Atomic<RelayState>(value: .waiting)
         
         let streamLock = Lock()
         
@@ -116,14 +116,14 @@ extension Publishers.Print {
         
         func cancel() {
             self.write("receive cancel")
-            self.state.finishIfSubscribing()?.cancel()
+            self.state.finishIfRelaying()?.cancel()
             
             self.upstream = nil
 //            self.sub = nil
         }
         
         func receive(subscription: Subscription) {
-            if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(subscription)) {
+            if self.state.compareAndStore(expected: .waiting, newVaue: .relaying(subscription)) {
                 self.write("receive subscription: (\(subscription))")
                 self.sub?.receive(subscription: self)
             } else {
@@ -132,7 +132,7 @@ extension Publishers.Print {
         }
         
         func receive(_ input: Input) -> Subscribers.Demand {
-            guard self.state.isSubscribing else {
+            guard self.state.isRelaying else {
                 return .none
             }
             
@@ -148,7 +148,7 @@ extension Publishers.Print {
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
-            if let subscription = self.state.finishIfSubscribing() {
+            if let subscription = self.state.finishIfRelaying() {
                 subscription.cancel()
                 
                 switch completion {

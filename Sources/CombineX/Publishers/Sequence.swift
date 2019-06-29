@@ -199,8 +199,8 @@ extension Publishers.Sequence {
         func request(_ demand: Subscribers.Demand) {
             if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(demand)) {
                 self.drain(demand)
-            } else if let demand = self.state.tryAdd(demand), demand.before <= 0 {
-                self.drain(demand.after)
+            } else if let demands = self.state.tryAdd(demand), demands.before <= 0 {
+                self.drain(demands.after)
             }
         }
         

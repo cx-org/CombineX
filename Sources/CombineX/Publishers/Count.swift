@@ -72,7 +72,7 @@ extension Publishers.Count {
         typealias Pub = Publishers.Count<Upstream>
         typealias Sub = S
         
-        let state = Atomic<RelaySubscriptionState>(value: .waiting)
+        let state = Atomic<RelayState>(value: .waiting)
         
         var count = 0
         var pub: Pub?
@@ -89,14 +89,14 @@ extension Publishers.Count {
         }
         
         func cancel() {
-            self.state.finishIfSubscribing()?.cancel()
+            self.state.finishIfRelaying()?.cancel()
             
             self.pub = nil
             self.sub = nil
         }
         
         func receive(subscription: Subscription) {
-            if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(subscription)) {
+            if self.state.compareAndStore(expected: .waiting, newVaue: .relaying(subscription)) {
                 self.sub?.receive(subscription: self)
             } else {
                 subscription.cancel()
@@ -105,7 +105,7 @@ extension Publishers.Count {
         
         func receive(_ input: Input) -> Subscribers.Demand {
             self.state.withLock {
-                guard $0.isSubscribing else {
+                guard $0.isRelaying else {
                     return
                 }
                 self.count += 1
@@ -115,7 +115,7 @@ extension Publishers.Count {
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
-            if let subscription = self.state.finishIfSubscribing() {
+            if let subscription = self.state.finishIfRelaying() {
                 subscription.cancel()
                 
                 switch completion {

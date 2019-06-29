@@ -491,31 +491,6 @@ extension Publisher {
 
 extension Publisher {
 
-    /// Handles errors from an upstream publisher by replacing it with another publisher.
-    ///
-    /// The following example replaces any error from the upstream publisher and replaces the upstream with a `Just` publisher. This continues the stream by publishing a single value and completing normally.
-    /// ```
-    /// enum SimpleError: Error { case error }
-    /// let errorPublisher = (0..<10).publisher().tryMap { v -> Int in
-    ///     if v < 5 {
-    ///         return v
-    ///     } else {
-    ///         throw SimpleError.error
-    ///     }
-    /// }
-    ///
-    /// let noErrorPublisher = errorPublisher.catch { _ in
-    ///     return Publishers.Just(100)
-    /// }
-    /// ```
-    /// Backpressure note: This publisher passes through `request` and `cancel` to the upstream. After receiving an error, the publisher sends sends any unfulfilled demand to the new `Publisher`.
-    /// - Parameter handler: A closure that accepts the upstream failure as input and returns a publisher to replace the upstream publisher.
-    /// - Returns: A publisher that handles errors from an upstream publisher by replacing the failed publisher with another publisher.
-    public func `catch`<P>(_ handler: @escaping (Self.Failure) -> P) -> Publishers.Catch<Self, P> where P : Publisher, Self.Output == P.Output
-}
-
-extension Publisher {
-
     /// Delays delivery of all output to the downstream receiver by a specified amount of time on a particular scheduler.
     ///
     /// The delay affects the delivery of elements and completion, but not of the original subscription.
@@ -1523,37 +1498,6 @@ extension Publishers {
 
 extension Publishers {
 
-    /// A publisher that emits all of one publisher’s elements before those from another publisher.
-    public struct Concatenate<Prefix, Suffix> : Publisher where Prefix : Publisher, Suffix : Publisher, Prefix.Failure == Suffix.Failure, Prefix.Output == Suffix.Output {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = Suffix.Output
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Suffix.Failure
-
-        /// The publisher to republish, in its entirety, before republishing elements from `suffix`.
-        public let prefix: Prefix
-
-        /// The publisher to republish only after `prefix` finishes.
-        public let suffix: Suffix
-
-        public init(prefix: Prefix, suffix: Suffix)
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, Suffix.Failure == S.Failure, Suffix.Output == S.Input
-    }
-}
-
-extension Publishers {
-
     /// A publisher that publishes elements only after a specified time interval elapses between events.
     public struct Debounce<Upstream, Context> : Publisher where Upstream : Publisher, Context : Scheduler {
 
@@ -1813,41 +1757,7 @@ extension Publishers {
 }
 
 
-extension Publishers {
 
-    /// A publisher that handles errors from an upstream publisher by replacing the failed publisher with another publisher.
-    public struct Catch<Upstream, NewPublisher> : Publisher where Upstream : Publisher, NewPublisher : Publisher, Upstream.Output == NewPublisher.Output {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = Upstream.Output
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = NewPublisher.Failure
-
-        /// The publisher that this publisher receives elements from.
-        public let upstream: Upstream
-
-        /// A closure that accepts the upstream failure as input and returns a publisher to replace the upstream publisher.
-        public let handler: (Upstream.Failure) -> NewPublisher
-
-        /// Creates a publisher that handles errors from an upstream publisher by replacing the failed publisher with another publisher.
-        ///
-        /// - Parameters:
-        ///   - upstream: The publisher that this publisher receives elements from.
-        ///   - handler: A closure that accepts the upstream failure as input and returns a publisher to replace the upstream publisher.
-        public init(upstream: Upstream, handler: @escaping (Upstream.Failure) -> NewPublisher)
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, NewPublisher.Failure == S.Failure, NewPublisher.Output == S.Input
-    }
-}
 
 extension Publishers {
 
@@ -2071,17 +1981,6 @@ extension Publishers.DropUntilOutput : Equatable where Upstream : Equatable, Oth
     ///   - lhs: A value to compare.
     ///   - rhs: Another value to compare.
     public static func == (lhs: Publishers.DropUntilOutput<Upstream, Other>, rhs: Publishers.DropUntilOutput<Upstream, Other>) -> Bool
-}
-
-extension Publishers.Concatenate : Equatable where Prefix : Equatable, Suffix : Equatable {
-
-    /// Returns a Boolean value that indicates whether two publishers are equivalent.
-    ///
-    /// - Parameters:
-    ///   - lhs: A concatenate publisher to compare for equality.
-    ///   - rhs: Another concatenate publisher to compare for equality.
-    /// - Returns: `true` if the two publishers’ prefix and suffix properties are equal, `false` otherwise.
-    public static func == (lhs: Publishers.Concatenate<Prefix, Suffix>, rhs: Publishers.Concatenate<Prefix, Suffix>) -> Bool
 }
 
 extension Publishers.Fail : Equatable where Failure : Equatable {
