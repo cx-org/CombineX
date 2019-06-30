@@ -65,7 +65,7 @@ extension Publishers.FlatMap {
         typealias Failure = Upstream.Failure
         
         // for upstream
-        let upstreamState = Atomic<RelayState>(value: .waiting)
+        let relayState = Atomic<RelayState>(value: .waiting)
         
         // for downstream
         let lock = Lock(recursive: true)
@@ -126,7 +126,7 @@ extension Publishers.FlatMap {
                 $0.subscription.exchange(with: nil)?.cancel()
             }
             
-            self.upstreamState.finishIfRelaying()?.cancel()
+            self.relayState.finishIfRelaying()?.cancel()
             
             self.pub = nil
             self.sub = nil
@@ -134,7 +134,7 @@ extension Publishers.FlatMap {
         
         // MARK: Subscriber
         func receive(subscription: Subscription) {
-            if upstreamState.compareAndStore(expected: .waiting, newVaue: .relaying(subscription)) {
+            if relayState.compareAndStore(expected: .waiting, newVaue: .relaying(subscription)) {
                 self.sub?.receive(subscription: self)
                 subscription.request(self.maxPublishers)
             } else {
@@ -145,7 +145,7 @@ extension Publishers.FlatMap {
         func receive(_ input: Input) -> Subscribers.Demand {
             
             // Against misbehaving upstream
-            guard self.upstreamState.isRelaying else {
+            guard self.relayState.isRelaying else {
                 return .none
             }
             
@@ -169,7 +169,7 @@ extension Publishers.FlatMap {
         }
         
         func receive(completion: Subscribers.Completion<P.Failure>) {
-            guard let subscription = self.upstreamState.finishIfRelaying() else {
+            guard let subscription = self.relayState.finishIfRelaying() else {
                 return
             }
             
@@ -258,7 +258,7 @@ extension Publishers.FlatMap {
             case .finished:
                 self.children.removeAll(where: { $0 === child })
                 
-                if let subscription = self.upstreamState.subscription {
+                if let subscription = self.relayState.subscription {
                     self.lock.unlock()
                     
                     subscription.request(.max(1))
@@ -294,7 +294,7 @@ extension Publishers.FlatMap {
                     $0.subscription.exchange(with: nil)?.cancel()
                 }
                 
-                self.upstreamState.finishIfRelaying()?.cancel()
+                self.relayState.finishIfRelaying()?.cancel()
                 
                 self.pub = nil
                 self.sub = nil
