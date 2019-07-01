@@ -122,11 +122,3 @@ extension Atomic where Value: BinaryInteger {
         }
     }
 }
-
-extension Atomic where Value: OptionalProtocol {
-    
-    func ifNilStore(_ value: Value.Wrapped) -> Bool {
-        self.lock.lock(); defer { self.lock.unlock() }
-        return self.value.ifNilStore(value)
-    }
-}

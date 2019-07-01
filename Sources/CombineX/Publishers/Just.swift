@@ -175,6 +175,78 @@ extension Publishers.Just {
     public func setFailureType<E>(to failureType: E.Type) -> Publishers.Once<Output, E> where E : Error {
         return .init(self.output)
     }
+    
+    public func output(at index: Int) -> Publishers.Optional<Output, Publishers.Just<Output>.Failure> {
+        if index == 0 {
+            return .init(self.output)
+        } else {
+            return .init(nil)
+        }
+    }
+    
+    public func output<R>(in range: R) -> Publishers.Optional<Output, Publishers.Just<Output>.Failure> where R : RangeExpression, R.Bound == Int {
+        if range.contains(0) {
+            return .init(self.output)
+        } else {
+            return .init(nil)
+        }
+    }
+    
+    public func prefix(_ maxLength: Int) -> Publishers.Optional<Output, Publishers.Just<Output>.Failure> {
+        precondition(maxLength > 0)
+        return .init(self.output)
+    }
+    
+    public func prefix(while predicate: (Output) -> Bool) -> Publishers.Optional<Output, Publishers.Just<Output>.Failure> {
+        if predicate(self.output) {
+            return .init(self.output)
+        } else {
+            return .init(nil)
+        }
+    }
+    
+    public func tryPrefix(while predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error> {
+        self.tryCompactMap {
+            if try predicate($0) {
+                return $0
+            }
+            return nil
+        }
+    }
+    
+    public func removeDuplicates(by predicate: (Output, Output) -> Bool) -> Publishers.Just<Output> {
+        return self
+    }
+    
+    public func tryRemoveDuplicates(by predicate: (Output, Output) throws -> Bool) -> Publishers.Once<Output, Error> {
+        return .init(self.output)
+    }
+    
+    public func replaceError(with output: Output) -> Publishers.Just<Output> {
+        return self
+    }
+    
+    public func replaceEmpty(with output: Output) -> Publishers.Just<Output> {
+        return self
+    }
+    
+    public func retry(_ times: Int) -> Publishers.Just<Output> {
+        return self
+    }
+    
+    public func retry() -> Publishers.Just<Output> {
+        return self
+    }
+    
+    public func scan<T>(_ initialResult: T, _ nextPartialResult: (T, Output) -> T) -> Publishers.Once<T, Publishers.Just<Output>.Failure> {
+        return .init(nextPartialResult(initialResult, self.output))
+    }
+    
+    public func tryScan<T>(_ initialResult: T, _ nextPartialResult: (T, Output) throws -> T) -> Publishers.Once<T, Error> {
+        return .init(Result {
+            try nextPartialResult(initialResult, self.output)
+        })
+    }
 }
 
 extension Publishers.Just : Equatable where Output : Equatable {

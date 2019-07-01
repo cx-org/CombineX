@@ -149,6 +149,86 @@ extension Publishers.Once {
             try nextPartialResult(initialResult, $0)
         })
     }
+    
+    public func output(at index: Int) -> Publishers.Optional<Output, Failure> {
+        if index == 0 {
+            return .init(self.result.map { $0 })
+        } else {
+            return .init(nil)
+        }
+    }
+    
+    public func output<R>(in range: R) -> Publishers.Optional<Output, Failure> where R : RangeExpression, R.Bound == Int {
+        if range.contains(0) {
+            return self.output(at: 0)
+        } else {
+            return .init(nil)
+        }
+    }
+    
+    public func prefix(_ maxLength: Int) -> Publishers.Optional<Output, Failure> {
+        precondition(maxLength > 0)
+        return .init(self.result.map { $0 })
+    }
+    
+    public func prefix(while predicate: (Output) -> Bool) -> Publishers.Optional<Output, Failure> {
+        return .init(self.result.map {
+            if predicate($0) {
+                return $0
+            }
+            return nil
+        })
+    }
+    
+    public func tryPrefix(while predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error> {
+        return .init(self.result.tryMap {
+            if try predicate($0) {
+                return $0
+            }
+            return nil
+        })
+    }
+    
+    public func removeDuplicates(by predicate: (Output, Output) -> Bool) -> Publishers.Once<Output, Failure> {
+        return self
+    }
+    
+    public func tryRemoveDuplicates(by predicate: (Output, Output) throws -> Bool) -> Publishers.Once<Output, Error> {
+        return self.mapError { $0 }
+    }
+    
+    public func replaceError(with output: Output) -> Publishers.Once<Output, Never> {
+        switch self.result {
+        case .success(let output):
+            return .init(output)
+        case .failure:
+            return .init(output)
+        }
+    }
+    
+    public func replaceEmpty(with output: Output) -> Publishers.Once<Output, Failure> {
+        return self
+    }
+    
+    public func retry(_ times: Int) -> Publishers.Once<Output, Failure> {
+        return self
+    }
+    
+    public func retry() -> Publishers.Once<Output, Failure> {
+        return self
+    }
+    
+    public func scan<T>(_ initialResult: T, _ nextPartialResult: (T, Output) -> T) -> Publishers.Once<T, Failure> {
+        return .init(self.result.map {
+            nextPartialResult(initialResult, $0)
+        })
+    }
+    
+    public func tryScan<T>(_ initialResult: T, _ nextPartialResult: (T, Output) throws -> T) -> Publishers.Once<T, Error> {
+        return .init(self.result.tryMap {
+            try nextPartialResult(initialResult, $0)
+        })
+    }
 }
 
 extension Publishers.Once : Equatable where Output : Equatable, Failure : Equatable {

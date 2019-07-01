@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		62125AD022BB3081005B57AE /* Typealias.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62125ACF22BB3081005B57AE /* Typealias.swift */; };
 		62125AD122BB3081005B57AE /* Typealias.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62125ACF22BB3081005B57AE /* Typealias.swift */; };
+		6213188222C9A86000B2FE41 /* ConcatenateSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6213188122C9A86000B2FE41 /* ConcatenateSpec.swift */; };
+		6213188322C9A86000B2FE41 /* ConcatenateSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6213188122C9A86000B2FE41 /* ConcatenateSpec.swift */; };
 		6219B13122C45814002EC61B /* OutputSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6219B13022C45814002EC61B /* OutputSpec.swift */; };
 		6219B13222C45814002EC61B /* OutputSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6219B13022C45814002EC61B /* OutputSpec.swift */; };
 		6219B14422C465D3002EC61B /* TryDropWhileSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6219B14322C465D2002EC61B /* TryDropWhileSpec.swift */; };
@@ -154,6 +156,7 @@
 		62125ACF22BB3081005B57AE /* Typealias.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typealias.swift; sourceTree = "<group>"; };
 		62125AD722BB9269005B57AE /* Specs.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Specs.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		62125AD822BB9336005B57AE /* Combine.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Combine.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		6213188122C9A86000B2FE41 /* ConcatenateSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConcatenateSpec.swift; sourceTree = "<group>"; };
 		6219B13022C45814002EC61B /* OutputSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutputSpec.swift; sourceTree = "<group>"; };
 		6219B14322C465D2002EC61B /* TryDropWhileSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TryDropWhileSpec.swift; sourceTree = "<group>"; };
 		6229E64C22B720E1002CBEC2 /* AnyCancellableSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyCancellableSpec.swift; sourceTree = "<group>"; };
@@ -354,6 +357,7 @@
 				625EC8C322B8D8F5006DB4D5 /* SequenceSpec.swift */,
 				66F1199822BE7B6100D744BB /* TryCompactMapSpec.swift */,
 				6219B14322C465D2002EC61B /* TryDropWhileSpec.swift */,
+				6213188122C9A86000B2FE41 /* ConcatenateSpec.swift */,
 			);
 			path = Publishers;
 			sourceTree = "<group>";
@@ -786,6 +790,7 @@
 				6615FECD22BA8C5A000201AF /* CombineIdentifierSpec.swift in Sources */,
 				625EC8B922B8B32A006DB4D5 /* DemandSpec.swift in Sources */,
 				6229E64D22B720E1002CBEC2 /* AnyCancellableSpec.swift in Sources */,
+				6213188222C9A86000B2FE41 /* ConcatenateSpec.swift in Sources */,
 				6229E65A22B729F1002CBEC2 /* CustomSubscription.swift in Sources */,
 				62A73FC022C5FAA0007C962C /* ImmediateSchedulerSpec.swift in Sources */,
 				62125AD022BB3081005B57AE /* Typealias.swift in Sources */,
@@ -840,6 +845,7 @@
 				6615FECE22BA8C5A000201AF /* CombineIdentifierSpec.swift in Sources */,
 				625EC8BA22B8B32A006DB4D5 /* DemandSpec.swift in Sources */,
 				6229E64E22B720E1002CBEC2 /* AnyCancellableSpec.swift in Sources */,
+				6213188322C9A86000B2FE41 /* ConcatenateSpec.swift in Sources */,
 				6229E65B22B729F1002CBEC2 /* CustomSubscription.swift in Sources */,
 				62A73FC122C5FAA0007C962C /* ImmediateSchedulerSpec.swift in Sources */,
 				62125AD122BB3081005B57AE /* Typealias.swift in Sources */,

@@ -178,6 +178,91 @@ extension Publishers.Optional {
     public func tryRemoveDuplicates(by predicate: (Output, Output) throws -> Bool) ->  Publishers.Optional<Output, Error> {
         return self.mapError { $0 }
     }
+    
+    public func output(at index: Int) -> Publishers.Optional<Output, Failure> {
+        if index == 0 {
+            return self
+        } else {
+            return .init(nil)
+        }
+    }
+    
+    public func output<R>(in range: R) -> Publishers.Optional<Output, Failure> where R : RangeExpression, R.Bound == Int {
+        if range.contains(0) {
+            return self.output(at: 0)
+        } else {
+            return .init(nil)
+        }
+    }
+    
+    public func prefix(_ maxLength: Int) -> Publishers.Optional<Output, Failure> {
+        precondition(maxLength > 0)
+        return self
+    }
+    
+    public func prefix(while predicate: (Output) -> Bool) -> Publishers.Optional<Output, Failure> {
+        return .init(self.result.map({
+            if let output = $0, predicate(output) {
+                return output
+            }
+            return nil
+        }))
+    }
+    
+    public func tryPrefix(while predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error> {
+        return .init(self.result.tryMap {
+            if let output = $0, try predicate(output) {
+                return output
+            }
+            return nil
+        })
+    }
+    
+    public func replaceError(with output: Output) -> Publishers.Optional<Output, Never> {
+        switch self.result {
+        case .success(let output):
+            return .init(output)
+        case .failure:
+            return .init(output)
+        }
+    }
+    
+    public func replaceEmpty(with output: Output) -> Publishers.Optional<Output, Failure> {
+        return self
+    }
+    
+    public func retry(_ times: Int) -> Publishers.Optional<Output, Failure> {
+        return self
+    }
+    
+    public func retry() -> Publishers.Optional<Output, Failure> {
+        return self
+    }
+    
+    public func scan<T>(_ initialResult: T, _ nextPartialResult: (T, Output) -> T) -> Publishers.Optional<T, Failure> {
+        return .init(self.result.map {
+            guard let output = $0 else {
+                return nil
+            }
+            return nextPartialResult(initialResult, output)
+        })
+    }
+    
+    public func tryScan<T>(_ initialResult: T, _ nextPartialResult: (T, Output) throws -> T) -> Publishers.Optional<T, Error> {
+        return .init(self.result.tryMap {
+            guard let output = $0 else {
+                return nil
+            }
+            return try nextPartialResult(initialResult, output)
+        })
+    }
+}
+
+extension Publishers.Optional where Failure == Never {
+    
+    public func setFailureType<E>(to failureType: E.Type) -> Publishers.Optional<Output, E> where E : Error {
+        return self.mapError { _ -> E in }
+    }
 }
 
 extension Publishers.Optional : Equatable where Output : Equatable, Failure : Equatable {

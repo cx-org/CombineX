@@ -21,6 +21,12 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		6213188922C9AB3600B2FE41 /* Last.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6213188822C9AB3600B2FE41 /* Last.swift */; };
+		6213188B22C9ABC000B2FE41 /* TryLastWhere.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6213188A22C9ABC000B2FE41 /* TryLastWhere.swift */; };
+		6213188E22C9B16000B2FE41 /* LastWhere.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6213188D22C9B16000B2FE41 /* LastWhere.swift */; };
+		6213189022C9B3BE00B2FE41 /* TryContainsWhere.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6213188F22C9B3BE00B2FE41 /* TryContainsWhere.swift */; };
+		6213189222C9B43500B2FE41 /* ContainsWhere.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6213189122C9B43500B2FE41 /* ContainsWhere.swift */; };
+		6213189422C9B4D000B2FE41 /* Contains.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6213189322C9B4D000B2FE41 /* Contains.swift */; };
 		6219B12B22C449C0002EC61B /* First.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6219B12A22C449C0002EC61B /* First.swift */; };
 		6219B12D22C44A35002EC61B /* TryFirstWhere.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6219B12C22C44A35002EC61B /* TryFirstWhere.swift */; };
 		6219B12F22C44B77002EC61B /* Output.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6219B12E22C44B77002EC61B /* Output.swift */; };
@@ -122,6 +128,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		6213188822C9AB3600B2FE41 /* Last.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Last.swift; sourceTree = "<group>"; };
+		6213188A22C9ABC000B2FE41 /* TryLastWhere.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TryLastWhere.swift; sourceTree = "<group>"; };
+		6213188D22C9B16000B2FE41 /* LastWhere.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastWhere.swift; sourceTree = "<group>"; };
+		6213188F22C9B3BE00B2FE41 /* TryContainsWhere.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TryContainsWhere.swift; sourceTree = "<group>"; };
+		6213189122C9B43500B2FE41 /* ContainsWhere.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainsWhere.swift; sourceTree = "<group>"; };
+		6213189322C9B4D000B2FE41 /* Contains.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contains.swift; sourceTree = "<group>"; };
 		6219B12A22C449C0002EC61B /* First.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = First.swift; sourceTree = "<group>"; };
 		6219B12C22C44A35002EC61B /* TryFirstWhere.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TryFirstWhere.swift; sourceTree = "<group>"; };
 		6219B12E22C44B77002EC61B /* Output.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Output.swift; sourceTree = "<group>"; };
@@ -246,20 +258,31 @@
 		OBJ_25 /* Publishers */ = {
 			isa = PBXGroup;
 			children = (
-				62A73FB622C5F414007C962C /* MeasureInterval.swift */,
 				629182C522C2134100F3565F /* AllSatisfy.swift */,
 				629182CD22C21F7100F3565F /* AssertNoFailure.swift */,
 				OBJ_26 /* Autoconnect.swift */,
+				62A73FD122C61077007C962C /* BreakPoint.swift */,
+				66BD1DE822C6499500FF1457 /* Catch.swift */,
 				66F1198D22BE624800D744BB /* CompactMap.swift */,
+				66BD1DEA22C64CB200FF1457 /* Concatenate.swift */,
+				6213189322C9B4D000B2FE41 /* Contains.swift */,
+				6213189122C9B43500B2FE41 /* ContainsWhere.swift */,
 				6615FEC822BA87A2000201AF /* Count.swift */,
+				6219B14922C468F8002EC61B /* Drop.swift */,
+				6219B14722C46868002EC61B /* DropWhile.swift */,
 				OBJ_27 /* Empty.swift */,
 				629182BF22C205E400F3565F /* Fail.swift */,
 				66F1198B22BE5E2000D744BB /* Filter.swift */,
 				6219B12A22C449C0002EC61B /* First.swift */,
+				6219B13F22C46127002EC61B /* FirstWhere.swift */,
 				OBJ_28 /* FlatMap.swift */,
+				6219B14B22C46BA0002EC61B /* IgnoreOutput.swift */,
 				OBJ_29 /* Just.swift */,
+				6213188822C9AB3600B2FE41 /* Last.swift */,
+				6213188D22C9B16000B2FE41 /* LastWhere.swift */,
 				OBJ_30 /* Map.swift */,
 				OBJ_31 /* MapError.swift */,
+				62A73FB622C5F414007C962C /* MeasureInterval.swift */,
 				OBJ_33 /* Merge.swift */,
 				OBJ_32 /* Merge+.swift */,
 				629182BC22C1F5DF00F3565F /* Multicast.swift */,
@@ -270,25 +293,20 @@
 				OBJ_35 /* Publishers.swift */,
 				629182CF22C221F400F3565F /* ReceiveOn.swift */,
 				629182C922C2151200F3565F /* Reduce.swift */,
+				62A73FD322C61803007C962C /* RemoveDuplicates.swift */,
 				OBJ_36 /* Sequence.swift */,
 				629182C322C20C3C00F3565F /* SetFailureType.swift */,
 				OBJ_37 /* SubscribeOn.swift */,
 				629182C722C214C500F3565F /* TryAllSatisfy.swift */,
 				66F1199622BE7A9100D744BB /* TryCompectMap.swift */,
+				6213188F22C9B3BE00B2FE41 /* TryContainsWhere.swift */,
+				6219B14122C462B5002EC61B /* TryDropWhile.swift */,
 				66CAF61C22BF357100E8FAAC /* TryFilter.swift */,
+				6219B12C22C44A35002EC61B /* TryFirstWhere.swift */,
+				6213188A22C9ABC000B2FE41 /* TryLastWhere.swift */,
 				OBJ_38 /* TryMap.swift */,
 				629182CB22C2154F00F3565F /* TryReduce.swift */,
-				6219B13F22C46127002EC61B /* FirstWhere.swift */,
-				6219B14122C462B5002EC61B /* TryDropWhile.swift */,
-				6219B12C22C44A35002EC61B /* TryFirstWhere.swift */,
-				6219B14722C46868002EC61B /* DropWhile.swift */,
-				6219B14922C468F8002EC61B /* Drop.swift */,
-				6219B14B22C46BA0002EC61B /* IgnoreOutput.swift */,
-				62A73FD122C61077007C962C /* BreakPoint.swift */,
-				62A73FD322C61803007C962C /* RemoveDuplicates.swift */,
 				62A73FD522C61865007C962C /* TryRemoveDuplicates.swift */,
-				66BD1DE822C6499500FF1457 /* Catch.swift */,
-				66BD1DEA22C64CB200FF1457 /* Concatenate.swift */,
 			);
 			path = Publishers;
 			sourceTree = "<group>";
@@ -538,9 +556,11 @@
 				6229E66522B73500002CBEC2 /* Lock.swift in Sources */,
 				OBJ_97 /* FlatMap.swift in Sources */,
 				66F1198E22BE624800D744BB /* CompactMap.swift in Sources */,
+				6213189022C9B3BE00B2FE41 /* TryContainsWhere.swift in Sources */,
 				629182C822C214C500F3565F /* TryAllSatisfy.swift in Sources */,
 				OBJ_98 /* Just.swift in Sources */,
 				66D3861122BA56BE001B8189 /* PeekableIterator.swift in Sources */,
+				6213189422C9B4D000B2FE41 /* Contains.swift in Sources */,
 				OBJ_99 /* Map.swift in Sources */,
 				OBJ_100 /* MapError.swift in Sources */,
 				OBJ_101 /* Merge+.swift in Sources */,
@@ -558,16 +578,19 @@
 				OBJ_107 /* TryMap.swift in Sources */,
 				OBJ_110 /* Scheduler.swift in Sources */,
 				6219B14822C46868002EC61B /* DropWhile.swift in Sources */,
+				6213189222C9B43500B2FE41 /* ContainsWhere.swift in Sources */,
 				6219B14222C462B5002EC61B /* TryDropWhile.swift in Sources */,
 				62A73FB922C5F4A1007C962C /* DispatchQueueScheduler.swift in Sources */,
 				OBJ_111 /* SchedulerTimeIntervalConvertible.swift in Sources */,
 				6615FECB22BA892C000201AF /* Published.swift in Sources */,
 				OBJ_112 /* ImmediateScheduler.swift in Sources */,
 				OBJ_113 /* Subject.swift in Sources */,
+				6213188922C9AB3600B2FE41 /* Last.swift in Sources */,
 				OBJ_114 /* CurrentValueSubject.swift in Sources */,
 				OBJ_115 /* PassthroughSubject.swift in Sources */,
 				6219B12B22C449C0002EC61B /* First.swift in Sources */,
 				OBJ_116 /* Subscriber.swift in Sources */,
+				6213188B22C9ABC000B2FE41 /* TryLastWhere.swift in Sources */,
 				629182C422C20C3C00F3565F /* SetFailureType.swift in Sources */,
 				OBJ_117 /* Assign.swift in Sources */,
 				629182C622C2134100F3565F /* AllSatisfy.swift in Sources */,
@@ -577,6 +600,7 @@
 				629182CE22C21F7100F3565F /* AssertNoFailure.swift in Sources */,
 				OBJ_120 /* Subscription.swift in Sources */,
 				OBJ_121 /* Demand.swift in Sources */,
+				6213188E22C9B16000B2FE41 /* LastWhere.swift in Sources */,
 				6219B12F22C44B77002EC61B /* Output.swift in Sources */,
 				62A73FB722C5F414007C962C /* MeasureInterval.swift in Sources */,
 				629182D022C221F400F3565F /* ReceiveOn.swift in Sources */,

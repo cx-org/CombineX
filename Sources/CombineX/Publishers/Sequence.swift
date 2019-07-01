@@ -1,3 +1,118 @@
+extension Publishers.Sequence {
+    
+    public func allSatisfy(_ predicate: (Publishers.Sequence<Elements, Failure>.Output) -> Bool) -> Publishers.Once<Bool, Failure> {
+        return .init(self.sequence.allSatisfy(predicate))
+    }
+    
+    public func tryAllSatisfy(_ predicate: (Publishers.Sequence<Elements, Failure>.Output) throws -> Bool) -> Publishers.Once<Bool, Error> {
+        return .init(Result {
+            try self.sequence.allSatisfy(predicate)
+        })
+    }
+    
+    public func collect() -> Publishers.Once<[Publishers.Sequence<Elements, Failure>.Output], Failure> {
+        return .init(Array(self.sequence))
+    }
+    
+    public func compactMap<T>(_ transform: (Publishers.Sequence<Elements, Failure>.Output) -> T?) -> Publishers.Sequence<[T], Failure> {
+        return .init(sequence: self.sequence.compactMap(transform))
+    }
+    
+    public func min(by areInIncreasingOrder: (Publishers.Sequence<Elements, Failure>.Output, Publishers.Sequence<Elements, Failure>.Output) -> Bool) -> Publishers.Optional<Publishers.Sequence<Elements, Failure>.Output, Failure> {
+        return .init(self.sequence.min(by: areInIncreasingOrder))
+    }
+    
+    public func tryMin(by areInIncreasingOrder: (Publishers.Sequence<Elements, Failure>.Output, Publishers.Sequence<Elements, Failure>.Output) throws -> Bool) -> Publishers.Optional<Publishers.Sequence<Elements, Failure>.Output, Error> {
+        return .init(Result {
+            try self.sequence.min(by: areInIncreasingOrder)
+        })
+    }
+    
+    public func max(by areInIncreasingOrder: (Publishers.Sequence<Elements, Failure>.Output, Publishers.Sequence<Elements, Failure>.Output) -> Bool) -> Publishers.Optional<Publishers.Sequence<Elements, Failure>.Output, Failure> {
+        return .init(self.sequence.max(by: areInIncreasingOrder))
+    }
+    
+    public func tryMax(by areInIncreasingOrder: (Publishers.Sequence<Elements, Failure>.Output, Publishers.Sequence<Elements, Failure>.Output) throws -> Bool) -> Publishers.Optional<Publishers.Sequence<Elements, Failure>.Output, Error> {
+        return .init(Result {
+            try self.sequence.max(by: areInIncreasingOrder)
+        })
+    }
+    
+    public func contains(where predicate: (Publishers.Sequence<Elements, Failure>.Output) -> Bool) -> Publishers.Once<Bool, Failure> {
+        return .init(self.sequence.contains(where: predicate))
+    }
+    
+    public func tryContains(where predicate: (Publishers.Sequence<Elements, Failure>.Output) throws -> Bool) -> Publishers.Once<Bool, Error> {
+        return .init(Result {
+            try self.sequence.contains(where: predicate)
+        })
+    }
+    
+    public func drop(while predicate: (Elements.Element) -> Bool) -> Publishers.Sequence<DropWhileSequence<Elements>, Failure> {
+        return .init(sequence: self.sequence.drop(while: predicate))
+    }
+    
+    public func dropFirst(_ count: Int = 1) -> Publishers.Sequence<DropFirstSequence<Elements>, Failure> {
+        return .init(sequence: self.sequence.dropFirst(count))
+    }
+    
+    public func first(where predicate: (Publishers.Sequence<Elements, Failure>.Output) -> Bool) -> Publishers.Optional<Publishers.Sequence<Elements, Failure>.Output, Failure> {
+        return .init(self.sequence.first(where: predicate))
+    }
+    
+    public func tryFirst(where predicate: (Publishers.Sequence<Elements, Failure>.Output) throws -> Bool) -> Publishers.Optional<Publishers.Sequence<Elements, Failure>.Output, Error> {
+        return .init(Result {
+            try self.sequence.first(where: predicate)
+        })
+    }
+    
+    public func filter(_ isIncluded: (Publishers.Sequence<Elements, Failure>.Output) -> Bool) -> Publishers.Sequence<[Publishers.Sequence<Elements, Failure>.Output], Failure> {
+        return .init(sequence: self.sequence.filter(isIncluded))
+    }
+    
+    public func ignoreOutput() -> Publishers.Empty<Publishers.Sequence<Elements, Failure>.Output, Failure> {
+        return .init(completeImmediately: true)
+    }
+    
+    public func map<T>(_ transform: (Elements.Element) -> T) -> Publishers.Sequence<[T], Failure> {
+        return .init(sequence: self.sequence.map(transform))
+    }
+    
+    public func prefix(_ maxLength: Int) -> Publishers.Sequence<PrefixSequence<Elements>, Failure> {
+        return .init(sequence: self.sequence.prefix(maxLength))
+    }
+    
+    public func prefix(while predicate: (Elements.Element) -> Bool) -> Publishers.Sequence<[Elements.Element], Failure> {
+        return .init(sequence: self.sequence.prefix(while: predicate))
+    }
+    
+    public func reduce<T>(_ initialResult: T, _ nextPartialResult: @escaping (T, Publishers.Sequence<Elements, Failure>.Output) -> T) -> Publishers.Once<T, Failure> {
+        return .init(self.sequence.reduce(initialResult, nextPartialResult))
+    }
+    
+    public func tryReduce<T>(_ initialResult: T, _ nextPartialResult: @escaping (T, Publishers.Sequence<Elements, Failure>.Output) throws -> T) -> Publishers.Once<T, Error> {
+        return .init(Result {
+            try self.sequence.reduce(initialResult, nextPartialResult)
+        })
+    }
+    
+    public func replaceNil<T>(with output: T) -> Publishers.Sequence<[Publishers.Sequence<Elements, Failure>.Output], Failure> where Elements.Element == T? {
+        return .init(sequence: self.sequence.map { $0 ?? output })
+    }
+    
+    public func scan<T>(_ initialResult: T, _ nextPartialResult: @escaping (T, Publishers.Sequence<Elements, Failure>.Output) -> T) -> Publishers.Sequence<[T], Failure> {
+        var result = initialResult
+        return .init(sequence: self.sequence.map({
+            result = nextPartialResult(result, $0)
+            return result
+        }))
+    }
+    
+    public func setFailureType<E>(to error: E.Type) -> Publishers.Sequence<Elements, E> where E : Error {
+        return .init(sequence: self.sequence)
+    }
+}
+
 extension Publishers.Sequence : Equatable where Elements : Equatable {
     
     /// Returns a Boolean value indicating whether two values are equal.

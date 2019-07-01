@@ -11,6 +11,21 @@ extension Publisher where Self.Failure == Never {
     }
 }
 
+extension Publishers.SetFailureType : Equatable where Upstream : Equatable {
+    
+    /// Returns a Boolean value indicating whether two values are equal.
+    ///
+    /// Equality is the inverse of inequality. For any values `a` and `b`,
+    /// `a == b` implies that `a != b` is `false`.
+    ///
+    /// - Parameters:
+    ///   - lhs: A value to compare.
+    ///   - rhs: Another value to compare.
+    public static func == (lhs: Publishers.SetFailureType<Upstream, Failure>, rhs: Publishers.SetFailureType<Upstream, Failure>) -> Bool {
+        return lhs.upstream == rhs.upstream
+    }
+}
+
 extension Publishers {
     
     /// A publisher that appears to send a specified failure type.

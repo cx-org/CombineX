@@ -14,15 +14,7 @@ extension Publisher where Self.Output : Encodable {
     public func encode<Coder>(encoder: Coder) -> Publishers.Encode<Self, Coder> where Coder : TopLevelEncoder
 }
 
-extension Publisher where Self.Output : Equatable {
 
-    /// Publishes a Boolean value upon receiving an element equal to the argument.
-    ///
-    /// The contains publisher consumes all received elements until the upstream publisher produces a matching element. At that point, it emits `true` and finishes normally. If the upstream finishes normally without producing a matching element, this publisher emits `false`, then finishes.
-    /// - Parameter output: An element to match against.
-    /// - Returns: A publisher that emits the Boolean value `true` when the upstream publisher emits a matching value.
-    public func contains(_ output: Self.Output) -> Publishers.Contains<Self>
-}
 
 extension Publisher {
 
@@ -122,23 +114,6 @@ extension Publisher {
     public func tryPrefix(while predicate: @escaping (Self.Output) throws -> Bool) -> Publishers.TryPrefixWhile<Self>
 }
 
-extension Publisher {
-
-    /// Publishes a Boolean value upon receiving an element that satisfies the predicate closure.
-    ///
-    /// This operator consumes elements produced from the upstream publisher until the upstream publisher produces a matching element.
-    /// - Parameter predicate: A closure that takes an element as its parameter and returns a Boolean value indicating whether the element satisfies the closure’s comparison logic.
-    /// - Returns: A publisher that emits the Boolean value `true` when the upstream  publisher emits a matching value.
-    public func contains(where predicate: @escaping (Self.Output) -> Bool) -> Publishers.ContainsWhere<Self>
-
-    /// Publishes a Boolean value upon receiving an element that satisfies the throwing predicate closure.
-    ///
-    /// This operator consumes elements produced from the upstream publisher until the upstream publisher produces a matching element. If the closure throws, the stream fails with an error.
-    /// - Parameter predicate: A closure that takes an element as its parameter and returns a Boolean value indicating whether the element satisfies the closure’s comparison logic.
-    /// - Returns: A publisher that emits the Boolean value `true` when the upstream publisher emits a matching value.
-    public func tryContains(where predicate: @escaping (Self.Output) throws -> Bool) -> Publishers.TryContainsWhere<Self>
-}
-
 extension Publisher where Self.Failure == Never {
 
     /// Creates a connectable wrapper around the publisher.
@@ -179,8 +154,6 @@ extension Publisher {
     public func collect<S>(_ strategy: Publishers.TimeGroupingStrategy<S>, options: S.SchedulerOptions? = nil) -> Publishers.CollectByTime<Self, S> where S : Scheduler
 }
 
-
-
 extension Publisher {
 
     /// Republishes elements until another publisher emits an element.
@@ -217,21 +190,6 @@ extension Publisher {
     ///   - nextPartialResult: An error-throwing closure that takes as its arguments the previous value returned by the closure and the next element emitted from the upstream publisher.
     /// - Returns: A publisher that transforms elements by applying a closure that receives its previous return value and the next element from the upstream publisher.
     public func tryScan<T>(_ initialResult: T, _ nextPartialResult: @escaping (T, Self.Output) throws -> T) -> Publishers.TryScan<Self, T>
-}
-
-extension Publisher {
-
-    /// Only publishes the last element of a stream that satisfies a predicate closure, after the stream finishes.
-    /// - Parameter predicate: A closure that takes an element as its parameter and returns a Boolean value indicating whether to publish the element.
-    /// - Returns: A publisher that only publishes the last element satisfying the given predicate.
-    public func last(where predicate: @escaping (Self.Output) -> Bool) -> Publishers.LastWhere<Self>
-
-    /// Only publishes the last element of a stream that satisfies a error-throwing predicate closure, after the stream finishes.
-    ///
-    /// If the predicate closure throws, the publisher fails with the thrown error.
-    /// - Parameter predicate: A closure that takes an element as its parameter and returns a Boolean value indicating whether to publish the element.
-    /// - Returns: A publisher that only publishes the last element satisfying the given predicate.
-    public func tryLast(where predicate: @escaping (Self.Output) throws -> Bool) -> Publishers.TryLastWhere<Self>
 }
 
 extension Publisher where Self.Failure == Self.Output.Failure, Self.Output : Publisher {
@@ -382,39 +340,6 @@ extension Publisher {
 
 extension Publisher {
 
-    /// Prefixes a `Publisher`'s output with the specified sequence.
-    /// - Parameter elements: The elements to publish before this publisher’s elements.
-    /// - Returns: A publisher that prefixes the specified elements prior to this publisher’s elements.
-    public func prepend(_ elements: Self.Output...) -> Publishers.Concatenate<Publishers.Sequence<[Self.Output], Self.Failure>, Self>
-
-    /// Prefixes a `Publisher`'s output with the specified sequence.
-    /// - Parameter elements: A sequence of elements to publish before this publisher’s elements.
-    /// - Returns: A publisher that prefixes the sequence of elements prior to this publisher’s elements.
-    public func prepend<S>(_ elements: S) -> Publishers.Concatenate<Publishers.Sequence<S, Self.Failure>, Self> where S : Sequence, Self.Output == S.Element
-
-    /// Prefixes this publisher’s output with the elements emitted by the given publisher.
-    ///
-    /// The resulting publisher doesn’t emit any elements until the prefixing publisher finishes.
-    /// - Parameter publisher: The prefixing publisher.
-    /// - Returns: A publisher that prefixes the prefixing publisher’s elements prior to this publisher’s elements.
-    public func prepend<P>(_ publisher: P) -> Publishers.Concatenate<P, Self> where P : Publisher, Self.Failure == P.Failure, Self.Output == P.Output
-
-    /// Append a `Publisher`'s output with the specified sequence.
-    public func append(_ elements: Self.Output...) -> Publishers.Concatenate<Self, Publishers.Sequence<[Self.Output], Self.Failure>>
-
-    /// Appends a `Publisher`'s output with the specified sequence.
-    public func append<S>(_ elements: S) -> Publishers.Concatenate<Self, Publishers.Sequence<S, Self.Failure>> where S : Sequence, Self.Output == S.Element
-
-    /// Appends this publisher’s output with the elements emitted by the given publisher.
-    ///
-    /// This operator produces no elements until this publisher finishes. It then produces this publisher’s elements, followed by the given publisher’s elements. If this publisher fails with an error, the prefixing publisher does not publish the provided publisher’s elements.
-    /// - Parameter publisher: The appending publisher.
-    /// - Returns: A publisher that appends the appending publisher’s elements after this publisher’s elements.
-    public func append<P>(_ publisher: P) -> Publishers.Concatenate<Self, P> where P : Publisher, Self.Failure == P.Failure, Self.Output == P.Output
-}
-
-extension Publisher {
-
     /// Publishes elements only after a specified time interval elapses between events.
     ///
     /// Use this operator when you want to wait for a pause in the delivery of events from the upstream publisher. For example, call `debounce` on the publisher from a text field to only receive elements when the user pauses or stops typing. When they start typing again, the `debounce` holds event delivery until the next pause.
@@ -424,13 +349,6 @@ extension Publisher {
     ///   - options: Scheduler options that customize this publisher’s delivery of elements.
     /// - Returns: A publisher that publishes events only after a specified time elapses.
     public func debounce<S>(for dueTime: S.SchedulerTimeType.Stride, scheduler: S, options: S.SchedulerOptions? = nil) -> Publishers.Debounce<Self, S> where S : Scheduler
-}
-
-extension Publisher {
-
-    /// Only publishes the last element of a stream, after the stream finishes.
-    /// - Returns: A publisher that only publishes the last element of a stream.
-    public func last() -> Publishers.Last<Self>
 }
 
 extension Publisher {
@@ -579,36 +497,6 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Coder.Output == S.Input, S.Failure == Publishers.Encode<Upstream, Coder>.Failure
-    }
-}
-
-
-extension Publishers {
-
-    /// A publisher that emits a Boolean value when a specified element is received from its upstream publisher.
-    public struct Contains<Upstream> : Publisher where Upstream : Publisher, Upstream.Output : Equatable {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = Bool
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Upstream.Failure
-
-        /// The publisher from which this publisher receives elements.
-        public let upstream: Upstream
-
-        /// The element to scan for in the upstream publisher.
-        public let output: Upstream.Output
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, S.Input == Publishers.Contains<Upstream>.Output
     }
 }
 
@@ -855,61 +743,6 @@ extension Publishers {
 
 extension Publishers {
 
-    /// A publisher that emits a Boolean value upon receiving an element that satisfies the predicate closure.
-    public struct ContainsWhere<Upstream> : Publisher where Upstream : Publisher {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = Bool
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Upstream.Failure
-
-        /// The publisher from which this publisher receives elements.
-        public let upstream: Upstream
-
-        /// The closure that determines whether the publisher should consider an element as a match.
-        public let predicate: (Upstream.Output) -> Bool
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, S.Input == Publishers.ContainsWhere<Upstream>.Output
-    }
-
-    /// A publisher that emits a Boolean value upon receiving an element that satisfies the throwing predicate closure.
-    public struct TryContainsWhere<Upstream> : Publisher where Upstream : Publisher {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = Bool
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Error
-
-        /// The publisher from which this publisher receives elements.
-        public let upstream: Upstream
-
-        /// The error-throwing closure that determines whether this publisher should emit a `true` element.
-        public let predicate: (Upstream.Output) throws -> Bool
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, S.Failure == Publishers.TryContainsWhere<Upstream>.Failure, S.Input == Publishers.TryContainsWhere<Upstream>.Output
-    }
-}
-
-extension Publishers {
-
     public struct MakeConnectable<Upstream> : ConnectablePublisher where Upstream : Publisher {
 
         /// The kind of values published by this publisher.
@@ -1106,60 +939,6 @@ extension Publishers {
     }
 }
 
-extension Publishers {
-
-    /// A publisher that only publishes the last element of a stream that satisfies a predicate closure, once the stream finishes.
-    public struct LastWhere<Upstream> : Publisher where Upstream : Publisher {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = Upstream.Output
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Upstream.Failure
-
-        /// The publisher from which this publisher receives elements.
-        public let upstream: Upstream
-
-        /// The closure that determines whether to publish an element.
-        public let predicate: (Upstream.Output) -> Bool
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input
-    }
-
-    /// A publisher that only publishes the last element of a stream that satisfies a error-throwing predicate closure, once the stream finishes.
-    public struct TryLastWhere<Upstream> : Publisher where Upstream : Publisher {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = Upstream.Output
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Error
-
-        /// The publisher from which this publisher receives elements.
-        public let upstream: Upstream
-
-        /// The error-throwing closure that determines whether to publish an element.
-        public let predicate: (Upstream.Output) throws -> Bool
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, S.Failure == Publishers.TryLastWhere<Upstream>.Failure
-    }
-}
 
 extension Publishers {
 
@@ -1533,32 +1312,6 @@ extension Publishers {
 
 extension Publishers {
 
-    /// A publisher that only publishes the last element of a stream, after the stream finishes.
-    public struct Last<Upstream> : Publisher where Upstream : Publisher {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = Upstream.Output
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Upstream.Failure
-
-        /// The publisher from which this publisher receives elements.
-        public let upstream: Upstream
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input
-    }
-}
-
-extension Publishers {
-
     public struct Timeout<Upstream, Context> : Publisher where Upstream : Publisher, Context : Scheduler {
 
         /// The kind of values published by this publisher.
@@ -1794,60 +1547,6 @@ extension Publishers {
     }
 }
 
-
-extension Publishers.Just {
-
-    public func output(at index: Int) -> Publishers.Optional<Output, Publishers.Just<Output>.Failure>
-
-    public func output<R>(in range: R) -> Publishers.Optional<Output, Publishers.Just<Output>.Failure> where R : RangeExpression, R.Bound == Int
-
-    public func prefix(_ maxLength: Int) -> Publishers.Optional<Output, Publishers.Just<Output>.Failure>
-
-    public func prefix(while predicate: (Output) -> Bool) -> Publishers.Optional<Output, Publishers.Just<Output>.Failure>
-
-    public func tryPrefix(while predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error>
-
-    public func removeDuplicates(by predicate: (Output, Output) -> Bool) -> Publishers.Just<Output>
-
-    public func tryRemoveDuplicates(by predicate: (Output, Output) throws -> Bool) -> Publishers.Once<Output, Error>
-
-    public func replaceError(with output: Output) -> Publishers.Just<Output>
-
-    public func replaceEmpty(with output: Output) -> Publishers.Just<Output>
-
-    public func retry(_ times: Int) -> Publishers.Just<Output>
-
-    public func retry() -> Publishers.Just<Output>
-
-    public func scan<T>(_ initialResult: T, _ nextPartialResult: (T, Output) -> T) -> Publishers.Once<T, Publishers.Just<Output>.Failure>
-
-    public func tryScan<T>(_ initialResult: T, _ nextPartialResult: (T, Output) throws -> T) -> Publishers.Once<T, Error>
-}
-
-extension Publishers.Contains : Equatable where Upstream : Equatable {
-
-    /// Returns a Boolean value that indicates whether two publishers are equivalent.
-    ///
-    /// - Parameters:
-    ///   - lhs: A contains publisher to compare for equality.
-    ///   - rhs: Another contains publisher to compare for equality.
-    /// - Returns: `true` if the two publishers’ upstream and output properties are equal, `false` otherwise.
-    public static func == (lhs: Publishers.Contains<Upstream>, rhs: Publishers.Contains<Upstream>) -> Bool
-}
-
-extension Publishers.SetFailureType : Equatable where Upstream : Equatable {
-
-    /// Returns a Boolean value indicating whether two values are equal.
-    ///
-    /// Equality is the inverse of inequality. For any values `a` and `b`,
-    /// `a == b` implies that `a != b` is `false`.
-    ///
-    /// - Parameters:
-    ///   - lhs: A value to compare.
-    ///   - rhs: Another value to compare.
-    public static func == (lhs: Publishers.SetFailureType<Upstream, Failure>, rhs: Publishers.SetFailureType<Upstream, Failure>) -> Bool
-}
-
 extension Publishers.Collect : Equatable where Upstream : Equatable {
 
     /// Returns a Boolean value indicating whether two values are equal.
@@ -1873,67 +1572,6 @@ extension Publishers.CollectByCount : Equatable where Upstream : Equatable {
     ///   - rhs: Another value to compare.
     public static func == (lhs: Publishers.CollectByCount<Upstream>, rhs: Publishers.CollectByCount<Upstream>) -> Bool
 }
-
-extension Publishers.Optional {
-
-    public func output(at index: Int) -> Publishers.Optional<Output, Failure>
-
-    public func output<R>(in range: R) -> Publishers.Optional<Output, Failure> where R : RangeExpression, R.Bound == Int
-
-    public func prefix(_ maxLength: Int) -> Publishers.Optional<Output, Failure>
-
-    public func prefix(while predicate: (Output) -> Bool) -> Publishers.Optional<Output, Failure>
-
-    public func tryPrefix(while predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error>
-
-    public func replaceError(with output: Output) -> Publishers.Optional<Output, Never>
-
-    public func replaceEmpty(with output: Output) -> Publishers.Optional<Output, Failure>
-
-    public func retry(_ times: Int) -> Publishers.Optional<Output, Failure>
-
-    public func retry() -> Publishers.Optional<Output, Failure>
-
-    public func scan<T>(_ initialResult: T, _ nextPartialResult: (T, Output) -> T) -> Publishers.Optional<T, Failure>
-
-    public func tryScan<T>(_ initialResult: T, _ nextPartialResult: (T, Output) throws -> T) -> Publishers.Optional<T, Error>
-}
-
-extension Publishers.Optional where Failure == Never {
-
-    public func setFailureType<E>(to failureType: E.Type) -> Publishers.Optional<Output, E> where E : Error
-}
-
-extension Publishers.Once {
-
-    public func output(at index: Int) -> Publishers.Optional<Output, Failure>
-
-    public func output<R>(in range: R) -> Publishers.Optional<Output, Failure> where R : RangeExpression, R.Bound == Int
-
-    public func prefix(_ maxLength: Int) -> Publishers.Optional<Output, Failure>
-
-    public func prefix(while predicate: (Output) -> Bool) -> Publishers.Optional<Output, Failure>
-
-    public func tryPrefix(while predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error>
-
-    public func removeDuplicates(by predicate: (Output, Output) -> Bool) -> Publishers.Once<Output, Failure>
-
-    public func tryRemoveDuplicates(by predicate: (Output, Output) throws -> Bool) -> Publishers.Once<Output, Error>
-
-    public func replaceError(with output: Output) -> Publishers.Once<Output, Never>
-
-    public func replaceEmpty(with output: Output) -> Publishers.Once<Output, Failure>
-
-    public func retry(_ times: Int) -> Publishers.Once<Output, Failure>
-
-    public func retry() -> Publishers.Once<Output, Failure>
-
-    public func scan<T>(_ initialResult: T, _ nextPartialResult: (T, Output) -> T) -> Publishers.Once<T, Failure>
-
-    public func tryScan<T>(_ initialResult: T, _ nextPartialResult: (T, Output) throws -> T) -> Publishers.Once<T, Error>
-}
-
-
 
 extension Publishers.Retry : Equatable where Upstream : Equatable {
 
@@ -1982,83 +1620,6 @@ extension Publishers.DropUntilOutput : Equatable where Upstream : Equatable, Oth
     ///   - rhs: Another value to compare.
     public static func == (lhs: Publishers.DropUntilOutput<Upstream, Other>, rhs: Publishers.DropUntilOutput<Upstream, Other>) -> Bool
 }
-
-extension Publishers.Fail : Equatable where Failure : Equatable {
-
-    /// Returns a Boolean value indicating whether two values are equal.
-    ///
-    /// Equality is the inverse of inequality. For any values `a` and `b`,
-    /// `a == b` implies that `a != b` is `false`.
-    ///
-    /// - Parameters:
-    ///   - lhs: A value to compare.
-    ///   - rhs: Another value to compare.
-    public static func == (lhs: Publishers.Fail<Output, Failure>, rhs: Publishers.Fail<Output, Failure>) -> Bool
-}
-
-extension Publishers.Last : Equatable where Upstream : Equatable {
-
-    /// Returns a Boolean value that indicates whether two publishers are equivalent.
-    ///
-    /// - Parameters:
-    ///   - lhs: A last publisher to compare for equality.
-    ///   - rhs: Another last publisher to compare for equality.
-    /// - Returns: `true` if the two publishers have equal upstream publishers, `false` otherwise.
-    public static func == (lhs: Publishers.Last<Upstream>, rhs: Publishers.Last<Upstream>) -> Bool
-}
-
-extension Publishers.Sequence {
-
-    public func allSatisfy(_ predicate: (Publishers.Sequence<Elements, Failure>.Output) -> Bool) -> Publishers.Once<Bool, Failure>
-
-    public func tryAllSatisfy(_ predicate: (Publishers.Sequence<Elements, Failure>.Output) throws -> Bool) -> Publishers.Once<Bool, Error>
-
-    public func collect() -> Publishers.Once<[Publishers.Sequence<Elements, Failure>.Output], Failure>
-
-    public func compactMap<T>(_ transform: (Publishers.Sequence<Elements, Failure>.Output) -> T?) -> Publishers.Sequence<[T], Failure>
-
-    public func min(by areInIncreasingOrder: (Publishers.Sequence<Elements, Failure>.Output, Publishers.Sequence<Elements, Failure>.Output) -> Bool) -> Publishers.Optional<Publishers.Sequence<Elements, Failure>.Output, Failure>
-
-    public func tryMin(by areInIncreasingOrder: (Publishers.Sequence<Elements, Failure>.Output, Publishers.Sequence<Elements, Failure>.Output) throws -> Bool) -> Publishers.Optional<Publishers.Sequence<Elements, Failure>.Output, Error>
-
-    public func max(by areInIncreasingOrder: (Publishers.Sequence<Elements, Failure>.Output, Publishers.Sequence<Elements, Failure>.Output) -> Bool) -> Publishers.Optional<Publishers.Sequence<Elements, Failure>.Output, Failure>
-
-    public func tryMax(by areInIncreasingOrder: (Publishers.Sequence<Elements, Failure>.Output, Publishers.Sequence<Elements, Failure>.Output) throws -> Bool) -> Publishers.Optional<Publishers.Sequence<Elements, Failure>.Output, Error>
-
-    public func contains(where predicate: (Publishers.Sequence<Elements, Failure>.Output) -> Bool) -> Publishers.Once<Bool, Failure>
-
-    public func tryContains(where predicate: (Publishers.Sequence<Elements, Failure>.Output) throws -> Bool) -> Publishers.Once<Bool, Error>
-
-    public func drop(while predicate: (Elements.Element) -> Bool) -> Publishers.Sequence<DropWhileSequence<Elements>, Failure>
-
-    public func dropFirst(_ count: Int = 1) -> Publishers.Sequence<DropFirstSequence<Elements>, Failure>
-
-    public func first(where predicate: (Publishers.Sequence<Elements, Failure>.Output) -> Bool) -> Publishers.Optional<Publishers.Sequence<Elements, Failure>.Output, Failure>
-
-    public func tryFirst(where predicate: (Publishers.Sequence<Elements, Failure>.Output) throws -> Bool) -> Publishers.Optional<Publishers.Sequence<Elements, Failure>.Output, Error>
-
-    public func filter(_ isIncluded: (Publishers.Sequence<Elements, Failure>.Output) -> Bool) -> Publishers.Sequence<[Publishers.Sequence<Elements, Failure>.Output], Failure>
-
-    public func ignoreOutput() -> Publishers.Empty<Publishers.Sequence<Elements, Failure>.Output, Failure>
-
-    public func map<T>(_ transform: (Elements.Element) -> T) -> Publishers.Sequence<[T], Failure>
-
-    public func prefix(_ maxLength: Int) -> Publishers.Sequence<PrefixSequence<Elements>, Failure>
-
-    public func prefix(while predicate: (Elements.Element) -> Bool) -> Publishers.Sequence<[Elements.Element], Failure>
-
-    public func reduce<T>(_ initialResult: T, _ nextPartialResult: @escaping (T, Publishers.Sequence<Elements, Failure>.Output) -> T) -> Publishers.Once<T, Failure>
-
-    public func tryReduce<T>(_ initialResult: T, _ nextPartialResult: @escaping (T, Publishers.Sequence<Elements, Failure>.Output) throws -> T) -> Publishers.Once<T, Error>
-
-    public func replaceNil<T>(with output: T) -> Publishers.Sequence<[Publishers.Sequence<Elements, Failure>.Output], Failure> where Elements.Element == T?
-
-    public func scan<T>(_ initialResult: T, _ nextPartialResult: @escaping (T, Publishers.Sequence<Elements, Failure>.Output) -> T) -> Publishers.Sequence<[T], Failure>
-
-    public func setFailureType<E>(to error: E.Type) -> Publishers.Sequence<Elements, E> where E : Error
-}
-
-
 
 extension Publishers.Zip : Equatable where A : Equatable, B : Equatable {
 

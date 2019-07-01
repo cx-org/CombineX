@@ -80,7 +80,11 @@ Since some people may not have macOS 10.15 beta installed, the recommended contr
 |`AssertNoFailure`| done |   |   |
 |`Autoconnect`|   |   |   |
 |`Breakpoint`|   |   |   |
+|`Catch`|   |   |   |
 |`CompactMap`| done | done |   |
+|`Concatenate`| done | basic |   |
+|`Contains`| done |   |   |
+|`ContainsWhere`| done |   |   |
 |`Count`| done | basic |   |
 |`Drop`| done |   |   |
 |`DropWhile`| done |   |   |
@@ -91,6 +95,8 @@ Since some people may not have macOS 10.15 beta installed, the recommended contr
 |`FirstWhere`| done |   |   |
 |`FlatMap`| done | done |   |
 |`Just`| done | done |   |
+|`Last`| done |   |   |
+|`LastWhere`| done |   |   |
 |`IgnoreOutput`| done |   |   |
 |`Map`| done | done |   |
 |`MapError`| done |   |   |
@@ -101,17 +107,22 @@ Since some people may not have macOS 10.15 beta installed, the recommended contr
 |`Output`| done | basic |   |
 |`Print`| done | done |   |
 |`Publishers`| done | no need |   |
+|`ReceiveOn`| done |   |   |
 |`Reduce`| done |   |   |
-|`TryAllSatisfy`| done |   |   |
-|`TryReduce`| done |   |   |
+|`RemoveDuplicates`| done |   |   |
 |`Sequence`| done | done |   |
 |`SetFailureType`| done |   |   |
 |`SubscribeOn`|   |   |   |
-|`TryCompactMapSpec`| done | done |   |
+|`TryAllSatisfy`| done |   |   |
+|`TryCompactMap`| done | done |   |
+|`TryContainsWhere`| done |   |   |
 |`TryDropWhere`| done | basic |   |
 |`TryFilter`| done |   |   |
 |`TryFirst`| done |   |   |
+|`TryLastWhere`| done |   |   |
 |`TryMap`| done |   |   |
+|`TryReduce`| done |   |   |
+|`TryRemoveDuplicates`| done |   |   |
 
 ### Schedulers
 

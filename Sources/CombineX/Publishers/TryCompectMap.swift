@@ -114,7 +114,6 @@ extension Publishers.TryCompactMap {
             }
             
             do {
-                
                 if let transform = try pub.transform(input) {
                     return sub.receive(transform)
                 } else {
