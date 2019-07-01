@@ -318,7 +318,7 @@ extension Publishers {
         public func receive<S>(subscriber: S)
         where S : Subscriber, S.Input == Output, S.Failure == Never
         {
-            Publishers.Once<Output, Never>(self.output).receive(subscriber: subscriber)
+            Publishers.Once(self.output).receive(subscriber: subscriber)
         }
     }
 }

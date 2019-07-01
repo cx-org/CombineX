@@ -8,7 +8,7 @@ class CustomSubject<Output, Failure> : Subject where Failure : Error {
     
     private let subscriptions = Atomic<[Inner]>(value: [])
     
-    init() {}
+    init() { }
     
     func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
         let subscription = Inner(pub: self, sub: AnySubscriber(subscriber))
@@ -92,11 +92,11 @@ extension CustomSubject {
         }
         
         var description: String {
-            return "PassthroughSubject"
+            return "CustomSubject"
         }
         
         var debugDescription: String {
-            return "PassthroughSubject"
+            return "CustomSubject"
         }
     }
 }

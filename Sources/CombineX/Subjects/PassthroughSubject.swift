@@ -27,7 +27,7 @@ final public class PassthroughSubject<Output, Failure> : Subject where Failure :
     final public func send(_ input: Output) {
         let subscriptions = self.subscriptions.load()
         
-        // FIXME: Yes, here is thread-unsafe. Because Combine's PassthroughSubject seems to be thread-unsafe. This doesn't accord with my intuition, you can see `PassthroughSubjectSpec` for more information.
+        // FIXME: Yes, here is thread-unsafe. Because Combine's PassthroughSubject seems to be also thread-unsafe. This doesn't accord with my intuition, you can see `PassthroughSubjectSpec` for more information.
         for subscription in subscriptions where subscription.demand > 0 {
             let more = subscription.sub?.receive(input) ?? .none
             subscription.demand += (more - 1)

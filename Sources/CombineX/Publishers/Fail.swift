@@ -45,7 +45,7 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
-            Publishers.Once(Result<Output, Failure>.failure(self.error)).subscribe(subscriber)
+            Publishers.Once(.failure(self.error)).receive(subscriber: subscriber)
         }
     }
 }

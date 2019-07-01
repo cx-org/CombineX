@@ -89,12 +89,12 @@ Since some people may not have macOS 10.15 beta installed, the recommended contr
 |`Drop`| done |   |   |
 |`DropWhile`| done |   |   |
 |`Empty`| done | done |   |
-|`Fail`| done |   |   |
+|`Fail`| done |   | use `Optional` |
 |`Filter`| done | done |   |
 |`First`| done |   |   |
 |`FirstWhere`| done |   |   |
 |`FlatMap`| done | done |   |
-|`Just`| done | done |   |
+|`Just`| done |   | use `Optional` |
 |`Last`| done |   |   |
 |`LastWhere`| done |   |   |
 |`IgnoreOutput`| done |   |   |
@@ -102,7 +102,7 @@ Since some people may not have macOS 10.15 beta installed, the recommended contr
 |`MapError`| done |   |   |
 |`MeasureInterval`| done | basic |   |
 |`Merge`| done | basic |   |
-|`Once`| done | done |   |
+|`Once`| done |   | use `Optional` |
 |`Optional`| done | done |   |
 |`Output`| done | basic |   |
 |`Print`| done | done |   |

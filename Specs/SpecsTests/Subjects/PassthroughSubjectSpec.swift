@@ -144,8 +144,8 @@ class PassthroughSubjectSpec: QuickSpec {
             }
         }
         
-        // MARK: - Frees Up Resources
-        describe("Frees Up Resources") {
+        // MARK: - Release Resources
+        describe("Release Resources") {
             
             // MARK: * should release all subscriptions after sending completion
             it("should release all subscriptions after sending completion") {
@@ -238,8 +238,8 @@ class PassthroughSubjectSpec: QuickSpec {
                 expect(before.max()).to(beLessThan(after.min()))
             }
             
-            // MARK: * X should send as many values as the subscriber's demand even if these are sent concurrently
-            // FIXME: Apple's combine seems to be thread-unsafe
+            // MARK: * should send as many values as the subscriber's demand even if these are sent concurrently
+            // FIXME: [XIT] Apple's combine seems to be thread-unsafe
             xit("should send as many values as the subscriber's demand even if these are sent concurrently") {
                 let subject = PassthroughSubject<Int, Never>()
                 
