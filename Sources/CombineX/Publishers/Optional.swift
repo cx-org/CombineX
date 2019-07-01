@@ -261,7 +261,9 @@ extension Publishers.Optional {
 extension Publishers.Optional where Failure == Never {
     
     public func setFailureType<E>(to failureType: E.Type) -> Publishers.Optional<Output, E> where E : Error {
-        return self.mapError { _ -> E in }
+        return self.mapError {
+            $0 as! E
+        }
     }
 }
 

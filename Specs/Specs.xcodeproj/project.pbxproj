@@ -11,6 +11,7 @@
 		62125AD122BB3081005B57AE /* Typealias.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62125ACF22BB3081005B57AE /* Typealias.swift */; };
 		6213188222C9A86000B2FE41 /* ConcatenateSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6213188122C9A86000B2FE41 /* ConcatenateSpec.swift */; };
 		6213188322C9A86000B2FE41 /* ConcatenateSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6213188122C9A86000B2FE41 /* ConcatenateSpec.swift */; };
+		6213189822C9CB4300B2FE41 /* Const.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6213189722C9CB4300B2FE41 /* Const.swift */; };
 		6219B13122C45814002EC61B /* OutputSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6219B13022C45814002EC61B /* OutputSpec.swift */; };
 		6219B13222C45814002EC61B /* OutputSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6219B13022C45814002EC61B /* OutputSpec.swift */; };
 		6219B14422C465D3002EC61B /* TryDropWhileSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6219B14322C465D2002EC61B /* TryDropWhileSpec.swift */; };
@@ -157,6 +158,7 @@
 		62125AD722BB9269005B57AE /* Specs.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Specs.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		62125AD822BB9336005B57AE /* Combine.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Combine.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		6213188122C9A86000B2FE41 /* ConcatenateSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConcatenateSpec.swift; sourceTree = "<group>"; };
+		6213189722C9CB4300B2FE41 /* Const.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Const.swift; sourceTree = "<group>"; };
 		6219B13022C45814002EC61B /* OutputSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutputSpec.swift; sourceTree = "<group>"; };
 		6219B14322C465D2002EC61B /* TryDropWhileSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TryDropWhileSpec.swift; sourceTree = "<group>"; };
 		6229E64C22B720E1002CBEC2 /* AnyCancellableSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyCancellableSpec.swift; sourceTree = "<group>"; };
@@ -395,6 +397,7 @@
 				623227BB22C0CC73006D907B /* CustomSubject.swift */,
 				623227C222C0D077006D907B /* Atomic.swift */,
 				62A73FC622C60AF0007C962C /* CustomScheduler.swift */,
+				6213189722C9CB4300B2FE41 /* Const.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -810,6 +813,7 @@
 				62A73FD822C61C4D007C962C /* RemoveDuplicatesSpec.swift in Sources */,
 				660DD91622C4F444001FDA4F /* CountSpec.swift in Sources */,
 				6219B13122C45814002EC61B /* OutputSpec.swift in Sources */,
+				6213189822C9CB4300B2FE41 /* Const.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

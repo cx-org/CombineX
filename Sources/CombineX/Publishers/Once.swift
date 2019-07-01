@@ -271,7 +271,8 @@ extension Publishers.Once where Output : Comparable {
 extension Publishers.Once where Failure == Never {
     
     public func setFailureType<E>(to failureType: E.Type) -> Publishers.Once<Output, E> where E : Error {
-        return self.mapError { _ -> E in
+        return self.mapError {
+            $0 as! E
         }
     }
 }

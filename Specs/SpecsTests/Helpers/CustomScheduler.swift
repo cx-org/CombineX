@@ -88,15 +88,15 @@ public struct CustomScheduler: Scheduler {
             }
             
             public static func milliseconds(_ ms: Int) -> Stride {
-                return Stride(floatLiteral: Double(ms) / pow(10, 3))
+                return Stride(floatLiteral: Double(ms) / Double(Const.msec_per_sec))
             }
             
             public static func microseconds(_ us: Int) -> Stride {
-                return Stride(floatLiteral: Double(us) / pow(10, 6))
+                return Stride(floatLiteral: Double(us) / Double(Const.usec_per_sec))
             }
             
             public static func nanoseconds(_ ns: Int) -> Stride {
-                return Stride(floatLiteral: Double(ns) / pow(10, 9))
+                return Stride(floatLiteral: Double(ns) / Double(Const.nsec_per_sec))
             }
             
             public static var zero: Stride {
@@ -145,7 +145,7 @@ public struct CustomScheduler: Scheduler {
             ref = nil
         }
         
-        let leeway = Int(Swift.max(tolerance, self.minimumTolerance).seconds * pow(10, 9))
+        let leeway = Int(Swift.max(tolerance, self.minimumTolerance).seconds * Double(Const.nsec_per_sec))
         timer.schedule(deadline: date.time, leeway: .nanoseconds(leeway))
         timer.resume()
     }
@@ -158,7 +158,7 @@ public struct CustomScheduler: Scheduler {
             action()
         }
         
-        let repeating = Int(interval.seconds * pow(10, 9))
+        let repeating = Int(interval.seconds * Double(Const.nsec_per_sec))
         let leeway = Int(Swift.max(tolerance, self.minimumTolerance).seconds * pow(10, 9))
         timer.schedule(deadline: date.time, repeating: .nanoseconds(repeating), leeway: .nanoseconds(leeway))
         timer.resume()

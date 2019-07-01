@@ -54,7 +54,8 @@ extension Publishers {
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Failure == S.Failure, S : Subscriber, Upstream.Output == S.Input {
             self.upstream
-                .mapError { e -> Failure in
+                .mapError {
+                    $0 as! Failure
                 }
                 .receive(subscriber: subscriber)
         }

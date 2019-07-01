@@ -206,7 +206,7 @@ extension Publishers.Just {
     }
     
     public func tryPrefix(while predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error> {
-        self.tryCompactMap {
+        return self.tryCompactMap {
             if try predicate($0) {
                 return $0
             }

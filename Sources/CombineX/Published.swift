@@ -1,3 +1,5 @@
+/*
+
 /// Adds a `Publisher` to a property.
 ///
 /// Properties annotated with `@Published` contain both the stored value and a publisher which sends any new values after the property value has been sent.
@@ -30,3 +32,4 @@
     public var value: Value
 }
 
+ */
