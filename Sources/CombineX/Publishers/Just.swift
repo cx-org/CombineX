@@ -1,5 +1,3 @@
-import Foundation
-
 extension Publishers.Just {
     
     public func allSatisfy(_ predicate: (Output) -> Bool) -> Publishers.Just<Bool> {

@@ -40,6 +40,6 @@ final public class CurrentValueSubject<Output, Failure> : Subject where Failure 
     ///
     /// - Parameter completion: A `Completion` instance which indicates whether publishing has finished normally or failed with an error.
     final public func send(completion: Subscribers.Completion<Failure>) {
-        self.passthrough.send(completion: completion)
+        self.passthrough.send(completion: .finished)
     }
 }

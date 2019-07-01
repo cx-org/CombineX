@@ -1,5 +1,3 @@
-import Foundation
-
 /// A protocol representing the connection of a subscriber to a publisher.
 ///
 /// Subcriptions are class constrained because a `Subscription` has identity -

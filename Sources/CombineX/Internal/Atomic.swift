@@ -1,5 +1,3 @@
-import Foundation
-
 final class Atomic<Value> {
     
     private let lock: Lock
@@ -38,11 +36,6 @@ final class Atomic<Value> {
     func withLockMutating<Result>(_ body: (inout Value) throws -> Result) rethrows -> Result {
         lock.lock(); defer { lock.unlock() }
         return try body(&self.value)
-    }
-    
-    func withLockVoid<Result>(_ body: () throws -> Result) rethrows -> Result {
-        lock.lock(); defer { lock.unlock() }
-        return try body()
     }
 }
 
@@ -118,6 +111,32 @@ extension Atomic where Value: BinaryInteger {
         return self.withLockMutating {
             let old = $0
             $0 ^= value
+            return old
+        }
+    }
+}
+
+// MARK: Demands
+extension Atomic where Value == Subscribers.Demand {
+
+    /// Adds the provided value to the existing value.
+    ///
+    /// - Returns: The old value.
+    func add(_ value: Value) -> Value {
+        return self.withLockMutating {
+            let old = $0
+            $0 += value
+            return old
+        }
+    }
+    
+    /// Subtracts the provided value from the existing value.
+    ///
+    /// - Returns: The old value.
+    func sub(_ value: Value) -> Value {
+        return self.withLockMutating {
+            let old = $0
+            $0 -= value
             return old
         }
     }

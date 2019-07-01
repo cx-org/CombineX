@@ -1,5 +1,3 @@
-import Foundation
-
 private let counter = Atomic<UInt>(value: 0)
 
 public struct CombineIdentifier : Hashable, CustomStringConvertible {

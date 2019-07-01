@@ -1,5 +1,3 @@
-import Foundation
-
 /// Declares that a type can transmit a sequence of values over time.
 ///
 /// There are four kinds of messages:

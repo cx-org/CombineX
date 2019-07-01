@@ -1,4 +1,4 @@
-import Foundation
+import Dispatch
 import Quick
 import Nimble
 

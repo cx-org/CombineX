@@ -1,5 +1,3 @@
-import Foundation
-
 /// A protocol that declares a type that can receive input from a publisher.
 public protocol Subscriber : CustomCombineIdentifierConvertible {
     

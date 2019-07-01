@@ -1,14 +1,9 @@
-import Foundation
-
 #if USE_COMBINE
 import Combine
 #else
 import CombineX
 #endif
 
-/// The same implementation as CombineX's `PassthroughSubject`.
-///
-/// Since Combine's `PassthroughSubject` 
 class CustomSubject<Output, Failure> : Subject where Failure : Error {
     
     private let subscriptions = Atomic<[Inner]>(value: [])
@@ -27,14 +22,7 @@ class CustomSubject<Output, Failure> : Subject where Failure : Error {
         let subscriptions = self.subscriptions.load()
         
         for subscription in subscriptions {
-            subscription.demand.withLockMutating {
-                guard $0 > 0 else {
-                    return
-                }
-                
-                let more = subscription.sub?.receive(input) ?? .none
-                $0 += (more - 1)
-            }
+            subscription.receive(input)
         }
     }
     
@@ -42,10 +30,7 @@ class CustomSubject<Output, Failure> : Subject where Failure : Error {
         let subscriptions = self.subscriptions.exchange(with: [])
         
         for subscription in subscriptions {
-            subscription.sub?.receive(completion: completion)
-            
-            subscription.pub = nil
-            subscription.sub = nil
+            subscription.receive(completion: completion)
         }
     }
     
@@ -66,17 +51,37 @@ extension CustomSubject {
         var pub: Pub?
         var sub: Sub?
         
-        let demand = Atomic<Subscribers.Demand>(value: .none)
+        let lock = Lock()
+        var demand: Subscribers.Demand = .none
         
         init(pub: Pub, sub: Sub) {
             self.pub = pub
             self.sub = sub
         }
         
-        func request(_ demand: Subscribers.Demand) {
-            self.demand.withLockMutating {
-                $0 += demand
+        func receive(_ value: Output) {
+            self.lock.lock()
+            defer {
+                self.lock.unlock()
             }
+            
+            guard self.demand > 0 else {
+                return
+            }
+            let more = self.sub?.receive(value) ?? .none
+            self.demand += (more - 1)
+        }
+        
+        func receive(completion: Subscribers.Completion<Failure>) {
+            self.sub?.receive(completion: completion)
+            self.pub = nil
+            self.sub = nil
+        }
+        
+        func request(_ demand: Subscribers.Demand) {
+            self.lock.lock()
+            self.demand += demand
+            self.lock.unlock()
         }
         
         func cancel() {

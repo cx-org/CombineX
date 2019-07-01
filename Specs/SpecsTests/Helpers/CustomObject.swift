@@ -1,15 +1,15 @@
 class CustomObject {
     
-    var fnBody: (() -> Void)?
+    var runBody: (() -> Void)?
     var deinitBody: (() -> Void)?
     
-    init(fn: (() -> Void)? = nil, deinit: (() -> Void)? = nil) {
-        self.fnBody = fn
+    init(run: (() -> Void)? = nil, deinit: (() -> Void)? = nil) {
+        self.runBody = run
         self.deinitBody = `deinit`
     }
     
-    func fn() {
-        self.fnBody?()
+    func run() {
+        self.runBody?()
     }
     
     deinit {

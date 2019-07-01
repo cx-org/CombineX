@@ -1,4 +1,4 @@
-import Foundation
+import Dispatch
 import Quick
 import Nimble
 
@@ -53,7 +53,7 @@ class MapSpec: QuickSpec {
                 closureObj = obj
                 
                 let pub = subject.map { (v) -> Int in
-                    obj.fn()
+                    obj.run()
                     return v
                 }
                 
@@ -97,7 +97,7 @@ class MapSpec: QuickSpec {
                 closureObj = obj
                 
                 let pub = subject.map { (v) -> Int in
-                    obj.fn()
+                    obj.run()
                     return v
                 }
                 let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in

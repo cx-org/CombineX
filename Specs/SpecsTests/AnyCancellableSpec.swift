@@ -19,7 +19,7 @@ class AnyCancellableSpec: QuickSpec {
                 let obj = CustomObject()
                 
                 cancel = AnyCancellable {
-                    obj.fn()
+                    obj.run()
                 }
                 
                 object = obj

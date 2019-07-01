@@ -1,5 +1,3 @@
-import Foundation
-
 extension Publisher {
     
     /// Transforms all elements from the upstream publisher with a provided closure.

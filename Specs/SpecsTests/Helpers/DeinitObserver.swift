@@ -1,12 +1,11 @@
-import Foundation
-
 #if canImport(ObjectiveC)
+import ObjectiveC
 
 private var deinit_observer_key: Void = ()
 
 class DeinitObserver {
     
-    private var body: (() -> Void)?
+    private let body: (() -> Void)?
     
     private init(_ body: @escaping () -> Void) {
         self.body = body

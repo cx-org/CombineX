@@ -1,18 +1,17 @@
-import Foundation
+#if USE_COMBINE
+import Combine
+#else
+import CombineX
+#endif
 
 final class Atomic<Value> {
     
-    private let lock: NSLocking
+    private let lock: Lock
     private var value: Value
     
     init(value: Value, recursive: Bool = false) {
         self.value = value
-        
-        if recursive {
-            self.lock = NSRecursiveLock()
-        } else {
-            self.lock = NSLock()
-        }
+        self.lock = Lock(recursive: recursive)
     }
     
     func load() -> Value {
@@ -43,11 +42,6 @@ final class Atomic<Value> {
     func withLockMutating<Result>(_ body: (inout Value) throws -> Result) rethrows -> Result {
         lock.lock(); defer { lock.unlock() }
         return try body(&self.value)
-    }
-    
-    func withLockVoid<Result>(_ body: () throws -> Result) rethrows -> Result {
-        lock.lock(); defer { lock.unlock() }
-        return try body()
     }
 }
 
@@ -128,17 +122,28 @@ extension Atomic where Value: BinaryInteger {
     }
 }
 
-extension Atomic {
+// MARK: Demands
+extension Atomic where Value == Subscribers.Demand {
     
-    class func ifNil(_ atomic: Atomic<Value?>, store value: Value) -> Bool {
-        atomic.lock.lock(); defer { atomic.lock.unlock() }
-        
-        if atomic.value == nil {
-            atomic.value = value
-            return true
+    /// Adds the provided value to the existing value.
+    ///
+    /// - Returns: The old value.
+    func add(_ value: Value) -> Value {
+        return self.withLockMutating {
+            let old = $0
+            $0 += value
+            return old
         }
-        
-        return false
+    }
+    
+    /// Subtracts the provided value from the existing value.
+    ///
+    /// - Returns: The old value.
+    func sub(_ value: Value) -> Value {
+        return self.withLockMutating {
+            let old = $0
+            $0 -= value
+            return old
+        }
     }
 }
-

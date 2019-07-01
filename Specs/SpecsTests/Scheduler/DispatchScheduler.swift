@@ -35,10 +35,10 @@ class DispatchSchedulerSpec: QuickSpec {
         it("should execute action after delay") {
             let scheduler = DispatchScheduler.global()
             
-            let before = Date()
-            var after: Date?
+            let before = DispatchTime.now()
+            var after: DispatchTime?
             scheduler.schedule(after: scheduler.now.advanced(by: .seconds(0.5)), tolerance: .zero, options: nil) {
-                after = Date()
+                after = DispatchTime.now()
             }
             
             expect(after).toEventually(beGreaterThan(before + 0.5))
@@ -63,9 +63,9 @@ class DispatchSchedulerSpec: QuickSpec {
         it("should not execute action if getting cancelled") {
             let scheduler = DispatchScheduler.global()
             
-            var after: Date?
+            var after: DispatchTime?
             let cancel = scheduler.schedule(after: scheduler.now, interval: .seconds(0.1), tolerance: .zero, options: nil) {
-                after = Date()
+                after = DispatchTime.now()
             }
             
             cancel.cancel()

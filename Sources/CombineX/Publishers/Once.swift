@@ -321,62 +321,7 @@ extension Publishers {
         public func receive<S>(subscriber: S)
         where S : Subscriber, S.Input == Output, S.Failure == Failure
         {
-            let subscription = Inner(once: self.result, sub: subscriber)
-            subscriber.receive(subscription: subscription)
-        }
-    }
-}
-
-extension Publishers.Once {
-    
-    private final class Inner<S>:
-        Subscription,
-        CustomStringConvertible,
-        CustomDebugStringConvertible
-    where
-        S : Subscriber,
-        S.Input == Output,
-        S.Failure == Failure
-    {
-        
-        let state = Atomic<SubscriptionState>(value: .waiting)
-        let once: Result<Output, Failure>
-        
-        var sub: S?
-        
-        init(once: Result<Output, Failure>, sub: S) {
-            self.once = once
-            self.sub = sub
-        }
-        
-        func request(_ demand: Subscribers.Demand) {
-            precondition(demand > 0)
-            
-            if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(demand)) {
-                switch self.once {
-                case .success(let output):
-                    _ = self.sub?.receive(output)
-                    self.sub?.receive(completion: .finished)
-                case .failure(let error):
-                    self.sub?.receive(completion: .failure(error))
-                }
-                
-                self.state.store(.finished)
-                self.sub = nil
-            }
-        }
-        
-        func cancel() {
-            self.state.store(.finished)
-            self.sub = nil
-        }
-        
-        var description: String {
-            return "Once"
-        }
-        
-        var debugDescription: String {
-            return "Once"
+            Publishers.Optional(self.result.map { $0 }).receive(subscriber: subscriber)
         }
     }
 }

@@ -159,7 +159,7 @@ public struct CustomScheduler: Scheduler {
         }
         
         let repeating = Int(interval.seconds * Double(Const.nsec_per_sec))
-        let leeway = Int(Swift.max(tolerance, self.minimumTolerance).seconds * pow(10, 9))
+        let leeway = Int(Swift.max(tolerance, self.minimumTolerance).seconds * Double(Const.nsec_per_sec))
         timer.schedule(deadline: date.time, repeating: .nanoseconds(repeating), leeway: .nanoseconds(leeway))
         timer.resume()
         

@@ -1,5 +1,3 @@
-import Foundation
-
 #if USE_COMBINE
 import Combine
 #else
@@ -17,7 +15,7 @@ class CustomSubscriber<Input, Failure>: Subscriber where Failure : Error {
         case completion(Subscribers.Completion<Failure>)
     }
     
-    let lock = NSLock()
+    let lock = Lock()
     var _events: [Event] = []
     
     var events: [Event] {

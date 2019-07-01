@@ -370,11 +370,9 @@ extension Publishers.Optional {
         }
         
         func request(_ demand: Subscribers.Demand) {
+            precondition(demand > 0)
+            
             if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(demand)) {
-                
-                guard demand > 0 else {
-                    fatalError("trying to request '<= 0' values from Once")
-                }
                 
                 switch self.result {
                 case .success(let optional):

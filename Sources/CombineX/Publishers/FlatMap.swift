@@ -1,5 +1,3 @@
-import Foundation
-
 extension Publisher {
     
     /// Transforms all elements from an upstream publisher into a new or existing publisher.

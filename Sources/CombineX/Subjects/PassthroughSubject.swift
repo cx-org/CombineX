@@ -1,5 +1,3 @@
-import Foundation
-
 /// A subject that passes along values and completion.
 ///
 /// Use a `PassthroughSubject` in unit tests when you want a publisher than can publish specific values on-demand during tests.
@@ -7,8 +5,7 @@ final public class PassthroughSubject<Output, Failure> : Subject where Failure :
     
     private let subscriptions = Atomic<[Inner]>(value: [])
     
-    public init() {
-    }
+    public init() { }
     
     /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
     ///
@@ -30,15 +27,10 @@ final public class PassthroughSubject<Output, Failure> : Subject where Failure :
     final public func send(_ input: Output) {
         let subscriptions = self.subscriptions.load()
         
-        for subscription in subscriptions {
-            subscription.demand.withLockMutating {
-                guard $0 > 0 else {
-                    return
-                }
-            
-                let more = subscription.sub?.receive(input) ?? .none
-                $0 += (more - 1)
-            }
+        // FIXME: Yes, here is thread-unsafe. Because Combine's PassthroughSubject seems to be thread-unsafe. This doesn't accord with my intuition, you can see `PassthroughSubjectSpec` for more information.
+        for subscription in subscriptions where subscription.demand > 0 {
+            let more = subscription.sub?.receive(input) ?? .none
+            subscription.demand += (more - 1)
         }
     }
     
@@ -73,7 +65,7 @@ extension PassthroughSubject {
         var pub: Pub?
         var sub: Sub?
         
-        let demand = Atomic<Subscribers.Demand>(value: .none)
+        var demand: Subscribers.Demand = .none
         
         init(pub: Pub, sub: Sub) {
             self.pub = pub
@@ -81,9 +73,7 @@ extension PassthroughSubject {
         }
         
         func request(_ demand: Subscribers.Demand) {
-            self.demand.withLockMutating {
-                $0 += demand
-            }
+            self.demand += demand
         }
         
         func cancel() {

@@ -1,5 +1,3 @@
-import Foundation
-
 public protocol CustomCombineIdentifierConvertible {
     
     var combineIdentifier: CombineIdentifier { get }
