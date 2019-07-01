@@ -59,7 +59,7 @@ class PassthroughSubjectSpec: QuickSpec {
                 
                 let sub = CustomSubscriber<Int, CustomError>(receiveSubscription: { (s) in
                 }, receiveValue: { v in
-                    fail("Should not receive value, but got a value")
+                    fail("Subscriber should not receive value")
                     return .none
                 }, receiveCompletion: { s in
                 })
@@ -86,7 +86,7 @@ class PassthroughSubjectSpec: QuickSpec {
                 subject.send(completion: .failure(.e0))
                 
                 guard let last = sub.events.last else {
-                    fail("Should receive completion, but got nothing")
+                    fail("Events should not be empty")
                     return
                 }
                 expect(last).to(equal(.completion(.failure(.e0))))

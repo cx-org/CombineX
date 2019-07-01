@@ -37,7 +37,7 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Failure == S.Failure, S : Subscriber, Upstream.Output == S.Input {
-            let subscription = MapErrorSubscription(pub: self, sub: subscriber)
+            let subscription = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(subscription)
         }
     }
@@ -45,7 +45,7 @@ extension Publishers {
 
 extension Publishers.MapError {
     
-    private final class MapErrorSubscription<S>:
+    private final class Inner<S>:
         Subscription,
         Subscriber,
         CustomStringConvertible,
@@ -100,23 +100,20 @@ extension Publishers.MapError {
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
-            if let subscription = self.state.finishIfRelaying() {
-                subscription.cancel()
-                
-                guard let pub = self.pub, let sub = self.sub else {
-                    return
-                }
-                
-                switch completion {
-                case .finished:
-                    sub.receive(completion: .finished)
-                case .failure(let e):
-                    sub.receive(completion: .failure(pub.transform(e)))
-                }
-                
-                self.pub = nil
-                self.sub = nil
+            guard let subscription = self.state.finishIfRelaying() else {
+                return
             }
+            
+            subscription.cancel()
+            
+            guard let pub = self.pub, let sub = self.sub else {
+                return
+            }
+            
+            sub.receive(completion: completion.mapError(pub.transform))
+            
+            self.pub = nil
+            self.sub = nil
         }
         
         var description: String {

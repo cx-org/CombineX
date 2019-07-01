@@ -81,7 +81,7 @@ Since some people may not have macOS 10.15 beta installed, the recommended contr
 |`Autoconnect`|   |   |   |
 |`Breakpoint`|   |   |   |
 |`Catch`|   |   |   |
-|`CompactMap`| done | done |   |
+|`CompactMap`| done |   | use `TryCompactMap` |
 |`Concatenate`| done | basic |   |
 |`Contains`| done |   |   |
 |`ContainsWhere`| done |   |   |
@@ -98,8 +98,8 @@ Since some people may not have macOS 10.15 beta installed, the recommended contr
 |`Last`| done |   |   |
 |`LastWhere`| done |   |   |
 |`IgnoreOutput`| done |   |   |
-|`Map`| done | done |   |
-|`MapError`| done |   |   |
+|`Map`| done |   | use `TryCompactMap` |
+|`MapError`| done | done |   |
 |`MeasureInterval`| done | basic |   |
 |`Merge`| done | basic |   |
 |`Once`| done |   | use `Optional` |
@@ -120,7 +120,7 @@ Since some people may not have macOS 10.15 beta installed, the recommended contr
 |`TryFilter`| done |   |   |
 |`TryFirst`| done |   |   |
 |`TryLastWhere`| done |   |   |
-|`TryMap`| done |   |   |
+|`TryMap`| done |   | use `TryCompactMap` |
 |`TryReduce`| done |   |   |
 |`TryRemoveDuplicates`| done |   |   |
 

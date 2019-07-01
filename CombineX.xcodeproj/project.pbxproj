@@ -64,7 +64,7 @@
 		66D3861122BA56BE001B8189 /* PeekableIterator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D3861022BA56BE001B8189 /* PeekableIterator.swift */; };
 		66F1198C22BE5E2000D744BB /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F1198B22BE5E2000D744BB /* Filter.swift */; };
 		66F1198E22BE624800D744BB /* CompactMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F1198D22BE624800D744BB /* CompactMap.swift */; };
-		66F1199722BE7A9100D744BB /* TryCompectMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F1199622BE7A9100D744BB /* TryCompectMap.swift */; };
+		66F1199722BE7A9100D744BB /* TryCompactMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F1199622BE7A9100D744BB /* TryCompactMap.swift */; };
 		66F1199C22BE846600D744BB /* Coding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F1199B22BE846600D744BB /* Coding.swift */; };
 		OBJ_100 /* MapError.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_31 /* MapError.swift */; };
 		OBJ_101 /* Merge+.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_32 /* Merge+.swift */; };
@@ -172,7 +172,7 @@
 		66D3861022BA56BE001B8189 /* PeekableIterator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeekableIterator.swift; sourceTree = "<group>"; };
 		66F1198B22BE5E2000D744BB /* Filter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		66F1198D22BE624800D744BB /* CompactMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompactMap.swift; sourceTree = "<group>"; };
-		66F1199622BE7A9100D744BB /* TryCompectMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TryCompectMap.swift; sourceTree = "<group>"; };
+		66F1199622BE7A9100D744BB /* TryCompactMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TryCompactMap.swift; sourceTree = "<group>"; };
 		66F1199B22BE846600D744BB /* Coding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coding.swift; sourceTree = "<group>"; };
 		"CombineX::CombineX::Product" /* CombineX.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CombineX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		"CombineX::CombineXTests::Product" /* CombineXTests.xctest */ = {isa = PBXFileReference; lastKnownFileType = file; path = CombineXTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -301,7 +301,7 @@
 				629182C322C20C3C00F3565F /* SetFailureType.swift */,
 				OBJ_37 /* SubscribeOn.swift */,
 				629182C722C214C500F3565F /* TryAllSatisfy.swift */,
-				66F1199622BE7A9100D744BB /* TryCompectMap.swift */,
+				66F1199622BE7A9100D744BB /* TryCompactMap.swift */,
 				6213188F22C9B3BE00B2FE41 /* TryContainsWhere.swift */,
 				6219B14122C462B5002EC61B /* TryDropWhile.swift */,
 				66CAF61C22BF357100E8FAAC /* TryFilter.swift */,
@@ -577,7 +577,7 @@
 				OBJ_106 /* SubscribeOn.swift in Sources */,
 				66BD1DE922C6499500FF1457 /* Catch.swift in Sources */,
 				66CAF61D22BF357100E8FAAC /* TryFilter.swift in Sources */,
-				66F1199722BE7A9100D744BB /* TryCompectMap.swift in Sources */,
+				66F1199722BE7A9100D744BB /* TryCompactMap.swift in Sources */,
 				OBJ_107 /* TryMap.swift in Sources */,
 				OBJ_110 /* Scheduler.swift in Sources */,
 				6219B14822C46868002EC61B /* DropWhile.swift in Sources */,

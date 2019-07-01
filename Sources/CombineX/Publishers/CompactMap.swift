@@ -55,91 +55,10 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, Upstream.Failure == S.Failure {
-            let subscription = Inner(pub: self, sub: subscriber)
-            self.upstream.subscribe(subscription)
-        }
-    }
-}
-
-extension Publishers.CompactMap {
-    
-    private final class Inner<S>:
-        Subscription,
-        Subscriber,
-        CustomStringConvertible,
-        CustomDebugStringConvertible
-    where
-        S: Subscriber,
-        S.Input == Output,
-        S.Failure == Failure
-    {
-        
-        typealias Input = Upstream.Output
-        typealias Failure = Upstream.Failure
-        
-        typealias Pub = Publishers.CompactMap<Upstream, Output>
-        typealias Sub = S
-        
-        let state = Atomic<RelayState>(value: .waiting)
-        
-        var pub: Pub?
-        var sub: Sub?
-        
-        init(pub: Pub, sub: Sub) {
-            self.pub = pub
-            self.sub = sub
-        }
-        
-        func request(_ demand: Subscribers.Demand) {
-            self.state.subscription?.request(demand)
-        }
-        
-        func cancel() {
-            self.state.finishIfRelaying()?.cancel()
-            
-            self.pub = nil
-            self.sub = nil
-        }
-        
-        func receive(subscription: Subscription) {
-            if self.state.compareAndStore(expected: .waiting, newVaue: .relaying(subscription)) {
-                self.sub?.receive(subscription: self)
-            } else {
-                subscription.cancel()
-            }
-        }
-        
-        func receive(_ input: Input) -> Subscribers.Demand {
-            guard self.state.isRelaying else {
-                return .none
-            }
-            
-            guard let pub = self.pub, let sub = self.sub else {
-                return .none
-            }
-            
-            if let transformed = pub.transform(input) {
-                return sub.receive(transformed)
-            } else {
-                return .max(1)
-            }
-        }
-        
-        func receive(completion: Subscribers.Completion<Failure>) {
-            if let subscription = self.state.finishIfRelaying() {
-                subscription.cancel()
-                self.sub?.receive(completion: completion)
-                self.pub = nil
-                self.sub = nil
-            }
-        }
-        
-        var description: String {
-            return "CompactMap"
-        }
-        
-        var debugDescription: String {
-            return "CompatcMap"
+            self.upstream
+                .tryCompactMap(self.transform)
+                .mapError { $0 as! Failure }
+                .receive(subscriber: subscriber)
         }
     }
 }

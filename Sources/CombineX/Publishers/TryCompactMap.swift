@@ -120,28 +120,25 @@ extension Publishers.TryCompactMap {
                     return .max(1)
                 }
             } catch {
-                if let subscription = self.state.finishIfRelaying() {
-                    subscription.cancel()
-                    sub.receive(completion: .failure(error))
+                guard let subscription = self.state.finishIfRelaying() else {
+                    return .none
                 }
+                subscription.cancel()
+                sub.receive(completion: .failure(error))
                 return .none
             }
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
-            if let subscription = self.state.finishIfRelaying() {
-                subscription.cancel()
-                
-                switch completion {
-                case .finished:
-                    self.sub?.receive(completion: .finished)
-                case .failure(let error):
-                    self.sub?.receive(completion: .failure(error))
-                }
-                
-                self.pub = nil
-                self.sub = nil
+            guard let subscription = self.state.finishIfRelaying() else {
+                return
             }
+            
+            subscription.cancel()
+            self.sub?.receive(completion: completion.mapError { $0 })
+            
+            self.pub = nil
+            self.sub = nil
         }
         
         var description: String {
