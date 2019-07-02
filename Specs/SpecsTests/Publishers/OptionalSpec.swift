@@ -144,8 +144,8 @@ class OptionalSpec: QuickSpec {
         // MARK: - Concurrent
         describe("Concurrent") {
             
-            // MARK: * should send one value even if the subscription request concurrently
-            it("should only send one value even if the subscription request concurrently") {
+            // MARK: * should send only one value even if the subscription request concurrently
+            it("should only send only one value even if the subscription request concurrently") {
                 let g = DispatchGroup()
                 
                 let pub = Publishers.Optional<Int, Never>(1)

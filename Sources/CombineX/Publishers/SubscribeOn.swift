@@ -65,8 +65,6 @@ extension Publishers.SubscribeOn {
         S.Failure == Failure
     {
         
-        let state = Atomic<SubscriptionState>(value: .waiting)
-        
         func request(_ demand: Subscribers.Demand) {
             Global.RequiresImplementation()
         }
@@ -80,7 +78,7 @@ extension Publishers.SubscribeOn {
         }
         
         func cancel() {
-            self.state.store(.finished)
+            Global.RequiresImplementation()
         }
     }
 }

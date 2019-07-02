@@ -341,8 +341,8 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
-            let subscription = Inner(result: self.result, sub: subscriber)
-            subscriber.receive(subscription: subscription)
+            let s = Inner(result: self.result, sub: subscriber)
+            subscriber.receive(subscription: s)
         }
     }
 }
@@ -361,28 +361,21 @@ extension Publishers.Optional {
         
         let result: Result<Output?, Failure>
         
-        let lock = Lock()
-        var state: SubscriptionState = .waiting
+        typealias State = SubscriptionState_1<S>
         
-        var sub: S?
+        let state: Atomic<State>
         
         init(result: Result<Output?, Failure>, sub: S) {
             self.result = result
-            self.sub = sub
+            self.state = .init(value: .waiting(sub))
         }
         
         func request(_ demand: Subscribers.Demand) {
             precondition(demand > 0)
             
-            self.lock.lock()
-            guard self.state.isWaiting else {
-                self.lock.unlock()
+            guard let sub = self.state.request(demand) else {
                 return
             }
-            
-            self.state = .subscribing(demand)
-            let sub = self.sub!
-            self.lock.unlock()
             
             switch self.result {
             case .success(let optional):
@@ -394,17 +387,11 @@ extension Publishers.Optional {
                 sub.receive(completion: .failure(error))
             }
             
-            self.lock.withLock {
-                self.state = .finished
-                self.sub = nil
-            }
+            self.state.store(.done)
         }
         
         func cancel() {
-            self.lock.withLock {
-                self.state = .finished
-                self.sub = nil
-            }
+            self.state.store(.done)
         }
         
         var description: String {

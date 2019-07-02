@@ -74,66 +74,34 @@ extension Publishers.TryCompactMap {
         typealias Pub = Publishers.TryCompactMap<Upstream, Output>
         typealias Sub = S
         
-        let lock = Lock()
-        var state: RelayState = .waiting
-        
-        var pub: Pub?
-        var sub: Sub?
+        let state: Atomic<RelayState_1<Pub, Sub>>
         
         init(pub: Pub, sub: Sub) {
-            self.pub = pub
-            self.sub = sub
+            self.state = Atomic(value: .waiting(pub, sub))
         }
         
         func request(_ demand: Subscribers.Demand) {
-            self.lock.lock()
-            let subscription = self.state.subscription
-            self.lock.unlock()
-            
-            subscription?.request(demand)
+            self.state.subscription?.request(demand)
         }
         
         func cancel() {
-            self.lock.lock()
-            let subscription = self.state.finishIfRelaying()
-            self.pub = nil
-            self.sub = nil
-            self.lock.unlock()
-            
-            subscription?.cancel()
+            self.state.complete()?.cancel()
         }
         
         func receive(subscription: Subscription) {
-            self.lock.lock()
-            
-            guard self.state.isWaiting else {
-                self.lock.unlock()
-                
+            guard let sub = self.state.receive(subscription: subscription) else {
                 subscription.cancel()
                 return
             }
-            
-            self.state = .relaying(subscription)
-            let sub = self.sub!
-            
-            self.lock.unlock()
             
             sub.receive(subscription: self)
         }
         
         func receive(_ input: Input) -> Subscribers.Demand {
-            self.lock.lock()
-            
-            guard self.state.isRelaying else {
-                self.lock.unlock()
+            guard let (pub, sub) = self.state.pubsubIfRelaying else {
                 return .none
             }
             
-            let pub = self.pub!
-            let sub = self.sub!
-            
-            self.lock.unlock()
-
             do {
                 if let transformed = try pub.transform(input) {
                     return sub.receive(transformed)
@@ -151,20 +119,12 @@ extension Publishers.TryCompactMap {
         }
         
         private func complete(_ completion: Subscribers.Completion<Error>) {
-            self.lock.lock()
-            guard let subscription = self.state.finishIfRelaying() else {
-                self.lock.unlock()
+            guard let (_, sub, s) = self.state.completeIfRelaying() else {
                 return
             }
-            let sub = self.sub!
-            self.lock.unlock()
             
-            subscription.cancel()
-            
+            s.cancel()
             sub.receive(completion: completion.mapError { $0 })
-            
-            self.pub = nil
-            self.sub = nil
         }
         
         var description: String {
