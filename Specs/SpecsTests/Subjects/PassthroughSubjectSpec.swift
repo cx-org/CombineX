@@ -114,6 +114,31 @@ class PassthroughSubjectSpec: QuickSpec {
                 expect(sub.events.count).to(equal(1))
             }
             
+            // MARK: * should send completion if the subscription happens after sending completion
+            it("should send completion if the subscription happens after sending completion") {
+                let subject = PassthroughSubject<Int, CustomError>()
+                subject.send(completion: .finished)
+                
+                weak var subObj: CustomSubscriber<Int, CustomError>?
+                
+                do {
+                    let sub = CustomSubscriber<Int, CustomError>(receiveSubscription: { s in
+                        s.request(.unlimited)
+                    }, receiveValue: { v in
+                        return .none
+                    }, receiveCompletion: { c in
+                    })
+                    
+                    subObj = sub
+                    
+                    subject.subscribe(sub)
+                    
+                    expect(sub.events).to(equal([.completion(.finished)]))
+                }
+                
+                expect(subObj).to(beNil())
+            }
+            
             // MARK: * should send values to multi-subscribers as their demand
             it("should send values to multi-subscribers as their demand") {
                 let subject = PassthroughSubject<Int, Error>()
@@ -239,7 +264,6 @@ class PassthroughSubjectSpec: QuickSpec {
             }
             
             // MARK: * should send as many values as the subscriber's demand even if these are sent concurrently
-            // FIXME: [XIT] Apple's combine seems to be thread-unsafe
             xit("should send as many values as the subscriber's demand even if these are sent concurrently") {
                 let subject = PassthroughSubject<Int, Never>()
                 
@@ -253,7 +277,7 @@ class PassthroughSubjectSpec: QuickSpec {
                 subject.subscribe(sub)
                 
                 let g = DispatchGroup()
-                100.times { i in
+                500.times { i in
                     DispatchQueue.global().async(group: g) {
                         subject.send(i)
                     }
@@ -261,6 +285,7 @@ class PassthroughSubjectSpec: QuickSpec {
                 
                 g.wait()
                 
+                // FIXME: If PassthroughSubject is thread-safe, it's should always be equal to 5, but the result is not like this.
                 expect(sub.events.count).to(equal(5))
             }
         }

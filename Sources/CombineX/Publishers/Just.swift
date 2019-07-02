@@ -315,9 +315,7 @@ extension Publishers {
         /// - Parameters:
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S)
-        where S : Subscriber, S.Input == Output, S.Failure == Never
-        {
+        public func receive<S>(subscriber: S) where S : Subscriber, S.Input == Output, S.Failure == Never {
             Publishers.Once(self.output).receive(subscriber: subscriber)
         }
     }

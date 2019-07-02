@@ -79,9 +79,9 @@ Since some people may not have macOS 10.15 beta installed, the recommended contr
 |`AllSatisfy`| done |   |   |
 |`AssertNoFailure`| done |   |   |
 |`Autoconnect`|   |   |   |
-|`Breakpoint`|   |   |   |
+|`Breakpoint`| done |   |   |
 |`Catch`|   |   |   |
-|`CompactMap`| done |   | use `TryCompactMap` |
+|`CompactMap`| done |   |   |
 |`Concatenate`| done | basic |   |
 |`Contains`| done |   |   |
 |`ContainsWhere`| done |   |   |
@@ -89,20 +89,20 @@ Since some people may not have macOS 10.15 beta installed, the recommended contr
 |`Drop`| done |   |   |
 |`DropWhile`| done |   |   |
 |`Empty`| done | done |   |
-|`Fail`| done |   | use `Optional` |
-|`Filter`| done | done |   |
+|`Fail`| done |   |   |
+|`Filter`| done |   |   |
 |`First`| done |   |   |
 |`FirstWhere`| done |   |   |
 |`FlatMap`| done | done |   |
-|`Just`| done |   | use `Optional` |
+|`Just`| done |   |   |
 |`Last`| done |   |   |
 |`LastWhere`| done |   |   |
 |`IgnoreOutput`| done |   |   |
-|`Map`| done |   | use `TryCompactMap` |
+|`Map`| done |   |   |
 |`MapError`| done | done |   |
 |`MeasureInterval`| done | basic |   |
 |`Merge`| done | basic |   |
-|`Once`| done |   | use `Optional` |
+|`Once`| done |   |   |
 |`Optional`| done | done |   |
 |`Output`| done | basic |   |
 |`Print`| done | done |   |
@@ -120,7 +120,7 @@ Since some people may not have macOS 10.15 beta installed, the recommended contr
 |`TryFilter`| done |   |   |
 |`TryFirst`| done |   |   |
 |`TryLastWhere`| done |   |   |
-|`TryMap`| done |   | use `TryCompactMap` |
+|`TryMap`| done |   |   |
 |`TryReduce`| done |   |   |
 |`TryRemoveDuplicates`| done |   |   |
 
@@ -129,6 +129,7 @@ Since some people may not have macOS 10.15 beta installed, the recommended contr
 | API | Status | Test | Notes |
 |:--|:--|:--|:--|
 |`ImmediateScheduler`| done |   |   |
+|`DispatchScheduler`| done |   | only `CombineX` |
 
 ### Subjects
 

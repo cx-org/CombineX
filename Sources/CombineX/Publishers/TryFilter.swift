@@ -14,7 +14,7 @@ extension Publisher {
 extension Publishers.TryFilter {
     
     public func filter(_ isIncluded: @escaping (Publishers.TryFilter<Upstream>.Output) -> Bool) -> Publishers.TryFilter<Upstream> {
-        let newIsIncluded:  (Upstream.Output) throws -> Bool = {
+        let newIsIncluded: (Upstream.Output) throws -> Bool = {
             let lhs = try self.isIncluded($0)
             let rhs = isIncluded($0)
             return lhs && rhs
@@ -59,14 +59,9 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, S.Failure == Publishers.TryFilter<Upstream>.Failure {
-            
-            let transform: (Upstream.Output) throws -> Upstream.Output? = {
-                if try self.isIncluded($0) {
-                    return $0
-                }
-                return nil
-            }
-            self.upstream.tryCompactMap(transform).subscribe(subscriber)
+            self.upstream
+                .tryCompactMap { try self.isIncluded($0) ? $0 : nil }
+                .receive(subscriber: subscriber)
         }
     }
 }

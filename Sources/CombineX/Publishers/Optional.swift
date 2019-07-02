@@ -359,8 +359,10 @@ extension Publishers.Optional {
         S.Failure == Failure
     {
         
-        let state = Atomic<SubscriptionState>(value: .waiting)
         let result: Result<Output?, Failure>
+        
+        let lock = Lock()
+        var state: SubscriptionState = .waiting
         
         var sub: S?
         
@@ -372,26 +374,37 @@ extension Publishers.Optional {
         func request(_ demand: Subscribers.Demand) {
             precondition(demand > 0)
             
-            if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(demand)) {
-                
-                switch self.result {
-                case .success(let optional):
-                    if let output = optional {
-                        _ = self.sub?.receive(output)
-                    }
-                    self.sub?.receive(completion: .finished)
-                case .failure(let error):
-                    self.sub?.receive(completion: .failure(error))
+            self.lock.lock()
+            guard self.state.isWaiting else {
+                self.lock.unlock()
+                return
+            }
+            
+            self.state = .subscribing(demand)
+            let sub = self.sub!
+            self.lock.unlock()
+            
+            switch self.result {
+            case .success(let optional):
+                if let output = optional {
+                    _ = sub.receive(output)
                 }
-                
-                self.state.store(.finished)
+                sub.receive(completion: .finished)
+            case .failure(let error):
+                sub.receive(completion: .failure(error))
+            }
+            
+            self.lock.withLock {
+                self.state = .finished
                 self.sub = nil
             }
         }
         
         func cancel() {
-            self.state.store(.finished)
-            self.sub = nil
+            self.lock.withLock {
+                self.state = .finished
+                self.sub = nil
+            }
         }
         
         var description: String {

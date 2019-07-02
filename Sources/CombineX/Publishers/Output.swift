@@ -110,7 +110,9 @@ extension Publishers.Output {
         
         let lock = Lock()
         var state = RelayState.waiting
-        var count = 0
+        var index = 0
+        
+        let range: CountableRange<Int>
         
         var pub: Pub?
         var sub: Sub?
@@ -118,6 +120,8 @@ extension Publishers.Output {
         init(pub: Pub, sub: Sub) {
             self.pub = pub
             self.sub = sub
+            
+            self.range = pub.range
         }
         
         func request(_ demand: Subscribers.Demand) {
@@ -157,22 +161,21 @@ extension Publishers.Output {
         func receive(_ input: Input) -> Subscribers.Demand {
             self.lock.lock()
             
-            guard
-                self.state.isRelaying,
-                let range = self.pub?.range,
-                let sub = self.sub,
-                range.contains(self.count)
-            else {
-                self.count += 1
+            guard self.state.isRelaying, let sub = self.sub else {
+                self.lock.unlock()
+                return .none
+            }
+            guard self.range.contains(self.index) else {
+                self.index += 1
                 self.lock.unlock()
                 return .max(1)
             }
             
-            self.count += 1
+            self.index += 1
             self.lock.unlock()
             
             let demand = sub.receive(input)
-            if self.count == range.upperBound {
+            if self.index == range.upperBound {
                 self.state.subscription?.cancel()
                 sub.receive(completion: .finished)
                 

@@ -10,10 +10,9 @@ QCKMain([
     DemandSpec.self,
     SubscriptionSpec.self,
     
-    ConcatenateSpecSpec.self,
+    ConcatenateSpec.self,
     CountSpec.self,
     EmptySpec.self,
-    FilterSpec.self,
     FlatMapSpec.self,
     MapErrorSpec.self,
     MeasureIntervalSpec.self,

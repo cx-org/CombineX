@@ -172,6 +172,7 @@ class OptionalSpec: QuickSpec {
         #if !SWIFT_PACKAGE
         describe("Exception") {
             
+            // MARK: * should fatal error when less than one demand is requested
             it("should fatal error when less than one demand is requested") {
                 let pub = Publishers.Optional<Int, CustomError>(1)
                 let sub = CustomSubscriber<Int, CustomError>(receiveSubscription: { s in

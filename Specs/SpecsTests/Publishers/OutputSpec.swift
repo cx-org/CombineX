@@ -7,7 +7,7 @@ import Combine
 import CombineX
 #endif
 
-class OutputSpecs: QuickSpec {
+class OutputSpec: QuickSpec {
     
     override func spec() {
         

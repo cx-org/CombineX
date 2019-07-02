@@ -14,14 +14,6 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        enum E: Error {
-            case e
-        }
-        
-        Publishers.Once<Int, Never>(1).dropFirst(0)
-            .sink { (v) in
-                print("receive", v)
-            }
     }
 }
 

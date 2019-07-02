@@ -110,51 +110,6 @@ class TryCompactMapSpec: QuickSpec {
         // MARK: - Release Resources
         describe("release resources") {
             
-            // MARK: * should release upstream, downstream and transform closure when cancel
-            it("should release upstream, downstream and transform closure when cancel") {
-                
-                weak var upstreamObj: AnyObject?
-                weak var downstreamObj: AnyObject?
-                
-                weak var closureObj: CustomObject?
-                
-                var subscription: Subscription?
-                
-                do {
-                    let subject = PassthroughSubject<Int, Never>()
-                    upstreamObj = subject
-                    
-                    let obj = CustomObject()
-                    closureObj = obj
-                    
-                    let pub = subject.tryCompactMap { (v) -> Int in
-                        obj.run()
-                        return v
-                    }
-                    
-                    let sub = CustomSubscriber<Int, Error>(receiveSubscription: { (s) in
-                        subscription = s
-                        s.request(.max(1))
-                    }, receiveValue: { v in
-                        return .none
-                    }, receiveCompletion: { s in
-                    })
-                    downstreamObj = sub
-                    
-                    pub.subscribe(sub)
-                }
-                
-                expect(upstreamObj).toNot(beNil())
-                expect(downstreamObj).toNot(beNil())
-                expect(closureObj).toNot(beNil())
-                
-                subscription?.cancel()
-                
-                expect(upstreamObj).to(beNil())
-                expect(downstreamObj).to(beNil())
-                expect(closureObj).to(beNil())
-            }
-            
             // MARK: * should release upstream, downstream and transform closure when finished
             it("should release upstream, downstream and transform closure when finished") {
                 
@@ -199,6 +154,51 @@ class TryCompactMapSpec: QuickSpec {
                 expect(closureObj).to(beNil())
                 
                 _ = subscription
+            }
+            
+            // MARK: * should release upstream, downstream and transform closure when cancel
+            it("should release upstream, downstream and transform closure when cancel") {
+                
+                weak var upstreamObj: AnyObject?
+                weak var downstreamObj: AnyObject?
+                
+                weak var closureObj: CustomObject?
+                
+                var subscription: Subscription?
+                
+                do {
+                    let subject = PassthroughSubject<Int, Never>()
+                    upstreamObj = subject
+                    
+                    let obj = CustomObject()
+                    closureObj = obj
+                    
+                    let pub = subject.tryCompactMap { (v) -> Int in
+                        obj.run()
+                        return v
+                    }
+                    
+                    let sub = CustomSubscriber<Int, Error>(receiveSubscription: { (s) in
+                        subscription = s
+                        s.request(.max(1))
+                    }, receiveValue: { v in
+                        return .none
+                    }, receiveCompletion: { s in
+                    })
+                    downstreamObj = sub
+                    
+                    pub.subscribe(sub)
+                }
+                
+                expect(upstreamObj).toNot(beNil())
+                expect(downstreamObj).toNot(beNil())
+                expect(closureObj).toNot(beNil())
+                
+                subscription?.cancel()
+                
+                expect(upstreamObj).to(beNil())
+                expect(downstreamObj).to(beNil())
+                expect(closureObj).to(beNil())
             }
         }
 

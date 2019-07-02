@@ -5,7 +5,6 @@ extension Publisher {
     }
 }
 
-
 extension Publishers.Filter {
     
     public func tryFilter(_ isIncluded: @escaping (Publishers.Filter<Upstream>.Output) throws -> Bool) -> Publishers.TryFilter<Upstream> {
@@ -44,13 +43,9 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
-            let transform: (Upstream.Output) -> Upstream.Output? = {
-                if self.isIncluded($0) {
-                    return $0
-                }
-                return nil
-            }
-            self.upstream.compactMap(transform).subscribe(subscriber)
+            self.upstream
+                .compactMap { self.isIncluded($0) ? $0 : nil }
+                .receive(subscriber: subscriber)
         }
     }
 }

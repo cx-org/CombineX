@@ -6,20 +6,33 @@ import CombineX
 
 class CustomSubject<Output, Failure> : Subject where Failure : Error {
     
-    private let subscriptions = Atomic<[Inner]>(value: [])
+    private let lock = Lock()
+    private var subscriptions: [Inner] = []
+    private var completion: Subscribers.Completion<Failure>?
     
     init() { }
     
     func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
-        let subscription = Inner(pub: self, sub: AnySubscriber(subscriber))
-        self.subscriptions.withLockMutating {
-            $0.append(subscription)
+        self.lock.lock()
+        
+        if let completion = self.completion {
+            subscriber.receive(subscription: Subscriptions.empty)
+            subscriber.receive(completion: completion)
+            self.lock.unlock()
+            return
         }
+        
+        let subscription = Inner(pub: self, sub: AnySubscriber(subscriber))
+        self.subscriptions.append(subscription)
+        self.lock.unlock()
+        
         subscriber.receive(subscription: subscription)
     }
     
     func send(_ input: Output) {
-        let subscriptions = self.subscriptions.load()
+        self.lock.lock()
+        let subscriptions = self.subscriptions
+        self.lock.unlock()
         
         for subscription in subscriptions {
             subscription.receive(input)
@@ -27,7 +40,10 @@ class CustomSubject<Output, Failure> : Subject where Failure : Error {
     }
     
     func send(completion: Subscribers.Completion<Failure>) {
-        let subscriptions = self.subscriptions.exchange(with: [])
+        self.lock.lock()
+        self.completion = completion
+        let subscriptions = self.subscriptions
+        self.lock.unlock()
         
         for subscription in subscriptions {
             subscription.receive(completion: completion)
@@ -35,9 +51,9 @@ class CustomSubject<Output, Failure> : Subject where Failure : Error {
     }
     
     private func removeSubscription(_ subscription: Inner) {
-        self.subscriptions.withLockMutating {
-            $0.removeAll(where: { $0 === subscription })
-        }
+        self.lock.lock()
+        self.subscriptions.removeAll(where: { $0 === subscription })
+        self.lock.unlock()
     }
 }
 
@@ -52,6 +68,7 @@ extension CustomSubject {
         var sub: Sub?
         
         let lock = Lock()
+        var isCancelled = false
         var demand: Subscribers.Demand = .none
         
         init(pub: Pub, sub: Sub) {
@@ -65,6 +82,10 @@ extension CustomSubject {
                 self.lock.unlock()
             }
             
+            if self.isCancelled {
+                return
+            }
+            
             guard self.demand > 0 else {
                 return
             }
@@ -73,6 +94,10 @@ extension CustomSubject {
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
+            if self.lock.withLock({ self.isCancelled }) {
+                return
+            }
+            
             self.sub?.receive(completion: completion)
             self.pub = nil
             self.sub = nil
@@ -85,6 +110,15 @@ extension CustomSubject {
         }
         
         func cancel() {
+            self.lock.lock()
+            if self.isCancelled {
+                self.lock.unlock()
+                return
+            }
+            
+            self.isCancelled = true
+            self.lock.unlock()
+            
             self.pub?.removeSubscription(self)
             
             self.pub = nil
