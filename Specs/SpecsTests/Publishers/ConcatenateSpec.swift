@@ -13,7 +13,7 @@ class ConcatenateSpec: QuickSpec {
         
         it("should concatenate two publishers") {
             let p0 = Publishers.Sequence<[Int], Never>(sequence: [1, 2, 3, 4])
-            let p1 = Publishers.Just(5)
+            let p1 = Just(5)
             
             let pub = Publishers.Concatenate(prefix: p0, suffix: p1)
             let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in

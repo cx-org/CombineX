@@ -20,12 +20,12 @@ class AnySubscriberSpec: QuickSpec {
             }, cancel: {
             })
             
-            let pub = AnyPublisher<Int, Error> { (s) in
-                s.receive(subscription: subscription)
-                expect(s.receive(1)).to(equal(Subscribers.Demand.none))
-            }
-            
-            pub.subscribe(subscriber)
+//            let pub = AnyPublisher<Int, Error> { (s) in
+//                s.receive(subscription: subscription)
+//                expect(s.receive(1)).to(equal(Subscribers.Demand.none))
+//            }
+//            
+//            pub.subscribe(subscriber)
         }
     }
 }

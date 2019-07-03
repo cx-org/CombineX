@@ -35,7 +35,7 @@ class OutputSpec: QuickSpec {
         }
         
         // MARK: It should receive value as demand
-        fit("should receive value as demand") {
+        it("should receive value as demand") {
             let sequence = Publishers.Sequence<[Int], Never>(sequence: Array(0..<100))
             
             let range = sequence.output(in: 10..<20)

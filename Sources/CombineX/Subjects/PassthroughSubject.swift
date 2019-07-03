@@ -87,30 +87,49 @@ extension PassthroughSubject {
         }
         
         func receive(_ value: Output) {
-            if self.lock.withLock({ self.isCancelled }) {
-                return
-            }
-            
-            guard self.demand > 0 else {
-                return
-            }
-            
-            let more = self.sub?.receive(value) ?? .none
-            self.demand += (more - 1)
-        }
-        
-        func receive(completion: Subscribers.Completion<Failure>) {
-            if self.lock.withLock({ self.isCancelled }) {
+            self.lock.lock()
+            if self.isCancelled {
+                self.lock.unlock()
                 return
             }
 
-            self.sub?.receive(completion: completion)
+            guard self.demand > 0 else {
+                self.lock.unlock()
+                return
+            }
+            
+            self.demand -= 1
+            self.lock.unlock()
+            
+            let more = self.sub?.receive(value) ?? .none
+            
+            self.lock.lock()
+            self.demand += more
+            self.lock.unlock()
+        }
+        
+        func receive(completion: Subscribers.Completion<Failure>) {
+            self.lock.lock()
+            if self.isCancelled {
+                self.lock.unlock()
+                return
+            }
+
+            let sub = self.sub
             self.pub = nil
-            self.sub = nil
+//            self.sub = nil
+            self.lock.unlock()
+            
+            sub?.receive(completion: completion)
         }
         
         func request(_ demand: Subscribers.Demand) {
-            if self.lock.withLock({ self.isCancelled }) {
+            self.lock.lock()
+            defer {
+                self.lock.unlock()
+            }
+            
+            if self.isCancelled {
                 return
             }
             
@@ -119,18 +138,20 @@ extension PassthroughSubject {
         
         func cancel() {
             self.lock.lock()
-            if self.isCancelled {
+            defer {
                 self.lock.unlock()
+            }
+            
+            if self.isCancelled {
                 return
             }
             
             self.isCancelled = true
-            self.lock.unlock()
             
             self.pub?.removeSubscription(self)
             
             self.pub = nil
-            self.sub = nil
+//            self.sub = nil
         }
         
         var description: String {

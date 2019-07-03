@@ -18,7 +18,7 @@ class SinkSpec: QuickSpec {
             var valueCount = 0
             var completionCount = 0
             
-            let sink = Subscribers.Sink<PassthroughSubject<Int, Never>>(receiveCompletion: { (c) in
+            let sink = Subscribers.Sink<Int, Never>(receiveCompletion: { (c) in
                 completionCount += 1
             }, receiveValue: { v in
                 valueCount += 1
@@ -39,7 +39,7 @@ class SinkSpec: QuickSpec {
         // MARK: It should release subscription when receive completion
         it("should release subscription when receive completion") {
             
-            let sink = Subscribers.Sink<Publishers.Just<Int>>(
+            let sink = Subscribers.Sink<Int, Never>(
                 receiveCompletion: { c in
             },
                 receiveValue: { v in

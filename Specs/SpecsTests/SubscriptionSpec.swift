@@ -16,7 +16,7 @@ class SubscriptionSpec: QuickSpec {
             weak var subscriber: CustomSubscriber<Int, Never>?
             
             do {
-                let pub = Publishers.Just(1)
+                let pub = Just(1)
                 
                 let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
                     subscription = s
