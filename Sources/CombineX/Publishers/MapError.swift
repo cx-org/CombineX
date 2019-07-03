@@ -30,6 +30,11 @@ extension Publishers {
             self.transform = map
         }
         
+        public init(upstream: Upstream, transform: @escaping (Upstream.Failure) -> Failure) {
+            self.upstream = upstream
+            self.transform = transform
+        }
+        
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
         /// - SeeAlso: `subscribe(_:)`

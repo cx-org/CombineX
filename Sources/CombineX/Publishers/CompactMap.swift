@@ -48,6 +48,11 @@ extension Publishers {
         /// A closure that receives values from the upstream publisher and returns optional values.
         public let transform: (Upstream.Output) -> Output?
         
+        public init(upstream: Upstream, transform: @escaping (Upstream.Output) -> Output?) {
+            self.upstream = upstream
+            self.transform = transform
+        }
+        
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
         /// - SeeAlso: `subscribe(_:)`

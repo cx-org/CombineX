@@ -34,6 +34,11 @@ extension Publishers {
         /// Return `true` to continue, or `false` to cancel the upstream and complete. The closure may throw, in which case the publisher cancels the upstream publisher and fails with the thrown error.
         public let predicate: (Upstream.Output) throws -> Bool
         
+        public init(upstream: Upstream, predicate: @escaping (Upstream.Output) throws -> Bool) {
+            self.upstream = upstream
+            self.predicate = predicate
+        }
+        
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
         /// - SeeAlso: `subscribe(_:)`

@@ -17,10 +17,10 @@ extension Publisher {
 
 extension Publishers {
     
-    public struct FlatMap<P, Upstream> : Publisher where P : Publisher, Upstream : Publisher, P.Failure == Upstream.Failure {
+    public struct FlatMap<NewPublisher, Upstream> : Publisher where NewPublisher : Publisher, Upstream : Publisher, NewPublisher.Failure == Upstream.Failure {
         
         /// The kind of values published by this publisher.
-        public typealias Output = P.Output
+        public typealias Output = NewPublisher.Output
         
         /// The kind of errors this publisher might publish.
         ///
@@ -31,7 +31,13 @@ extension Publishers {
         
         public let maxPublishers: Subscribers.Demand
         
-        public let transform: (Upstream.Output) -> P
+        public let transform: (Upstream.Output) -> NewPublisher
+        
+        public init(upstream: Upstream, maxPublishers: Subscribers.Demand, transform: @escaping (Upstream.Output) -> NewPublisher) {
+            self.upstream = upstream
+            self.maxPublishers = maxPublishers
+            self.transform = transform
+        }
         
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
@@ -39,7 +45,7 @@ extension Publishers {
         /// - Parameters:
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, P.Output == S.Input, Upstream.Failure == S.Failure {
+        public func receive<S>(subscriber: S) where S : Subscriber, NewPublisher.Output == S.Input, Upstream.Failure == S.Failure {
             let subscription = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(subscription)
         }
@@ -55,8 +61,8 @@ extension Publishers.FlatMap {
         CustomDebugStringConvertible
     where
         S: Subscriber,
-        S.Input == P.Output,
-        S.Failure == P.Failure
+        S.Input == NewPublisher.Output,
+        S.Failure == NewPublisher.Failure
     {
         
         typealias Input = Upstream.Output
@@ -70,7 +76,7 @@ extension Publishers.FlatMap {
         var children: [ChildSubscriber] = []
         var state = SubscriptionState.waiting
         
-        typealias Pub = Publishers.FlatMap<P, Upstream>
+        typealias Pub = Publishers.FlatMap<NewPublisher, Upstream>
         typealias Sub = S
         
         var pub: Pub?
@@ -166,7 +172,7 @@ extension Publishers.FlatMap {
             return .none
         }
         
-        func receive(completion: Subscribers.Completion<P.Failure>) {
+        func receive(completion: Subscribers.Completion<NewPublisher.Failure>) {
             guard let subscription = self.relayState.finishIfRelaying() else {
                 return
             }
@@ -218,7 +224,7 @@ extension Publishers.FlatMap {
         }
         
         // MARK: ChildSubsciber
-        func receive(_ input: P.Output, from child: ChildSubscriber) -> Subscribers.Demand {
+        func receive(_ input: NewPublisher.Output, from child: ChildSubscriber) -> Subscribers.Demand {
             self.lock.lock()
             defer {
                 self.lock.unlock()
@@ -244,7 +250,7 @@ extension Publishers.FlatMap {
             }
         }
         
-        func receive(completion: Subscribers.Completion<P.Failure>, from child: ChildSubscriber) {
+        func receive(completion: Subscribers.Completion<NewPublisher.Failure>, from child: ChildSubscriber) {
             self.lock.lock()
             
             guard self.state.isSubscribing else {
@@ -366,13 +372,13 @@ extension Publishers.FlatMap {
         // MARK: - ChildSubscriber
         final class ChildSubscriber: Subscriber {
             
-            typealias Input = P.Output
-            typealias Failure = P.Failure
+            typealias Input = NewPublisher.Output
+            typealias Failure = NewPublisher.Failure
             
             let parent: Inner
             
             let subscription = Atomic<Subscription?>(value: nil)
-            var buffer: P.Output?
+            var buffer: NewPublisher.Output?
             
             init(parent: Inner) {
                 self.parent = parent
@@ -386,14 +392,14 @@ extension Publishers.FlatMap {
                 }
             }
             
-            func receive(_ input: P.Output) -> Subscribers.Demand {
+            func receive(_ input: NewPublisher.Output) -> Subscribers.Demand {
                 if self.subscription.load() == nil {
                     return .none
                 }
                 return self.parent.receive(input, from: self)
             }
             
-            func receive(completion: Subscribers.Completion<P.Failure>) {
+            func receive(completion: Subscribers.Completion<NewPublisher.Failure>) {
                 if let subscription = self.subscription.exchange(with: nil) {
                     subscription.cancel()
                     self.parent.receive(completion: completion, from: self)

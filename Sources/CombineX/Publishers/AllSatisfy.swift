@@ -33,6 +33,11 @@ extension Publishers {
         ///  Return `true` to continue, or `false` to cancel the upstream and finish.
         public let predicate: (Upstream.Output) -> Bool
         
+        public init(upstream: Upstream, predicate: @escaping (Upstream.Output) -> Bool) {
+            self.upstream = upstream
+            self.predicate = predicate
+        }
+        
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
         /// - SeeAlso: `subscribe(_:)`

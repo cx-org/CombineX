@@ -1,6 +1,6 @@
 /// A scheduler for performing synchronous actions.
 ///
-/// You can only use this scheduler for immediate actions. If you attempt to schedule actions after a specific date, the scheduler produces a fatal error.
+/// You can use this scheduler for immediate actions. If you attempt to schedule actions after a specific date, the scheduler ignores the date and executes synchronously.
 public struct ImmediateScheduler : Scheduler {
     
     /// The time type used by the immediate scheduler.
@@ -290,12 +290,13 @@ public struct ImmediateScheduler : Scheduler {
     
     /// Performs the action at some time after the specified date.
     public func schedule(after date: ImmediateScheduler.SchedulerTimeType, tolerance: ImmediateScheduler.SchedulerTimeType.Stride, options: ImmediateScheduler.SchedulerOptions?, _ action: @escaping () -> Void) {
-        fatalError()
+        action()
     }
     
     /// Performs the action at some time after the specified date, at the specified
     /// frequency, optionally taking into account tolerance if possible.
     public func schedule(after date: ImmediateScheduler.SchedulerTimeType, interval: ImmediateScheduler.SchedulerTimeType.Stride, tolerance: ImmediateScheduler.SchedulerTimeType.Stride, options: ImmediateScheduler.SchedulerOptions?, _ action: @escaping () -> Void) -> Cancellable {
-        fatalError()
+        action()
+        return AnyCancellable { }
     }
 }

@@ -37,10 +37,15 @@ extension Publishers {
         /// The publisher from which this publisher receives elements.
         public let upstream: Upstream
         
-        /// an error-throwing closure that receives values from the upstream publisher and returns optional values.
+        /// An error-throwing closure that receives values from the upstream publisher and returns optional values.
         ///
         /// If this closure throws an error, the publisher fails.
         public let transform: (Upstream.Output) throws -> Output?
+        
+        public init(upstream: Upstream, transform: @escaping (Upstream.Output) throws -> Output?) {
+            self.upstream = upstream
+            self.transform = transform
+        }
         
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///

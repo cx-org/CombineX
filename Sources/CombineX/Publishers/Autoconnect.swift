@@ -14,7 +14,7 @@ extension Publishers {
         /// The publisher from which this publisher receives elements.
         final public let upstream: Upstream
         
-        public init(_ upstream: Upstream) {
+        public init(upstream: Upstream) {
             self.upstream = upstream
         }
         

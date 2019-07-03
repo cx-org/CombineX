@@ -2,7 +2,7 @@ struct PeekableIterator<Element>: IteratorProtocol {
     
     private var iterator: AnyIterator<Element>
     
-    // TODO: Use a circular buffer structure.
+    // TODO: Use a circular buffer.
     private var buffer: [Element]
     
     init<I: IteratorProtocol>(_ iterator: I) where I.Element == Element {
@@ -19,6 +19,6 @@ struct PeekableIterator<Element>: IteratorProtocol {
     }
 
     mutating func next() -> Element? {
-        return self.buffer.tryRemoveFirst() ?? self.iterator.next()
+        return self.buffer.dequeue() ?? self.iterator.next()
     }
 }

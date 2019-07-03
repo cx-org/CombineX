@@ -29,7 +29,6 @@ extension Subject where Self.Output == Void {
     }
 }
 
-
 extension Publisher {
     
     public func subscribe<S>(_ subject: S) -> AnyCancellable where S : Subject, Self.Failure == S.Failure, Self.Output == S.Output {

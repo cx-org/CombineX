@@ -52,11 +52,25 @@ extension SubscriptionState_1 {
 // MARK: Transition
 extension SubscriptionState_1 {
     
-    mutating func request(_ demand: Subscribers.Demand) -> Sub? {
+    mutating func requestIfWaiting(_ demand: Subscribers.Demand) -> Sub? {
         switch self {
         case .waiting(let s):
             self = .subscribing(s, demand)
             return s
+        default:
+            return nil
+        }
+    }
+    
+    mutating func request(_ demand: Subscribers.Demand) -> (Sub, Subscribers.Demand)? {
+        switch self {
+        case .waiting(let s):
+            self = .subscribing(s, demand)
+            return (s, demand)
+        case .subscribing(let s, let d):
+            let after = d + demand
+            self = .subscribing(s, after)
+            return (s, after)
         default:
             return nil
         }
@@ -86,8 +100,14 @@ extension SubscriptionState_1: SubscriptionState_1_Protocol {
 }
 
 extension Atomic where Value: SubscriptionState_1_Protocol {
+    
+    func requestIfWaiting(_ demand: Subscribers.Demand) -> Value.Sub? {
+        return self.withLockMutating {
+            $0.state.requestIfWaiting(demand)
+        }
+    }
 
-    func request(_ demand: Subscribers.Demand) -> Value.Sub? {
+    func request(_ demand: Subscribers.Demand) -> (Value.Sub, Subscribers.Demand)? {
         return self.withLockMutating {
             $0.state.request(demand)
         }

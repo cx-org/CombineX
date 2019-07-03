@@ -1,5 +1,20 @@
 import Darwin
 
+final public class Future<Output, Failure> : Publisher where Failure : Error {
+    
+    public typealias Promise = (Result<Output, Failure>) -> Void
+    
+    public init(_ attemptToFulfill: @escaping (@escaping Future<Output, Failure>.Promise) -> Void)
+    
+    /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
+    ///
+    /// - SeeAlso: `subscribe(_:)`
+    /// - Parameters:
+    ///     - subscriber: The subscriber to attach to this `Publisher`.
+    ///                   once attached it can begin to receive values.
+    final public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber
+}
+
 extension Publisher {
 
     /// Decodes the output from upstream using a specified `TopLevelDecoder`.
@@ -14,10 +29,18 @@ extension Publisher where Self.Output : Encodable {
     public func encode<Coder>(encoder: Coder) -> Publishers.Encode<Self, Coder> where Coder : TopLevelEncoder
 }
 
-
-
 extension Publisher {
 
+    /// Subscribes to an additional publisher and publishes a tuple upon receiving output from either publisher.
+    ///
+    /// The combined publisher passes through any requests to *all* upstream publishers. However, it still obeys the demand-fulfilling rule of only sending the request amount downstream. If the demand isn’t `.unlimited`, it drops values from upstream publishers. It implements this by using a buffer size of 1 for each upstream, and holds the most recent value in each buffer.
+    /// All upstream publishers need to finish for this publisher to finsh. If an upstream publisher never publishes a value, this publisher never finishes.
+    /// If any of the combined publishers terminates with a failure, this publisher also fails.
+    /// - Parameters:
+    ///   - other: Another publisher to combine with this one.
+    /// - Returns: A publisher that receives and combines elements from this and another publisher.
+    public func combineLatest<P>(_ other: P) -> Publishers.CombineLatest<Self, P> where P : Publisher, Self.Failure == P.Failure
+    
     /// Subscribes to an additional publisher and invokes a closure upon receiving output from either publisher.
     ///
     /// The combined publisher passes through any requests to *all* upstream publishers. However, it still obeys the demand-fulfilling rule of only sending the request amount downstream. If the demand isn’t `.unlimited`, it drops values from upstream publishers. It implements this by using a buffer size of 1 for each upstream, and holds the most recent value in each buffer.
@@ -27,8 +50,19 @@ extension Publisher {
     ///   - other: Another publisher to combine with this one.
     ///   - transform: A closure that receives the most recent value from each publisher and returns a new value to publish.
     /// - Returns: A publisher that receives and combines elements from this and another publisher.
-    public func combineLatest<P, T>(_ other: P, _ transform: @escaping (Self.Output, P.Output) -> T) -> Publishers.CombineLatest<Self, P, T> where P : Publisher, Self.Failure == P.Failure
-
+    public func combineLatest<P, T>(_ other: P, _ transform: @escaping (Self.Output, P.Output) -> T) -> Publishers.Map<Publishers.CombineLatest<Self, P>, T> where P : Publisher, Self.Failure == P.Failure
+    
+    /// Subscribes to two additional publishers and publishes a tuple upon receiving output from any of the publishers.
+    ///
+    /// The combined publisher passes through any requests to *all* upstream publishers. However, it still obeys the demand-fulfilling rule of only sending the request amount downstream. If the demand isn’t `.unlimited`, it drops values from upstream publishers. It implements this by using a buffer size of 1 for each upstream, and holds the most recent value in each buffer.
+    /// All upstream publishers need to finish for this publisher to finish. If an upstream publisher never publishes a value, this publisher never finishes.
+    /// If any of the combined publishers terminates with a failure, this publisher also fails.
+    /// - Parameters:
+    ///   - publisher1: A second publisher to combine with this one.
+    ///   - publisher2: A third publisher to combine with this one.
+    /// - Returns: A publisher that receives and combines elements from this publisher and two other publishers.
+    public func combineLatest<P, Q>(_ publisher1: P, _ publisher2: Q) -> Publishers.CombineLatest3<Self, P, Q> where P : Publisher, Q : Publisher, Self.Failure == P.Failure, P.Failure == Q.Failure
+    
     /// Subscribes to two additional publishers and invokes a closure upon receiving output from any of the publishers.
     ///
     /// The combined publisher passes through any requests to *all* upstream publishers. However, it still obeys the demand-fulfilling rule of only sending the request amount downstream. If the demand isn’t `.unlimited`, it drops values from upstream publishers. It implements this by using a buffer size of 1 for each upstream, and holds the most recent value in each buffer.
@@ -39,8 +73,20 @@ extension Publisher {
     ///   - publisher2: A third publisher to combine with this one.
     ///   - transform: A closure that receives the most recent value from each publisher and returns a new value to publish.
     /// - Returns: A publisher that receives and combines elements from this publisher and two other publishers.
-    public func combineLatest<P, Q, T>(_ publisher1: P, _ publisher2: Q, _ transform: @escaping (Self.Output, P.Output, Q.Output) -> T) -> Publishers.CombineLatest3<Self, P, Q, T> where P : Publisher, Q : Publisher, Self.Failure == P.Failure, P.Failure == Q.Failure
-
+    public func combineLatest<P, Q, T>(_ publisher1: P, _ publisher2: Q, _ transform: @escaping (Self.Output, P.Output, Q.Output) -> T) -> Publishers.Map<Publishers.CombineLatest3<Self, P, Q>, T> where P : Publisher, Q : Publisher, Self.Failure == P.Failure, P.Failure == Q.Failure
+    
+    /// Subscribes to three additional publishers and publishes a tuple upon receiving output from any of the publishers.
+    ///
+    /// The combined publisher passes through any requests to *all* upstream publishers. However, it still obeys the demand-fulfilling rule of only sending the request amount downstream. If the demand isn’t `.unlimited`, it drops values from upstream publishers. It implements this by using a buffer size of 1 for each upstream, and holds the most recent value in each buffer.
+    /// All upstream publishers need to finish for this publisher to finish. If an upstream publisher never publishes a value, this publisher never finishes.
+    /// If any of the combined publishers terminates with a failure, this publisher also fails.
+    /// - Parameters:
+    ///   - publisher1: A second publisher to combine with this one.
+    ///   - publisher2: A third publisher to combine with this one.
+    ///   - publisher3: A fourth publisher to combine with this one.
+    /// - Returns: A publisher that receives and combines elements from this publisher and three other publishers.
+    public func combineLatest<P, Q, R>(_ publisher1: P, _ publisher2: Q, _ publisher3: R) -> Publishers.CombineLatest4<Self, P, Q, R> where P : Publisher, Q : Publisher, R : Publisher, Self.Failure == P.Failure, P.Failure == Q.Failure, Q.Failure == R.Failure
+    
     /// Subscribes to three additional publishers and invokes a closure upon receiving output from any of the publishers.
     ///
     /// The combined publisher passes through any requests to *all* upstream publishers. However, it still obeys the demand-fulfilling rule of only sending the request amount downstream. If the demand isn’t `.unlimited`, it drops values from upstream publishers. It implements this by using a buffer size of 1 for each upstream, and holds the most recent value in each buffer.
@@ -52,8 +98,11 @@ extension Publisher {
     ///   - publisher3: A fourth publisher to combine with this one.
     ///   - transform: A closure that receives the most recent value from each publisher and returns a new value to publish.
     /// - Returns: A publisher that receives and combines elements from this publisher and three other publishers.
-    public func combineLatest<P, Q, R, T>(_ publisher1: P, _ publisher2: Q, _ publisher3: R, _ transform: @escaping (Self.Output, P.Output, Q.Output, R.Output) -> T) -> Publishers.CombineLatest4<Self, P, Q, R, T> where P : Publisher, Q : Publisher, R : Publisher, Self.Failure == P.Failure, P.Failure == Q.Failure, Q.Failure == R.Failure
+    public func combineLatest<P, Q, R, T>(_ publisher1: P, _ publisher2: Q, _ publisher3: R, _ transform: @escaping (Self.Output, P.Output, Q.Output, R.Output) -> T) -> Publishers.Map<Publishers.CombineLatest4<Self, P, Q, R>, T> where P : Publisher, Q : Publisher, R : Publisher, Self.Failure == P.Failure, P.Failure == Q.Failure, Q.Failure == R.Failure
+}
 
+extension Publisher {
+    
     /// Subscribes to an additional publisher and invokes an error-throwing closure upon receiving output from either publisher.
     ///
     /// The combined publisher passes through any requests to *all* upstream publishers. However, it still obeys the demand-fulfilling rule of only sending the request amount downstream. If the demand isn’t `.unlimited`, it drops values from upstream publishers. It implements this by using a buffer size of 1 for each upstream, and holds the most recent value in each buffer.
@@ -209,11 +258,6 @@ extension Publisher {
     /// - Parameter retries: The number of times to attempt to recreate the subscription.
     /// - Returns: A publisher that attempts to recreate its subscription to a failed upstream publisher.
     public func retry(_ retries: Int) -> Publishers.Retry<Self>
-
-    /// Performs an unlimited number of attempts to recreate the subscription to the upstream publisher if it fails.
-    ///
-    /// - Returns: A publisher that attempts to recreate its subscription to a failed upstream publisher.
-    public func retry() -> Publishers.Retry<Self>
 }
 
 extension Publisher {
@@ -381,6 +425,17 @@ extension Publisher {
     /// - Returns: A publisher that emits pairs of elements from the upstream publishers as tuples.
     public func zip<P>(_ other: P) -> Publishers.Zip<Self, P> where P : Publisher, Self.Failure == P.Failure
 
+    /// Combine elements from another publisher and deliver a transformed output.
+    ///
+    /// The returned publisher waits until both publishers have emitted an event, then delivers the oldest unconsumed event from each publisher together as a tuple to the subscriber.
+    /// For example, if publisher `P1` emits elements `a` and `b`, and publisher `P2` emits event `c`, the zip publisher emits the tuple `(a, c)`. It won’t emit a tuple with event `b` until `P2` emits another event.
+    /// If either upstream publisher finishes successfuly or fails with an error, the zipped publisher does the same.
+    ///
+    /// - Parameter other: Another publisher.
+    ///   - transform: A closure that receives the most recent value from each publisher and returns a new value to publish.
+    /// - Returns: A publisher that emits pairs of elements from the upstream publishers as tuples.
+    public func zip<P, T>(_ other: P, _ transform: @escaping (Self.Output, P.Output) -> T) -> Publishers.Map<Publishers.Zip<Self, P>, T> where P : Publisher, Self.Failure == P.Failure
+    
     /// Combine elements from two other publishers and deliver groups of elements as tuples.
     ///
     /// The returned publisher waits until all three publishers have emitted an event, then delivers the oldest unconsumed event from each publisher as a tuple to the subscriber.
@@ -392,6 +447,19 @@ extension Publisher {
     ///   - publisher2: A third publisher.
     /// - Returns: A publisher that emits groups of elements from the upstream publishers as tuples.
     public func zip<P, Q>(_ publisher1: P, _ publisher2: Q) -> Publishers.Zip3<Self, P, Q> where P : Publisher, Q : Publisher, Self.Failure == P.Failure, P.Failure == Q.Failure
+    
+    /// Combine elements from two other publishers and deliver a transformed output.
+    ///
+    /// The returned publisher waits until all three publishers have emitted an event, then delivers the oldest unconsumed event from each publisher as a tuple to the subscriber.
+    /// For example, if publisher `P1` emits elements `a` and `b`, and publisher `P2` emits elements `c` and `d`, and publisher `P3` emits the event `e`, the zip publisher emits the tuple `(a, c, e)`. It won’t emit a tuple with elements `b` or `d` until `P3` emits another event.
+    /// If any upstream publisher finishes successfuly or fails with an error, the zipped publisher does the same.
+    ///
+    /// - Parameters:
+    ///   - publisher1: A second publisher.
+    ///   - publisher2: A third publisher.
+    ///   - transform: A closure that receives the most recent value from each publisher and returns a new value to publish.
+    /// - Returns: A publisher that emits groups of elements from the upstream publishers as tuples.
+    public func zip<P, Q, T>(_ publisher1: P, _ publisher2: Q, _ transform: @escaping (Self.Output, P.Output, Q.Output) -> T) -> Publishers.Map<Publishers.Zip3<Self, P, Q>, T> where P : Publisher, Q : Publisher, Self.Failure == P.Failure, P.Failure == Q.Failure
 
     /// Combine elements from three other publishers and deliver groups of elements as tuples.
     ///
@@ -405,6 +473,21 @@ extension Publisher {
     ///   - publisher3: A fourth publisher.
     /// - Returns: A publisher that emits groups of elements from the upstream publishers as tuples.
     public func zip<P, Q, R>(_ publisher1: P, _ publisher2: Q, _ publisher3: R) -> Publishers.Zip4<Self, P, Q, R> where P : Publisher, Q : Publisher, R : Publisher, Self.Failure == P.Failure, P.Failure == Q.Failure, Q.Failure == R.Failure
+    
+    /// Combine elements from three other publishers and deliver a transformed output.
+    ///
+    /// The returned publisher waits until all four publishers have emitted an event, then delivers the oldest unconsumed event from each publisher as a tuple to the subscriber.
+    /// For example, if publisher `P1` emits elements `a` and `b`, and publisher `P2` emits elements `c` and `d`, and publisher `P3` emits the elements `e` and `f`, and publisher `P4` emits the event `g`, the zip publisher emits the tuple `(a, c, e, g)`. It won’t emit a tuple with elements `b`, `d`, or `f` until `P4` emits another event.
+    /// If any upstream publisher finishes successfuly or fails with an error, the zipped publisher does the same.
+    ///
+    /// - Parameters:
+    ///   - publisher1: A second publisher.
+    ///   - publisher2: A third publisher.
+    ///   - publisher3: A fourth publisher.
+    ///   - transform: A closure that receives the most recent value from each publisher and returns a new value to publish.
+    /// - Returns: A publisher that emits groups of elements from the upstream publishers as tuples.
+    public func zip<P, Q, R, T>(_ publisher1: P, _ publisher2: Q, _ publisher3: R, _ transform: @escaping (Self.Output, P.Output, Q.Output, R.Output) -> T) -> Publishers.Map<Publishers.Zip4<Self, P, Q, R>, T> where P : Publisher, Q : Publisher, R : Publisher, Self.Failure == P.Failure, P.Failure == Q.Failure, Q.Failure == R.Failure
+
 }
 
 extension Publisher {
@@ -501,87 +584,93 @@ extension Publishers {
 }
 
 extension Publishers {
-
+    
     /// A publisher that receives and combines the latest elements from two publishers.
-    public struct CombineLatest<A, B, Output> : Publisher where A : Publisher, B : Publisher, A.Failure == B.Failure {
-
+    public struct CombineLatest<A, B> : Publisher where A : Publisher, B : Publisher, A.Failure == B.Failure {
+        
+        /// The kind of values published by this publisher.
+        public typealias Output = (A.Output, B.Output)
+        
         /// The kind of errors this publisher might publish.
         ///
         /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = A.Failure
-
+        
         public let a: A
-
+        
         public let b: B
-
-        public let transform: (A.Output, B.Output) -> Output
-
-        public init(_ a: A, _ b: B, transform: @escaping (A.Output, B.Output) -> Output)
-
+        
+        public init(_ a: A, _ b: B)
+        
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
         /// - SeeAlso: `subscribe(_:)`
         /// - Parameters:
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, B.Failure == S.Failure
+        public func receive<S>(subscriber: S) where S : Subscriber, B.Failure == S.Failure, S.Input == (A.Output, B.Output)
     }
-
+    
     /// A publisher that receives and combines the latest elements from three publishers.
-    public struct CombineLatest3<A, B, C, Output> : Publisher where A : Publisher, B : Publisher, C : Publisher, A.Failure == B.Failure, B.Failure == C.Failure {
-
+    public struct CombineLatest3<A, B, C> : Publisher where A : Publisher, B : Publisher, C : Publisher, A.Failure == B.Failure, B.Failure == C.Failure {
+        
+        /// The kind of values published by this publisher.
+        public typealias Output = (A.Output, B.Output, C.Output)
+        
         /// The kind of errors this publisher might publish.
         ///
         /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = A.Failure
-
+        
         public let a: A
-
+        
         public let b: B
-
+        
         public let c: C
-
-        public let transform: (A.Output, B.Output, C.Output) -> Output
-
-        public init(_ a: A, _ b: B, _ c: C, transform: @escaping (A.Output, B.Output, C.Output) -> Output)
-
+        
+        public init(_ a: A, _ b: B, _ c: C)
+        
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
         /// - SeeAlso: `subscribe(_:)`
         /// - Parameters:
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, C.Failure == S.Failure
+        public func receive<S>(subscriber: S) where S : Subscriber, C.Failure == S.Failure, S.Input == (A.Output, B.Output, C.Output)
     }
-
+    
     /// A publisher that receives and combines the latest elements from four publishers.
-    public struct CombineLatest4<A, B, C, D, Output> : Publisher where A : Publisher, B : Publisher, C : Publisher, D : Publisher, A.Failure == B.Failure, B.Failure == C.Failure, C.Failure == D.Failure {
-
+    public struct CombineLatest4<A, B, C, D> : Publisher where A : Publisher, B : Publisher, C : Publisher, D : Publisher, A.Failure == B.Failure, B.Failure == C.Failure, C.Failure == D.Failure {
+        
+        /// The kind of values published by this publisher.
+        public typealias Output = (A.Output, B.Output, C.Output, D.Output)
+        
         /// The kind of errors this publisher might publish.
         ///
         /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = A.Failure
-
+        
         public let a: A
-
+        
         public let b: B
-
+        
         public let c: C
-
+        
         public let d: D
-
-        public let transform: (A.Output, B.Output, C.Output, D.Output) -> Output
-
-        public init(_ a: A, _ b: B, _ c: C, _ d: D, transform: @escaping (A.Output, B.Output, C.Output, D.Output) -> Output)
-
+        
+        public init(_ a: A, _ b: B, _ c: C, _ d: D)
+        
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
         /// - SeeAlso: `subscribe(_:)`
         /// - Parameters:
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, D.Failure == S.Failure
+        public func receive<S>(subscriber: S) where S : Subscriber, D.Failure == S.Failure, S.Input == (A.Output, B.Output, C.Output, D.Output)
     }
+}
+
+extension Publishers {
 
     /// A publisher that receives and combines the latest elements from two publishers, using a throwing closure.
     public struct TryCombineLatest<A, B, Output> : Publisher where A : Publisher, B : Publisher, A.Failure == Error, B.Failure == Error {
@@ -685,6 +774,8 @@ extension Publishers {
 
         /// The closure that determines whether whether publishing should continue.
         public let predicate: (Upstream.Output) -> Bool
+        
+        public init(upstream: Upstream, predicate: @escaping (Publishers.PrefixWhile<Upstream>.Output) -> Bool)
 
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
@@ -697,21 +788,23 @@ extension Publishers {
 
     /// A publisher that republishes elements while an error-throwing predicate closure indicates publishing should continue.
     public struct TryPrefixWhile<Upstream> : Publisher where Upstream : Publisher {
-
+        
         /// The kind of values published by this publisher.
         public typealias Output = Upstream.Output
-
+        
         /// The kind of errors this publisher might publish.
         ///
         /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = Error
-
+        
         /// The publisher from which this publisher receives elements.
         public let upstream: Upstream
-
+        
         /// The error-throwing closure that determines whether publishing should continue.
         public let predicate: (Upstream.Output) throws -> Bool
-
+        
+        public init(upstream: Upstream, predicate: @escaping (Publishers.TryPrefixWhile<Upstream>.Output) throws -> Bool)
+        
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
         /// - SeeAlso: `subscribe(_:)`
@@ -719,25 +812,6 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, S.Failure == Publishers.TryPrefixWhile<Upstream>.Failure
-    }
-}
-
-extension Publishers {
-
-    /// A publisher that eventually produces one value and then finishes or fails.
-    final public class Future<Output, Failure> : Publisher where Failure : Error {
-
-        public typealias Promise = (Result<Output, Failure>) -> Void
-
-        public init(_ attemptToFulfill: @escaping (@escaping Publishers.Future<Output, Failure>.Promise) -> Void)
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        final public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber
     }
 }
 
@@ -800,6 +874,8 @@ extension Publishers {
 
         /// `Scheduler` options to use for the strategy.
         public let options: Context.SchedulerOptions?
+        
+        public init(upstream: Upstream, strategy: Publishers.TimeGroupingStrategy<Context>, options: Context.SchedulerOptions?)
 
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
@@ -823,6 +899,8 @@ extension Publishers {
 
         /// The publisher that this publisher receives elements from.
         public let upstream: Upstream
+        
+        public init(upstream: Upstream)
 
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
@@ -849,6 +927,8 @@ extension Publishers {
 
         ///  The maximum number of received elements to buffer before publishing.
         public let count: Int
+        
+        public init(upstream: Upstream, count: Int)
 
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
@@ -895,18 +975,20 @@ extension Publishers {
 extension Publishers {
 
     public struct Scan<Upstream, Output> : Publisher where Upstream : Publisher {
-
+        
         /// The kind of errors this publisher might publish.
         ///
         /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = Upstream.Failure
-
+        
         public let upstream: Upstream
-
-        public let nextPartialResult: (Output, Upstream.Output) -> Output
-
+        
         public let initialResult: Output
-
+        
+        public let nextPartialResult: (Output, Upstream.Output) -> Output
+        
+        public init(upstream: Upstream, initialResult: Output, nextPartialResult: @escaping (Output, Upstream.Output) -> Output)
+        
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
         /// - SeeAlso: `subscribe(_:)`
@@ -915,20 +997,22 @@ extension Publishers {
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, Upstream.Failure == S.Failure
     }
-
+    
     public struct TryScan<Upstream, Output> : Publisher where Upstream : Publisher {
-
+        
         /// The kind of errors this publisher might publish.
         ///
         /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = Error
-
+        
         public let upstream: Upstream
-
-        public let nextPartialResult: (Output, Upstream.Output) throws -> Output
-
+        
         public let initialResult: Output
-
+        
+        public let nextPartialResult: (Output, Upstream.Output) throws -> Output
+        
+        public init(upstream: Upstream, initialResult: Output, nextPartialResult: @escaping (Output, Upstream.Output) throws -> Output)
+        
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
         /// - SeeAlso: `subscribe(_:)`
@@ -1038,6 +1122,8 @@ extension Publishers {
         ///
         /// If `false`, the publisher emits the first element received during the interval.
         public let latest: Bool
+        
+        public init(upstream: Upstream, interval: Context.SchedulerTimeType.Stride, scheduler: Context, latest: Bool)
 
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
@@ -1061,6 +1147,10 @@ extension Publishers {
         ///
         /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = Upstream.Failure
+        
+        final public let upstream: Upstream
+        
+        public init(upstream: Upstream)
 
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
@@ -1100,6 +1190,8 @@ extension Publishers {
 
         /// A closure that receives two elements and returns `true` if they are in increasing order.
         public let areInIncreasingOrder: (Upstream.Output, Upstream.Output) -> Bool
+        
+        public init(upstream: Upstream, areInIncreasingOrder: @escaping (Upstream.Output, Upstream.Output) -> Bool)
 
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
@@ -1126,6 +1218,8 @@ extension Publishers {
 
         /// A closure that receives two elements and returns `true` if they are in increasing order.
         public let areInIncreasingOrder: (Upstream.Output, Upstream.Output) throws -> Bool
+
+        public init(upstream: Upstream, areInIncreasingOrder: @escaping (Upstream.Output, Upstream.Output) throws -> Bool)
 
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
@@ -1264,6 +1358,8 @@ extension Publishers {
 
         /// A closure that executes when the publisher receives a request for more elements.
         public var receiveRequest: ((Subscribers.Demand) -> Void)?
+        
+        public init(upstream: Upstream, receiveSubscription: ((Subscription) -> Void)? = nil, receiveOutput: ((Publishers.HandleEvents<Upstream>.Output) -> Void)? = nil, receiveCompletion: ((Subscribers.Completion<Publishers.HandleEvents<Upstream>.Failure>) -> Void)? = nil, receiveCancel: (() -> Void)? = nil, receiveRequest: ((Subscribers.Demand) -> Void)?)
 
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
@@ -1299,6 +1395,9 @@ extension Publishers {
 
         /// Scheduler options that customize this publisher’s delivery of elements.
         public let options: Context.SchedulerOptions?
+        
+        public init(upstream: Upstream, dueTime: Context.SchedulerTimeType.Stride, scheduler: Context, options: Context.SchedulerOptions?)
+
 
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
@@ -1331,6 +1430,8 @@ extension Publishers {
         public let options: Context.SchedulerOptions?
 
         public let customError: (() -> Upstream.Failure)?
+        
+        public init(upstream: Upstream, interval: Context.SchedulerTimeType.Stride, scheduler: Context, options: Context.SchedulerOptions?, customError: (() -> Publishers.Timeout<Upstream, Context>.Failure)?)
 
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
@@ -1411,6 +1512,9 @@ extension Publishers {
         public let prefetch: Publishers.PrefetchStrategy
 
         public let whenFull: Publishers.BufferingStrategy<Upstream.Failure>
+        
+        public init(upstream: Upstream, size: Int, prefetch: Publishers.PrefetchStrategy, whenFull: Publishers.BufferingStrategy<Publishers.Buffer<Upstream>.Failure>)
+
 
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
@@ -1509,8 +1613,55 @@ extension Publishers {
     }
 }
 
+extension Publishers.CombineLatest : Equatable where A : Equatable, B : Equatable {
+    /// Returns a Boolean value that indicates whether two publishers are equivalent.
+    ///
+    /// - Parameters:
+    ///   - lhs: A combineLatest publisher to compare for equality.
+    ///   - rhs: Another combineLatest publisher to compare for equality.
+    /// - Returns: `true` if the corresponding upstream publishers of each combineLatest publisher are equal, `false` otherwise.
+    public static func == (lhs: Publishers.CombineLatest<A, B>, rhs: Publishers.CombineLatest<A, B>) -> Bool
+}
 
+/// Returns a Boolean value that indicates whether two publishers are equivalent.
+///
+/// - Parameters:
+///   - lhs: A combineLatest publisher to compare for equality.
+///   - rhs: Another combineLatest publisher to compare for equality.
+/// - Returns: `true` if the corresponding upstream publishers of each combineLatest publisher are equal, `false` otherwise.
+extension Publishers.CombineLatest3 : Equatable where A : Equatable, B : Equatable, C : Equatable {
+    /// Returns a Boolean value indicating whether two values are equal.
+    ///
+    /// Equality is the inverse of inequality. For any values `a` and `b`,
+    /// `a == b` implies that `a != b` is `false`.
+    ///
+    /// - Parameters:
+    ///   - lhs: A value to compare.
+    ///   - rhs: Another value to compare.
+    public static func == (lhs: Publishers.CombineLatest3<A, B, C>, rhs: Publishers.CombineLatest3<A, B, C>) -> Bool
 
+}
+
+/// Returns a Boolean value that indicates whether two publishers are equivalent.
+///
+/// - Parameters:
+///   - lhs: A combineLatest publisher to compare for equality.
+///   - rhs: Another combineLatest publisher to compare for equality.
+/// - Returns: `true` if the corresponding upstream publishers of each combineLatest publisher are equal, `false` otherwise.
+@available(OSX 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+extension Publishers.CombineLatest4 : Equatable where A : Equatable, B : Equatable, C : Equatable, D : Equatable {
+
+    /// Returns a Boolean value indicating whether two values are equal.
+    ///
+    /// Equality is the inverse of inequality. For any values `a` and `b`,
+    /// `a == b` implies that `a != b` is `false`.
+    ///
+    /// - Parameters:
+    ///   - lhs: A value to compare.
+    ///   - rhs: Another value to compare.
+    public static func == (lhs: Publishers.CombineLatest4<A, B, C, D>, rhs: Publishers.CombineLatest4<A, B, C, D>) -> Bool
+
+}
 
 extension Publishers {
 
@@ -1536,6 +1687,8 @@ extension Publishers {
 
         /// The scheduler to deliver the delayed events.
         public let scheduler: Context
+        
+        public init(upstream: Upstream, interval: Context.SchedulerTimeType.Stride, tolerance: Context.SchedulerTimeType.Stride, scheduler: Context)
 
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///

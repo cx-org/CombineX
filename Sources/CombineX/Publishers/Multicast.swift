@@ -22,16 +22,17 @@ extension Publishers {
         /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = Upstream.Failure
         
-        private let upstream: Upstream
-        private let createSubjecBody: () -> SubjectType
+        final public let upstream: Upstream
         
-        private lazy var subject: SubjectType = self.createSubjecBody()
+        final public let createSubject: () -> SubjectType
+        
+        private lazy var subject: SubjectType = self.createSubject()
         
 //        private let connection = Atomic<Connection?>(value: nil)
         
         init(upstream: Upstream, createSubject: @escaping () -> SubjectType) {
             self.upstream = upstream
-            self.createSubjecBody = createSubject
+            self.createSubject = createSubject
         }
         
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`

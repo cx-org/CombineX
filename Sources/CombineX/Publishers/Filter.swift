@@ -36,6 +36,11 @@ extension Publishers {
         /// A closure that indicates whether to republish an element.
         public let isIncluded: (Upstream.Output) -> Bool
         
+        public init(upstream: Upstream, isIncluded: @escaping (Upstream.Output) -> Bool) {
+            self.upstream = upstream
+            self.isIncluded = isIncluded
+        }
+        
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
         /// - SeeAlso: `subscribe(_:)`

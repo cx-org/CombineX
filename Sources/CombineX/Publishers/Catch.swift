@@ -14,7 +14,7 @@ extension Publisher {
     /// }
     ///
     /// let noErrorPublisher = errorPublisher.catch { _ in
-    ///     return Publishers.Just(100)
+    ///     return Just(100)
     /// }
     /// ```
     /// Backpressure note: This publisher passes through `request` and `cancel` to the upstream. After receiving an error, the publisher sends sends any unfulfilled demand to the new `Publisher`.

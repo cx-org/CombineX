@@ -31,6 +31,11 @@ extension Publishers {
         
         public let predicate: (Upstream.Output, Upstream.Output) -> Bool
         
+        public init(upstream: Upstream, predicate: @escaping (Publishers.RemoveDuplicates<Upstream>.Output, Publishers.RemoveDuplicates<Upstream>.Output) -> Bool) {
+            self.upstream = upstream
+            self.predicate = predicate
+        }
+        
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
         /// - SeeAlso: `subscribe(_:)`

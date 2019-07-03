@@ -42,6 +42,11 @@ extension Publishers {
         /// The closure that transforms elements from the upstream publisher.
         public let transform: (Upstream.Output) -> Output
         
+        public init(upstream: Upstream, transform: @escaping (Upstream.Output) -> Output) {
+            self.upstream = upstream
+            self.transform = transform
+        }
+        
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
         /// - SeeAlso: `subscribe(_:)`

@@ -53,6 +53,11 @@ extension Publishers {
         /// The error-throwing closure that transforms elements from the upstream publisher.
         public let transform: (Upstream.Output) throws -> Output
         
+        public init(upstream: Upstream, transform: @escaping (Upstream.Output) throws -> Output) {
+            self.upstream = upstream
+            self.transform = transform
+        }
+        
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
         /// - SeeAlso: `subscribe(_:)`

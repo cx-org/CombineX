@@ -301,17 +301,27 @@ extension Publishers.Sequence {
         S.Failure == Failure
     {
         
+        let lock = Lock()
+        var state_1: SubscriptionState_1<S>
+        var iterator: PeekableIterator<Elements.Element>
+        
         let state = Atomic<SubscriptionState>(value: .waiting)
         
-        var iterator: PeekableIterator<Elements.Element>
         var sub: S?
         
         init(sequence: Elements, sub: S) {
+            self.state_1 = .waiting(sub)
             self.iterator = PeekableIterator(sequence.makeIterator())
-            self.sub = sub
         }
         
         func request(_ demand: Subscribers.Demand) {
+            self.lock.lock()
+            guard let (sub, demand) = self.state_1.request(demand) else {
+                self.lock.unlock()
+                return
+            }
+            self.lock.unlock()
+            
             if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(demand)) {
                 self.drain(demand)
             } else if let demands = self.state.tryAdd(demand), demands.before <= 0 {
@@ -320,14 +330,14 @@ extension Publishers.Sequence {
         }
         
         private func drain(_ demand: Subscribers.Demand) {
-            switch demand {
-            case .unlimited:
-                self.fastPath()
-            case .max(let amount):
-                if amount > 0 {
-                    self.slowPath(demand)
-                }
-            }
+//            switch demand {
+//            case .unlimited:
+//                self.fastPath()
+//            case .max(let amount):
+//                if amount > 0 {
+//                    self.slowPath(demand)
+//                }
+//            }
         }
         
         private func fastPath() {

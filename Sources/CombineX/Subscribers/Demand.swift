@@ -4,19 +4,66 @@ extension Subscribers {
     ///
     /// - unlimited: A request for an unlimited number of items.
     /// - max: A request for a maximum number of items.
-    public enum Demand : Equatable, Comparable {
+    public struct Demand : Equatable, Comparable, Hashable, Codable, CustomStringConvertible {
+        
+        enum Storage {
+            case unlimited
+            case max(Int)
+        }
+        
+        private let storage: Storage
+        
+        private init(_ storage: Storage) {
+            self.storage = storage
+        }
         
         /// Requests as many values as the `Publisher` can produce.
-        case unlimited
+        public static var unlimited: Subscribers.Demand {
+            return Demand(.unlimited)
+        }
         
         /// Limits the maximum number of values.
         /// The `Publisher` may send fewer than the requested number.
         /// Negative values will result in a `fatalError`.
-        case max(Int)
+        public static func max(_ value: Int) -> Subscribers.Demand {
+            return Demand(.max(value.clampedTo0()))
+        }
         
+        /// A textual representation of this instance.
+        ///
+        /// Calling this property directly is discouraged. Instead, convert an
+        /// instance of any type to a string by using the `String(describing:)`
+        /// initializer. This initializer works with any type, and uses the custom
+        /// `description` property for types that conform to
+        /// `CustomStringConvertible`:
+        ///
+        ///     struct Point: CustomStringConvertible {
+        ///         let x: Int, y: Int
+        ///
+        ///         var description: String {
+        ///             return "(\(x), \(y))"
+        ///         }
+        ///     }
+        ///
+        ///     let p = Point(x: 21, y: 30)
+        ///     let s = String(describing: p)
+        ///     print(s)
+        ///     // Prints "(21, 30)"
+        ///
+        /// The conversion of `p` to a string in the assignment to `s` uses the
+        /// `Point` type's `description` property.
+        public var description: String {
+            switch self.storage {
+            case .unlimited:
+                return "unlimited"
+            case .max(let value):
+                return "max(\(value))"
+            }
+        }
+
         /// When adding any value to .unlimited, the result is .unlimited.
         public static func + (lhs: Subscribers.Demand, rhs: Subscribers.Demand) -> Subscribers.Demand {
-            switch (lhs, rhs) {
+            switch (lhs.storage, rhs.storage) {
             case (.max(let d0), .max(let d1)):
                 return .max(d0 + d1)
             default:
@@ -47,9 +94,9 @@ extension Subscribers {
         }
         
         public static func * (lhs: Subscribers.Demand, rhs: Int) -> Subscribers.Demand {
-            switch lhs {
+            switch lhs.storage {
             case .max(let d):
-                return .max(d * rhs)
+                return .max(d * rhs.clampedTo0())
             case .unlimited:
                 return .unlimited
             }
@@ -59,24 +106,24 @@ extension Subscribers {
             lhs = lhs * rhs
         }
         
-        /// When subtracting any value (including .unlimited) from .unlimited, the result is still .unlimited. Subtracting unlimited from any value (except unlimited) results in .max(0). A negative demand is possible, but be aware that it is not usable when requesting values in a subscription.
+        /// When subtracting any value (including .unlimited) from .unlimited, the result is still .unlimited. Subtracting unlimited from any value (except unlimited) results in .max(0). A negative demand is not possible; any operation that would result in a negative value is clamped to .max(0).
         public static func - (lhs: Subscribers.Demand, rhs: Subscribers.Demand) -> Subscribers.Demand {
-            switch (lhs, rhs) {
+            switch (lhs.storage, rhs.storage) {
             case (.unlimited, _):
                 return .unlimited
             case (.max, .unlimited):
                 return .max(0)
             case (.max(let d0), .max(let d1)):
-                return .max(d0 - d1)
+                return .max((d0 - d1).clampedTo0())
             }
         }
         
-        /// When subtracting any value (including .unlimited) from .unlimited, the result is still .unlimited. Subtracting unlimited from any value (except unlimited) results in .max(0). A negative demand is possible, but be aware that it is not usable when requesting values in a subscription.
+        /// When subtracting any value (including .unlimited) from .unlimited, the result is still .unlimited. Subtracting unlimited from any value (except unlimited) results in .max(0). A negative demand is not possible; any operation that would result in a negative value is clamped to .max(0).
         public static func -= (lhs: inout Subscribers.Demand, rhs: Subscribers.Demand) {
             lhs = lhs - rhs
         }
         
-        /// When subtracting any value from .unlimited, the result is still .unlimited. A negative demand is possible, but be aware that it is not usable when requesting values in a subscription.
+        /// When subtracting any value from .unlimited, the result is still .unlimited. A negative demand is not possible; any operation that would result in a negative value is clamped to .max(0)
         public static func - (lhs: Subscribers.Demand, rhs: Int) -> Subscribers.Demand {
             return lhs - .max(rhs)
         }
@@ -87,7 +134,7 @@ extension Subscribers {
         }
         
         public static func > (lhs: Subscribers.Demand, rhs: Int) -> Bool {
-            switch lhs {
+            switch lhs.storage {
             case .max(let d):
                 return d > rhs
             case .unlimited:
@@ -108,7 +155,7 @@ extension Subscribers {
         }
         
         public static func < (lhs: Subscribers.Demand, rhs: Int) -> Bool {
-            switch lhs {
+            switch lhs.storage {
             case .max(let d):
                 return d < rhs
             case .unlimited:
@@ -137,8 +184,8 @@ extension Subscribers {
         ///   - lhs: A value to compare.
         ///   - rhs: Another value to compare.
         public static func == (lhs: Subscribers.Demand, rhs: Subscribers.Demand) -> Bool {
-            switch (lhs, rhs) {
-            case (.unlimited, unlimited):
+            switch (lhs.storage, rhs.storage) {
+            case (.unlimited, .unlimited):
                 return true
             case (.max(let d0), .max(let d1)):
                 return d0 == d1
@@ -149,7 +196,7 @@ extension Subscribers {
         
         /// If lhs is .unlimited, then the result is always false. If rhs is .unlimited then the result is always true. Otherwise, the two max values are compared.
         public static func < (lhs: Subscribers.Demand, rhs: Subscribers.Demand) -> Bool {
-            switch (lhs, rhs) {
+            switch (lhs.storage, rhs.storage) {
             case (.unlimited, _):
                 return false
             case (_, .unlimited):
@@ -176,7 +223,7 @@ extension Subscribers {
         
         /// If rhs is .unlimited, then the result is always false. If lhs is .unlimited then the result is always false. Otherwise, the two max values are compared.
         public static func > (lhs: Subscribers.Demand, rhs: Subscribers.Demand) -> Bool {
-            switch (lhs, rhs) {
+            switch (lhs.storage, rhs.storage) {
             case (_, .unlimited):
                 return false
             case (.unlimited, _):
@@ -188,7 +235,7 @@ extension Subscribers {
         
         /// Returns `true` if `lhs` and `rhs` are equal. `.unlimited` is not equal to any integer.
         public static func == (lhs: Subscribers.Demand, rhs: Int) -> Bool {
-            switch lhs {
+            switch lhs.storage {
             case .max(let d):
                 return d == rhs
             case .unlimited:
@@ -213,12 +260,75 @@ extension Subscribers {
         
         /// Returns the number of requested values, or nil if unlimited.
         public var max: Int? {
-            switch self {
+            switch self.storage {
             case .max(let d):
                 return d
             case .unlimited:
                 return nil
             }
         }
+        
+        /// The hash value.
+        ///
+        /// Hash values are not guaranteed to be equal across different executions of
+        /// your program. Do not save hash values to use during a future execution.
+        ///
+        /// - Important: `hashValue` is deprecated as a `Hashable` requirement. To
+        ///   conform to `Hashable`, implement the `hash(into:)` requirement instead.
+//        public var hashValue: Int { get }
+        
+        /// Hashes the essential components of this value by feeding them into the
+        /// given hasher.
+        ///
+        /// Implement this method to conform to the `Hashable` protocol. The
+        /// components used for hashing must be the same as the components compared
+        /// in your type's `==` operator implementation. Call `hasher.combine(_:)`
+        /// with each of these components.
+        ///
+        /// - Important: Never call `finalize()` on `hasher`. Doing so may become a
+        ///   compile-time error in the future.
+        ///
+        /// - Parameter hasher: The hasher to use when combining the components
+        ///   of this instance.
+        public func hash(into hasher: inout Hasher) {
+            switch self.storage {
+            case .max(let value):
+                hasher.combine(value)
+            default:
+                break
+            }
+        }
+        
+        /// Creates a new instance by decoding from the given decoder.
+        ///
+        /// This initializer throws an error if reading from the decoder fails, or
+        /// if the data read is corrupted or otherwise invalid.
+        ///
+        /// - Parameter decoder: The decoder to read data from.
+        public init(from decoder: Decoder) throws {
+            Global.RequiresImplementation()
+        }
+        
+        /// Encodes this value into the given encoder.
+        ///
+        /// If the value fails to encode anything, `encoder` will encode an empty
+        /// keyed container in its place.
+        ///
+        /// This function throws an error if any values are invalid for the given
+        /// encoder's format.
+        ///
+        /// - Parameter encoder: The encoder to write data to.
+        public func encode(to encoder: Encoder) throws {
+            Global.RequiresImplementation()
+        }
+
+    }
+}
+
+
+private extension Int {
+    
+    func clampedTo0() -> Int {
+        return self > 0 ? self : 0
     }
 }

@@ -44,6 +44,12 @@ extension Publishers {
         /// Scheduler options that customize the delivery of elements.
         public let options: Context.SchedulerOptions?
         
+        public init(upstream: Upstream, scheduler: Context, options: Context.SchedulerOptions?) {
+            self.upstream = upstream
+            self.scheduler = scheduler
+            self.options = options
+        }
+        
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
         /// - SeeAlso: `subscribe(_:)`

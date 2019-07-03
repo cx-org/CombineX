@@ -13,14 +13,6 @@ public struct AnyPublisher<Output, Failure> where Failure : Error {
     @inlinable public init<P>(_ publisher: P) where Output == P.Output, Failure == P.Failure, P : Publisher {
         self.subscribeBody = publisher.subscribe(_:)
     }
-    
-    /// Creates a type-erasing publisher implemented by the provided closure.
-    ///
-    /// - Parameters:
-    ///   - subscribe: A closure to invoke when a subscriber subscribes to the publisher.
-    @inlinable public init(_ subscribe: @escaping (AnySubscriber<Output, Failure>) -> Void) {
-        self.subscribeBody = subscribe
-    }
 }
 
 extension AnyPublisher: Publisher {

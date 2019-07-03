@@ -1,21 +1,20 @@
 final public class AnySubject<Output, Failure> : Subject where Failure : Error {
     
-    private let anyPublisher: AnyPublisher<Output, Failure>
     private let sendValueBody: (Output) -> Void
     private let sendCompletionBody: (Subscribers.Completion<Failure>) -> Void
  
     public init<S>(_ subject: S) where Output == S.Output, Failure == S.Failure, S : Subject {
-        self.anyPublisher = subject.eraseToAnyPublisher()
-        
         self.sendValueBody = subject.send(_:)
         self.sendCompletionBody = subject.send(completion:)
+        
+        Global.RequiresImplementation()
     }
     
     public init(_ subscribe: @escaping (AnySubscriber<Output, Failure>) -> Void, _ receive: @escaping (Output) -> Void, _ receiveCompletion: @escaping (Subscribers.Completion<Failure>) -> Void) {
-        self.anyPublisher = AnyPublisher(subscribe)
-        
         self.sendValueBody = receive
         self.sendCompletionBody = receiveCompletion
+        
+        Global.RequiresImplementation()
     }
     
     /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
@@ -25,7 +24,8 @@ final public class AnySubject<Output, Failure> : Subject where Failure : Error {
     ///     - subscriber: The subscriber to attach to this `Publisher`.
     ///                   once attached it can begin to receive values.
     final public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
-        self.anyPublisher.receive(subscriber: subscriber)
+        
+        Global.RequiresImplementation()
     }
     
     /// Sends a value to the subscriber.

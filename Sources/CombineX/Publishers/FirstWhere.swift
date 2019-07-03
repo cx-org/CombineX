@@ -30,6 +30,11 @@ extension Publishers {
         /// The closure that determines whether to publish an element.
         public let predicate: (Upstream.Output) -> Bool
         
+        public init(upstream: Upstream, predicate: @escaping (Publishers.FirstWhere<Upstream>.Output) -> Bool) {
+            self.upstream = upstream
+            self.predicate = predicate
+        }
+        
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
         /// - SeeAlso: `subscribe(_:)`

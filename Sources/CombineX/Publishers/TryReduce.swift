@@ -34,6 +34,12 @@ extension Publishers {
         /// If this closure throws an error, the publisher fails and passes the error to its subscriber.
         public let nextPartialResult: (Output, Upstream.Output) throws -> Output
         
+        public init(upstream: Upstream, initial: Output, nextPartialResult: @escaping (Output, Upstream.Output) throws -> Output) {
+            self.upstream = upstream
+            self.initial = initial
+            self.nextPartialResult = nextPartialResult
+        }
+        
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
         /// - SeeAlso: `subscribe(_:)`

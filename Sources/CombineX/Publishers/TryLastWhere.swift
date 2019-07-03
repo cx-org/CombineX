@@ -29,6 +29,10 @@ extension Publishers {
         /// The error-throwing closure that determines whether to publish an element.
         public let predicate: (Upstream.Output) throws -> Bool
         
+        public init(upstream: Upstream, predicate: @escaping (Publishers.TryLastWhere<Upstream>.Output) throws -> Bool) {
+            self.upstream = upstream
+            self.predicate = predicate
+        }
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
         /// - SeeAlso: `subscribe(_:)`

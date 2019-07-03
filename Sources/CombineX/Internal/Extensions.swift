@@ -1,7 +1,7 @@
 // MARK: - Array
 extension Array {
     
-    mutating func tryRemoveFirst() -> Element? {
+    mutating func dequeue() -> Element? {
         if self.isEmpty {
             return nil
         }

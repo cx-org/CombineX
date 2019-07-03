@@ -30,6 +30,12 @@ extension Publishers {
         /// A closure that takes the previously-accumulated value and the next element from the upstream publisher to produce a new value.
         public let nextPartialResult: (Output, Upstream.Output) -> Output
         
+        public init(upstream: Upstream, initial: Output, nextPartialResult: @escaping (Output, Upstream.Output) -> Output) {
+            self.upstream = upstream
+            self.initial = initial
+            self.nextPartialResult = nextPartialResult
+        }
+        
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
         /// - SeeAlso: `subscribe(_:)`

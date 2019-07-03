@@ -29,6 +29,11 @@ extension Publishers {
 
         /// The error-throwing closure that indicates whether to drop the element.
         public let predicate: (Upstream.Output) throws -> Bool
+        
+        public init(upstream: Upstream, predicate: @escaping (Publishers.TryDropWhile<Upstream>.Output) throws -> Bool) {
+            self.upstream = upstream
+            self.predicate = predicate
+        }
 
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///

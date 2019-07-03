@@ -6,8 +6,8 @@ extension Publisher {
     /// - parameter receiveValue: The closure to execute on receipt of a value. If `nil`, the sink uses an empty closure.
     /// - parameter receiveComplete: The closure to execute on completion. If `nil`, the sink uses an empty closure.
     /// - Returns: A subscriber that performs the provided closures upon receiving values or completion.
-    public func sink(receiveCompletion: ((Subscribers.Completion<Self.Failure>) -> Void)? = nil, receiveValue: @escaping ((Self.Output) -> Void)) -> Subscribers.Sink<Self> {
-        let sink = Subscribers.Sink<Self>(receiveCompletion: receiveCompletion, receiveValue: receiveValue)
+    public func sink(receiveCompletion: ((Subscribers.Completion<Self.Failure>) -> Void)? = nil, receiveValue: @escaping ((Self.Output) -> Void)) -> Subscribers.Sink<Self.Output, Self.Failure> {
+        let sink = Subscribers.Sink<Self.Output, Self.Failure>(receiveCompletion: receiveCompletion, receiveValue: receiveValue)
         self.subscribe(sink)
         return sink
     }
@@ -16,21 +16,13 @@ extension Publisher {
 extension Subscribers {
     
     /// A simple subscriber that requests an unlimited number of values upon subscription.
-    final public class Sink<Upstream> : Subscriber, Cancellable, CustomStringConvertible, CustomReflectable, CustomPlaygroundDisplayConvertible where Upstream : Publisher {
-        
-        /// The kind of values this subscriber receives.
-        public typealias Input = Upstream.Output
-        
-        /// The kind of errors this subscriber might receive.
-        ///
-        /// Use `Never` if this `Subscriber` cannot receive errors.
-        public typealias Failure = Upstream.Failure
+    final public class Sink<Input, Failure> : Subscriber, Cancellable, CustomStringConvertible, CustomReflectable, CustomPlaygroundDisplayConvertible where Failure : Error {
         
         /// The closure to execute on receipt of a value.
-        final public let receiveValue: (Upstream.Output) -> Void
+        final public let receiveValue: (Input) -> Void
         
         /// The closure to execute on completion.
-        final public let receiveCompletion: ((Subscribers.Completion<Upstream.Failure>) -> Void)?
+        final public let receiveCompletion: ((Subscribers.Completion<Failure>) -> Void)?
         
         /// A textual representation of this instance.
         ///
@@ -79,7 +71,7 @@ extension Subscribers {
         /// - Parameters:
         ///   - receiveValue: The closure to execute on receipt of a value. If `nil`, the sink uses an empty closure.
         ///   - receiveCompletion: The closure to execute on completion. If `nil`, the sink uses an empty closure.
-        public init(receiveCompletion: ((Subscribers.Completion<Subscribers.Sink<Upstream>.Failure>) -> Void)? = nil, receiveValue: @escaping ((Subscribers.Sink<Upstream>.Input) -> Void)) {
+        public init(receiveCompletion: ((Subscribers.Completion<Failure>) -> Void)? = nil, receiveValue: @escaping ((Input) -> Void)) {
             self.receiveCompletion = receiveCompletion
             self.receiveValue = receiveValue
         }
@@ -100,7 +92,7 @@ extension Subscribers {
         ///
         /// - Parameter input: The published element.
         /// - Returns: A `Demand` instance indicating how many more elements the subcriber expects to receive.
-        final public func receive(_ value: Subscribers.Sink<Upstream>.Input) -> Subscribers.Demand {
+        final public func receive(_ value: Input) -> Subscribers.Demand {
             self.receiveValue(value)
             return .none
         }
@@ -108,7 +100,7 @@ extension Subscribers {
         /// Tells the subscriber that the publisher has completed publishing, either normally or with an error.
         ///
         /// - Parameter completion: A `Completion` case indicating whether publishing completed normally or with an error.
-        final public func receive(completion: Subscribers.Completion<Subscribers.Sink<Upstream>.Failure>) {
+        final public func receive(completion: Subscribers.Completion<Failure>) {
             self.receiveCompletion?(completion)
             self.subscription.exchange(with: nil)?.cancel()
         }

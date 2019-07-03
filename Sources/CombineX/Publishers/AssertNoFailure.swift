@@ -41,6 +41,13 @@ extension Publishers {
         /// The line number used in the error message.
         public let line: UInt
         
+        public init(upstream: Upstream, prefix: String, file: StaticString, line: UInt) {
+            self.upstream = upstream
+            self.prefix = prefix
+            self.file = file
+            self.line = line
+        }
+        
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
         /// - SeeAlso: `subscribe(_:)`
@@ -48,11 +55,12 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, S.Failure == Publishers.AssertNoFailure<Upstream>.Failure {
-            return self.upstream
-                .mapError {
-                    fatalError(self.prefix + ": Asset no failure, but got \($0)", file: self.file, line: self.line)
-                }
-                .receive(subscriber: subscriber)
+            Global.RequiresImplementation()
+//            return self.upstream
+//                .mapError {
+//                    fatalError(self.prefix + ": Asset no failure, but got \($0)", file: self.file, line: self.line)
+//                }
+//                .receive(subscriber: subscriber)
         }
     }
 }

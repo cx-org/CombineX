@@ -42,6 +42,11 @@ extension Publishers {
         /// The element to scan for in the upstream publisher.
         public let output: Upstream.Output
         
+        public init(upstream: Upstream, output: Upstream.Output) {
+            self.upstream = upstream
+            self.output = output
+        }
+        
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
         /// - SeeAlso: `subscribe(_:)`

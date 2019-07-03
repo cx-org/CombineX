@@ -110,7 +110,7 @@ extension Publishers.Print {
         }
         
         func request(_ demand: Subscribers.Demand) {
-            self.write("request \(demand.toText())")
+            self.write("request \(demand)")
             self.state.subscription?.request(demand)
         }
         
@@ -142,7 +142,7 @@ extension Publishers.Print {
             
             self.write("receive value: (\(input))")
             let demand = sub.receive(input)
-            self.write("request \(demand.toText()) (synchronous)")
+            self.write("request \(demand) (synchronous)")
             
             return demand
         }
@@ -178,17 +178,5 @@ private class ConsoleOutputStream: TextOutputStream {
     
     func write(_ string: String) {
         print(string, terminator: "")
-    }
-}
-
-private extension Subscribers.Demand {
-    
-    func toText() -> String {
-        switch self {
-        case .unlimited:
-            return "unlimited"
-        case .max(let d):
-            return "max: (\(d))"
-        }
     }
 }

@@ -33,3 +33,10 @@ extension Subscriber {
         return AnySubscriber(self)
     }
 }
+
+extension Subscriber where Self.Input == Void {
+    
+    public func receive() -> Subscribers.Demand {
+        self.receive(())
+    }
+}

@@ -372,8 +372,8 @@ extension Publishers.Optional {
         
         func request(_ demand: Subscribers.Demand) {
             precondition(demand > 0)
-            
-            guard let sub = self.state.request(demand) else {
+
+            guard let sub = self.state.requestIfWaiting(demand) else {
                 return
             }
             

@@ -40,6 +40,10 @@ extension Publishers {
         /// The publisher from which this publisher receives elements.
         public let upstream: Upstream
         
+        public init(upstream: Upstream) {
+            self.upstream = upstream
+        }
+        
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
         /// - SeeAlso: `subscribe(_:)`
