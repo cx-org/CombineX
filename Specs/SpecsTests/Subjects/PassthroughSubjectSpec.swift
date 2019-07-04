@@ -17,21 +17,17 @@ class PassthroughSubjectSpec: QuickSpec {
 
             // MARK: 1.1 should send as many values as the subscriber's demand
             it("should send as many values as the subscriber's demand") {
+                typealias Sub = CustomSubscriber<Int, CustomError>
+                
                 let subject = PassthroughSubject<Int, CustomError>()
                 
                 var subscription: Subscription?
-                var once = false
                 
-                let sub = CustomSubscriber<Int, CustomError>(receiveSubscription: { (s) in
+                let sub = Sub(receiveSubscription: { (s) in
                     subscription = s
-                    s.request(.max(2))
+                    s.request(.max(1))
                 }, receiveValue: { v in
-                    if once {
-                        return .none
-                    } else {
-                        once = true
-                        return .max(2)  // total 4
-                    }
+                    return v == 0 ? .max(1) : .none
                 }, receiveCompletion: { s in
                 })
                 
@@ -41,25 +37,69 @@ class PassthroughSubjectSpec: QuickSpec {
                     subject.send(i)
                 }
                 
-                expect(sub.events.count).to(equal(4))
+                expect(sub.events.count).to(equal(2))
                 
-                // ask 5 more
                 subscription?.request(.max(5))
+                
+                for i in 10..<20 {
+                    subject.send(i)
+                }
+                
+                expect(sub.events.count).to(equal(7))
+            }
+            
+            // MARK: 1.2 should not send values to subscribers after sending completion
+            it("should not send values to subscribers after sending completion") {
+                typealias Sub = CustomSubscriber<Int, CustomError>
+                
+                let subject = PassthroughSubject<Int, CustomError>()
+                
+                let sub = Sub(receiveSubscription: { s in
+                    s.request(.unlimited)
+                }, receiveValue: { v in
+                    return .none
+                }, receiveCompletion: { c in
+                })
+                
+                subject.subscribe(sub)
+                
+                subject.send(completion: .finished)
                 
                 for i in 0..<10 {
                     subject.send(i)
                 }
                 
-                expect(sub.events.count).to(equal(9))
+                expect(sub.events).to(equal([.completion(.finished)]))
             }
             
-            // MARK: 1.2 should not send values before the subscriber requests
+            // MARK: 1.3 should not send completion to subscribers after sending completion
+            it("should not send completion to subscribers after sending completion") {
+                typealias Sub = CustomSubscriber<Int, CustomError>
+                
+                let subject = PassthroughSubject<Int, CustomError>()
+                
+                let sub = Sub(receiveSubscription: { s in
+                    s.request(.unlimited)
+                }, receiveValue: { v in
+                    return .none
+                }, receiveCompletion: { c in
+                })
+                
+                subject.subscribe(sub)
+                
+                subject.send(completion: .failure(.e0))
+                subject.send(completion: .failure(.e1))
+                subject.send(completion: .failure(.e2))
+                
+                expect(sub.events).to(equal([.completion(.failure(.e0))]))
+            }
+            
+            // MARK: 1.4 should not send values before the subscriber requests
             it("should not send values before the subscriber requests") {
                 let subject = PassthroughSubject<Int, CustomError>()
                 
                 let sub = CustomSubscriber<Int, CustomError>(receiveSubscription: { (s) in
                 }, receiveValue: { v in
-                    fail("Subscriber should not receive value")
                     return .none
                 }, receiveCompletion: { s in
                 })
@@ -71,8 +111,8 @@ class PassthroughSubjectSpec: QuickSpec {
                 expect(sub.events).to(beEmpty())
             }
             
-            // MARK: 1.3 should send completion even if the subscriber hasn't requested
-            it("should send completion even if the subscriber hasn't requested") {
+            // MARK: 1.5 should send completion even if the subscriber does not request
+            it("should send completion even if the subscriber does not request") {
                 let subject = PassthroughSubject<Int, CustomError>()
                 
                 let sub = CustomSubscriber<Int, CustomError>(receiveSubscription: { (s) in
@@ -82,19 +122,34 @@ class PassthroughSubjectSpec: QuickSpec {
                 })
                 
                 subject.subscribe(sub)
-                
                 subject.send(completion: .failure(.e0))
                 
-                guard let last = sub.events.last else {
-                    fail("Events should not be empty")
-                    return
-                }
-                expect(last).to(equal(.completion(.failure(.e0))))
+                expect(sub.events).to(equal([.completion(.failure(.e0))]))
             }
             
-            // MARK: 1.4 should not send values to subscribers after sending completion
-            it("should not send values to subscribers after sending completion") {
+            // MARK: 1.6 should not send events after the subscription is cancelled
+            it("should not send events after the subscription is cancelled") {
                 let subject = PassthroughSubject<Int, CustomError>()
+                
+                let sub = CustomSubscriber<Int, CustomError>(receiveSubscription: { (s) in
+                    s.cancel()
+                }, receiveValue: { v in
+                    return .none
+                }, receiveCompletion: { s in
+                })
+                
+                subject.subscribe(sub)
+                
+                subject.send(1)
+                subject.send(completion: .failure(.e0))
+                
+                expect(sub.events).to(beEmpty())
+            }
+            
+            // MARK: 1.7 should resend completion if the subscription happens after sending completion
+            it("should resend completion if the subscription happens after sending completion") {
+                let subject = PassthroughSubject<Int, CustomError>()
+                subject.send(completion: .finished)
                 
                 let sub = CustomSubscriber<Int, CustomError>(receiveSubscription: { s in
                     s.request(.unlimited)
@@ -102,45 +157,14 @@ class PassthroughSubjectSpec: QuickSpec {
                     return .none
                 }, receiveCompletion: { c in
                 })
- 
+                
                 subject.subscribe(sub)
                 
-                subject.send(completion: .finished)
-                
-                for i in 0..<10 {
-                    subject.send(i)
-                }
-                
-                expect(sub.events.count).to(equal(1))
+                expect(sub.events).to(equal([.completion(.finished)]))
             }
             
-            // MARK: 1.5 should send completion if the subscription happens after sending completion
-            it("should send completion if the subscription happens after sending completion") {
-                let subject = PassthroughSubject<Int, CustomError>()
-                subject.send(completion: .finished)
-                
-                weak var subObj: CustomSubscriber<Int, CustomError>?
-                
-                do {
-                    let sub = CustomSubscriber<Int, CustomError>(receiveSubscription: { s in
-                        s.request(.unlimited)
-                    }, receiveValue: { v in
-                        return .none
-                    }, receiveCompletion: { c in
-                    })
-                    
-                    subObj = sub
-                    
-                    subject.subscribe(sub)
-                    
-                    expect(sub.events).to(equal([.completion(.finished)]))
-                }
-                
-                expect(subObj).to(beNil())
-            }
-            
-            // MARK: 1.6 should send values to multi-subscribers as their demand
-            it("should send values to multi-subscribers as their demand") {
+            // MARK: 1.8 should send as many values to multi-subscribers as their demands
+            it("should send as many values to multi-subscribers as their demands") {
                 let subject = PassthroughSubject<Int, Error>()
                 
                 var subs: [CustomSubscriber<Int, Error>] = []
@@ -172,10 +196,8 @@ class PassthroughSubjectSpec: QuickSpec {
         // MARK: - Release Resources
         describe("Release Resources") {
             
-            
-            
-            // MARK: 2.1 should release subscriptions after sending completion
-            it("should release subscriptions after sending completion") {
+            // MARK: 2.1 should retain subscriptions then release them after sending completion
+            it("should retain subscriptions then release them after sending completion") {
                 let pub = PassthroughSubject<Int, Never>()
                 
                 weak var subscription: AnyObject?
@@ -195,17 +217,15 @@ class PassthroughSubjectSpec: QuickSpec {
                 expect(subscription).to(beNil())
             }
             
-            // MARK: 2.2 should release subscribers after sending completion
-            it("should release subscribers after sending completion") {
+            // MARK: 2.2 should retain subscribers then release them after sending completion
+            it("should retain subscribers then release them after sending completion") {
                 let pub = PassthroughSubject<Int, Never>()
                 
-                weak var subscriptionObj: AnyObject?
                 weak var subObj: AnyObject?
                 
                 do {
                     let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
                         s.request(.max(1))
-                        subscriptionObj = s as AnyObject
                     }, receiveValue: { v in
                         return .none
                     }, receiveCompletion: { c in
@@ -215,15 +235,60 @@ class PassthroughSubjectSpec: QuickSpec {
                     pub.subscribe(sub)
                 }
                 
-                expect(subscriptionObj).toNot(beNil())
                 expect(subObj).toNot(beNil())
                 pub.send(completion: .finished)
-                expect(subscriptionObj).to(beNil())
                 expect(subObj).to(beNil())
             }
             
-            // MARK: 2.3 should release pub and sub after sending completion
-            it("should release pub and sub after sending completion") {
+            // MARK: 2.3 should retain subscriptions then release them after them are cancelled
+            it("should retain subscriptions then release them after them are cancelled") {
+                let pub = PassthroughSubject<Int, Never>()
+                
+                weak var subscriptionObj: AnyObject?
+                
+                do {
+                    let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
+                        subscriptionObj = s as AnyObject
+                        s.request(.max(1))
+                    }, receiveValue: { v in
+                        return .none
+                    }, receiveCompletion: { c in
+                    })
+                    
+                    pub.subscribe(sub)
+                }
+                
+                expect(subscriptionObj).toNot(beNil())
+                
+                (subscriptionObj as? Subscription)?.cancel()
+                
+                expect(subscriptionObj).to(beNil())
+            }
+            
+            // MARK: 2.4 should not retain sub if the subscription happens after sending completion
+            it("should not retain sub if the subscription happens after sending completion") {
+                let pub = PassthroughSubject<Int, Never>()
+                pub.send(completion: .finished)
+
+                weak var subObj: AnyObject?
+                
+                do {
+                    let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
+                        s.request(.max(1))
+                    }, receiveValue: { v in
+                        return .none
+                    }, receiveCompletion: { c in
+                    })
+                    subObj = sub
+                    
+                    pub.subscribe(sub)
+                }
+                
+                expect(subObj).to(beNil())
+            }
+            
+            // MARK: 2.5 subscription should retain pub and sub then release pub after sending completion
+            it("subscription should retain pub and sub then release pub after sending completion") {
                 var subscription: Subscription?
                 weak var pubObj: PassthroughSubject<Int, Never>?
                 weak var subObj: AnyObject?
@@ -255,8 +320,8 @@ class PassthroughSubjectSpec: QuickSpec {
                 _ = subscription
             }
             
-            // MARK: 2.4 should release pub and sub after cancelling
-            it("should release pub and sub after cancelling") {
+            // MARK: 2.6 subscription should retain pub and sub then release pub after cancelling
+            it("subscription should retain pub and sub then release pub after cancelling") {
                 var subscription: Subscription?
                 weak var pubObj: PassthroughSubject<Int, Never>?
                 weak var subObj: AnyObject?
@@ -290,8 +355,8 @@ class PassthroughSubjectSpec: QuickSpec {
         // MARK: - Concurrent
         describe("Concurrent") {
             
-            // MARK: * should send value concurrently
-            it("should send value concurrently") {
+            // MARK: 3.1 should be able to send value concurrently
+            it("should be able to send value concurrently") {
                 let pub = PassthroughSubject<Int, Never>()
                 
                 var enters: [Date?] = [nil, nil, nil]
@@ -319,63 +384,19 @@ class PassthroughSubjectSpec: QuickSpec {
                 
                 g.wait()
                 
-                print(enters)
-                print(exits)
-                
                 let before = enters.compactMap { $0 }
                 let after = exits.compactMap { $0 }
                 
-                expect(before.count).to(equal(3))
-                expect(after.count).to(equal(3))
                 expect(before.max()).to(beLessThan(after.min()))
             }
             
-            // MARK: * should send as many values as the subscriber's demand even if these are sent concurrently
-            it("should send as many values as the subscriber's demand even if these are sent concurrently 1") {
+            // MARK: 3.2 should send as many values as the subscriber's demand even if these are sent concurrently
+            it("should send as many values as the subscriber's demand even if these are sent concurrently") {
                 let subject = PassthroughSubject<Int, Never>()
-                
-                let once = Atomic(value: false)
                 
                 let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
                     s.request(.max(10))
                 }, receiveValue: { v in
-                    if once.compareAndStore(expected: false, newVaue: true) {
-                        return .max(5)
-                    }
-                    return .none
-                }, receiveCompletion: { c in
-                })
-                
-                subject.subscribe(sub)
-                
-                let g = DispatchGroup()
-                
-                15.times { i in
-                    DispatchQueue.global().async(group: g) {
-                        subject.send(i)
-                    }
-                }
-                
-                g.wait()
-                
-                print(sub.events.count)
-                
-                print(sub.events)
-                expect(sub.events.count).to(equal(15))
-            }
-            
-            // MARK: * should send as many values as the subscriber's demand even if these are sent concurrently
-            it("should send as many values as the subscriber's demand even if these are sent concurrently 2") {
-                let subject = PassthroughSubject<Int, Never>()
-                
-                let once = Atomic(value: false)
-                
-                let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
-                    s.request(.max(10))
-                }, receiveValue: { v in
-                    if once.compareAndStore(expected: false, newVaue: true) {
-                        return .max(5)
-                    }
                     return .none
                 }, receiveCompletion: { c in
                 })
@@ -392,10 +413,37 @@ class PassthroughSubjectSpec: QuickSpec {
                 
                 g.wait()
                 
-                print(sub.events.count)
+                expect(sub.events.count).to(equal(10))
+            }
+            
+            // MARK: 3.3 no guarantee of synchronous backpressure
+            it("no guarantee of synchronous backpressure") {
+                let subject = PassthroughSubject<Int, Never>()
                 
-                print(sub.events)
-                expect(sub.events.count).to(equal(15))
+                let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
+                    s.request(.max(10))
+                }, receiveValue: { v in
+                    if v == 1 {
+                        Thread.sleep(forTimeInterval: 1)
+                        return .max(5)
+                    }
+                    return .none
+                }, receiveCompletion: { c in
+                })
+                
+                subject.subscribe(sub)
+                
+                let g = DispatchGroup()
+                
+                100.times { i in
+                    DispatchQueue.global().async(group: g) {
+                        subject.send(i)
+                    }
+                }
+
+                g.wait()
+                
+                expect(sub.events.count).to(equal(10))
             }
         }
     }

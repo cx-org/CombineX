@@ -24,7 +24,7 @@ class OptionalSpec: QuickSpec {
         // MARK: - Send Values
         describe("Send Values") {
             
-            // MARK: * should send value then send finished
+            // MARK: 1.1 should send value then send finished
             it("should send value then send finished") {
                 let pub = Publishers.Optional<Int, CustomError>(1)
                 
@@ -35,7 +35,7 @@ class OptionalSpec: QuickSpec {
                 expect(sub.events).to(equal([.value(1), .completion(.finished)]))
             }
             
-            // MARK: * should send finished
+            // MARK: 1.2 should send finished
             it("should send finished") {
                 let pub = Publishers.Optional<Int, CustomError>(nil)
              
@@ -46,7 +46,7 @@ class OptionalSpec: QuickSpec {
                 expect(sub.events).to(equal([.completion(.finished)]))
             }
             
-            // MARK: * should send failure
+            // MARK: 1.3 should send failure
             it("should send failure") {
                 let pub = Publishers.Optional<Int, CustomError>(.e0)
                 
@@ -61,8 +61,8 @@ class OptionalSpec: QuickSpec {
         // MARK: - Release Resources
         describe("Release Resources") {
             
-            // MARK: * should release the subscriber when complete
-            it("should release the subscriber when complete") {
+            // MARK: 2.1 subscription should release the subscriber when complete
+            it("subscription should release the subscriber when complete") {
                 var subscription: Subscription?
                 weak var subObj: AnyObject?
                 
@@ -86,7 +86,32 @@ class OptionalSpec: QuickSpec {
                 _ = subscription
             }
             
-            // MARK: * should not release the initial object when complete
+            // MARK: 2.2 subscription should release the subscriber when cancel
+            it("subscription should release the subscriber when cancel") {
+                var subscription: Subscription?
+                weak var subObj: AnyObject?
+                
+                do {
+                    let pub = Publishers.Optional<Int, Never>(1)
+                    let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
+                        subscription = s
+                        s.cancel()
+                    }, receiveValue: { v in
+                        return .none
+                    }, receiveCompletion: { s in
+                    })
+                    
+                    subObj = sub
+                    
+                    pub.subscribe(sub)
+                }
+                
+                expect(subObj).to(beNil())
+                
+                _ = subscription
+            }
+            
+            // MARK: 2.3 should not release the initial object when complete
             it("should not release the initial object when complete") {
                 var subscription: Subscription?
                 weak var customObj: AnyObject?
@@ -112,7 +137,7 @@ class OptionalSpec: QuickSpec {
                 _ = subscription
             }
             
-            // MARK: * should not release the initial object when cancel
+            // MARK: 2.4 should not release the initial object when cancel
             it("should not release the initial object when cancel") {
                 var subscription: Subscription?
                 weak var customObj: AnyObject?
@@ -132,9 +157,7 @@ class OptionalSpec: QuickSpec {
                     
                     pub.subscribe(sub)
                 }
-                
-                expect(customObj).toNot(beNil())
-                
+
                 subscription?.cancel()
                 
                 expect(customObj).toNot(beNil())
@@ -144,7 +167,7 @@ class OptionalSpec: QuickSpec {
         // MARK: - Concurrent
         describe("Concurrent") {
             
-            // MARK: * should send only one value even if the subscription request concurrently
+            // MARK: 3.1 should send only one value even if the subscription request concurrently
             it("should only send only one value even if the subscription request concurrently") {
                 let g = DispatchGroup()
                 
@@ -172,7 +195,7 @@ class OptionalSpec: QuickSpec {
         #if !SWIFT_PACKAGE
         describe("Exception") {
             
-            // MARK: * should fatal error when less than one demand is requested
+            // MARK: 4.1 should fatal error when less than one demand is requested
             it("should fatal error when less than one demand is requested") {
                 let pub = Publishers.Optional<Int, CustomError>(1)
                 let sub = CustomSubscriber<Int, CustomError>(receiveSubscription: { s in

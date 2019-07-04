@@ -37,6 +37,10 @@ final public class PassthroughSubject<Output, Failure> : Subject where Failure :
     /// - Parameter value: The value to send.
     final public func send(_ input: Output) {
         self.lock.lock()
+        guard self.completion == nil else {
+            self.lock.unlock()
+            return
+        }
         let subscriptions = self.subscriptions
         self.lock.unlock()
         
@@ -50,8 +54,13 @@ final public class PassthroughSubject<Output, Failure> : Subject where Failure :
     /// - Parameter completion: A `Completion` instance which indicates whether publishing has finished normally or failed with an error.
     final public func send(completion: Subscribers.Completion<Failure>) {
         self.lock.lock()
+        guard self.completion == nil else {
+            self.lock.unlock()
+            return
+        }
         self.completion = completion
         let subscriptions = self.subscriptions
+        self.subscriptions = []
         self.lock.unlock()
         
         for subscription in subscriptions {
@@ -74,7 +83,7 @@ extension PassthroughSubject {
         typealias Sub = AnySubscriber<Output, Failure>
         
         var pub: Pub?
-        var sub: Sub?
+        let sub: Sub
         
         let lock = Lock()
         var isCancelled = false
@@ -101,11 +110,12 @@ extension PassthroughSubject {
             self.demand -= 1
             self.lock.unlock()
             
-            let more = self.sub?.receive(value) ?? .none
+            // FIXME: Yes, no guarantee of synchronous backpressure. See PassthroughSubjectSpec#3.3 for more information.
+            let more = self.sub.receive(value)
             
-            self.lock.lock()
-            self.demand += more
-            self.lock.unlock()
+            self.lock.withLock {
+                self.demand += more
+            }
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
@@ -114,13 +124,11 @@ extension PassthroughSubject {
                 self.lock.unlock()
                 return
             }
-
-            let sub = self.sub
+            
             self.pub = nil
-//            self.sub = nil
             self.lock.unlock()
             
-            sub?.receive(completion: completion)
+            self.sub.receive(completion: completion)
         }
         
         func request(_ demand: Subscribers.Demand) {
@@ -138,20 +146,19 @@ extension PassthroughSubject {
         
         func cancel() {
             self.lock.lock()
-            defer {
-                self.lock.unlock()
-            }
             
             if self.isCancelled {
+                self.lock.unlock()
                 return
             }
             
             self.isCancelled = true
             
-            self.pub?.removeSubscription(self)
-            
+            let pub = self.pub
             self.pub = nil
-//            self.sub = nil
+            self.lock.unlock()
+            
+            pub?.removeSubscription(self)
         }
         
         var description: String {

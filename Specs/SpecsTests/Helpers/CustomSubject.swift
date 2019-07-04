@@ -31,6 +31,10 @@ class CustomSubject<Output, Failure> : Subject where Failure : Error {
     
     func send(_ input: Output) {
         self.lock.lock()
+        guard self.completion == nil else {
+            self.lock.unlock()
+            return
+        }
         let subscriptions = self.subscriptions
         self.lock.unlock()
         
@@ -41,8 +45,13 @@ class CustomSubject<Output, Failure> : Subject where Failure : Error {
     
     func send(completion: Subscribers.Completion<Failure>) {
         self.lock.lock()
+        guard self.completion == nil else {
+            self.lock.unlock()
+            return
+        }
         self.completion = completion
         let subscriptions = self.subscriptions
+        self.subscriptions = []
         self.lock.unlock()
         
         for subscription in subscriptions {
@@ -65,10 +74,11 @@ extension CustomSubject {
         typealias Sub = AnySubscriber<Output, Failure>
         
         var pub: Pub?
-        var sub: Sub?
+        var sub: Sub
         
         let lock = Lock()
         var isCancelled = false
+        
         var demand: Subscribers.Demand = .none
         
         init(pub: Pub, sub: Sub) {
@@ -89,40 +99,56 @@ extension CustomSubject {
             guard self.demand > 0 else {
                 return
             }
-            let more = self.sub?.receive(value) ?? .none
-            self.demand += (more - 1)
+            
+            self.demand -= 1
+            let more = self.sub.receive(value)
+            self.demand += more
+            
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
-            if self.lock.withLock({ self.isCancelled }) {
+            self.lock.lock()
+            defer {
+                self.lock.unlock()
+            }
+            
+            if self.isCancelled {
                 return
             }
             
-            self.sub?.receive(completion: completion)
             self.pub = nil
-            self.sub = nil
+            self.sub.receive(completion: completion)
         }
         
         func request(_ demand: Subscribers.Demand) {
             self.lock.lock()
+            defer {
+                self.lock.unlock()
+            }
+            
+            if self.isCancelled {
+                return
+            }
+            
             self.demand += demand
-            self.lock.unlock()
         }
         
         func cancel() {
             self.lock.lock()
-            if self.isCancelled {
+            defer {
                 self.lock.unlock()
+            }
+            
+            if self.isCancelled {
                 return
             }
             
             self.isCancelled = true
-            self.lock.unlock()
             
-            self.pub?.removeSubscription(self)
-            
+            let pub = self.pub
             self.pub = nil
-            self.sub = nil
+            
+            pub?.removeSubscription(self)
         }
         
         var description: String {
