@@ -54,7 +54,7 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, S.Failure == Publishers.TryCompactMap<Upstream, Output>.Failure {
-            let subscription = Inner(pub: self, sub: subscriber)
+            let subscription = Inner(transform: self.transform, sub: subscriber)
             self.upstream.subscribe(subscription)
         }
     }
@@ -76,40 +76,49 @@ extension Publishers.TryCompactMap {
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
         
-        typealias Pub = Publishers.TryCompactMap<Upstream, Output>
+        typealias Transform = (Upstream.Output) throws -> Output?
         typealias Sub = S
         
-        let state: Atomic<RelayState_1<Pub, Sub>>
+        let lock = Lock()
         
-        init(pub: Pub, sub: Sub) {
-            self.state = Atomic(value: .waiting(pub, sub))
+        let transform: Transform
+        let sub: Sub
+        
+        var state = RelayState.waiting
+        
+        init(transform: @escaping Transform, sub: Sub) {
+            self.transform = transform
+            self.sub = sub
         }
         
         func request(_ demand: Subscribers.Demand) {
-            self.state.subscription?.request(demand)
+            guard let subscription = self.lock.withLockGet(self.state.subscription) else {
+                return
+            }
+            subscription.request(demand)
         }
         
         func cancel() {
-            self.state.complete()?.cancel()
+            self.lock.withLockGet(self.state.subscription)?.cancel()
         }
         
         func receive(subscription: Subscription) {
-            guard let sub = self.state.receive(subscription: subscription) else {
+            guard self.lock.withLockGet(self.state.relay(subscription)) else {
                 subscription.cancel()
                 return
             }
             
-            sub.receive(subscription: self)
+            self.sub.receive(subscription: self)
         }
         
         func receive(_ input: Input) -> Subscribers.Demand {
-            guard let (pub, sub) = self.state.pubsubIfRelaying else {
+            guard self.lock.withLockGet(self.state.isRelaying) else {
                 return .none
             }
             
             do {
-                if let transformed = try pub.transform(input) {
-                    return sub.receive(transformed)
+                if let transformed = try self.transform(input) {
+                    return self.sub.receive(transformed)
                 } else {
                     return .max(1)
                 }
@@ -124,12 +133,8 @@ extension Publishers.TryCompactMap {
         }
         
         private func complete(_ completion: Subscribers.Completion<Error>) {
-            guard let (_, sub, s) = self.state.completeIfRelaying() else {
-                return
-            }
-            
-            s.cancel()
-            sub.receive(completion: completion.mapError { $0 })
+            self.lock.withLockGet(self.state.subscription)?.cancel()
+            self.sub.receive(completion: completion.mapError { $0 })
         }
         
         var description: String {

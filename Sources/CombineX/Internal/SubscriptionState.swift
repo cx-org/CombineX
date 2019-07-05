@@ -43,28 +43,26 @@ extension SubscriptionState {
 extension Atomic where Value == SubscriptionState {
     
     var isWaiting: Bool {
-        switch self.load() {
-        case .waiting:      return true
-        default:            return false
+        return self.withLock {
+            $0.isWaiting
         }
     }
     
     var isSubscribing: Bool {
-        switch self.load() {
-        case .subscribing:  return true
-        default:            return false
-        }
-    }
+        return self.withLock {
+            $0.isSubscribing
+        }    }
     
     var isFinished: Bool {
-        switch self.load() {
-        case .finished:     return true
-        default:            return false
+        return self.withLock {
+            $0.isFinished
         }
     }
     
     var demand: Subscribers.Demand? {
-        return self.load().demand
+        return self.withLock {
+            $0.demand
+        }
     }
 }
 

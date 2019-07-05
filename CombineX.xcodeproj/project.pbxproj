@@ -40,9 +40,7 @@
 		OBJ_268 /* OptionalProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_25 /* OptionalProtocol.swift */; };
 		OBJ_269 /* PeekableIterator.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_26 /* PeekableIterator.swift */; };
 		OBJ_270 /* RelayState.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_27 /* RelayState.swift */; };
-		OBJ_271 /* RelayState_1.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_28 /* RelayState_1.swift */; };
 		OBJ_272 /* SubscriptionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_29 /* SubscriptionState.swift */; };
-		OBJ_273 /* SubscriptionState_1.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_30 /* SubscriptionState_1.swift */; };
 		OBJ_274 /* Published.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_31 /* Published.swift */; };
 		OBJ_275 /* Publisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_32 /* Publisher.swift */; };
 		OBJ_276 /* AllSatisfy.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_34 /* AllSatisfy.swift */; };
@@ -422,9 +420,7 @@
 		OBJ_25 /* OptionalProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionalProtocol.swift; sourceTree = "<group>"; };
 		OBJ_26 /* PeekableIterator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeekableIterator.swift; sourceTree = "<group>"; };
 		OBJ_27 /* RelayState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelayState.swift; sourceTree = "<group>"; };
-		OBJ_28 /* RelayState_1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelayState_1.swift; sourceTree = "<group>"; };
 		OBJ_29 /* SubscriptionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionState.swift; sourceTree = "<group>"; };
-		OBJ_30 /* SubscriptionState_1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionState_1.swift; sourceTree = "<group>"; };
 		OBJ_31 /* Published.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Published.swift; sourceTree = "<group>"; };
 		OBJ_32 /* Publisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Publisher.swift; sourceTree = "<group>"; };
 		OBJ_34 /* AllSatisfy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllSatisfy.swift; sourceTree = "<group>"; };
@@ -769,9 +765,7 @@
 				OBJ_25 /* OptionalProtocol.swift */,
 				OBJ_26 /* PeekableIterator.swift */,
 				OBJ_27 /* RelayState.swift */,
-				OBJ_28 /* RelayState_1.swift */,
 				OBJ_29 /* SubscriptionState.swift */,
-				OBJ_30 /* SubscriptionState_1.swift */,
 			);
 			path = Internal;
 			sourceTree = "<group>";
@@ -905,7 +899,7 @@
 			path = Publishers;
 			sourceTree = "<group>";
 		};
-		OBJ_5 /*  */ = {
+		OBJ_5 = {
 			isa = PBXGroup;
 			children = (
 				OBJ_6 /* Package.swift */,
@@ -917,7 +911,6 @@
 				OBJ_246 /* LICENSE */,
 				OBJ_247 /* README.md */,
 			);
-			name = "";
 			sourceTree = "<group>";
 		};
 		OBJ_7 /* Sources */ = {
@@ -1156,7 +1149,7 @@
 				English,
 				en,
 			);
-			mainGroup = OBJ_5 /*  */;
+			mainGroup = OBJ_5;
 			productRefGroup = OBJ_239 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -1197,9 +1190,7 @@
 				OBJ_268 /* OptionalProtocol.swift in Sources */,
 				OBJ_269 /* PeekableIterator.swift in Sources */,
 				OBJ_270 /* RelayState.swift in Sources */,
-				OBJ_271 /* RelayState_1.swift in Sources */,
 				OBJ_272 /* SubscriptionState.swift in Sources */,
-				OBJ_273 /* SubscriptionState_1.swift in Sources */,
 				OBJ_274 /* Published.swift in Sources */,
 				OBJ_275 /* Publisher.swift in Sources */,
 				OBJ_276 /* AllSatisfy.swift in Sources */,

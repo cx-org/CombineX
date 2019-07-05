@@ -77,6 +77,22 @@ extension Atomic where Value == RelayState {
 
 extension RelayState {
     
+    mutating func relay(_ subscription: Subscription) -> Bool {
+        if self.isWaiting {
+            self = .relaying(subscription)
+            return true
+        }
+        return false
+    }
+    
+    mutating func finish() -> Subscription? {
+        defer {
+            self = .finished
+        }
+        return self.subscription
+    }
+    
+    @available(*, deprecated)
     mutating func finishIfRelaying() -> Subscription? {
         if let subscription = self.subscription {
             self = .finished
@@ -88,6 +104,13 @@ extension RelayState {
 
 extension Atomic where Value == RelayState {
     
+    func finish() -> Subscription? {
+        return self.withLockMutating {
+            $0.finish()
+        }
+    }
+    
+    @available(*, deprecated)
     func finishIfRelaying() -> Subscription? {
         return self.withLockMutating {
             if let subscription = $0.subscription {

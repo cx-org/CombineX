@@ -61,8 +61,8 @@ class OptionalSpec: QuickSpec {
         // MARK: - Release Resources
         describe("Release Resources") {
             
-            // MARK: 2.1 subscription should release the subscriber when complete
-            it("subscription should release the subscriber when complete") {
+            // MARK: 2.1 subscription should release the subscriber after complete
+            it("subscription should release the subscriber after complete") {
                 var subscription: Subscription?
                 weak var subObj: AnyObject?
                 
@@ -86,8 +86,8 @@ class OptionalSpec: QuickSpec {
                 _ = subscription
             }
             
-            // MARK: 2.2 subscription should release the subscriber when cancel
-            it("subscription should release the subscriber when cancel") {
+            // MARK: 2.2 subscription should release the subscriber after cancel
+            it("subscription should release the subscriber after cancel") {
                 var subscription: Subscription?
                 weak var subObj: AnyObject?
                 
@@ -111,8 +111,8 @@ class OptionalSpec: QuickSpec {
                 _ = subscription
             }
             
-            // MARK: 2.3 should not release the initial object when complete
-            it("should not release the initial object when complete") {
+            // MARK: 2.3 subscription should not release the initial object after complete
+            it("subscription should not release the initial object after complete") {
                 var subscription: Subscription?
                 weak var customObj: AnyObject?
                 
@@ -137,8 +137,8 @@ class OptionalSpec: QuickSpec {
                 _ = subscription
             }
             
-            // MARK: 2.4 should not release the initial object when cancel
-            it("should not release the initial object when cancel") {
+            // MARK: 2.4 subscription should not release the initial object after cancel
+            it("subscription should not release the initial object after cancel") {
                 var subscription: Subscription?
                 weak var customObj: AnyObject?
                 
@@ -207,6 +207,25 @@ class OptionalSpec: QuickSpec {
                 
                 expect {
                     pub.subscribe(sub)
+                }.to(throwAssertion())
+            }
+            
+            // MARK: 4.2 should fatal error when less than one demand is requested after finish
+            it("should fatal error when less than one demand is requested after finish") {
+                var subscription: Subscription?
+                let pub = Publishers.Optional<Int, CustomError>(1)
+                let sub = CustomSubscriber<Int, CustomError>(receiveSubscription: { s in
+                    subscription = s
+                    s.request(.unlimited)
+                }, receiveValue: { v in
+                    return .none
+                }, receiveCompletion: { c in
+                })
+                
+                pub.subscribe(sub)
+                
+                expect {
+                    subscription?.request(.max(0))
                 }.to(throwAssertion())
             }
         }

@@ -360,38 +360,51 @@ extension Publishers.Optional {
     {
         
         let result: Result<Output?, Failure>
+    
+        let lock = Lock()
         
-        typealias State = SubscriptionState_1<S>
-        
-        let state: Atomic<State>
+        var state = SubscriptionState.waiting
+        var sub: S?
         
         init(result: Result<Output?, Failure>, sub: S) {
             self.result = result
-            self.state = .init(value: .waiting(sub))
+            self.sub = sub
         }
         
         func request(_ demand: Subscribers.Demand) {
             precondition(demand > 0)
 
-            guard let sub = self.state.requestIfWaiting(demand) else {
+            self.lock.lock()
+            guard self.state.isWaiting else {
+                self.lock.unlock()
                 return
             }
+            
+            let sub = self.sub
+            self.sub = nil
+            
+            self.state = .finished
+            
+            self.lock.unlock()
+            
+            guard let s = sub else { return }
             
             switch self.result {
             case .success(let optional):
                 if let output = optional {
-                    _ = sub.receive(output)
+                    _ = s.receive(output)
                 }
-                sub.receive(completion: .finished)
+                s.receive(completion: .finished)
             case .failure(let error):
-                sub.receive(completion: .failure(error))
+                s.receive(completion: .failure(error))
             }
-            
-            self.state.store(.done)
         }
         
         func cancel() {
-            self.state.store(.done)
+            self.lock.withLock {
+                self.state = .finished
+                self.sub = nil
+            }
         }
         
         var description: String {

@@ -302,7 +302,7 @@ extension Publishers.Sequence {
     {
         
         let lock = Lock()
-        var state_1: SubscriptionState_1<S>
+//        var state_1: SubscriptionState_1<S>
         var iterator: PeekableIterator<Elements.Element>
         
         let state = Atomic<SubscriptionState>(value: .waiting)
@@ -310,16 +310,15 @@ extension Publishers.Sequence {
         var sub: S?
         
         init(sequence: Elements, sub: S) {
-            self.state_1 = .waiting(sub)
             self.iterator = PeekableIterator(sequence.makeIterator())
         }
         
         func request(_ demand: Subscribers.Demand) {
             self.lock.lock()
-            guard let (sub, demand) = self.state_1.request(demand) else {
-                self.lock.unlock()
-                return
-            }
+//            guard let (sub, demand) = self.state_1.request(demand) else {
+//                self.lock.unlock()
+//                return
+//            }
             self.lock.unlock()
             
             if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(demand)) {

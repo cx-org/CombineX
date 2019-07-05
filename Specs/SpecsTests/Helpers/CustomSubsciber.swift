@@ -52,6 +52,30 @@ class CustomSubscriber<Input, Failure>: Subscriber where Failure : Error {
     }
 }
 
+extension CustomSubscriber.Event {
+    
+    func isFinished() -> Bool {
+        switch self {
+        case .value:
+            return false
+        case .completion(let c):
+            return c.isFinished
+        }
+    }
+}
+
+extension CustomSubscriber.Event where Input: Equatable {
+    
+    func isValue(_ value: Input) -> Bool {
+        switch self {
+        case .value(let v):
+            return v == value
+        case .completion:
+            return false
+        }
+    }
+}
+
 extension CustomSubscriber.Event: Equatable where Input: Equatable, Failure: Equatable {
     
     static func == (lhs: CustomSubscriber.Event, rhs: CustomSubscriber.Event) -> Bool {
