@@ -19,9 +19,9 @@ final public class PassthroughSubject<Output, Failure> : Subject where Failure :
         self.lock.lock()
         
         if let completion = self.completion {
+            self.lock.unlock()
             subscriber.receive(subscription: Subscriptions.empty)
             subscriber.receive(completion: completion)
-            self.lock.unlock()
             return
         }
         
