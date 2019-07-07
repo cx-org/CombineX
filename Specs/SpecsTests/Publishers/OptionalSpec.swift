@@ -193,7 +193,7 @@ class OptionalSpec: QuickSpec {
         
         // MARK: - Exception
         #if !SWIFT_PACKAGE
-        xdescribe("Exception", flags: [:]) {
+        describe("Exception", flags: [:]) {
             
             // MARK: 4.1 should fatal error when less than one demand is requested
             it("should fatal error when less than one demand is requested") {

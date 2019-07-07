@@ -25,6 +25,10 @@ extension OptionalProtocol {
         return self.optional == nil
     }
     
+    var isNotNil: Bool {
+        return !self.isNil
+    }
+    
     mutating func ifNilStore(_ value: Wrapped) -> Bool {
         switch self.optional {
         case .none:
@@ -40,6 +44,10 @@ extension Atomic where Value: OptionalProtocol {
     
     var isNil: Bool {
         return self.load().optional == nil
+    }
+    
+    var isNotNil: Bool {
+        return !self.isNil
     }
     
     func ifNilStore(_ value: Value.Wrapped) -> Bool {

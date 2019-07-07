@@ -66,7 +66,8 @@ extension Subscribers {
             return self.description
         }
         
-        private let subscription = Atomic<Subscription?>(value: nil)
+        private let lock = Lock()
+        private var subscription: Subscription?
         
         public init(object: Root, keyPath: ReferenceWritableKeyPath<Root, Input>) {
             self.object = object
@@ -78,9 +79,13 @@ extension Subscribers {
         /// Use the received `Subscription` to request items from the publisher.
         /// - Parameter subscription: A subscription that represents the connection between publisher and subscriber.
         final public func receive(subscription: Subscription) {
-            if self.subscription.ifNilStore(subscription) {
+            self.lock.lock()
+            if self.subscription == nil {
+                self.subscription = subscription
+                self.lock.unlock()
                 subscription.request(.unlimited)
             } else {
+                self.lock.unlock()
                 subscription.cancel()
             }
         }
@@ -90,11 +95,16 @@ extension Subscribers {
         /// - Parameter input: The published element.
         /// - Returns: A `Demand` instance indicating how many more elements the subcriber expects to receive.
         final public func receive(_ value: Input) -> Subscribers.Demand {
-            if self.subscription.load() == nil {
-                return .none
+            self.lock.lock()
+            if self.subscription.isNotNil {
+                let obj = self.object
+                self.lock.unlock()
+                
+                obj?[keyPath: self.keyPath] = value
+            } else {
+                self.lock.unlock()
             }
             
-            self.object?[keyPath: self.keyPath] = value
             return .none
         }
         
@@ -102,14 +112,23 @@ extension Subscribers {
         ///
         /// - Parameter completion: A `Completion` case indicating whether publishing completed normally or with an error.
         final public func receive(completion: Subscribers.Completion<Never>) {
-            self.subscription.exchange(with: nil)?.cancel()
+            self.lock.lock()
+            let subscription = self.subscription
+            self.subscription = nil
             self.object = nil
+            self.lock.unlock()
+            
+            subscription?.cancel()
         }
         
         /// Cancel the activity.
         final public func cancel() {
-            self.subscription.exchange(with: nil)?.cancel()
-            self.object = nil
+            self.lock.lock()
+            let subscription = self.subscription
+            self.subscription = nil
+            self.lock.unlock()
+            
+            subscription?.cancel()
         }
         
     }

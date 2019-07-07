@@ -454,7 +454,7 @@ class CurrentValueSubjectSpec: QuickSpec {
 
         // MARK: - Exception
         #if !SWIFT_PACKAGE
-        xdescribe("Exception", flags: [:]) {
+        describe("Exception", flags: [:]) {
             
             it("should fatal error when less than one demand is requested") {
                 let subject = CurrentValueSubject<Int, Never>(-1)

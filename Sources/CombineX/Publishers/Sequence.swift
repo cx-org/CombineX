@@ -302,64 +302,68 @@ extension Publishers.Sequence {
     {
         
         let lock = Lock()
-//        var state_1: SubscriptionState_1<S>
+        
         var iterator: PeekableIterator<Elements.Element>
-        
-        let state = Atomic<SubscriptionState>(value: .waiting)
-        
+        var state: SubscriptionState = .waiting
         var sub: S?
         
         init(sequence: Elements, sub: S) {
             self.iterator = PeekableIterator(sequence.makeIterator())
+            self.sub = sub
         }
         
         func request(_ demand: Subscribers.Demand) {
             self.lock.lock()
-//            guard let (sub, demand) = self.state_1.request(demand) else {
-//                self.lock.unlock()
-//                return
-//            }
-            self.lock.unlock()
             
-            if self.state.compareAndStore(expected: .waiting, newVaue: .subscribing(demand)) {
-                self.drain(demand)
-            } else if let demands = self.state.tryAdd(demand), demands.before <= 0 {
-                self.drain(demands.after)
+            switch self.state {
+            case .waiting:
+                self.state = .subscribing(demand)
+                self.lock.unlock()
+                
+                if demand == .unlimited {
+                    self.fastPath()
+                } else {
+                    self.slowPath(demand)
+                }
+            case .subscribing(let old):
+                let new = old + demand
+                self.state = .subscribing(new)
+                self.lock.unlock()
+                
+                if new == .unlimited {
+                    self.fastPath()
+                } else if old == 0 && new > 0 {
+                    self.slowPath(new)
+                }
+            case .finished:
+                self.lock.unlock()
             }
-        }
-        
-        private func drain(_ demand: Subscribers.Demand) {
-//            switch demand {
-//            case .unlimited:
-//                self.fastPath()
-//            case .max(let amount):
-//                if amount > 0 {
-//                    self.slowPath(demand)
-//                }
-//            }
         }
         
         private func fastPath() {
             while let element = self.iterator.next() {
-                guard self.state.isSubscribing else {
+                guard self.lock.withLockGet(self.state.isSubscribing) else {
                     return
                 }
                 
                 _ = self.sub?.receive(element)
             }
 
-            if self.state.isSubscribing {
+            if self.lock.withLockGet(self.state.finishIfSubscribing()) {
                 self.sub?.receive(completion: .finished)
-                self.state.store(.finished)
                 self.sub = nil
             }
         }
         
         private func slowPath(_ demand: Subscribers.Demand) {
-            var totalDemand = demand
-            while totalDemand > 0 {
+            var now = demand
+            while now > 0 {
+                self.lock.lock()
                 guard let element = self.iterator.next() else {
-                    if self.state.finishIfSubscribing() {
+                    let finish = self.state.finishIfSubscribing()
+                    self.lock.unlock()
+                    
+                    if finish {
                         self.sub?.receive(completion: .finished)
                         self.sub = nil
                     }
@@ -367,34 +371,45 @@ extension Publishers.Sequence {
                 }
                 
                 guard self.state.isSubscribing else {
+                    self.lock.unlock()
                     return
                 }
+
+                _ = self.state.addIfSubscribing(-1)
+                let sub = self.sub
+                self.lock.unlock()
                 
-                let demand = self.sub?.receive(element) ?? .none
-                guard let currentDemand = self.state.tryAdd(demand - 1)?.after, currentDemand > 0 else {
+                let new = sub?.receive(element) ?? .none
+                
+                self.lock.lock()
+                guard let after = self.state.addIfSubscribing(new)?.after, after > 0 else {
+                    let peek = self.iterator.peek()
                     
-                    if self.iterator.peek() == nil {
-                        if self.state.finishIfSubscribing() {
-                            self.sub?.receive(completion: .finished)
-                            self.sub = nil
-                        }
+                    var finish = false
+                    if peek == nil {
+                        finish = self.state.finishIfSubscribing()
+                    }
+                    
+                    self.lock.unlock()
+                    
+                    if finish {
+                        self.sub?.receive(completion: .finished)
+                        self.sub = nil
                     }
                     
                     return
                 }
+                self.lock.unlock()
                 
-                totalDemand = currentDemand
-                
-                if totalDemand == .unlimited {
-                    self.fastPath()
-                    return
-                }
+                now = after
             }
         }
         
         func cancel() {
-            self.state.store(.finished)
-            self.sub = nil
+            self.lock.withLock {
+                self.state = .finished
+                self.sub = nil
+            }
         }
         
         var description: String {

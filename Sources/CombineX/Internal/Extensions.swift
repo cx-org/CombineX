@@ -7,6 +7,10 @@ extension Array {
         }
         return self.removeFirst()
     }
+    
+    var isNotEmpty: Bool {
+        return !self.isEmpty
+    }
 }
 
 // MARK: - Result
@@ -38,5 +42,17 @@ extension Subscribers.Completion {
         case .failure(let error):
             return .failure(transform(error))
         }
+    }
+}
+
+// MARK: - Optional
+extension Optional {
+    
+    var isNil: Bool {
+        return self == nil
+    }
+    
+    var isNotNil: Bool {
+        return self != nil
     }
 }

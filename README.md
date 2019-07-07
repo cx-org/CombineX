@@ -143,7 +143,7 @@ Since some people may not have macOS 10.15 beta installed, the recommended contr
 | API | Status | Test | Notes |
 |:--|:--|:--|:--|
 |`Assign`| done | done  |   |
-|`Demand`| done | almost done |   |
+|`Demand`| done | done |   |
 |`Sink`| done | done |   |
 |`Subscribers`| done  | no need |   |
 

@@ -26,7 +26,15 @@ extension Subscribers {
         /// The `Publisher` may send fewer than the requested number.
         /// Negative values will result in a `fatalError`.
         public static func max(_ value: Int) -> Subscribers.Demand {
-            return Demand(.max(value.clampedTo0()))
+            precondition(value >= 0)
+            return Demand(.max(value))
+        }
+        
+        /// A demand for no items.
+        ///
+        /// This is equivalent to `Demand.max(0)`.
+        public static var none: Subscribers.Demand {
+            return .max(0)
         }
         
         /// A textual representation of this instance.
@@ -71,13 +79,6 @@ extension Subscribers {
             }
         }
         
-        /// A demand for no items.
-        ///
-        /// This is equivalent to `Demand.max(0)`.
-        public static var none: Subscribers.Demand {
-            return .max(0)
-        }
-        
         /// When adding any value to .unlimited, the result is .unlimited.
         public static func += (lhs: inout Subscribers.Demand, rhs: Subscribers.Demand) {
             lhs = lhs + rhs
@@ -85,6 +86,9 @@ extension Subscribers {
         
         /// When adding any value to .unlimited, the result is .unlimited.
         public static func + (lhs: Subscribers.Demand, rhs: Int) -> Subscribers.Demand {
+            if rhs < 0 {
+                return lhs - .max(-rhs)
+            }
             return lhs + .max(rhs)
         }
         
@@ -96,7 +100,7 @@ extension Subscribers {
         public static func * (lhs: Subscribers.Demand, rhs: Int) -> Subscribers.Demand {
             switch lhs.storage {
             case .max(let d):
-                return .max(d * rhs.clampedTo0())
+                return .max(d * rhs)
             case .unlimited:
                 return .unlimited
             }
@@ -114,7 +118,8 @@ extension Subscribers {
             case (.max, .unlimited):
                 return .max(0)
             case (.max(let d0), .max(let d1)):
-                return .max((d0 - d1).clampedTo0())
+                // FIXME: Docs say "any operation that would result in a negative value is clamped to .max(0)", but it will actually crash. See DemandSpec.swift#2.3 for more information.
+                return .max(d0 - d1)
             }
         }
         
@@ -125,7 +130,7 @@ extension Subscribers {
         
         /// When subtracting any value from .unlimited, the result is still .unlimited. A negative demand is not possible; any operation that would result in a negative value is clamped to .max(0)
         public static func - (lhs: Subscribers.Demand, rhs: Int) -> Subscribers.Demand {
-            return lhs - .max(rhs)
+            return lhs + (-rhs)
         }
         
         /// When subtracting any value from .unlimited, the result is still .unlimited. A negative demand is possible, but be aware that it is not usable when requesting values in a subscription.
@@ -134,12 +139,7 @@ extension Subscribers {
         }
         
         public static func > (lhs: Subscribers.Demand, rhs: Int) -> Bool {
-            switch lhs.storage {
-            case .max(let d):
-                return d > rhs
-            case .unlimited:
-                return true
-            }
+            return lhs > .max(rhs)
         }
         
         public static func >= (lhs: Subscribers.Demand, rhs: Int) -> Bool {
@@ -155,12 +155,7 @@ extension Subscribers {
         }
         
         public static func < (lhs: Subscribers.Demand, rhs: Int) -> Bool {
-            switch lhs.storage {
-            case .max(let d):
-                return d < rhs
-            case .unlimited:
-                return false
-            }
+            return lhs < .max(rhs)
         }
         
         public static func < (lhs: Int, rhs: Subscribers.Demand) -> Bool {
@@ -229,18 +224,13 @@ extension Subscribers {
             case (.unlimited, _):
                 return true
             case (.max(let d0), .max(let d1)):
-                return d0 < d1
+                return d0 > d1
             }
         }
         
         /// Returns `true` if `lhs` and `rhs` are equal. `.unlimited` is not equal to any integer.
         public static func == (lhs: Subscribers.Demand, rhs: Int) -> Bool {
-            switch lhs.storage {
-            case .max(let d):
-                return d == rhs
-            case .unlimited:
-                return false
-            }
+            return lhs == .max(rhs)
         }
         
         /// Returns `true` if `lhs` and `rhs` are not equal. `.unlimited` is not equal to any integer.
@@ -324,7 +314,6 @@ extension Subscribers {
 
     }
 }
-
 
 private extension Int {
     

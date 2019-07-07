@@ -84,9 +84,19 @@ extension SubscriptionState: Equatable {
 
 extension SubscriptionState {
     
-    typealias TryAdd = (before: Subscribers.Demand, after: Subscribers.Demand)
+    typealias Demands = (before: Subscribers.Demand, after: Subscribers.Demand)
     
-    mutating func tryAdd(_ demand: Subscribers.Demand) -> TryAdd? {
+    mutating func addIfSubscribing(_ demand: Int) -> Demands? {
+        if let old = self.demand {
+            let new = old + demand
+            self = .subscribing(new)
+            return (old, new)
+        } else {
+            return nil
+        }
+    }
+    
+    mutating func addIfSubscribing(_ demand: Subscribers.Demand) -> Demands? {
         if let old = self.demand {
             let new = old + demand
             self = .subscribing(new)
@@ -107,30 +117,26 @@ extension SubscriptionState {
 
 extension Atomic where Value == SubscriptionState {
     
-    typealias TryAdd = (before: Subscribers.Demand, after: Subscribers.Demand)
+    typealias Demands = (before: Subscribers.Demand, after: Subscribers.Demand)
+    
+    func addIfSubscribing(_ demand: Int) -> Demands? {
+        return self.withLockMutating {
+            $0.addIfSubscribing(demand)
+        }
+    }
     
     /// Adds the provided demand to the existing demand if the current state is `subscribing`.
     ///
     /// - Returns: `(before, after)` if added, otherwise nil.
-    func tryAdd(_ demand: Subscribers.Demand) -> TryAdd? {
+    func addIfSubscribing(_ demand: Subscribers.Demand) -> Demands? {
         return self.withLockMutating {
-            if let old = $0.demand {
-                let new = old + demand
-                $0 = .subscribing(new)
-                return (old, new)
-            } else {
-                return nil
-            }
+            $0.addIfSubscribing(demand)
         }
     }
 
     func finishIfSubscribing() -> Bool {
         return self.withLockMutating {
-            if $0.isSubscribing {
-                $0 = .finished
-                return true
-            }
-            return false
+            $0.finishIfSubscribing()
         }
     }
 }

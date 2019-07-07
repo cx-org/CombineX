@@ -5,6 +5,9 @@
       location = "group:../CombineX.xcodeproj">
    </FileRef>
    <FileRef
-      location = "container:Specs.xcodeproj">
+      location = "group:Specs.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Pods/Pods.xcodeproj">
    </FileRef>
 </Workspace>

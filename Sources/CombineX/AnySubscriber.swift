@@ -62,16 +62,23 @@ public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertibl
     }
     
     public init<S>(_ s: S) where Input == S.Output, Failure == S.Failure, S : Subject {
+        let subscription = Atomic<Subscription?>(value: nil)
+        
         self.receiveSubscriptionBody = {
+            subscription.store($0)
             $0.request(.unlimited)
         }
         
-        self.receiveValueBody = { value in
-            s.send(value)
+        self.receiveValueBody = { v in
+            precondition(subscription.load().isNotNil)
+            s.send(v)
             return .none
         }
 
-        self.receiveCompletionBody = s.send(completion:)
+        self.receiveCompletionBody = { c in
+            precondition(subscription.load().isNotNil)
+            s.send(completion: c)
+        }
         
         self.combineIdentifier = CombineIdentifier()
     }

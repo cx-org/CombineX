@@ -1,0 +1,34 @@
+install! 'cocoapods', :generate_multiple_pod_projects => true
+
+source 'https://cdn.cocoapods.org/'
+
+platform :ios, '13.0'
+
+def pod_quick
+  pod 'Quick'
+  pod 'Nimble'
+end
+
+target 'CombineSpecs' do
+  
+  use_frameworks!
+
+  target 'CombineSpecsTests' do
+    inherit! :search_paths
+    
+    pod_quick
+  end
+
+end
+
+target 'Specs' do
+  
+  use_frameworks!
+
+  target 'SpecsTests' do
+    inherit! :search_paths
+    
+    pod_quick
+  end
+
+end
