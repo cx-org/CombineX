@@ -1,3 +1,4 @@
+import Foundation
 import Quick
 import Nimble
 
@@ -359,8 +360,8 @@ class CurrentValueSubjectSpec: QuickSpec {
             it("should be able to send value concurrently") {
                 let pub = CurrentValueSubject<Int, Never>(-1)
                 
-                var enters: [Date?] = [nil, nil, nil]
-                var exits: [Date?] = [nil, nil, nil]
+                var enters: [Date] = []
+                var exits: [Date] = []
                 
                 let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
                     s.request(.unlimited)
@@ -373,21 +374,25 @@ class CurrentValueSubjectSpec: QuickSpec {
                 pub.subscribe(sub)
                 
                 let g = DispatchGroup()
+                let q = DispatchQueue(label: UUID().uuidString)
                 
                 for i in 0..<3 {
                     DispatchQueue.global().async(group: g) {
-                        enters[i] = Date()
+                        q.async {
+                            enters.append(Date())
+                        }
                         pub.send(i)
-                        exits[i] = Date()
+                        q.async {
+                            exits.append(Date())
+                        }
                     }
                 }
                 
                 g.wait()
                 
-                let before = enters.compactMap { $0 }
-                let after = exits.compactMap { $0 }
-                
-                expect(before.max()).to(beLessThan(after.min()))
+                q.sync {
+                    expect(enters.max()).to(beLessThan(exits.min()))
+                }
             }
             
             // MARK: 3.2 should send as many values as the subscriber's demand even if these are sent concurrently
@@ -449,7 +454,7 @@ class CurrentValueSubjectSpec: QuickSpec {
 
         // MARK: - Exception
         #if !SWIFT_PACKAGE
-        describe("Exception") {
+        xdescribe("Exception", flags: [:]) {
             
             it("should fatal error when less than one demand is requested") {
                 let subject = CurrentValueSubject<Int, Never>(-1)

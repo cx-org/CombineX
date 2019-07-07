@@ -52,7 +52,7 @@ final public class AnyCancellable: Cancellable, Hashable {
     ///   - lhs: A value to compare.
     ///   - rhs: Another value to compare.
     public static func == (lhs: AnyCancellable, rhs: AnyCancellable) -> Bool {
-        return lhs === rhs
+        return ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
     }
     
     /// The hash value.
@@ -72,7 +72,6 @@ extension AnyCancellable {
     /// Stores this AnyCancellable in the specified collection.
     /// Parameters:
     ///    - collection: The collection to store this AnyCancellable.
-    @available(OSX 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     final public func store<C>(in collection: inout C) where C : RangeReplaceableCollection, C.Element == AnyCancellable {
         collection.append(self)
     }

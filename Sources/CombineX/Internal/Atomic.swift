@@ -116,6 +116,30 @@ extension Atomic where Value: BinaryInteger {
     }
 }
 
+extension Atomic where Value: RangeReplaceableCollection {
+    
+    func append(_ newElement: Value.Element) {
+        self.withLockMutating {
+            $0.append(newElement)
+        }
+    }
+    
+    func append<S>(contentsOf newElements: S) where S : Sequence, Value.Element == S.Element {
+        self.withLockMutating {
+            $0.append(contentsOf: newElements)
+        }
+    }
+}
+
+extension Atomic where Value: SetAlgebra {
+    
+    func insert(_ newMember: Value.Element) -> (inserted: Bool, memberAfterInsert: Value.Element) {
+        return self.withLockMutating {
+            $0.insert(newMember)
+        }
+    }
+}
+
 // MARK: Demands
 extension Atomic where Value == Subscribers.Demand {
 

@@ -359,8 +359,8 @@ class PassthroughSubjectSpec: QuickSpec {
             it("should be able to send value concurrently") {
                 let pub = PassthroughSubject<Int, Never>()
                 
-                var enters: [Date?] = [nil, nil, nil]
-                var exits: [Date?] = [nil, nil, nil]
+                var enters: [Date] = []
+                var exits: [Date] = []
                 
                 let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
                     s.request(.unlimited)
@@ -373,21 +373,25 @@ class PassthroughSubjectSpec: QuickSpec {
                 pub.subscribe(sub)
                 
                 let g = DispatchGroup()
+                let q = DispatchQueue(label: UUID().uuidString)
                 
                 for i in 0..<3 {
                     DispatchQueue.global().async(group: g) {
-                        enters[i] = Date()
+                        q.async {
+                            enters.append(Date())
+                        }
                         pub.send(i)
-                        exits[i] = Date()
+                        q.async {
+                            exits.append(Date())
+                        }
                     }
                 }
                 
                 g.wait()
                 
-                let before = enters.compactMap { $0 }
-                let after = exits.compactMap { $0 }
-                
-                expect(before.max()).to(beLessThan(after.min()))
+                q.sync {
+                    expect(enters.max()).to(beLessThan(exits.min()))
+                }
             }
             
             // MARK: 3.2 should send as many values as the subscriber's demand even if these are sent concurrently
