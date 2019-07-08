@@ -21,6 +21,9 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		6684B00F22D37B83008639D1 /* ReplaceEmpty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6684B00E22D37B83008639D1 /* ReplaceEmpty.swift */; };
+		6684B01422D389AD008639D1 /* ReplaceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6684B01322D389AD008639D1 /* ReplaceError.swift */; };
+		6684B01922D3958B008639D1 /* HandleEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6684B01822D3958B008639D1 /* HandleEvents.swift */; };
 		OBJ_252 /* AnyCancellable.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* AnyCancellable.swift */; };
 		OBJ_253 /* AnyPublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_10 /* AnyPublisher.swift */; };
 		OBJ_254 /* AnySubject.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_11 /* AnySubject.swift */; };
@@ -276,6 +279,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		6684B00E22D37B83008639D1 /* ReplaceEmpty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplaceEmpty.swift; sourceTree = "<group>"; };
+		6684B01322D389AD008639D1 /* ReplaceError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplaceError.swift; sourceTree = "<group>"; };
+		6684B01822D3958B008639D1 /* HandleEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandleEvents.swift; sourceTree = "<group>"; };
 		"CombineX::CombineX::Product" /* CombineX.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CombineX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		"CombineX::CombineXTests::Product" /* CombineXTests.xctest */ = {isa = PBXFileReference; lastKnownFileType = file; path = CombineXTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		"Nimble::Nimble::Product" /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Nimble.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -536,22 +542,17 @@
 		628BC8B622D31D30000EF5DB /* A */ = {
 			isa = PBXGroup;
 			children = (
-				OBJ_69 /* SetFailureType.swift */,
-				OBJ_67 /* RemoveDuplicates.swift */,
-				OBJ_81 /* TryRemoveDuplicates.swift */,
-				OBJ_52 /* Last.swift */,
-				OBJ_53 /* LastWhere.swift */,
-				OBJ_78 /* TryLastWhere.swift */,
-				OBJ_42 /* Drop.swift */,
-				OBJ_43 /* DropWhile.swift */,
-				OBJ_75 /* TryDropWhile.swift */,
-				OBJ_33 /* AssertNoFailure.swift */,
-				OBJ_41 /* Count.swift */,
-				OBJ_35 /* BreakPoint.swift */,
+				OBJ_56 /* MeasureInterval.swift */,
 				OBJ_32 /* AllSatisfy.swift */,
+				OBJ_33 /* AssertNoFailure.swift */,
+				OBJ_35 /* BreakPoint.swift */,
 				OBJ_37 /* CompactMap.swift */,
+				OBJ_38 /* Concatenate.swift */,
 				OBJ_39 /* Contains.swift */,
 				OBJ_40 /* ContainsWhere.swift */,
+				OBJ_41 /* Count.swift */,
+				OBJ_42 /* Drop.swift */,
+				OBJ_43 /* DropWhile.swift */,
 				OBJ_44 /* Empty.swift */,
 				OBJ_45 /* Fail.swift */,
 				OBJ_46 /* Filter.swift */,
@@ -559,6 +560,8 @@
 				OBJ_48 /* FirstWhere.swift */,
 				OBJ_50 /* IgnoreOutput.swift */,
 				OBJ_51 /* Just.swift */,
+				OBJ_52 /* Last.swift */,
+				OBJ_53 /* LastWhere.swift */,
 				OBJ_54 /* Map.swift */,
 				OBJ_55 /* MapError.swift */,
 				OBJ_60 /* Once.swift */,
@@ -567,14 +570,21 @@
 				OBJ_63 /* Print.swift */,
 				OBJ_64 /* Publishers.swift */,
 				OBJ_66 /* Reduce.swift */,
+				OBJ_67 /* RemoveDuplicates.swift */,
+				6684B00E22D37B83008639D1 /* ReplaceEmpty.swift */,
+				6684B01322D389AD008639D1 /* ReplaceError.swift */,
 				OBJ_68 /* Sequence.swift */,
+				OBJ_69 /* SetFailureType.swift */,
 				OBJ_71 /* TryAllSatisfy.swift */,
 				OBJ_73 /* TryCompactMap.swift */,
 				OBJ_74 /* TryContainsWhere.swift */,
+				OBJ_75 /* TryDropWhile.swift */,
 				OBJ_76 /* TryFilter.swift */,
 				OBJ_77 /* TryFirstWhere.swift */,
+				OBJ_78 /* TryLastWhere.swift */,
 				OBJ_79 /* TryMap.swift */,
 				OBJ_80 /* TryReduce.swift */,
+				OBJ_81 /* TryRemoveDuplicates.swift */,
 			);
 			name = A;
 			sourceTree = "<group>";
@@ -913,20 +923,19 @@
 				628BC8B622D31D30000EF5DB /* A */,
 				OBJ_34 /* Autoconnect.swift */,
 				OBJ_36 /* Catch.swift */,
-				OBJ_38 /* Concatenate.swift */,
 				OBJ_49 /* FlatMap.swift */,
-				OBJ_56 /* MeasureInterval.swift */,
 				OBJ_57 /* Merge+.swift */,
 				OBJ_58 /* Merge.swift */,
 				OBJ_59 /* Multicast.swift */,
 				OBJ_65 /* ReceiveOn.swift */,
 				OBJ_70 /* SubscribeOn.swift */,
 				OBJ_72 /* TryCatch.swift */,
+				6684B01822D3958B008639D1 /* HandleEvents.swift */,
 			);
 			path = Publishers;
 			sourceTree = "<group>";
 		};
-		OBJ_5 /*  */ = {
+		OBJ_5 = {
 			isa = PBXGroup;
 			children = (
 				OBJ_6 /* Package.swift */,
@@ -938,7 +947,6 @@
 				OBJ_245 /* LICENSE */,
 				OBJ_246 /* README.md */,
 			);
-			name = "";
 			sourceTree = "<group>";
 		};
 		OBJ_7 /* Sources */ = {
@@ -1162,7 +1170,7 @@
 			knownRegions = (
 				en,
 			);
-			mainGroup = OBJ_5 /*  */;
+			mainGroup = OBJ_5;
 			productRefGroup = OBJ_238 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -1197,6 +1205,7 @@
 				OBJ_261 /* CustomCombineIdentifierConvertible.swift in Sources */,
 				OBJ_262 /* Atomic.swift in Sources */,
 				OBJ_263 /* Const.swift in Sources */,
+				6684B00F22D37B83008639D1 /* ReplaceEmpty.swift in Sources */,
 				OBJ_264 /* Extensions.swift in Sources */,
 				OBJ_265 /* Global.swift in Sources */,
 				OBJ_266 /* Lock.swift in Sources */,
@@ -1218,10 +1227,12 @@
 				OBJ_282 /* Count.swift in Sources */,
 				OBJ_283 /* Drop.swift in Sources */,
 				OBJ_284 /* DropWhile.swift in Sources */,
+				6684B01922D3958B008639D1 /* HandleEvents.swift in Sources */,
 				OBJ_285 /* Empty.swift in Sources */,
 				OBJ_286 /* Fail.swift in Sources */,
 				OBJ_287 /* Filter.swift in Sources */,
 				OBJ_288 /* First.swift in Sources */,
+				6684B01422D389AD008639D1 /* ReplaceError.swift in Sources */,
 				OBJ_289 /* FirstWhere.swift in Sources */,
 				OBJ_290 /* FlatMap.swift in Sources */,
 				OBJ_291 /* IgnoreOutput.swift in Sources */,

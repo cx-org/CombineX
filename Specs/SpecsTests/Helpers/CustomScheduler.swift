@@ -10,7 +10,11 @@ public struct CustomScheduler: Scheduler {
     
     public struct SchedulerTimeType: Strideable {
         
-        public var time: DispatchTime
+        public let time: DispatchTime
+        
+        public init(time: DispatchTime) {
+            self.time = time
+        }
         
         public func distance(to other: SchedulerTimeType) -> Stride {
             let distance = self.time.uptimeNanoseconds.distance(to: other.time.uptimeNanoseconds)
@@ -30,7 +34,11 @@ public struct CustomScheduler: Scheduler {
             
             public typealias Magnitude = Double
             
-            public var seconds: Double
+            public let seconds: Double
+            
+            public init(seconds: Double) {
+                self.seconds = seconds
+            }
             
             public var magnitude: Double {
                 return self.seconds.magnitude

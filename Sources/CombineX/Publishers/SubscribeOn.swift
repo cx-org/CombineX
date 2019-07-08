@@ -60,31 +60,3 @@ extension Publishers {
         }
     }
 }
-
-extension Publishers.SubscribeOn {
-    
-    private final class SubscribeOnSubscriptions<S>:
-        Subscription
-    where
-        S: Subscriber,
-        S.Input == Output,
-        S.Failure == Failure
-    {
-        
-        func request(_ demand: Subscribers.Demand) {
-            Global.RequiresImplementation()
-        }
-        
-        func receive(subscription: Subscription) {
-            Global.RequiresImplementation()
-        }
-        
-        func receive(_ value: Output) -> Subscribers.Demand {
-            Global.RequiresImplementation()
-        }
-        
-        func cancel() {
-            Global.RequiresImplementation()
-        }
-    }
-}

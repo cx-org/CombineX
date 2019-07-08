@@ -87,17 +87,17 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Suffix.Failure == S.Failure, Suffix.Output == S.Input {
-//            _ = Inner(pub: self, sub: subscriber)
+            let subscription = Inner(pub: self, sub: subscriber)
+            self.prefix.subscribe(subscription)
         }
     }
 }
-
-/*
 
 extension Publishers.Concatenate {
     
     private final class Inner<S>:
         Subscription,
+        Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
@@ -106,14 +106,116 @@ extension Publishers.Concatenate {
         S.Failure == Suffix.Failure
     {
         
+        typealias Input = Prefix.Output
+        typealias Failure = Prefix.Failure
+        
         typealias Pub = Publishers.Concatenate<Prefix, Suffix>
         typealias Sub = S
         
         let lock = Lock()
+        let sub: Sub
 
         var state: RelayState = .waiting
         var demand: Subscribers.Demand = .none
+        
+        var isRelayingPrefix = true
+        var suffix: Suffix?
+        
+        init(pub: Pub, sub: Sub) {
+            self.suffix = pub.suffix
+            self.sub = sub
+        }
+        
+        func request(_ demand: Subscribers.Demand) {
+            self.lock.lock()
+            let subscription = self.state.subscription
+            
+            let before = self.demand
+            self.demand += demand
+            let after = self.demand
+            
+            self.lock.unlock()
+            
+            if before == 0 {
+                subscription?.request(after)
+            }
+        }
+        
+        func cancel() {
+            self.lock.withLockGet(self.state.finish())?.cancel()
+        }
+        
+        func receive(subscription: Subscription) {
+            self.lock.lock()
+            switch self.state {
+            case .waiting:
+                self.state = .relaying(subscription)
+                self.lock.unlock()
+                self.sub.receive(subscription: self)
+            case .relaying:
+                if self.isRelayingPrefix {
+                    self.lock.unlock()
+                    subscription.cancel()
+                } else {
+                    self.state = .relaying(subscription)
+                    self.lock.unlock()
+                    subscription.request(self.demand)
+                }
+            case .finished:
+                self.lock.unlock()
+            }
+        }
+        
+        func receive(_ input: Prefix.Output) -> Subscribers.Demand {
+            self.lock.lock()
+            guard self.state.isRelaying else {
+                self.lock.unlock()
+                return .none
+            }
+            
+            self.demand -= 1
+            self.lock.unlock()
+            return self.sub.receive(input)
+        }
+        
+        func receive(completion: Subscribers.Completion<Prefix.Failure>) {
+            switch completion {
+            case .failure:
+                guard let subscription = self.lock.withLockGet(self.state.finish()) else {
+                    return
+                }
+                
+                subscription.cancel()
+                self.sub.receive(completion: completion)
+            case .finished:
+                self.lock.lock()
+                if self.isRelayingPrefix {
+                    let suffix = self.suffix
+                    self.suffix = nil
+                    self.isRelayingPrefix = false
+                    self.lock.unlock()
+                    
+                    suffix?.subscribe(self)
+                } else {
+                    guard let subscription = self.state.finish() else {
+                        self.lock.unlock()
+                        return
+                    }
+                    
+                    self.lock.unlock()
+                    
+                    subscription.cancel()
+                    self.sub.receive(completion: completion)
+                }
+            }
+        }
+        
+        var description: String {
+            return "Concatenate"
+        }
+        
+        var debugDescription: String {
+            return "Concatenate"
+        }
     }
 }
-
- */

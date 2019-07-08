@@ -9,6 +9,17 @@ extension Publisher {
     }
 }
 
+extension Publisher {
+    
+    /// Replaces nil elements in the stream with the proviced element.
+    ///
+    /// - Parameter output: The element to use when replacing `nil`.
+    /// - Returns: A publisher that replaces `nil` elements from the upstream publisher with the provided element.
+    public func replaceNil<T>(with output: T) -> Publishers.Map<Self, T> where Self.Output == T? {
+        return self.map { $0 ?? output }
+    }
+}
+
 extension Publishers.Map {
     
     public func map<T>(_ transform: @escaping (Output) -> T) -> Publishers.Map<Upstream, T> {

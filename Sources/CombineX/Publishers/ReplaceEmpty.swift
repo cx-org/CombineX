@@ -1,42 +1,50 @@
 extension Publisher {
     
-    /// Measures and emits the time interval between events received from an upstream publisher.
+    /// Replaces an empty stream with the provided element.
     ///
-    /// The output type of the returned scheduler is the time interval of the provided scheduler.
+    /// If the upstream publisher finishes without producing any elements, this publisher emits the provided element, then finishes normally.
+    /// - Parameter output: An element to emit when the upstream publisher finishes without emitting any elements.
+    /// - Returns: A publisher that replaces an empty stream with the provided output element.
+    public func replaceEmpty(with output: Self.Output) -> Publishers.ReplaceEmpty<Self> {
+        return .init(upstream: self, output: output)
+    }
+}
+
+extension Publishers.ReplaceEmpty : Equatable where Upstream : Equatable, Upstream.Output : Equatable {
+    
+    /// Returns a Boolean value that indicates whether two publishers are equivalent.
+    ///
     /// - Parameters:
-    ///   - scheduler: The scheduler on which to deliver elements.
-    ///   - options: Options that customize the delivery of elements.
-    /// - Returns: A publisher that emits elements representing the time interval between the elements it receives.
-    public func measureInterval<S>(using scheduler: S, options: S.SchedulerOptions? = nil) -> Publishers.MeasureInterval<Self, S> where S : Scheduler {
-        return .init(upstream: self, scheduler: scheduler, options: options)
+    ///   - lhs: A replace empty publisher to compare for equality.
+    ///   - rhs: Another replace empty publisher to compare for equality.
+    /// - Returns: `true` if the two publishers have equal upstream publishers and output elements, `false` otherwise.
+    public static func == (lhs: Publishers.ReplaceEmpty<Upstream>, rhs: Publishers.ReplaceEmpty<Upstream>) -> Bool {
+        return lhs.upstream == rhs.upstream && lhs.output == rhs.output
     }
 }
 
 extension Publishers {
     
-    /// A publisher that measures and emits the time interval between events received from an upstream publisher.
-    public struct MeasureInterval<Upstream, Context> : Publisher where Upstream : Publisher, Context : Scheduler {
+    /// A publisher that replaces an empty stream with a provided element.
+    public struct ReplaceEmpty<Upstream> : Publisher where Upstream : Publisher {
         
         /// The kind of values published by this publisher.
-        public typealias Output = Context.SchedulerTimeType.Stride
+        public typealias Output = Upstream.Output
         
         /// The kind of errors this publisher might publish.
         ///
         /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = Upstream.Failure
         
+        /// The element to deliver when the upstream publisher finishes without delivering any elements.
+        public let output: Upstream.Output
+        
         /// The publisher from which this publisher receives elements.
         public let upstream: Upstream
         
-        /// The scheduler on which to deliver elements.
-        public let scheduler: Context
-        
-        private let options: Context.SchedulerOptions?
-        
-        init(upstream: Upstream, scheduler: Context, options: Context.SchedulerOptions?) {
+        public init(upstream: Upstream, output: Publishers.ReplaceEmpty<Upstream>.Output) {
             self.upstream = upstream
-            self.scheduler = scheduler
-            self.options = options
+            self.output = output
         }
         
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
@@ -45,51 +53,47 @@ extension Publishers {
         /// - Parameters:
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, S.Input == Context.SchedulerTimeType.Stride {
+        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             let subscription = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(subscription)
         }
     }
 }
 
-extension Publishers.MeasureInterval {
+extension Publishers.ReplaceEmpty {
     
     private final class Inner<S>:
         Subscription,
         Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
-    where
+        where
         S: Subscriber,
-        S.Input == Output,
+        S.Input == Upstream.Output,
         S.Failure == Failure
     {
         
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
         
-        typealias Pub = Publishers.MeasureInterval<Upstream, Context>
+        typealias Pub = Publishers.ReplaceEmpty<Upstream>
         typealias Sub = S
         
         let lock = Lock()
         
+        let output: Upstream.Output
         let sub: Sub
-        let scheduler: Context
-        let options: Context.SchedulerOptions?
         
-        var timestamp: Context.SchedulerTimeType
-        
-        var state: RelayState = .waiting
+        var isEmpty = true
+        var state = RelayState.waiting
         
         init(pub: Pub, sub: Sub) {
+            self.output = pub.output
             self.sub = sub
-            
-            self.scheduler = pub.scheduler
-            self.options = pub.options
-            self.timestamp = pub.scheduler.now
         }
         
         func request(_ demand: Subscribers.Demand) {
+            precondition(demand > 0)
             self.lock.withLockGet(self.state.subscription)?.request(demand)
         }
         
@@ -113,30 +117,34 @@ extension Publishers.MeasureInterval {
                 return .none
             }
             
-            let now = self.scheduler.now
-            let interval = self.timestamp.distance(to: now)
-            self.timestamp = now
+            self.isEmpty = false
             self.lock.unlock()
             
-            return sub.receive(interval)
+            return self.sub.receive(input)
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
-            guard let subscription = self.lock.withLockGet(self.state.finish()) else {
+            self.lock.lock()
+            guard let subscription = self.state.finish() else {
+                self.lock.unlock()
                 return
             }
+            let isEmpty = self.isEmpty
+            self.lock.unlock()
             
             subscription.cancel()
+            if isEmpty {
+                _ = self.sub.receive(self.output)
+            }
             self.sub.receive(completion: completion)
         }
         
         var description: String {
-            return "MeasureInterval"
+            return "ReplaceEmpty"
         }
         
         var debugDescription: String {
-            return "MeasureInterval"
+            return "ReplaceEmpty"
         }
     }
 }
-

@@ -41,11 +41,11 @@ extension Publishers {
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, S.Failure == Publishers.TryLastWhere<Upstream>.Failure {
             self.upstream
-                .tryReduce(nil as Output?) { (current, output) in
-                    if try self.predicate(output) {
-                        return output
+                .tryReduce(nil as Output?) {
+                    if try self.predicate($1) {
+                        return $1
                     }
-                    return current
+                    return $0
                 }
                 .compactMap {
                     $0

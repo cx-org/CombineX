@@ -110,6 +110,8 @@ Since some people may not have macOS 10.15 beta installed, the recommended contr
 |`ReceiveOn`| done |   |   |
 |`Reduce`| done |   |   |
 |`RemoveDuplicates`| done |   |   |
+|`ReplaceEmpty`| done | done |   |
+|`ReplaceError`| done | done |   |
 |`Sequence`| done | done |   |
 |`SetFailureType`| done |   |   |
 |`SubscribeOn`|   |   |   |

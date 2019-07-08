@@ -61,7 +61,12 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, NewPublisher.Failure == S.Failure, NewPublisher.Output == S.Input {
-            Global.RequiresImplementation()
+            self.upstream
+                .tryCatch(self.handler)
+                .mapError {
+                    $0 as! NewPublisher.Failure
+                }
+                .receive(subscriber: subscriber)
         }
     }
 }

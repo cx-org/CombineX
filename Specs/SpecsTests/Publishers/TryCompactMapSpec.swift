@@ -11,15 +11,6 @@ class TryCompactMapSpec: QuickSpec {
     
     override func spec() {
         
-        func makeCustomSubscriber<Input, Failure: Error>(_ input: Input.Type, _ failure: Failure.Type, _ demand: Subscribers.Demand) -> CustomSubscriber<Input, Failure> {
-            return CustomSubscriber<Input, Failure>(receiveSubscription: { (s) in
-                s.request(demand)
-            }, receiveValue: { v in
-                return .none
-            }, receiveCompletion: { c in
-            })
-        }
-        
         // MARK: Relay
         describe("Relay") {
             
