@@ -104,7 +104,7 @@ Since some people may not have macOS 10.15 beta installed, the recommended contr
 |`Merge`| done | basic |   |
 |`Once`| done |   |   |
 |`Optional`| done | done |   |
-|`Output`| done | basic |   |
+|`Output`| done | done |   |
 |`Print`| done | done |   |
 |`Publishers`| done | no need |   |
 |`ReceiveOn`| done |   |   |
@@ -121,15 +121,14 @@ Since some people may not have macOS 10.15 beta installed, the recommended contr
 |`TryFirst`| done |   |   |
 |`TryLastWhere`| done |   |   |
 |`TryMap`| done |   |   |
-|`TryReduce`| done |   |   |
-|`TryRemoveDuplicates`| done |   |   |
+|`TryReduce`| done | done |   |
+|`TryRemoveDuplicates`| done | done |   |
 
 ### Schedulers
 
 | API | Status | Test | Notes |
 |:--|:--|:--|:--|
 |`ImmediateScheduler`| done |   |   |
-|`DispatchScheduler`| done |   | only `CombineX` |
 
 ### Subjects
 

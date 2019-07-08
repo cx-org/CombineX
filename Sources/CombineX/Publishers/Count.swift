@@ -51,96 +51,12 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, S.Input == Publishers.Count<Upstream>.Output {
-            let subscription = Inner(pub: self, sub: subscriber)
-            self.upstream.subscribe(subscription)
-        }
-    }
-}
-
-extension Publishers.Count {
-    
-    private final class Inner<S>:
-        Subscription,
-        Subscriber,
-        CustomStringConvertible,
-        CustomDebugStringConvertible
-    where
-        S: Subscriber,
-        S.Input == Output,
-        S.Failure == Failure
-    {
-        
-        typealias Input = Upstream.Output
-        typealias Failure = Upstream.Failure
-        
-        typealias Pub = Publishers.Count<Upstream>
-        typealias Sub = S
-        
-        let state = Atomic<RelayState>(value: .waiting)
-        
-        var count = 0
-        var pub: Pub?
-        var sub: Sub?
-        
-        init(pub: Pub, sub: Sub) {
-            self.pub = pub
-            self.sub = sub
-        }
-        
-        func request(_ demand: Subscribers.Demand) {
-            precondition(demand > 0)
-            self.state.subscription?.request(.unlimited)
-        }
-        
-        func cancel() {
-            self.state.finishIfRelaying()?.cancel()
-            
-            self.pub = nil
-            self.sub = nil
-        }
-        
-        func receive(subscription: Subscription) {
-            if self.state.compareAndStore(expected: .waiting, newVaue: .relaying(subscription)) {
-                self.sub?.receive(subscription: self)
-            } else {
-                subscription.cancel()
-            }
-        }
-        
-        func receive(_ input: Input) -> Subscribers.Demand {
-            self.state.withLock {
-                guard $0.isRelaying else {
-                    return
+            self.upstream
+                .reduce(0) { (count, output) -> Int in
+                    Swift.print(count, output)
+                    return count + 1
                 }
-                self.count += 1
-            }
-            
-            return .none
-        }
-        
-        func receive(completion: Subscribers.Completion<Failure>) {
-            if let subscription = self.state.finishIfRelaying() {
-                subscription.cancel()
-                
-                switch completion {
-                case .failure(let error):
-                    self.sub?.receive(completion: .failure(error))
-                case .finished:
-                    _ = self.sub?.receive(self.count)
-                    self.sub?.receive(completion: .finished)
-                }
-                
-                self.pub = nil
-                self.sub = nil
-            }
-        }
-        
-        var description: String {
-            return "Count"
-        }
-        
-        var debugDescription: String {
-            return "Count"
+                .subscribe(subscriber)
         }
     }
 }

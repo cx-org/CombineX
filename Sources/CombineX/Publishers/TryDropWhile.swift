@@ -42,26 +42,112 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, S.Failure == Publishers.TryDropWhile<Upstream>.Failure {
-            
-            let lock = Lock()
-            var stopDrop = false
-            
-            let isInclude: (Upstream.Output) throws -> Bool = { output in
-                try lock.withLock {
-                    if stopDrop {
-                        return true
-                    }
-                    
-                    if try self.predicate(output) {
-                        return false
-                    }
-                    
-                    stopDrop = true
-                    return true
-                }
+            let subscription = Inner(pub: self, sub: subscriber)
+            self.upstream.subscribe(subscription)
+        }
+    }
+}
+
+extension Publishers.TryDropWhile {
+    
+    private final class Inner<S>:
+        Subscription,
+        Subscriber,
+        CustomStringConvertible,
+        CustomDebugStringConvertible
+    where
+        S: Subscriber,
+        S.Input == Output,
+        S.Failure == Failure
+    {
+        typealias Input = Upstream.Output
+        typealias Failure = Upstream.Failure
+        
+        typealias Pub = Publishers.TryDropWhile<Upstream>
+        typealias Sub = S
+        typealias Predicate = (Upstream.Output) throws -> Bool
+        
+        let lock = Lock()
+        
+        let sub: Sub
+        let predicate: Predicate
+        var stop = false
+        
+        var state = RelayState.waiting
+        
+        init(pub: Pub, sub: Sub) {
+            self.predicate = pub.predicate
+            self.sub = sub
+        }
+        
+        func request(_ demand: Subscribers.Demand) {
+            self.lock.withLockGet(self.state.subscription)?.request(demand)
+        }
+        
+        func cancel() {
+            self.lock.withLockGet(self.state.finish())?.cancel()
+        }
+        
+        func receive(subscription: Subscription) {
+            guard self.lock.withLockGet(self.state.relay(subscription)) else {
+                subscription.cancel()
+                return
             }
             
-            return self.upstream.tryFilter(isInclude).receive(subscriber: subscriber)
+            self.sub.receive(subscription: self)
+        }
+        
+        func receive(_ input: Input) -> Subscribers.Demand {
+            self.lock.lock()
+            guard self.state.isRelaying else {
+                self.lock.unlock()
+                return .none
+            }
+            
+            do {
+                if self.stop {
+                    self.lock.unlock()
+                    return self.sub.receive(input)
+                }
+                
+                if try self.predicate(input) {
+                    self.lock.unlock()
+                    return .max(1)
+                } else {
+                    self.stop = true
+                    self.lock.unlock()
+                    
+                    return self.sub.receive(input)
+                }
+            } catch {
+                let subscription = self.state.finish()
+                self.lock.unlock()
+                
+                subscription?.cancel()
+                self.sub.receive(completion: .failure(error))
+                return .none
+            }
+        }
+        
+        func receive(completion: Subscribers.Completion<Failure>) {
+            self.complete(completion.mapError { $0 })
+        }
+        
+        private func complete(_ completion: Subscribers.Completion<Error>) {
+            guard let subscription = self.lock.withLockGet(self.state.finish()) else {
+                return
+            }
+            
+            subscription.cancel()
+            self.sub.receive(completion: completion.mapError { $0 })
+        }
+        
+        var description: String {
+            return "TryDropWhile"
+        }
+        
+        var debugDescription: String {
+            return "TryDropWhile"
         }
     }
 }

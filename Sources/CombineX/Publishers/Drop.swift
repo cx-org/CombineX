@@ -53,19 +53,9 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
-            let lock = Lock()
-            var count = 0
-            
-            let isInclude: (Upstream.Output) -> Bool = { _ in
-                lock.withLock {
-                    defer {
-                        count += 1
-                    }
-                    return count > self.count
-                }
-            }
-            
-            return self.upstream.filter(isInclude).receive(subscriber: subscriber)
+            return self.upstream
+                .output(in: count...)
+                .receive(subscriber: subscriber)
         }
     }
 }

@@ -109,62 +109,42 @@ extension Publishers.Output {
         typealias Sub = S
         
         let lock = Lock()
-        var state = RelayState.waiting
-        var index = 0
         
         let range: CountableRange<Int>
+        let sub: Sub
         
-        var pub: Pub?
-        var sub: Sub?
+        var index = 0
+        var state = RelayState.waiting
         
         init(pub: Pub, sub: Sub) {
-            self.pub = pub
-            self.sub = sub
-            
             self.range = pub.range
+            self.sub = sub
         }
         
         func request(_ demand: Subscribers.Demand) {
-            self.lock.lock()
-            let subscription = self.state.subscription
-            self.lock.unlock()
-            
-            subscription?.request(demand)
+            self.lock.withLockGet(self.state.subscription)?.request(demand)
         }
         
         func cancel() {
-            self.lock.lock()
-            let subscription = self.state.subscription
-            self.state = .finished
-            self.lock.unlock()
-            
-            subscription?.cancel()
-            
-            self.pub = nil
-            self.sub = nil
+            self.lock.withLockGet(self.state.finish())?.cancel()
         }
         
         func receive(subscription: Subscription) {
-            self.lock.lock()
-            
-            if self.state.isWaiting {
-                self.state = .relaying(subscription)
-                self.lock.unlock()
-                
-                self.sub?.receive(subscription: self)
-            } else {
-                self.lock.unlock()
+            guard self.lock.withLockGet(self.state.relay(subscription)) else {
                 subscription.cancel()
+                return
             }
+            
+            self.sub.receive(subscription: self)
         }
         
         func receive(_ input: Input) -> Subscribers.Demand {
             self.lock.lock()
-            
-            guard self.state.isRelaying, let sub = self.sub else {
+            guard self.state.isRelaying else {
                 self.lock.unlock()
                 return .none
             }
+            
             guard self.range.contains(self.index) else {
                 self.index += 1
                 self.lock.unlock()
@@ -174,29 +154,29 @@ extension Publishers.Output {
             self.index += 1
             self.lock.unlock()
             
-            let demand = sub.receive(input)
-            if self.index == range.upperBound {
-                self.state.subscription?.cancel()
-                sub.receive(completion: .finished)
+            let demand = self.sub.receive(input)
+            
+            self.lock.lock()
+            if self.index == self.range.upperBound {
+                let subscription = self.state.finish()
+                self.lock.unlock()
                 
-                self.pub = nil
-                self.sub = nil
+                subscription?.cancel()
+                self.sub.receive(completion: .finished)
+            } else {
+                self.lock.unlock()
             }
+            
             return demand
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
-            self.lock.lock()
-            guard let subscription = self.state.subscription else {
-                self.lock.unlock()
+            guard let subscription = self.lock.withLockGet(self.state.finish()) else {
                 return
             }
             
             subscription.cancel()
-            
-            self.sub?.receive(completion: completion)
-            self.pub = nil
-            self.sub = nil
+            self.sub.receive(completion: completion)
         }
         
         var description: String {

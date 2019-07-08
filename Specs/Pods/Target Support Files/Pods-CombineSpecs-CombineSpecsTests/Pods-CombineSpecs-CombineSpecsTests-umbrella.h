@@ -11,6 +11,6 @@
 #endif
 
 
-FOUNDATION_EXPORT double Pods_SpecsTestsVersionNumber;
-FOUNDATION_EXPORT const unsigned char Pods_SpecsTestsVersionString[];
+FOUNDATION_EXPORT double Pods_CombineSpecs_CombineSpecsTestsVersionNumber;
+FOUNDATION_EXPORT const unsigned char Pods_CombineSpecs_CombineSpecsTestsVersionString[];
 

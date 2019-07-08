@@ -35,7 +35,7 @@ extension Publishers {
         /// The publisher from which this publisher receives elements.
         public let upstream: Upstream
         
-        public var stream: TextOutputStream?
+        public let stream: TextOutputStream?
         
         /// Creates a publisher that prints log messages for all publishing events.
         ///
@@ -80,88 +80,75 @@ extension Publishers.Print {
         typealias Pub = Publishers.Print<Upstream>
         typealias Sub = S
         
-        let state = Atomic<RelayState>(value: .waiting)
+        let lock = Lock()
         
-        let streamLock = Lock()
-        
-        var upstream: Upstream?
         let prefix: String
         var stream: TextOutputStream
+        let sub: Sub
         
-        var sub: Sub?
+        var state: RelayState = .waiting
         
         init(pub: Pub, sub: Sub) {
-            self.sub = sub
-        
-            self.upstream = pub.upstream
             self.prefix = pub.prefix
             self.stream = pub.stream ?? ConsoleOutputStream()
+            self.sub = sub
         }
         
         private func write(_ string: String) {
-            var output = "\(self.prefix): \(string)\n"
+            let output = self.prefix + ": \(string)\n"
             
-            self.streamLock.lock()
-            defer {
-                self.streamLock.unlock()
+            self.lock.withLock {
+                self.stream.write(output)
             }
-            
-            self.stream.write(output)
         }
         
         func request(_ demand: Subscribers.Demand) {
-            self.write("request \(demand)")
-            self.state.subscription?.request(demand)
+            self.write("request \(demand.toText())")
+            self.lock.withLockGet(self.state.subscription)?.request(demand)
         }
         
         func cancel() {
             self.write("receive cancel")
-            self.state.finishIfRelaying()?.cancel()
-            
-            self.upstream = nil
-//            self.sub = nil
+            self.lock.withLockGet(self.state.finish())?.cancel()
         }
         
         func receive(subscription: Subscription) {
-            if self.state.compareAndStore(expected: .waiting, newVaue: .relaying(subscription)) {
-                self.write("receive subscription: (\(subscription))")
-                self.sub?.receive(subscription: self)
-            } else {
+            guard self.lock.withLockGet(self.state.relay(subscription)) else {
                 subscription.cancel()
+                return
             }
+            
+            self.write("receive subscription: (\(subscription))")
+            self.sub.receive(subscription: self)
         }
         
         func receive(_ input: Input) -> Subscribers.Demand {
-            guard self.state.isRelaying else {
-                return .none
-            }
-            
-            guard let sub = self.sub else {
+            guard self.lock.withLockGet(self.state.isRelaying) else {
                 return .none
             }
             
             self.write("receive value: (\(input))")
             let demand = sub.receive(input)
-            self.write("request \(demand) (synchronous)")
+            self.write("request \(demand.toText()) (synchronous)")
             
             return demand
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
-            if let subscription = self.state.finishIfRelaying() {
-                subscription.cancel()
-                
-                switch completion {
-                case .finished:
-                    self.write("receive finished")
-                case .failure(let e):
-                    self.write("receive error: \(e)")
-                }
-                
-                self.sub?.receive(completion: completion)
-                self.upstream = nil
-//                self.sub = nil
+            guard let subscription = self.lock.withLockGet(self.state.finish()) else {
+                return
             }
+            
+            subscription.cancel()
+            
+            switch completion {
+            case .finished:
+                self.write("receive finished")
+            case .failure(let e):
+                self.write("receive error: \(e)")
+            }
+            
+            self.sub.receive(completion: completion)
         }
         
         var description: String {
@@ -171,6 +158,16 @@ extension Publishers.Print {
         var debugDescription: String {
             return "Print"
         }
+    }
+}
+
+private extension Subscribers.Demand {
+    
+    func toText() -> String {
+        if let max = self.max {
+            return "max: (\(max))"
+        }
+        return "unlimited"
     }
 }
 

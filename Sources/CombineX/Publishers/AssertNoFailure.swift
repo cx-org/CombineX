@@ -56,11 +56,11 @@ extension Publishers {
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, S.Failure == Publishers.AssertNoFailure<Upstream>.Failure {
             Global.RequiresImplementation()
-//            return self.upstream
-//                .mapError {
-//                    fatalError(self.prefix + ": Asset no failure, but got \($0)", file: self.file, line: self.line)
-//                }
-//                .receive(subscriber: subscriber)
+            return self.upstream
+                .mapError {
+                    fatalError(self.prefix + ": Asset no failure, but got \($0)", file: self.file, line: self.line)
+                }
+                .receive(subscriber: subscriber)
         }
     }
 }

@@ -57,7 +57,7 @@ extension Publishers.MapError {
         CustomDebugStringConvertible
     where
         S: Subscriber,
-        S.Input == Output,
+        S.Input == Upstream.Output,
         S.Failure == Failure
     {
         
@@ -66,59 +66,50 @@ extension Publishers.MapError {
         
         typealias Pub = Publishers.MapError<Upstream, S.Failure>
         typealias Sub = S
+        typealias Transform = (Upstream.Failure) -> S.Failure
         
-        let state = Atomic<RelayState>(value: .waiting)
+        let lock = Lock()
         
-        var pub: Pub?
-        var sub: Sub?
+        let transform: Transform
+        let sub: Sub
+        
+        var state = RelayState.waiting
         
         init(pub: Pub, sub: Sub) {
-            self.pub = pub
+            self.transform = pub.transform
             self.sub = sub
         }
         
         func request(_ demand: Subscribers.Demand) {
-            self.state.subscription?.request(demand)
+            self.lock.withLockGet(self.state.subscription)?.request(demand)
         }
         
         func cancel() {
-            self.state.finishIfRelaying()?.cancel()
-
-            self.pub = nil
-            self.sub = nil
+            self.lock.withLockGet(self.state.finish())?.cancel()
         }
         
         func receive(subscription: Subscription) {
-            if self.state.compareAndStore(expected: .waiting, newVaue: .relaying(subscription)) {
-                self.sub?.receive(subscription: self)
-            } else {
+            guard self.lock.withLockGet(self.state.relay(subscription)) else {
                 subscription.cancel()
+                return
             }
+            
+            self.sub.receive(subscription: self)
         }
         
         func receive(_ input: Input) -> Subscribers.Demand {
-            guard self.state.isRelaying else {
+            guard self.lock.withLockGet(self.state.isRelaying) else {
                 return .none
             }
-            
-            return self.sub?.receive(input) ?? .none
+            return self.sub.receive(input)
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
-            guard let subscription = self.state.finishIfRelaying() else {
+            guard let subscription = self.lock.withLockGet(self.state.finish()) else {
                 return
             }
-            
             subscription.cancel()
-            
-            guard let pub = self.pub, let sub = self.sub else {
-                return
-            }
-            
-            sub.receive(completion: completion.mapError(pub.transform))
-            
-            self.pub = nil
-            self.sub = nil
+            self.sub.receive(completion: completion.mapError(self.transform))
         }
         
         var description: String {

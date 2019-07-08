@@ -41,7 +41,10 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, S.Failure == Publishers.TryFirstWhere<Upstream>.Failure {
-            return self.upstream.tryFilter(self.predicate).output(at: 0).receive(subscriber: subscriber)
+            return self.upstream
+                .tryFilter(self.predicate)
+                .output(at: 0)
+                .receive(subscriber: subscriber)
         }
     }
 }

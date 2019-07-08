@@ -62,6 +62,13 @@ extension CustomSubscriber.Event {
             return c.isFinished
         }
     }
+    
+    var error: Failure? {
+        guard case .completion(let c) = self, case .failure(let e) = c else {
+            return nil
+        }
+        return e
+    }
 }
 
 extension CustomSubscriber.Event where Input: Equatable {

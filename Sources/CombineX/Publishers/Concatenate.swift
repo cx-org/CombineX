@@ -87,13 +87,12 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Suffix.Failure == S.Failure, Suffix.Output == S.Input {
-            let subscription = Inner(pub: self, sub: subscriber)
-            
-            let child = Inner<S>.Child(parent: subscription)
-            self.prefix.subscribe(child)
+//            _ = Inner(pub: self, sub: subscriber)
         }
     }
 }
+
+/*
 
 extension Publishers.Concatenate {
     
@@ -110,139 +109,11 @@ extension Publishers.Concatenate {
         typealias Pub = Publishers.Concatenate<Prefix, Suffix>
         typealias Sub = S
         
-        let lock = Lock(recursive: true)
+        let lock = Lock()
 
-        var relayState: RelayState = .waiting
+        var state: RelayState = .waiting
         var demand: Subscribers.Demand = .none
-        
-        var subscriptionCount = 0
-        
-        var pub: Pub?
-        var sub: Sub?
-        
-        init(pub: Pub, sub: Sub) {
-            self.pub = pub
-            self.sub = sub
-        }
-        
-        func request(_ demand: Subscribers.Demand) {
-            self.lock.lock()
-            let subscription = self.relayState.subscription
-            self.demand += demand
-            self.lock.unlock()
-            
-            subscription?.request(demand)
-        }
-        
-        func cancel() {
-            self.lock.lock()
-            self.relayState = .finished
-            self.lock.unlock()
-            
-            self.pub = nil
-            self.sub = nil
-        }
-        
-        // MARK: Child
-        func receive(subscription: Subscription) {
-            self.lock.lock()
-            self.subscriptionCount += 1
-            switch self.relayState {
-            case .waiting:
-                self.relayState = .relaying(subscription)
-                self.lock.unlock()
-                self.sub?.receive(subscription: self)
-            case .relaying:
-                self.relayState = .relaying(subscription)
-                self.lock.unlock()
-                subscription.request(self.demand)
-            default:
-                self.lock.unlock()
-            }
-        }
-        
-        func receive(_ input: Suffix.Output) -> Subscribers.Demand {
-            self.lock.lock()
-            let demand = self.sub?.receive(input) ?? .none
-            self.demand += demand
-            self.lock.unlock()
-
-            return demand
-        }
-        
-        func receive(completion: Subscribers.Completion<Suffix.Failure>) {
-            self.lock.lock()
-            
-            switch completion {
-            case .failure:
-                self.relayState = .finished
-                self.lock.unlock()
-                
-                self.sub?.receive(completion: completion)
-                
-                self.pub = nil
-                self.sub = nil
-            case .finished:
-                if self.subscriptionCount == 1 {
-                    self.lock.unlock()
-                    
-                    if let suffix = self.pub?.suffix {
-                        let child = Child(parent: self)
-                        suffix.subscribe(child)
-                    }
-                } else {
-                    self.relayState = .finished
-                    self.lock.unlock()
-                    
-                    self.sub?.receive(completion: completion)
-                    
-                    self.pub = nil
-                    self.sub = nil
-                }
-            }
-        }
-        
-        var description: String {
-            return "Concatenate"
-        }
-        
-        var debugDescription: String {
-            return "Concatenate"
-        }
-        
-        final class Child: Subscriber {
-            
-            typealias Input = Suffix.Output
-            typealias Failure = Suffix.Failure
-            
-            let subscription = Atomic<Subscription?>(value: nil)
-            
-            let parent: Inner
-            init(parent: Inner) {
-                self.parent = parent
-            }
-            
-            func receive(subscription: Subscription) {
-                if self.subscription.ifNilStore(subscription) {
-                    self.parent.receive(subscription: subscription)
-                    return
-                }
-                subscription.cancel()
-            }
-            
-            func receive(_ input: Input) -> Subscribers.Demand {
-                if self.subscription.isNil {
-                    return .none
-                }
-                return self.parent.receive(input)
-            }
-            
-            func receive(completion: Subscribers.Completion<Failure>) {
-                if self.subscription.isNil {
-                    return
-                }
-                return self.parent.receive(completion: completion)
-            }
-        }
     }
 }
+
+ */

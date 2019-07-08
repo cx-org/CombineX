@@ -20,8 +20,8 @@ class TryCompactMapSpec: QuickSpec {
             })
         }
         
-        // MARK: Send Values
-        describe("Send Values") {
+        // MARK: Relay
+        describe("Relay") {
             
             // MARK: 1.1 should compact map values from upstream
             it("should compact map values from upstream") {
@@ -49,7 +49,22 @@ class TryCompactMapSpec: QuickSpec {
                 }
             }
             
-            // MARK: 1.2 should fail if transform throws error
+            // MARK: 1.2 should send as many values as demand
+            it("should send as many values as demand") {
+                let pub = PassthroughSubject<Int, Never>()
+                
+                let sub = makeCustomSubscriber(Int.self, Error.self, .max(10))
+                
+                pub.tryCompactMap { $0 }.subscribe(sub)
+                
+                for i in 0..<100 {
+                    pub.send(i)
+                }
+                
+                expect(sub.events.count).to(equal(10))
+            }
+            
+            // MARK: 1.3 should fail if transform throws error
             it("should fail if transform throws error") {
                 let pub = PassthroughSubject<Int, CustomError>()
                 
@@ -81,20 +96,6 @@ class TryCompactMapSpec: QuickSpec {
                 }
             }
             
-            // MARK: 1.3 should send as many values as demand
-            it("should send as many values as demand") {
-                let pub = PassthroughSubject<Int, Never>()
-                
-                let sub = makeCustomSubscriber(Int.self, Error.self, .max(10))
-                
-                pub.tryCompactMap { $0 }.subscribe(sub)
-                
-                for i in 0..<100 {
-                    pub.send(i)
-                }
-                
-                expect(sub.events.count).to(equal(10))
-            }
         }
         
         
@@ -192,6 +193,5 @@ class TryCompactMapSpec: QuickSpec {
                 expect(closureObj).toNot(beNil())
             }
         }
-
     }
 }

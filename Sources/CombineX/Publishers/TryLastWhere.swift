@@ -40,135 +40,17 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, S.Failure == Publishers.TryLastWhere<Upstream>.Failure {
-            let subscription = Inner(pub: self, sub: subscriber)
-            self.upstream.subscribe(subscription)
-        }
-    }
-}
-
-extension Publishers.TryLastWhere {
-    
-    private final class Inner<S>:
-        Subscription,
-        Subscriber,
-        CustomStringConvertible,
-        CustomDebugStringConvertible
-    where
-        S: Subscriber,
-        S.Input == Output,
-        S.Failure == Failure
-    {
-        
-        typealias Input = Upstream.Output
-        typealias Failure = Upstream.Failure
-        
-        typealias Pub = Publishers.TryLastWhere<Upstream>
-        typealias Sub = S
-        
-        let lock = Lock()
-        
-        var state: RelayState = .waiting
-        var last: Input?
-        
-        var pub: Pub?
-        var sub: Sub?
-        
-        init(pub: Pub, sub: Sub) {
-            self.pub = pub
-            self.sub = sub
-        }
-        
-        func request(_ demand: Subscribers.Demand) {
-            precondition(demand > 0)
-            self.lock.lock()
-            let subscription = self.state.subscription
-            self.lock.unlock()
-            subscription?.request(.unlimited)
-        }
-        
-        func cancel() {
-            self.lock.lock()
-            let subscription = self.state.finishIfRelaying()
-            self.lock.unlock()
-            
-            subscription?.cancel()
-            
-            self.pub = nil
-            self.sub = nil
-        }
-        
-        func receive(subscription: Subscription) {
-            self.lock.lock()
-            switch self.state {
-            case .waiting:
-                self.state = .relaying(subscription)
-                self.lock.unlock()
-                self.sub?.receive(subscription: self)
-            default:
-                self.lock.unlock()
-                subscription.cancel()
-            }
-        }
-        
-        func receive(_ input: Input) -> Subscribers.Demand {
-            self.lock.lock()
-            
-            guard self.state.isRelaying else {
-                self.lock.unlock()
-                return .none
-            }
-            
-            guard let predicate = self.pub?.predicate else {
-                self.lock.unlock()
-                return .none
-            }
-            
-            do {
-                if try predicate(input) {
-                    self.last = input
-                }
-                self.lock.unlock()
-            } catch {
-                let subscription = self.state.finishIfRelaying()
-                self.lock.unlock()
-                
-                subscription?.cancel()
-                self.sub?.receive(completion: .failure(error))
-            }
-            
-            return .none
-        }
-        
-        func receive(completion: Subscribers.Completion<Failure>) {
-            self.lock.lock()
-            
-            if let subscription = self.state.finishIfRelaying() {
-                self.lock.unlock()
-                
-                subscription.cancel()
-                switch completion {
-                case .failure(let error):
-                    self.sub?.receive(completion: .failure(error))
-                case .finished:
-                    if let last = self.last {
-                        _ = self.sub?.receive(last)
+            self.upstream
+                .tryReduce(nil as Output?) { (current, output) in
+                    if try self.predicate(output) {
+                        return output
                     }
-                    self.sub?.receive(completion: .finished)
+                    return current
                 }
-                
-                self.pub = nil
-                self.sub = nil
-            } else {
-                self.lock.unlock()
-            }
-        }
-        
-        var description: String {
-            return "TryLastWhere"
-        }
-        
-        var debugDescription: String {
-            return "TryLastWhere"
+                .compactMap {
+                    $0
+                }
+                .subscribe(subscriber)
         }
     }
 }

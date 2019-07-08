@@ -15,7 +15,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         _ = Just(1).sink {
-            print("Just: \($0)")
+            print("[Combine] Just: \($0)")
         }
     }
 }

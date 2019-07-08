@@ -72,66 +72,66 @@ extension Publishers.TryReduce {
         typealias Pub = Publishers.TryReduce<Upstream, Output>
         typealias Sub = S
         
-        let state = Atomic<RelayState>(value: .waiting)
+        typealias NextPartialResult = (Output, Upstream.Output) throws -> Output
         
-        var pub: Pub?
-        var sub: Sub?
+        let lock = Lock()
         
-        let output: Atomic<Output>
+        let nextPartialResult: NextPartialResult
+        let sub: Sub
+        
+        var state: RelayState = .waiting
+        
+        var output: Output
         
         init(pub: Pub, sub: Sub) {
-            self.pub = pub
+            self.output = pub.initial
+            self.nextPartialResult = pub.nextPartialResult
             self.sub = sub
-            
-            self.output = Atomic(value: pub.initial)
         }
         
         func request(_ demand: Subscribers.Demand) {
             precondition(demand > 0)
-            self.state.subscription?.request(.unlimited)
+            self.lock.withLockGet(self.state.subscription)?.request(.unlimited)
         }
         
         func cancel() {
-            self.state.finishIfRelaying()?.cancel()
-            
-            self.pub = nil
-            self.sub = nil
+            self.lock.withLockGet(self.state.finish())?.cancel()
         }
         
         func receive(subscription: Subscription) {
-            if self.state.compareAndStore(expected: .waiting, newVaue: .relaying(subscription)) {
-                self.sub?.receive(subscription: self)
-            } else {
+            guard self.lock.withLockGet(self.state.relay(subscription)) else {
                 subscription.cancel()
+                return
             }
+            
+            self.sub.receive(subscription: self)
         }
         
         func receive(_ input: Input) -> Subscribers.Demand {
+            // Against misbehaving upstream
+            self.lock.lock()
             guard self.state.isRelaying else {
+                self.lock.unlock()
                 return .none
             }
             
-            guard let pub = self.pub, let sub = self.sub else {
-                return .none
+            do {
+                let next = try self.nextPartialResult(self.output, input)
+                self.output = next
+                self.lock.unlock()
+            } catch {
+                let subscription = self.state.finish()
+                self.lock.unlock()
+                
+                subscription?.cancel()
+                self.sub.receive(completion: .failure(error))
             }
-            
-            self.output.withLockMutating {
-                do {
-                    let next = try pub.nextPartialResult($0, input)
-                    $0 = next
-                } catch {
-                    if let subscription = self.state.finishIfRelaying() {
-                        subscription.cancel()
-                        sub.receive(completion: .failure(error))
-                    }
-                }
-            }
-            
+
             return .none
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
-            guard let subscription = self.state.finishIfRelaying() else {
+            guard let subscription = self.lock.withLockGet(self.state.finish()) else {
                 return
             }
             
@@ -139,22 +139,19 @@ extension Publishers.TryReduce {
             
             switch completion {
             case .failure(let e):
-                self.sub?.receive(completion: .failure(e))
+                self.sub.receive(completion: .failure(e))
             case .finished:
-                _ = self.sub?.receive(self.output.load())
-                self.sub?.receive(completion: .finished)
+                _ = self.sub.receive(self.output)
+                self.sub.receive(completion: .finished)
             }
-            
-            self.pub = nil
-            self.sub = nil
         }
         
         var description: String {
-            return "Reduce"
+            return "TryReduce"
         }
         
         var debugDescription: String {
-            return "Reduce"
+            return "TryReduce"
         }
     }
 }

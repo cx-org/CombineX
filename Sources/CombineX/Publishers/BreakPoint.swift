@@ -109,66 +109,63 @@ extension Publishers.Breakpoint {
         typealias Pub = Publishers.Breakpoint<Upstream>
         typealias Sub = S
         
-        let state = Atomic<RelayState>(value: .waiting)
+        let lock = Lock()
         
-        var pub: Pub?
-        var sub: Sub?
+        let receiveSubscription: ((Subscription) -> Bool)?
+        let receiveOutput: ((Upstream.Output) -> Bool)?
+        let receiveCompletion: ((Subscribers.Completion<Upstream.Failure>) -> Bool)?
+        let sub: Sub
+        
+        var state = RelayState.waiting
         
         init(pub: Pub, sub: Sub) {
-            self.pub = pub
+            self.receiveSubscription = pub.receiveSubscription
+            self.receiveOutput = pub.receiveOutput
+            self.receiveCompletion = pub.receiveCompletion
             self.sub = sub
         }
         
         func request(_ demand: Subscribers.Demand) {
-            self.state.subscription?.request(demand)
+            self.lock.withLockGet(self.state.subscription)?.request(demand)
         }
         
         func cancel() {
-            self.state.finishIfRelaying()?.cancel()
-            
-            self.pub = nil
-            self.sub = nil
+            self.lock.withLockGet(self.state.finish())?.cancel()
         }
         
         func receive(subscription: Subscription) {
-            if self.state.compareAndStore(expected: .waiting, newVaue: .relaying(subscription)) {
-                
-                if let receiveSubscription = self.pub?.receiveSubscription, receiveSubscription(subscription) {
-                    Signal.sigtrap.raise()
-                }
-                self.sub?.receive(subscription: self)
-            } else {
+            guard self.lock.withLockGet(self.state.relay(subscription)) else {
                 subscription.cancel()
+                return
             }
+            
+            if let receiveSubscription = self.receiveSubscription, receiveSubscription(subscription) {
+                Signal.sigtrap.raise()
+            }
+            self.sub.receive(subscription: self)
         }
         
         func receive(_ input: Input) -> Subscribers.Demand {
-            guard self.state.isRelaying else {
+            guard self.lock.withLockGet(self.state.isRelaying) else {
                 return .none
             }
-            
-            guard let sub = self.sub else {
-                return .none
-            }
-            
-            if let receiveOutput = self.pub?.receiveOutput, receiveOutput(input) {
+            if let receiveOutput = self.receiveOutput, receiveOutput(input) {
                 Signal.sigtrap.raise()
             }
-            return sub.receive(input)
+            return self.sub.receive(input)
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
-            if let subscription = self.state.finishIfRelaying() {
-                subscription.cancel()
-                
-                if let receiveCompletion = self.pub?.receiveCompletion, receiveCompletion(completion) {
-                    Signal.sigtrap.raise()
-                }
-                
-                self.sub?.receive(completion: completion)
-                self.pub = nil
-                self.sub = nil
+            guard let subscription = self.lock.withLockGet(self.state.finish()) else {
+                return
             }
+            subscription.cancel()
+            
+            if let receiveCompletion = self.receiveCompletion, receiveCompletion(completion) {
+                Signal.sigtrap.raise()
+            }
+            
+            self.sub.receive(completion: completion)
         }
         
         var description: String {

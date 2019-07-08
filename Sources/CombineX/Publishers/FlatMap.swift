@@ -46,7 +46,7 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, NewPublisher.Output == S.Input, Upstream.Failure == S.Failure {
-            let subscription = Inner(pub: self, sub: subscriber)
+            let subscription = Inner(transform: self.transform, maxPublishers: self.maxPublishers, sub: subscriber)
             self.upstream.subscribe(subscription)
         }
     }
@@ -67,194 +67,179 @@ extension Publishers.FlatMap {
         
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
-        
-        // for upstream
-        let relayState = Atomic<RelayState>(value: .waiting)
-        
-        // for downstream
-        let lock = Lock(recursive: true)
-        var children: [ChildSubscriber] = []
-        var state = SubscriptionState.waiting
-        
-        typealias Pub = Publishers.FlatMap<NewPublisher, Upstream>
+        typealias Transform = (Upstream.Output) -> NewPublisher
         typealias Sub = S
         
-        var pub: Pub?
-        var sub: Sub?
+        // for upstream
+        let upLock = Lock()
+        var upState: RelayState = .waiting
+        
+        // for downstream
+        let downLock = Lock()
+        var downState: SubscriptionState = .waiting
+        var children: [ChildSubscriber] = []
+        var sub: Sub
         
         let maxPublishers: Subscribers.Demand
+        let transform: Transform
         
-        init(pub: Pub, sub: Sub) {
-            self.pub = pub
+        init(transform: @escaping Transform, maxPublishers: Subscribers.Demand, sub: Sub) {
+            self.transform = transform
+            self.maxPublishers = maxPublishers
             self.sub = sub
-            
-            self.maxPublishers = pub.maxPublishers
         }
         
         // MARK: Subscription
         func request(_ demand: Subscribers.Demand) {
-            self.lock.lock()
-            defer {
-                self.lock.unlock()
-            }
-            
-            switch self.state {
+            self.downLock.lock()
+            switch self.downState {
             case .waiting:
-                self.state = .subscribing(demand)
+                self.downState = .subscribing(demand)
+                self.downLock.unlock()
+                
                 if demand > 0 {
                     self.drain(demand)
                 }
             case .subscribing(let before):
                 let after = before + demand
-                self.state = .subscribing(after)
+                self.downState = .subscribing(after)
+                self.downLock.unlock()
                 
-                if before <= 0 && after > 0 {
+                if before == 0 && after > 0 {
                     self.drain(after)
                 }
             default:
-                break
+                self.downLock.unlock()
             }
         }
         
         func cancel() {
-            self.lock.lock()
-            
-            self.state = .finished
-            
+            self.downLock.lock()
+            self.downState = .finished
             let children = self.children
             self.children = []
-            
-            self.lock.unlock()
+            self.downLock.unlock()
             
             children.forEach {
                 $0.subscription.exchange(with: nil)?.cancel()
             }
             
-            self.relayState.finishIfRelaying()?.cancel()
-            
-            self.pub = nil
-            self.sub = nil
+            self.upLock.withLockGet(self.upState.finish())?.cancel()
         }
         
         // MARK: Subscriber
         func receive(subscription: Subscription) {
-            if relayState.compareAndStore(expected: .waiting, newVaue: .relaying(subscription)) {
-                self.sub?.receive(subscription: self)
-                subscription.request(self.maxPublishers)
-            } else {
+            guard self.upLock.withLockGet(self.upState.relay(subscription)) else {
                 subscription.cancel()
+                return
             }
+            self.sub.receive(subscription: self)
+            subscription.request(self.maxPublishers)
         }
         
         func receive(_ input: Input) -> Subscribers.Demand {
-            
             // Against misbehaving upstream
-            guard self.relayState.isRelaying else {
+            guard self.upLock.withLockGet(self.upState.isRelaying) else {
                 return .none
             }
             
-            guard let pub = self.pub else {
-                return .none
-            }
-
             let child = ChildSubscriber(parent: self)
             
-            self.lock.lock()
-            if self.state.isFinished {
-                self.lock.unlock()
+            self.downLock.lock()
+            guard self.downState.isSubscribing else {
+                self.downLock.unlock()
                 return .none
             }
-
-            self.children.append(child)
-            self.lock.unlock()
             
-            pub.transform(input).subscribe(child)
+            self.children.append(child)
+            self.downLock.unlock()
+            
+            self.transform(input).subscribe(child)
             return .none
         }
         
         func receive(completion: Subscribers.Completion<NewPublisher.Failure>) {
-            guard let subscription = self.relayState.finishIfRelaying() else {
+            guard let subscription = self.upLock.withLockGet(self.upState.subscription) else {
                 return
             }
             
             subscription.cancel()
             
-            self.lock.lock()
-            
             switch completion {
             case .finished:
-                
+                self.downLock.lock()
                 if self.children.isEmpty {
-
-                    guard self.state.isSubscribing else {
-                        self.lock.unlock()
+                    guard self.downState.isSubscribing else {
+                        self.downLock.unlock()
                         return
                     }
-                    
-                    self.state = .finished
-                    self.sub?.receive(completion: .finished)
-                    self.lock.unlock()
-                    
-                    self.pub = nil
-                    self.sub = nil
+                    self.downState = .finished
+                    self.downLock.unlock()
+                    self.sub.receive(completion: .finished)
                 } else {
-                    self.lock.unlock()
+                    self.downLock.unlock()
                 }
             case .failure(let error):
-                guard self.state.isSubscribing else {
-                    self.lock.unlock()
+                self.downLock.lock()
+                guard self.downState.isSubscribing else {
+                    self.downLock.unlock()
                     return
                 }
                 
-                self.state = .finished
-                self.sub?.receive(completion: .failure(error))
-                
+                self.downState = .finished
                 let children = self.children
                 self.children = []
-                
-                self.lock.unlock()
+                self.downLock.unlock()
                 
                 children.forEach {
                     $0.subscription.exchange(with: nil)?.cancel()
                 }
                 
-                self.pub = nil
-                self.sub = nil
+                self.sub.receive(completion: .failure(error))
             }
         }
         
         // MARK: ChildSubsciber
         func receive(_ input: NewPublisher.Output, from child: ChildSubscriber) -> Subscribers.Demand {
-            self.lock.lock()
-            defer {
-                self.lock.unlock()
-            }
-            
-            guard let before = self.state.demand else {
+            self.downLock.lock()
+            guard let before = self.downState.demand else {
+                self.downLock.unlock()
                 return .none
             }
-
+            
             if before > 0 {
-                let new = self.sub?.receive(input) ?? .none
+                self.downState = .subscribing(before - 1)
+                self.downLock.unlock()
                 
-                let after = before + new - 1
-                self.state = .subscribing(after)
+                let new = self.sub.receive(input)
+                
+                self.downLock.lock()
+                var after = Subscribers.Demand.max(0)
+                if let demand = self.downState.demand {
+                    after = demand + new
+                    self.downState = .subscribing(after)
+                }
+                self.downLock.unlock()
                 
                 if after > 0 {
                     self.drain(after)
                 }
                 return .max(1)
             } else {
-                child.buffer = input
+                if child.buffer == nil {
+                    child.buffer = input
+                    self.children.removeAll(where: { $0 === child })
+                    self.children.append(child)
+                }
+                self.downLock.unlock()
                 return .none
             }
         }
         
         func receive(completion: Subscribers.Completion<NewPublisher.Failure>, from child: ChildSubscriber) {
-            self.lock.lock()
-            
-            guard self.state.isSubscribing else {
-                self.lock.unlock()
+            self.downLock.lock()
+            guard self.downState.isSubscribing else {
+                self.downLock.unlock()
                 return
             }
             
@@ -262,46 +247,37 @@ extension Publishers.FlatMap {
             case .finished:
                 self.children.removeAll(where: { $0 === child })
                 
-                if let subscription = self.relayState.subscription {
-                    self.lock.unlock()
-                    
+                if let subscription = self.upLock.withLockGet(self.upState.subscription) {
+                    self.downLock.unlock()
                     subscription.request(.max(1))
                 } else {
                     if self.children.isEmpty {
-                        self.state = .finished
-                        self.sub?.receive(completion: .finished)
+                        self.downState = .finished
                         let children = self.children
                         self.children = []
-                        
-                        self.lock.unlock()
+                        self.downLock.unlock()
                         
                         children.forEach {
                             $0.subscription.exchange(with: nil)?.cancel()
                         }
-                        
-                        self.pub = nil
-                        self.sub = nil
+                        self.sub.receive(completion: .finished)
                     } else {
-                        self.lock.unlock()
+                        self.downLock.unlock()
                     }
                 }
             case .failure(let error):
-                self.state = .finished
-                self.sub?.receive(completion: .failure(error))
-
+                self.downState = .finished
+                
                 let children = self.children
                 self.children = []
-                
-                self.lock.unlock()
+                self.downLock.unlock()
                 
                 children.forEach {
                     $0.subscription.exchange(with: nil)?.cancel()
                 }
+                self.sub.receive(completion: .failure(error))
                 
-                self.relayState.finishIfRelaying()?.cancel()
-                
-                self.pub = nil
-                self.sub = nil
+                self.upLock.withLockGet(self.upState.finish())?.cancel()
             }
         }
         
@@ -315,50 +291,61 @@ extension Publishers.FlatMap {
         }
         
         private func fastPath() {
-            for child in self.children {
-                guard let input = child.buffer else {
-                    continue
+            let buffer = self.downLock.withLock {
+                self.children.compactMap { child -> NewPublisher.Output? in
+                    let buffer = child.buffer
+                    child.buffer = nil
+                    return buffer
                 }
-                child.buffer = nil
-                guard self.state.isSubscribing else {
+            }
+            
+            for output in buffer {
+                guard self.downLock.withLockGet(self.downState.isSubscribing) else {
                     return
                 }
-                _ = self.sub?.receive(input)
+                _ = self.sub.receive(output)
             }
         }
         
         private func slowPath(_ demand: Subscribers.Demand) {
             var current = demand
-            
+
+            self.downLock.lock()
             for child in self.children {
                 guard current > 0 else {
+                    self.downLock.unlock()
                     return
                 }
-                
+
                 guard let input = child.buffer else {
                     continue
                 }
                 child.buffer = nil
-                
-                guard let before = self.state.demand else {
-                    return
-                }
-                
-                let new = self.sub?.receive(input) ?? .none
-                let after = before + new - 1
-                self.state = .subscribing(after)
 
-                if after <= 0 {
+                guard let before = self.downState.demand else {
+                    self.downLock.unlock()
                     return
                 }
-                
-                if after == .unlimited {
-                    self.fastPath()
+                self.downState = .subscribing(before - 1)
+                self.downLock.unlock()
+
+                let new = self.sub.receive(input)
+
+                self.downLock.lock()
+                var after = Subscribers.Demand.max(0)
+                if let demand = self.downState.demand {
+                    after = demand + new
+                    self.downState = .subscribing(after)
+                }
+
+                if after == 0 {
+                    self.downLock.unlock()
                     return
                 }
-                
+
                 current = after
             }
+            self.downLock.unlock()
         }
         
         var description: String {
@@ -378,7 +365,7 @@ extension Publishers.FlatMap {
             let parent: Inner
             
             let subscription = Atomic<Subscription?>(value: nil)
-            var buffer: NewPublisher.Output?
+            var buffer: Input?
             
             init(parent: Inner) {
                 self.parent = parent

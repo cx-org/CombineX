@@ -1,8 +1,18 @@
 import Foundation
 
-final class Lock: NSLocking {
+final class Lock {
     
     private let locking: NSLocking
+    
+    #if DEBUG
+    private var q = DispatchQueue(label: UUID().uuidString)
+    private var _history: [String] = []
+    var history: [String] {
+        return q.sync {
+            self._history
+        }
+    }
+    #endif
     
     init(recursive: Bool = false) {
         if recursive {
@@ -12,12 +22,22 @@ final class Lock: NSLocking {
         }
     }
     
-    func lock() {
+    func lock(file: StaticString = #file, line: UInt = #line) {
         self.locking.lock()
+        #if DEBUG
+        self.q.async {
+            self._history.append("LOCK: \(file)#\(line)")
+        }
+        #endif
     }
     
-    func unlock() {
+    func unlock(file: StaticString = #file, line: UInt = #line) {
         self.locking.unlock()
+        #if DEBUG
+        self.q.async {
+            self._history.append("UNLOCK: \(file)#\(line)")
+        }
+        #endif
     }
     
     func withLock<T>(_ body: () throws -> T) rethrows -> T {

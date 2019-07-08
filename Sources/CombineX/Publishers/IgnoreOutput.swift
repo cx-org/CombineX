@@ -53,9 +53,9 @@ extension Publishers {
                 .filter { _ in
                     return false
                 }
-                .flatMap { _ in
-                    // used to cast output to Never, should never be called.
-                    Publishers.Empty(completeImmediately: true, outputType: Never.self, failureType: Failure.self)
+                .map { _ in
+                    // Used to cast output to Never, should never be called
+                    fatalError()
                 }
                 .receive(subscriber: subscriber)
         }
