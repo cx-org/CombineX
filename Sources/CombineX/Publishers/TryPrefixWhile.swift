@@ -1,33 +1,23 @@
 extension Publisher {
     
-    /// Calls an error-throwing closure with each received element and publishes any returned optional that has a value.
+    /// Republishes elements while a error-throwing predicate closure indicates publishing should continue.
     ///
-    /// If the closure throws an error, the publisher cancels the upstream and sends the thrown error to the downstream receiver as a `Failure`.
-    /// - Parameter transform: an error-throwing closure that receives a value and returns an optional value.
-    /// - Returns: A publisher that republishes all non-`nil` results of calling the transform closure.
-    public func tryCompactMap<T>(_ transform: @escaping (Self.Output) throws -> T?) -> Publishers.TryCompactMap<Self, T> {
-        return .init(upstream: self, transform: transform)
-    }
-}
-
-extension Publishers.TryCompactMap {
-    
-    public func compactMap<T>(_ transform: @escaping (Output) throws -> T?) -> Publishers.TryCompactMap<Upstream, T> {
-        let newTransform: (Upstream.Output) throws -> T? = {
-            if let output = try self.transform($0) {
-                return try transform(output)
-            }
-            return nil
-        }
-        
-        return self.upstream.tryCompactMap(newTransform)
+    /// The publisher finishes when the closure returns `false`. If the closure throws, the publisher fails with the thrown error.
+    ///
+    /// - Parameter predicate: A closure that takes an element as its parameter and returns a Boolean value indicating whether publishing should continue.
+    /// - Returns: A publisher that passes through elements until the predicate throws or indicates publishing should finish.
+    public func tryPrefix(while predicate: @escaping (Self.Output) throws -> Bool) -> Publishers.TryPrefixWhile<Self> {
+        return .init(upstream: self, predicate: predicate)
     }
 }
 
 extension Publishers {
     
-    /// A publisher that republishes all non-`nil` results of calling an error-throwing closure with each received element.
-    public struct TryCompactMap<Upstream, Output> : Publisher where Upstream : Publisher {
+    /// A publisher that republishes elements while an error-throwing predicate closure indicates publishing should continue.
+    public struct TryPrefixWhile<Upstream> : Publisher where Upstream : Publisher {
+        
+        /// The kind of values published by this publisher.
+        public typealias Output = Upstream.Output
         
         /// The kind of errors this publisher might publish.
         ///
@@ -37,14 +27,12 @@ extension Publishers {
         /// The publisher from which this publisher receives elements.
         public let upstream: Upstream
         
-        /// An error-throwing closure that receives values from the upstream publisher and returns optional values.
-        ///
-        /// If this closure throws an error, the publisher fails.
-        public let transform: (Upstream.Output) throws -> Output?
+        /// The error-throwing closure that determines whether publishing should continue.
+        public let predicate: (Upstream.Output) throws -> Bool
         
-        public init(upstream: Upstream, transform: @escaping (Upstream.Output) throws -> Output?) {
+        public init(upstream: Upstream, predicate: @escaping (Publishers.TryPrefixWhile<Upstream>.Output) throws -> Bool) {
             self.upstream = upstream
-            self.transform = transform
+            self.predicate = predicate
         }
         
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
@@ -53,14 +41,14 @@ extension Publishers {
         /// - Parameters:
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, S.Failure == Publishers.TryCompactMap<Upstream, Output>.Failure {
+        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, S.Failure == Publishers.TryPrefixWhile<Upstream>.Failure {
             let subscription = Inner(pub: self, sub: subscriber)
-            self.upstream.receive(subscriber: subscription)
+            self.upstream.subscribe(subscription)
         }
     }
 }
 
-extension Publishers.TryCompactMap {
+extension Publishers.TryPrefixWhile {
     
     private final class Inner<S>:
         Subscription,
@@ -72,23 +60,22 @@ extension Publishers.TryCompactMap {
         S.Input == Output,
         S.Failure == Failure
     {
-        
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
         
-        typealias Pub = Publishers.TryCompactMap<Upstream, Output>
+        typealias Pub = Publishers.TryPrefixWhile<Upstream>
         typealias Sub = S
-        typealias Transform = (Upstream.Output) throws -> Output?
+        typealias Predicate = (Upstream.Output) throws -> Bool
         
         let lock = Lock()
         
-        let transform: Transform
         let sub: Sub
+        let predicate: Predicate
         
         var state = RelayState.waiting
         
         init(pub: Pub, sub: Sub) {
-            self.transform = pub.transform
+            self.predicate = pub.predicate
             self.sub = sub
         }
         
@@ -110,19 +97,30 @@ extension Publishers.TryCompactMap {
         }
         
         func receive(_ input: Input) -> Subscribers.Demand {
-            // Against misbehaving upstream
-            guard self.lock.withLockGet(self.state.isRelaying) else {
+            self.lock.lock()
+            guard self.state.isRelaying else {
+                self.lock.unlock()
                 return .none
             }
             
             do {
-                if let transformed = try self.transform(input) {
-                    return self.sub.receive(transformed)
+                if try self.predicate(input) {
+                    self.lock.unlock()
+                    return self.sub.receive(input)
                 } else {
-                    return .max(1)
+                    let subscription = self.state.finish()
+                    self.lock.unlock()
+                    
+                    subscription?.cancel()
+                    self.sub.receive(completion: .finished)
+                    return .none
                 }
             } catch {
-                self.complete(.failure(error))
+                let subscription = self.state.finish()
+                self.lock.unlock()
+                
+                subscription?.cancel()
+                self.sub.receive(completion: .failure(error))
                 return .none
             }
         }
@@ -141,11 +139,11 @@ extension Publishers.TryCompactMap {
         }
         
         var description: String {
-            return "TryCompactMap"
+            return "TryPrefixWhile"
         }
         
         var debugDescription: String {
-            return "TryCompactMap"
+            return "TryPrefixWhile"
         }
     }
 }

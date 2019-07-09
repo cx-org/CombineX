@@ -13,10 +13,7 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        _ = Just(1).sink {
-            print("[Combine] Just: \($0)")
-        }
+
     }
 }
 

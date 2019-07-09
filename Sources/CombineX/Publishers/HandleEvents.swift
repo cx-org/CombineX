@@ -61,11 +61,11 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
-            Global.RequiresImplementation()
+            let subscription = Inner(pub: self, sub: subscriber)
+            self.upstream.subscribe(subscription)
         }
     }
 }
-
 
 extension Publishers.HandleEvents {
     
@@ -121,7 +121,6 @@ extension Publishers.HandleEvents {
                 subscription.cancel()
                 return
             }
-            
             self.receiveSubscription?(subscription)
             self.sub.receive(subscription: self)
         }

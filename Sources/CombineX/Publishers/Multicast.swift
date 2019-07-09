@@ -9,7 +9,6 @@ extension Publisher {
     }
 }
 
-
 extension Publishers {
     
     final public class Multicast<Upstream, SubjectType> : ConnectablePublisher where Upstream : Publisher, SubjectType : Subject, Upstream.Failure == SubjectType.Failure, Upstream.Output == SubjectType.Output {
@@ -42,7 +41,7 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         final public func receive<S>(subscriber: S) where S : Subscriber, SubjectType.Failure == S.Failure, SubjectType.Output == S.Input {
-            subject.receive(subscriber: subscriber)
+            self.subject.receive(subscriber: subscriber)
         }
         
         /// Connects to the publisher and returns a `Cancellable` instance with which to cancel publishing.
@@ -50,17 +49,6 @@ extension Publishers {
         /// - Returns: A `Cancellable` instance that can be used to cancel publishing.
         final public func connect() -> Cancellable {
             Global.RequiresImplementation()
-//            return self.connection.withLockMutating {
-//                if let connection = $0 {
-//                    return connection
-//                }
-//
-//                let connection = Connection(upstream: self.upstream, subject: self.subject)
-//                self.upstream.subscribe(connection)
-//
-//                $0 = connection
-//                return connection
-//            }
         }
     }
 }

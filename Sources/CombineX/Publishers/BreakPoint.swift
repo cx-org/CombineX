@@ -195,7 +195,7 @@ private enum Signal {
         #elseif canImport(Glibc)
         Glibc.raise(self.code)
         #else
-        Global.RequiresImplementation()
+        print("how to raise a signal?")
         #endif
     }
 }

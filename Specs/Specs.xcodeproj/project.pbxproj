@@ -206,6 +206,10 @@
 		66CAF61522BF271500E8FAAC /* MergeSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MergeSpec.swift; sourceTree = "<group>"; };
 		66CAF62322BF3A0800E8FAAC /* PrintSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrintSpec.swift; sourceTree = "<group>"; };
 		66D385FF22B9271F001B8189 /* FlatMapSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlatMapSpec.swift; sourceTree = "<group>"; };
+		66DD4C9822D4DB2E008A1F60 /* Combine-2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Combine-2.swift"; sourceTree = "<group>"; };
+		66DD4C9922D4DB2E008A1F60 /* Combine-3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Combine-3.swift"; sourceTree = "<group>"; };
+		66DD4C9A22D4DB2E008A1F60 /* Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Combine.swift; sourceTree = "<group>"; };
+		66DD4C9B22D4DB2E008A1F60 /* Combine-1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Combine-1.swift"; sourceTree = "<group>"; };
 		66F1199822BE7B6100D744BB /* TryCompactMapSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TryCompactMapSpec.swift; sourceTree = "<group>"; };
 		7B6EF3BDA1443688A3AA9E81 /* Pods-CombineSpecsTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CombineSpecsTests.debug.xcconfig"; path = "Target Support Files/Pods-CombineSpecsTests/Pods-CombineSpecsTests.debug.xcconfig"; sourceTree = "<group>"; };
 		7B7B29DCD1CF4F3B86F1F1FA /* Pods-Specs.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Specs.debug.xcconfig"; path = "Target Support Files/Pods-Specs/Pods-Specs.debug.xcconfig"; sourceTree = "<group>"; };
@@ -273,6 +277,7 @@
 		66312FA122B665620081D8F1 = {
 			isa = PBXGroup;
 			children = (
+				66DD4C9722D4DB17008A1F60 /* API */,
 				66312FAC22B665620081D8F1 /* Specs */,
 				66312FC322B665630081D8F1 /* SpecsTests */,
 				6631303122B6937D0081D8F1 /* CombineSpecs */,
@@ -424,6 +429,17 @@
 				8DCB044E242447A73457C8E7 /* Pods_SpecsTests.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		66DD4C9722D4DB17008A1F60 /* API */ = {
+			isa = PBXGroup;
+			children = (
+				66DD4C9B22D4DB2E008A1F60 /* Combine-1.swift */,
+				66DD4C9822D4DB2E008A1F60 /* Combine-2.swift */,
+				66DD4C9922D4DB2E008A1F60 /* Combine-3.swift */,
+				66DD4C9A22D4DB2E008A1F60 /* Combine.swift */,
+			);
+			name = API;
 			sourceTree = "<group>";
 		};
 		CFDFD67B0FBA6B868DF7E169 /* Pods */ = {

@@ -4,11 +4,13 @@
 /// You can also use `AnySubscriber` to create a custom subscriber by providing closures for `Subscriber`’s methods, rather than implementing `Subscriber` directly.
 public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertible, CustomReflectable, CustomPlaygroundDisplayConvertible where Failure : Error {
     
-    public let combineIdentifier: CombineIdentifier
+    public let combineIdentifier = CombineIdentifier()
     
     private let receiveSubscriptionBody: ((Subscription) -> Void)?
     private let receiveValueBody: ((Input) -> Subscribers.Demand)?
     private let receiveCompletionBody: ((Subscribers.Completion<Failure>) -> Void)?
+    
+    private var subscription: Atomic<Subscription?>?
     
     /// A textual representation of this instance.
     ///
@@ -57,11 +59,10 @@ public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertibl
         self.receiveSubscriptionBody = s.receive(subscription:)
         self.receiveValueBody = s.receive(_:)
         self.receiveCompletionBody = s.receive(completion:)
-        
-        self.combineIdentifier = CombineIdentifier()
     }
     
     public init<S>(_ s: S) where Input == S.Output, Failure == S.Failure, S : Subject {
+        
         let subscription = Atomic<Subscription?>(value: nil)
         
         self.receiveSubscriptionBody = {
@@ -80,7 +81,11 @@ public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertibl
             s.send(completion: c)
         }
         
-        self.combineIdentifier = CombineIdentifier()
+        self.subscription = subscription
+    }
+    
+    func cancel() {
+        self.subscription?.exchange(with: nil)?.cancel()
     }
     
     /// Creates a type-erasing subscriber that executes the provided closures.
@@ -93,8 +98,6 @@ public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertibl
         self.receiveSubscriptionBody = receiveSubscription
         self.receiveValueBody = receiveValue
         self.receiveCompletionBody = receiveCompletion
-        
-        self.combineIdentifier = CombineIdentifier()
     }
     
     /// Tells the subscriber that it has successfully subscribed to the publisher and may request items.

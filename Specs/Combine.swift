@@ -1,20 +1,5 @@
 import Darwin
 
-final public class Future<Output, Failure> : Publisher where Failure : Error {
-    
-    public typealias Promise = (Result<Output, Failure>) -> Void
-    
-    public init(_ attemptToFulfill: @escaping (@escaping Future<Output, Failure>.Promise) -> Void)
-    
-    /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-    ///
-    /// - SeeAlso: `subscribe(_:)`
-    /// - Parameters:
-    ///     - subscriber: The subscriber to attach to this `Publisher`.
-    ///                   once attached it can begin to receive values.
-    final public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber
-}
-
 extension Publisher {
 
     /// Decodes the output from upstream using a specified `TopLevelDecoder`.
@@ -143,34 +128,6 @@ extension Publisher {
     public func tryCombineLatest<P, Q, R, T>(_ publisher1: P, _ publisher2: Q, _ publisher3: R, _ transform: @escaping (Self.Output, P.Output, Q.Output, R.Output) throws -> T) -> Publishers.TryCombineLatest4<Self, P, Q, R, T> where P : Publisher, Q : Publisher, R : Publisher, P.Failure == Error, Q.Failure == Error, R.Failure == Error
 }
 
-
-extension Publisher {
-
-    /// Republishes elements while a predicate closure indicates publishing should continue.
-    ///
-    /// The publisher finishes when the closure returns `false`.
-    ///
-    /// - Parameter predicate: A closure that takes an element as its parameter and returns a Boolean value indicating whether publishing should continue.
-    /// - Returns: A publisher that passes through elements until the predicate indicates publishing should finish.
-    public func prefix(while predicate: @escaping (Self.Output) -> Bool) -> Publishers.PrefixWhile<Self>
-
-    /// Republishes elements while a error-throwing predicate closure indicates publishing should continue.
-    ///
-    /// The publisher finishes when the closure returns `false`. If the closure throws, the publisher fails with the thrown error.
-    ///
-    /// - Parameter predicate: A closure that takes an element as its parameter and returns a Boolean value indicating whether publishing should continue.
-    /// - Returns: A publisher that passes through elements until the predicate throws or indicates publishing should finish.
-    public func tryPrefix(while predicate: @escaping (Self.Output) throws -> Bool) -> Publishers.TryPrefixWhile<Self>
-}
-
-extension Publisher where Self.Failure == Never {
-
-    /// Creates a connectable wrapper around the publisher.
-    ///
-    /// - Returns: A `ConnectablePublisher` wrapping this publisher.
-    public func makeConnectable() -> Publishers.MakeConnectable<Self>
-}
-
 extension Publisher {
 
     /// Collects all received elements, and emits a single array of the collection when the upstream publisher finishes.
@@ -214,33 +171,6 @@ extension Publisher {
     public func prefix<P>(untilOutputFrom publisher: P) -> Publishers.PrefixUntilOutput<Self, P> where P : Publisher
 }
 
-extension Publisher {
-
-    /// Transforms elements from the upstream publisher by providing the current element to a closure along with the last value returned by the closure.
-    ///
-    ///     let pub = (0...5)
-    ///         .publisher()
-    ///         .scan(0, { return $0 + $1 })
-    ///         .sink(receiveValue: { print ("\($0)", terminator: " ") })
-    ///      // Prints "0 1 3 6 10 15 ".
-    ///
-    ///
-    /// - Parameters:
-    ///   - initialResult: The previous result returned by the `nextPartialResult` closure.
-    ///   - nextPartialResult: A closure that takes as its arguments the previous value returned by the closure and the next element emitted from the upstream publisher.
-    /// - Returns: A publisher that transforms elements by applying a closure that receives its previous return value and the next element from the upstream publisher.
-    public func scan<T>(_ initialResult: T, _ nextPartialResult: @escaping (T, Self.Output) -> T) -> Publishers.Scan<Self, T>
-
-    /// Transforms elements from the upstream publisher by providing the current element to an error-throwing closure along with the last value returned by the closure.
-    ///
-    /// If the closure throws an error, the publisher fails with the error.
-    /// - Parameters:
-    ///   - initialResult: The previous result returned by the `nextPartialResult` closure.
-    ///   - nextPartialResult: An error-throwing closure that takes as its arguments the previous value returned by the closure and the next element emitted from the upstream publisher.
-    /// - Returns: A publisher that transforms elements by applying a closure that receives its previous return value and the next element from the upstream publisher.
-    public func tryScan<T>(_ initialResult: T, _ nextPartialResult: @escaping (T, Self.Output) throws -> T) -> Publishers.TryScan<Self, T>
-}
-
 extension Publisher where Self.Failure == Self.Output.Failure, Self.Output : Publisher {
 
     /// Flattens the stream of events from multiple upstream publishers to appear as if they were coming from a single stream of events.
@@ -271,63 +201,6 @@ extension Publisher {
     /// - Returns: A publisher that emits either the most-recent or first element received during the specified interval.
     public func throttle<S>(for interval: S.SchedulerTimeType.Stride, scheduler: S, latest: Bool) -> Publishers.Throttle<Self, S> where S : Scheduler
 }
-
-extension Publisher {
-
-    /// Returns a publisher as a class instance.
-    ///
-    /// The downstream subscriber receieves elements and completion states unchanged from the upstream publisher. Use this operator when you want to use reference semantics, such as storing a publisher instance in a property.
-    ///
-    /// - Returns: A class instance that republishes its upstream publisher.
-    public func share() -> Publishers.Share<Self>
-}
-
-extension Publisher where Self.Output : Comparable {
-
-    /// Publishes the minimum value received from the upstream publisher, after it finishes.
-    ///
-    /// After this publisher receives a request for more than 0 items, it requests unlimited items from its upstream publisher.
-    /// - Returns: A publisher that publishes the minimum value received from the upstream publisher, after the upstream publisher finishes.
-    public func min() -> Publishers.Comparison<Self>
-
-    /// Publishes the maximum value received from the upstream publisher, after it finishes.
-    ///
-    /// After this publisher receives a request for more than 0 items, it requests unlimited items from its upstream publisher.
-    /// - Returns: A publisher that publishes the maximum value received from the upstream publisher, after the upstream publisher finishes.
-    public func max() -> Publishers.Comparison<Self>
-}
-
-extension Publisher {
-
-    /// Publishes the minimum value received from the upstream publisher, after it finishes.
-    ///
-    /// After this publisher receives a request for more than 0 items, it requests unlimited items from its upstream publisher.
-    /// - Parameter areInIncreasingOrder: A closure that receives two elements and returns `true` if they are in increasing order.
-    /// - Returns: A publisher that publishes the minimum value received from the upstream publisher, after the upstream publisher finishes.
-    public func min(by areInIncreasingOrder: @escaping (Self.Output, Self.Output) -> Bool) -> Publishers.Comparison<Self>
-
-    /// Publishes the minimum value received from the upstream publisher, using the provided error-throwing closure to order the items.
-    ///
-    /// After this publisher receives a request for more than 0 items, it requests unlimited items from its upstream publisher.
-    /// - Parameter areInIncreasingOrder: A throwing closure that receives two elements and returns `true` if they are in increasing order. If this closure throws, the publisher terminates with a `Failure`.
-    /// - Returns: A publisher that publishes the minimum value received from the upstream publisher, after the upstream publisher finishes.
-    public func tryMin(by areInIncreasingOrder: @escaping (Self.Output, Self.Output) throws -> Bool) -> Publishers.TryComparison<Self>
-
-    /// Publishes the maximum value received from the upstream publisher, using the provided ordering closure.
-    ///
-    /// After this publisher receives a request for more than 0 items, it requests unlimited items from its upstream publisher.
-    /// - Parameter areInIncreasingOrder: A closure that receives two elements and returns `true` if they are in increasing order.
-    /// - Returns: A publisher that publishes the maximum value received from the upstream publisher, after the upstream publisher finishes.
-    public func max(by areInIncreasingOrder: @escaping (Self.Output, Self.Output) -> Bool) -> Publishers.Comparison<Self>
-
-    /// Publishes the maximum value received from the upstream publisher, using the provided error-throwing closure to order the items.
-    ///
-    /// After this publisher receives a request for more than 0 items, it requests unlimited items from its upstream publisher.
-    /// - Parameter areInIncreasingOrder: A throwing closure that receives two elements and returns `true` if they are in increasing order. If this closure throws, the publisher terminates with a `Failure`.
-    /// - Returns: A publisher that publishes the maximum value received from the upstream publisher, after the upstream publisher finishes.
-    public func tryMax(by areInIncreasingOrder: @escaping (Self.Output, Self.Output) throws -> Bool) -> Publishers.TryComparison<Self>
-}
-
 
 
 extension Publisher {
@@ -464,38 +337,7 @@ extension Publisher {
     public func delay<S>(for interval: S.SchedulerTimeType.Stride, tolerance: S.SchedulerTimeType.Stride? = nil, scheduler: S, options: S.SchedulerOptions? = nil) -> Publishers.Delay<Self, S> where S : Scheduler
 }
 
-extension Publishers {
 
-    /// A publisher that awaits subscription before running the supplied closure to create a publisher for the new subscriber.
-    public struct Deferred<DeferredPublisher> : Publisher where DeferredPublisher : Publisher {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = DeferredPublisher.Output
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = DeferredPublisher.Failure
-
-        /// The closure to execute when it receives a subscription.
-        ///
-        /// The publisher returned by this closure immediately receives the incoming subscription.
-        public let createPublisher: () -> DeferredPublisher
-
-        /// Creates a deferred publisher.
-        ///
-        /// - Parameter createPublisher: The closure to execute when calling `subscribe(_:)`.
-        public init(createPublisher: @escaping () -> DeferredPublisher)
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, DeferredPublisher.Failure == S.Failure, DeferredPublisher.Output == S.Input
-    }
-}
 
 extension Publishers {
 
@@ -715,93 +557,6 @@ extension Publishers {
     }
 }
 
-
-extension Publishers {
-
-    /// A publisher that republishes elements while a predicate closure indicates publishing should continue.
-    public struct PrefixWhile<Upstream> : Publisher where Upstream : Publisher {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = Upstream.Output
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Upstream.Failure
-
-        /// The publisher from which this publisher receives elements.
-        public let upstream: Upstream
-
-        /// The closure that determines whether whether publishing should continue.
-        public let predicate: (Upstream.Output) -> Bool
-        
-        public init(upstream: Upstream, predicate: @escaping (Publishers.PrefixWhile<Upstream>.Output) -> Bool)
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input
-    }
-
-    /// A publisher that republishes elements while an error-throwing predicate closure indicates publishing should continue.
-    public struct TryPrefixWhile<Upstream> : Publisher where Upstream : Publisher {
-        
-        /// The kind of values published by this publisher.
-        public typealias Output = Upstream.Output
-        
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Error
-        
-        /// The publisher from which this publisher receives elements.
-        public let upstream: Upstream
-        
-        /// The error-throwing closure that determines whether publishing should continue.
-        public let predicate: (Upstream.Output) throws -> Bool
-        
-        public init(upstream: Upstream, predicate: @escaping (Publishers.TryPrefixWhile<Upstream>.Output) throws -> Bool)
-        
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, S.Failure == Publishers.TryPrefixWhile<Upstream>.Failure
-    }
-}
-
-extension Publishers {
-
-    public struct MakeConnectable<Upstream> : ConnectablePublisher where Upstream : Publisher {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = Upstream.Output
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Upstream.Failure
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input
-
-        /// Connects to the publisher and returns a `Cancellable` instance with which to cancel publishing.
-        ///
-        /// - Returns: A `Cancellable` instance that can be used to cancel publishing.
-        public func connect() -> Cancellable
-    }
-}
-
 extension Publishers {
 
     /// A strategy for collecting received elements.
@@ -932,57 +687,6 @@ extension Publishers {
     }
 }
 
-extension Publishers {
-
-    public struct Scan<Upstream, Output> : Publisher where Upstream : Publisher {
-        
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Upstream.Failure
-        
-        public let upstream: Upstream
-        
-        public let initialResult: Output
-        
-        public let nextPartialResult: (Output, Upstream.Output) -> Output
-        
-        public init(upstream: Upstream, initialResult: Output, nextPartialResult: @escaping (Output, Upstream.Output) -> Output)
-        
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, Upstream.Failure == S.Failure
-    }
-    
-    public struct TryScan<Upstream, Output> : Publisher where Upstream : Publisher {
-        
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Error
-        
-        public let upstream: Upstream
-        
-        public let initialResult: Output
-        
-        public let nextPartialResult: (Output, Upstream.Output) throws -> Output
-        
-        public init(upstream: Upstream, initialResult: Output, nextPartialResult: @escaping (Output, Upstream.Output) throws -> Output)
-        
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, S.Failure == Publishers.TryScan<Upstream, Output>.Failure
-    }
-}
-
 
 extension Publishers {
 
@@ -1095,101 +799,6 @@ extension Publishers {
     }
 }
 
-extension Publishers {
-
-    /// A publisher implemented as a class, which otherwise behaves like its upstream publisher.
-    final public class Share<Upstream> : Publisher, Equatable where Upstream : Publisher {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = Upstream.Output
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Upstream.Failure
-        
-        final public let upstream: Upstream
-        
-        public init(upstream: Upstream)
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        final public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input
-
-        /// Returns a Boolean value indicating whether two values are equal.
-        ///
-        /// Equality is the inverse of inequality. For any values `a` and `b`,
-        /// `a == b` implies that `a != b` is `false`.
-        ///
-        /// - Parameters:
-        ///   - lhs: A value to compare.
-        ///   - rhs: Another value to compare.
-        public static func == (lhs: Publishers.Share<Upstream>, rhs: Publishers.Share<Upstream>) -> Bool
-    }
-}
-
-extension Publishers {
-
-    /// A publisher that republishes items from another publisher only if each new item is in increasing order from the previously-published item.
-    public struct Comparison<Upstream> : Publisher where Upstream : Publisher {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = Upstream.Output
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Upstream.Failure
-
-        /// The publisher that this publisher receives elements from.
-        public let upstream: Upstream
-
-        /// A closure that receives two elements and returns `true` if they are in increasing order.
-        public let areInIncreasingOrder: (Upstream.Output, Upstream.Output) -> Bool
-        
-        public init(upstream: Upstream, areInIncreasingOrder: @escaping (Upstream.Output, Upstream.Output) -> Bool)
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input
-    }
-
-    /// A publisher that republishes items from another publisher only if each new item is in increasing order from the previously-published item, and fails if the ordering logic throws an error.
-    public struct TryComparison<Upstream> : Publisher where Upstream : Publisher {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = Upstream.Output
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Error
-
-        /// The publisher that this publisher receives elements from.
-        public let upstream: Upstream
-
-        /// A closure that receives two elements and returns `true` if they are in increasing order.
-        public let areInIncreasingOrder: (Upstream.Output, Upstream.Output) throws -> Bool
-
-        public init(upstream: Upstream, areInIncreasingOrder: @escaping (Upstream.Output, Upstream.Output) throws -> Bool)
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, S.Failure == Publishers.TryComparison<Upstream>.Failure
-    }
-}
 
 extension Publishers {
 

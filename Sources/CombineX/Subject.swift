@@ -32,7 +32,11 @@ extension Subject where Self.Output == Void {
 extension Publisher {
     
     public func subscribe<S>(_ subject: S) -> AnyCancellable where S : Subject, Self.Failure == S.Failure, Self.Output == S.Output {
-        Global.RequiresImplementation()
+        let sub = AnySubscriber(subject)
+        self.subscribe(sub)
+        return AnyCancellable {
+            sub.cancel()
+        }
     }
 }
 
