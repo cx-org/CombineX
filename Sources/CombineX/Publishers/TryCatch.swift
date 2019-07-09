@@ -39,8 +39,164 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, NewPublisher.Output == S.Input, S.Failure == Publishers.TryCatch<Upstream, NewPublisher>.Failure {
-            Global.RequiresImplementation()
+            let subscription = Inner(pub: self, sub: subscriber)
+            self.upstream
+                .mapError { $0 }
+                .subscribe(subscription)
         }
     }
 
+}
+
+extension Publishers.TryCatch {
+    
+    private final class Inner<S>:
+        Subscription,
+        Subscriber,
+        CustomStringConvertible,
+        CustomDebugStringConvertible
+    where
+        S: Subscriber,
+        S.Input == NewPublisher.Output,
+        S.Failure == Error
+    {
+        
+        typealias Input = NewPublisher.Output
+        typealias Failure = Error
+        
+        typealias Pub = Publishers.TryCatch<Upstream, NewPublisher>
+        typealias Sub = S
+        typealias Handler = (Upstream.Failure) throws -> NewPublisher
+        
+        enum Stage {
+            case upstream
+            case halftime
+            case newPublisher
+        }
+        
+        let lock = Lock()
+        let sub: Sub
+        let handler: Handler
+        
+        var state: RelayState = .waiting
+        var demand: Subscribers.Demand = .none
+        
+        var stage = Stage.upstream
+        
+        init(pub: Pub, sub: Sub) {
+            self.handler = pub.handler
+            self.sub = sub
+        }
+        
+        func request(_ demand: Subscribers.Demand) {
+            self.lock.lock()
+            let subscription = self.state.subscription
+            
+            let before = self.demand
+            self.demand += demand
+            let after = self.demand
+            
+            self.lock.unlock()
+            
+            if before == 0 {
+                subscription?.request(after)
+            }
+        }
+        
+        func cancel() {
+            self.lock.withLockGet(self.state.finish())?.cancel()
+        }
+        
+        func receive(subscription: Subscription) {
+            self.lock.lock()
+            switch self.state {
+            case .waiting:
+                self.state = .relaying(subscription)
+                self.lock.unlock()
+                self.sub.receive(subscription: self)
+            case .relaying:
+                switch self.stage {
+                case .upstream, .newPublisher:
+                    self.lock.unlock()
+                    subscription.cancel()
+                case .halftime:
+                    self.stage = .newPublisher
+                    self.state = .relaying(subscription)
+                    let demand = self.demand
+                    self.lock.unlock()
+                    
+                    subscription.request(demand)
+                }
+            case .finished:
+                self.lock.unlock()
+            }
+        }
+        
+        func receive(_ input: NewPublisher.Output) -> Subscribers.Demand {
+            self.lock.lock()
+            guard self.state.isRelaying else {
+                self.lock.unlock()
+                return .none
+            }
+            
+            self.demand -= 1
+            self.lock.unlock()
+            return self.sub.receive(input)
+        }
+        
+        func receive(completion: Subscribers.Completion<Error>) {
+            switch completion {
+            case .finished:
+                guard let subscription = self.lock.withLockGet(self.state.finish()) else {
+                    return
+                }
+                
+                subscription.cancel()
+                self.sub.receive(completion: completion)
+            case .failure(let error):
+                self.lock.lock()
+                guard self.state.isRelaying else {
+                    self.lock.unlock()
+                    return
+                }
+                switch self.stage {
+                case .upstream:
+                    self.stage = .halftime
+                    
+                    do {
+                        self.lock.unlock()
+                        
+                        let newPublisher = try self.handler(error as! Upstream.Failure)
+                        newPublisher.mapError { $0 } .subscribe(self)
+                    } catch let e {
+                        guard let subscription = self.state.finish() else {
+                            self.lock.unlock()
+                            return
+                        }
+                        self.lock.unlock()
+                        subscription.cancel()
+                        self.sub.receive(completion: .failure(e))
+                    }
+                case .newPublisher:
+                    guard let subscription = self.state.finish() else {
+                        self.lock.unlock()
+                        return
+                    }
+                    self.lock.unlock()
+                    subscription.cancel()
+                    self.sub.receive(completion: completion)
+                default:
+                    self.lock.unlock()
+                }
+            }
+        }
+        
+        var description: String {
+            return "TryCatch"
+        }
+        
+        var debugDescription: String {
+            return "TryCatch"
+        }
+    }
 }

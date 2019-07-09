@@ -23,21 +23,21 @@ final class Lock {
     }
     
     func lock(file: StaticString = #file, line: UInt = #line) {
-        self.locking.lock()
         #if DEBUG
         self.q.async {
             self._history.append("LOCK: \(file)#\(line)")
         }
         #endif
+        self.locking.lock()
     }
     
     func unlock(file: StaticString = #file, line: UInt = #line) {
-        self.locking.unlock()
         #if DEBUG
         self.q.async {
             self._history.append("UNLOCK: \(file)#\(line)")
         }
         #endif
+        self.locking.unlock()
     }
     
     func withLock<T>(_ body: () throws -> T) rethrows -> T {

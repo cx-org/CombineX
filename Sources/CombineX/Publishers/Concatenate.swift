@@ -112,13 +112,19 @@ extension Publishers.Concatenate {
         typealias Pub = Publishers.Concatenate<Prefix, Suffix>
         typealias Sub = S
         
+        enum Stage {
+            case prefix
+            case halftime
+            case suffix
+        }
+        
         let lock = Lock()
         let sub: Sub
-
+        
         var state: RelayState = .waiting
         var demand: Subscribers.Demand = .none
         
-        var isRelayingPrefix = true
+        var stage = Stage.prefix
         var suffix: Suffix?
         
         init(pub: Pub, sub: Sub) {
@@ -153,13 +159,17 @@ extension Publishers.Concatenate {
                 self.lock.unlock()
                 self.sub.receive(subscription: self)
             case .relaying:
-                if self.isRelayingPrefix {
+                switch self.stage {
+                case .prefix, .suffix:
                     self.lock.unlock()
                     subscription.cancel()
-                } else {
+                case .halftime:
+                    self.stage = .suffix
                     self.state = .relaying(subscription)
+                    let demand = self.demand
                     self.lock.unlock()
-                    subscription.request(self.demand)
+                    
+                    subscription.request(demand)
                 }
             case .finished:
                 self.lock.unlock()
@@ -189,23 +199,28 @@ extension Publishers.Concatenate {
                 self.sub.receive(completion: completion)
             case .finished:
                 self.lock.lock()
-                if self.isRelayingPrefix {
+                guard self.state.isRelaying else {
+                    self.lock.unlock()
+                    return
+                }
+                switch self.stage {
+                case .prefix:
                     let suffix = self.suffix
                     self.suffix = nil
-                    self.isRelayingPrefix = false
+                    self.stage = .halftime
                     self.lock.unlock()
                     
                     suffix?.subscribe(self)
-                } else {
+                case .suffix:
                     guard let subscription = self.state.finish() else {
                         self.lock.unlock()
                         return
                     }
-                    
                     self.lock.unlock()
-                    
                     subscription.cancel()
                     self.sub.receive(completion: completion)
+                default:
+                    self.lock.unlock()
                 }
             }
         }

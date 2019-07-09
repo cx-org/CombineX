@@ -1,6 +1,0 @@
-framework module Pods_CombineSpecs_CombineSpecsTests {
-  umbrella header "Pods-CombineSpecs-CombineSpecsTests-umbrella.h"
-
-  export *
-  module * { export * }
-}
