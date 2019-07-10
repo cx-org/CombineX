@@ -118,6 +118,8 @@ extension Publishers {
     }
 }
 
+/*
+ 
 extension Publishers.Buffer {
     
     private final class KeeyFullInner<S>:
@@ -251,7 +253,6 @@ extension Publishers.Buffer {
     }
 }
 
-
 extension Publishers.Buffer {
     
     private final class ByRequestInner<S>:
@@ -294,8 +295,22 @@ extension Publishers.Buffer {
                 return
             }
             
-            self.demand += demand
+            let before = self.demand
+            let after = before + demand
+            self.demand = after
+            
+            var slice: [Output] = []
+            if before == 0, after > 0 {
+                slice = self.buffer[before..<after]
+            }
             self.lock.unlock()
+        
+            if slice.isNotEmpty {
+                let more = slice.reduce(0) { (demand, output) in
+                    return demand + self.sub.receive(output)
+                }
+                self.lock.
+            }
             
             subscription.request(demand)
         }
@@ -311,7 +326,7 @@ extension Publishers.Buffer {
                 return
             }
             
-            subscription.request(.max(self.size))
+            subscription.request(.unlimited)
             self.sub.receive(subscription: self)
         }
         
@@ -322,45 +337,41 @@ extension Publishers.Buffer {
                 return .none
             }
             
-            switch self.buffer.count {
-            case ..<self.size:
-                self.buffer.append(input)
-                
+            if self.demand > 0 {
+                self.demand -= 1
                 self.lock.unlock()
-            case self.size:
-                if self.demand > 0 {
-                    self.demand -= 1
-                    let first = self.buffer.removeFirst()
+                
+                let more = self.sub.receive(input)
+                
+                self.lock.withLock {
+                    self.demand += more
+                }
+            } else {
+                switch self.buffer.count {
+                case 0..<self.size:
                     self.buffer.append(input)
                     self.lock.unlock()
-                    
-                    let more = self.sub.receive(first)
-                    
-                    self.lock.withLock {
-                        self.demand += more
-                    }
-                } else {
+                case self.size:
                     switch self.whenFull {
+                    case .dropOldest:
+                        _ = self.buffer.removeFirst()
+                        self.buffer.append(input)
+                        self.lock.unlock()
                     case .dropNewest:
                         self.lock.unlock()
-                    case .dropOldest:
-                        if self.buffer.isNotEmpty {
-                            _ = self.buffer.removeFirst()
-                            self.buffer.append(input)
+                    case .customError(let makeError):
+                        guard let subscription = self.state.finish() else {
+                            self.lock.unlock()
+                            return
                         }
                         self.lock.unlock()
-                    case .customError(let makeError):
-                        let subscription = self.state.finish()
-                        self.lock.unlock()
-                        subscription?.cancel()
-                        let error = makeError()
                         
+                        subscription.cancel()
                         self.buffer = []
-                        self.sub.receive(completion: .failure(error))
+                        
+                        self.sub.receive(completion: .failure(makeError()))
                     }
                 }
-            default:
-                self.lock.unlock()
             }
             
             return .none
@@ -385,3 +396,5 @@ extension Publishers.Buffer {
         }
     }
 }
+
+*/

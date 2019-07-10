@@ -91,6 +91,10 @@
 		6631305322B693940081D8F1 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6631302922B691C80081D8F1 /* Extensions.swift */; };
 		6631305622B695180081D8F1 /* SinkSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6631305522B695180081D8F1 /* SinkSpec.swift */; };
 		6631305722B6951B0081D8F1 /* SinkSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6631305522B695180081D8F1 /* SinkSpec.swift */; };
+		664EF34722D6227B00F6CA2E /* DropUntilOutputSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664EF34622D6227B00F6CA2E /* DropUntilOutputSpec.swift */; };
+		664EF34822D6227B00F6CA2E /* DropUntilOutputSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664EF34622D6227B00F6CA2E /* DropUntilOutputSpec.swift */; };
+		664EF34C22D62D4100F6CA2E /* PrefixUntilOutputSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664EF34B22D62D4100F6CA2E /* PrefixUntilOutputSpec.swift */; };
+		664EF34D22D62D4100F6CA2E /* PrefixUntilOutputSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664EF34B22D62D4100F6CA2E /* PrefixUntilOutputSpec.swift */; };
 		6654AACD6B33E04BC39FE5A9 /* Pods_CombineSpecs.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54AD7C3D26D0754D23E1ECC4 /* Pods_CombineSpecs.framework */; };
 		6684B01122D38739008639D1 /* RepleaceEmptySpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6684B01022D38739008639D1 /* RepleaceEmptySpec.swift */; };
 		6684B01222D38739008639D1 /* RepleaceEmptySpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6684B01022D38739008639D1 /* RepleaceEmptySpec.swift */; };
@@ -194,6 +198,8 @@
 		6631304522B6937D0081D8F1 /* CombineSpecsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CombineSpecsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6631304B22B6937E0081D8F1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6631305522B695180081D8F1 /* SinkSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SinkSpec.swift; sourceTree = "<group>"; };
+		664EF34622D6227B00F6CA2E /* DropUntilOutputSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropUntilOutputSpec.swift; sourceTree = "<group>"; };
+		664EF34B22D62D4100F6CA2E /* PrefixUntilOutputSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrefixUntilOutputSpec.swift; sourceTree = "<group>"; };
 		666DE2D122D1C27B0081EE60 /* Quick.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Quick.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		666DE2D322D1C2EE0081EE60 /* CombineX.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CombineX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		666DE2D622D1C35C0081EE60 /* QuickSpecBase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = QuickSpecBase.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -361,6 +367,8 @@
 				62CE063722D497D3003AFB3D /* TryCatchSpec.swift */,
 				620C08F322D5BBE000DFA036 /* CollectByCountSpec.swift */,
 				620C08F622D5C3D400DFA036 /* BufferSpec.swift */,
+				664EF34622D6227B00F6CA2E /* DropUntilOutputSpec.swift */,
+				664EF34B22D62D4100F6CA2E /* PrefixUntilOutputSpec.swift */,
 			);
 			path = Publishers;
 			sourceTree = "<group>";
@@ -800,6 +808,7 @@
 				62A4A4FB22B87371009AD6FE /* CustomError.swift in Sources */,
 				620C08F422D5BBE000DFA036 /* CollectByCountSpec.swift in Sources */,
 				6684B01122D38739008639D1 /* RepleaceEmptySpec.swift in Sources */,
+				664EF34C22D62D4100F6CA2E /* PrefixUntilOutputSpec.swift in Sources */,
 				66F1199922BE7B6100D744BB /* TryCompactMapSpec.swift in Sources */,
 				62A73FC722C60AF0007C962C /* CustomScheduler.swift in Sources */,
 				66CAF62422BF3A0800E8FAAC /* PrintSpec.swift in Sources */,
@@ -816,6 +825,7 @@
 				628BC8D322D34806000EF5DB /* TryRemoveDuplicatesSpec.swift in Sources */,
 				623227C322C0D077006D907B /* Atomic.swift in Sources */,
 				66BD1DF122CA422F00FF1457 /* OptionalSpec.swift in Sources */,
+				664EF34722D6227B00F6CA2E /* DropUntilOutputSpec.swift in Sources */,
 				66D3860022B9271F001B8189 /* FlatMapSpec.swift in Sources */,
 				6229E66822B7385A002CBEC2 /* PassthroughSubjectSpec.swift in Sources */,
 				62B3D8BF22B757A4001FA5FE /* CustomSubsciber.swift in Sources */,
@@ -860,6 +870,7 @@
 				62A4A4FC22B87371009AD6FE /* CustomError.swift in Sources */,
 				620C08F522D5BBE000DFA036 /* CollectByCountSpec.swift in Sources */,
 				6684B01222D38739008639D1 /* RepleaceEmptySpec.swift in Sources */,
+				664EF34D22D62D4100F6CA2E /* PrefixUntilOutputSpec.swift in Sources */,
 				66F1199A22BE7B6100D744BB /* TryCompactMapSpec.swift in Sources */,
 				62A73FC822C60AF0007C962C /* CustomScheduler.swift in Sources */,
 				66CAF62522BF3A0800E8FAAC /* PrintSpec.swift in Sources */,
@@ -876,6 +887,7 @@
 				628BC8D422D34806000EF5DB /* TryRemoveDuplicatesSpec.swift in Sources */,
 				623227C422C0D077006D907B /* Atomic.swift in Sources */,
 				66BD1DF222CA422F00FF1457 /* OptionalSpec.swift in Sources */,
+				664EF34822D6227B00F6CA2E /* DropUntilOutputSpec.swift in Sources */,
 				66D3860122B9271F001B8189 /* FlatMapSpec.swift in Sources */,
 				6229E66922B7385A002CBEC2 /* PassthroughSubjectSpec.swift in Sources */,
 				62B3D8C022B757A4001FA5FE /* CustomSubsciber.swift in Sources */,

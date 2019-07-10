@@ -12,6 +12,21 @@ extension Publisher {
     }
 }
 
+extension Publishers.CollectByCount : Equatable where Upstream : Equatable {
+    
+    /// Returns a Boolean value indicating whether two values are equal.
+    ///
+    /// Equality is the inverse of inequality. For any values `a` and `b`,
+    /// `a == b` implies that `a != b` is `false`.
+    ///
+    /// - Parameters:
+    ///   - lhs: A value to compare.
+    ///   - rhs: Another value to compare.
+    public static func == (lhs: Publishers.CollectByCount<Upstream>, rhs: Publishers.CollectByCount<Upstream>) -> Bool {
+        return lhs.upstream == rhs.upstream && lhs.count == rhs.count
+    }
+}
+
 extension Publishers {
     
     /// A publisher that buffers a maximum number of items.

@@ -54,7 +54,7 @@ extension Publishers {
 
 extension Publishers.FlatMap {
     
-    final class Inner<S>:
+    private final class Inner<S>:
         Subscription,
         Subscriber,
         CustomStringConvertible,

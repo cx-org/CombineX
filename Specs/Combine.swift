@@ -144,26 +144,6 @@ extension Publisher {
 
 extension Publisher {
 
-    /// Republishes elements until another publisher emits an element.
-    ///
-    /// After the second publisher publishes an element, the publisher returned by this method finishes.
-    ///
-    /// - Parameter publisher: A second publisher.
-    /// - Returns: A publisher that republishes elements until the second publisher publishes an element.
-    public func prefix<P>(untilOutputFrom publisher: P) -> Publishers.PrefixUntilOutput<Self, P> where P : Publisher
-}
-
-extension Publisher where Self.Failure == Self.Output.Failure, Self.Output : Publisher {
-
-    /// Flattens the stream of events from multiple upstream publishers to appear as if they were coming from a single stream of events.
-    ///
-    /// This operator switches the inner publisher as new ones arrive but keeps the outer one constant for downstream subscribers.
-    /// For example, given the type `Publisher<Publisher<Data, NSError>, Never>`, calling `switchToLatest()` will result in the type `Publisher<Data, NSError>`. The downstream subscriber sees a continuous stream of values even though they may be coming from different upstream publishers.
-    public func switchToLatest() -> Publishers.SwitchToLatest<Self.Output, Self>
-}
-
-extension Publisher {
-
     /// Attempts to recreate a failed subscription with the upstream publisher using a specified number of attempts to establish the connection.
     ///
     /// After exceeding the specified number of retries, the publisher passes the failure to the downstream receiver.
@@ -182,19 +162,6 @@ extension Publisher {
     ///   - latest: A Boolean value that indicates whether to publish the most recent element. If `false`, the publisher emits the first element received during the interval.
     /// - Returns: A publisher that emits either the most-recent or first element received during the specified interval.
     public func throttle<S>(for interval: S.SchedulerTimeType.Stride, scheduler: S, latest: Bool) -> Publishers.Throttle<Self, S> where S : Scheduler
-}
-
-
-extension Publisher {
-
-    /// Ignores elements from the upstream publisher until it receives an element from a second publisher.
-    ///
-    /// This publisher requests a single value from the upstream publisher, and it ignores (drops) all elements from that publisher until the upstream publisher produces a value. After the `other` publisher produces an element, this publisher cancels its subscription to the `other` publisher, and allows events from the `upstream` publisher to pass through.
-    /// After this publisher receives a subscription from the upstream publisher, it passes through backpressure requests from downstream to the upstream publisher. If the upstream publisher acts on those requests before the other publisher produces an item, this publisher drops the elements it receives from the upstream publisher.
-    ///
-    /// - Parameter publisher: A publisher to monitor for its first emitted element.
-    /// - Returns: A publisher that drops elements from the upstream publisher until the `other` publisher produces a value.
-    public func drop<P>(untilOutputFrom publisher: P) -> Publishers.DropUntilOutput<Self, P> where P : Publisher, Self.Failure == P.Failure
 }
 
 extension Publisher {
@@ -224,16 +191,6 @@ extension Publisher {
 }
 
 extension Publisher {
-
-    /// Combine elements from another publisher and deliver pairs of elements as tuples.
-    ///
-    /// The returned publisher waits until both publishers have emitted an event, then delivers the oldest unconsumed event from each publisher together as a tuple to the subscriber.
-    /// For example, if publisher `P1` emits elements `a` and `b`, and publisher `P2` emits event `c`, the zip publisher emits the tuple `(a, c)`. It won’t emit a tuple with event `b` until `P2` emits another event.
-    /// If either upstream publisher finishes successfuly or fails with an error, the zipped publisher does the same.
-    ///
-    /// - Parameter other: Another publisher.
-    /// - Returns: A publisher that emits pairs of elements from the upstream publishers as tuples.
-    public func zip<P>(_ other: P) -> Publishers.Zip<Self, P> where P : Publisher, Self.Failure == P.Failure
 
     /// Combine elements from another publisher and deliver a transformed output.
     ///
@@ -579,73 +536,6 @@ extension Publishers {
     }
 }
 
-
-
-extension Publishers {
-
-    public struct PrefixUntilOutput<Upstream, Other> : Publisher where Upstream : Publisher, Other : Publisher {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = Upstream.Output
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Upstream.Failure
-
-        /// The publisher from which this publisher receives elements.
-        public let upstream: Upstream
-
-        /// Another publisher, whose first output causes this publisher to finish.
-        public let other: Other
-
-        public init(upstream: Upstream, other: Other)
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input
-    }
-}
-
-
-extension Publishers {
-
-    /// A publisher that “flattens” nested publishers.
-    ///
-    /// Given a publisher that publishes Publishers, the `SwitchToLatest` publisher produces a sequence of events from only the most recent one.
-    /// For example, given the type `Publisher<Publisher<Data, NSError>, Never>`, calling `switchToLatest()` will result in the type `Publisher<Data, NSError>`. The downstream subscriber sees a continuous stream of values even though they may be coming from different upstream publishers.
-    public struct SwitchToLatest<P, Upstream> : Publisher where P : Publisher, P == Upstream.Output, Upstream : Publisher, P.Failure == Upstream.Failure {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = P.Output
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = P.Failure
-
-        /// The publisher from which this publisher receives elements.
-        public let upstream: Upstream
-
-        /// Creates a publisher that “flattens” nested publishers.
-        ///
-        /// - Parameter upstream: The publisher from which this publisher receives elements.
-        public init(upstream: Upstream)
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, P.Output == S.Input, Upstream.Failure == S.Failure
-    }
-}
-
 extension Publishers {
 
     /// A publisher that attempts to recreate its subscription to a failed upstream publisher.
@@ -723,43 +613,6 @@ extension Publishers {
     }
 }
 
-
-extension Publishers {
-
-    /// A publisher that ignores elements from the upstream publisher until it receives an element from second publisher.
-    public struct DropUntilOutput<Upstream, Other> : Publisher where Upstream : Publisher, Other : Publisher, Upstream.Failure == Other.Failure {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = Upstream.Output
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Upstream.Failure
-
-        /// The publisher that this publisher receives elements from.
-        public let upstream: Upstream
-
-        /// A publisher to monitor for its first emitted element.
-        public let other: Other
-
-        /// Creates a publisher that ignores elements from the upstream publisher until it receives an element from another publisher.
-        ///
-        /// - Parameters:
-        ///   - upstream: A publisher to drop elements from while waiting for another publisher to emit elements.
-        ///   - other: A publisher to monitor for its first emitted element.
-        public init(upstream: Upstream, other: Other)
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, Other.Failure == S.Failure
-    }
-}
-
 extension Publishers {
 
     /// A publisher that publishes elements only after a specified time interval elapses between events.
@@ -833,32 +686,6 @@ extension Publishers {
 }
 
 extension Publishers {
-
-    /// A publisher created by applying the zip function to two upstream publishers.
-    public struct Zip<A, B> : Publisher where A : Publisher, B : Publisher, A.Failure == B.Failure {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = (A.Output, B.Output)
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = A.Failure
-
-        public let a: A
-
-        public let b: B
-
-        public init(_ a: A, _ b: B)
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, B.Failure == S.Failure, S.Input == (A.Output, B.Output)
-    }
 
     /// A publisher created by applying the zip function to three upstream publishers.
     public struct Zip3<A, B, C> : Publisher where A : Publisher, B : Publisher, C : Publisher, A.Failure == B.Failure, B.Failure == C.Failure {
@@ -1006,32 +833,6 @@ extension Publishers {
     }
 }
 
-extension Publishers.Collect : Equatable where Upstream : Equatable {
-
-    /// Returns a Boolean value indicating whether two values are equal.
-    ///
-    /// Equality is the inverse of inequality. For any values `a` and `b`,
-    /// `a == b` implies that `a != b` is `false`.
-    ///
-    /// - Parameters:
-    ///   - lhs: A value to compare.
-    ///   - rhs: Another value to compare.
-    public static func == (lhs: Publishers.Collect<Upstream>, rhs: Publishers.Collect<Upstream>) -> Bool
-}
-
-extension Publishers.CollectByCount : Equatable where Upstream : Equatable {
-
-    /// Returns a Boolean value indicating whether two values are equal.
-    ///
-    /// Equality is the inverse of inequality. For any values `a` and `b`,
-    /// `a == b` implies that `a != b` is `false`.
-    ///
-    /// - Parameters:
-    ///   - lhs: A value to compare.
-    ///   - rhs: Another value to compare.
-    public static func == (lhs: Publishers.CollectByCount<Upstream>, rhs: Publishers.CollectByCount<Upstream>) -> Bool
-}
-
 extension Publishers.Retry : Equatable where Upstream : Equatable {
 
     /// Returns a Boolean value indicating whether two values are equal.
@@ -1045,29 +846,7 @@ extension Publishers.Retry : Equatable where Upstream : Equatable {
     public static func == (lhs: Publishers.Retry<Upstream>, rhs: Publishers.Retry<Upstream>) -> Bool
 }
 
-extension Publishers.DropUntilOutput : Equatable where Upstream : Equatable, Other : Equatable {
 
-    /// Returns a Boolean value indicating whether two values are equal.
-    ///
-    /// Equality is the inverse of inequality. For any values `a` and `b`,
-    /// `a == b` implies that `a != b` is `false`.
-    ///
-    /// - Parameters:
-    ///   - lhs: A value to compare.
-    ///   - rhs: Another value to compare.
-    public static func == (lhs: Publishers.DropUntilOutput<Upstream, Other>, rhs: Publishers.DropUntilOutput<Upstream, Other>) -> Bool
-}
-
-extension Publishers.Zip : Equatable where A : Equatable, B : Equatable {
-
-    /// Returns a Boolean value that indicates whether two publishers are equivalent.
-    ///
-    /// - Parameters:
-    ///   - lhs: A zip publisher to compare for equality.
-    ///   - rhs: Another zip publisher to compare for equality.
-    /// - Returns: `true` if the corresponding upstream publishers of each zip publisher are equal, `false` otherwise.
-    public static func == (lhs: Publishers.Zip<A, B>, rhs: Publishers.Zip<A, B>) -> Bool
-}
 
 /// Returns a Boolean value that indicates whether two publishers are equivalent.
 ///
