@@ -24,8 +24,8 @@ class CustomSubscriber<Input, Failure>: Subscriber where Failure : Error {
         case completion(Subscribers.Completion<Failure>)
     }
     
-    let lock = Lock()
-    var _events: [Event] = []
+    private let lock = Lock()
+    private var _events: [Event] = []
     
     var events: [Event] {
         self.lock.lock()

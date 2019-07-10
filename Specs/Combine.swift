@@ -130,24 +130,6 @@ extension Publisher {
 
 extension Publisher {
 
-    /// Collects all received elements, and emits a single array of the collection when the upstream publisher finishes.
-    ///
-    /// If the upstream publisher fails with an error, this publisher forwards the error to the downstream receiver instead of sending its output.
-    /// This publisher requests an unlimited number of elements from the upstream publisher. It only sends the collected array to its downstream after a request whose demand is greater than 0 items.
-    /// Note: This publisher uses an unbounded amount of memory to store the received values.
-    ///
-    /// - Returns: A publisher that collects all received items and returns them as an array upon completion.
-    public func collect() -> Publishers.Collect<Self>
-
-    /// Collects up to the specified number of elements, and then emits a single array of the collection.
-    ///
-    /// If the upstream publisher finishes before filling the buffer, this publisher sends an array of all the items it has received. This may be fewer than `count` elements.
-    /// If the upstream publisher fails with an error, this publisher forwards the error to the downstream receiver instead of sending its output.
-    /// Note: When this publisher receives a request for `.max(n)` elements, it requests `.max(count * n)` from the upstream publisher.
-    /// - Parameter count: The maximum number of received elements to buffer before publishing.
-    /// - Returns: A publisher that collects up to the specified number of elements, and then publishes them as an array.
-    public func collect(_ count: Int) -> Publishers.CollectByCount<Self>
-
     /// Collects elements by a given strategy, and emits a single array of the collection.
     ///
     /// If the upstream publisher finishes before filling the buffer, this publisher sends an array of all the items it has received. This may be fewer than `count` elements.
@@ -239,11 +221,6 @@ extension Publisher {
     ///   - customError: A closure that executes if the publisher times out. The publisher sends the failure returned by this closure to the subscriber as the reason for termination.
     /// - Returns: A publisher that terminates if the specified interval elapses with no events received from the upstream publisher.
     public func timeout<S>(_ interval: S.SchedulerTimeType.Stride, scheduler: S, options: S.SchedulerOptions? = nil, customError: (() -> Self.Failure)? = nil) -> Publishers.Timeout<Self, S> where S : Scheduler
-}
-
-extension Publisher {
-
-    public func buffer(size: Int, prefetch: Publishers.PrefetchStrategy, whenFull: Publishers.BufferingStrategy<Self.Failure>) -> Publishers.Buffer<Self>
 }
 
 extension Publisher {
@@ -600,59 +577,6 @@ extension Publishers {
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, S.Input == [Upstream.Output]
     }
-
-    /// A publisher that buffers items.
-    public struct Collect<Upstream> : Publisher where Upstream : Publisher {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = [Upstream.Output]
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Upstream.Failure
-
-        /// The publisher that this publisher receives elements from.
-        public let upstream: Upstream
-        
-        public init(upstream: Upstream)
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, S.Input == [Upstream.Output]
-    }
-
-    /// A publisher that buffers a maximum number of items.
-    public struct CollectByCount<Upstream> : Publisher where Upstream : Publisher {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = [Upstream.Output]
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Upstream.Failure
-
-        /// The publisher from which this publisher receives elements.
-        public let upstream: Upstream
-
-        ///  The maximum number of received elements to buffer before publishing.
-        public let count: Int
-        
-        public init(upstream: Upstream, count: Int)
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, S.Input == [Upstream.Output]
-    }
 }
 
 
@@ -897,89 +821,6 @@ extension Publishers {
         public let customError: (() -> Upstream.Failure)?
         
         public init(upstream: Upstream, interval: Context.SchedulerTimeType.Stride, scheduler: Context, options: Context.SchedulerOptions?, customError: (() -> Publishers.Timeout<Upstream, Context>.Failure)?)
-
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input
-    }
-}
-
-extension Publishers {
-
-    public enum PrefetchStrategy {
-
-        case keepFull
-
-        case byRequest
-
-        /// Returns a Boolean value indicating whether two values are equal.
-        ///
-        /// Equality is the inverse of inequality. For any values `a` and `b`,
-        /// `a == b` implies that `a != b` is `false`.
-        ///
-        /// - Parameters:
-        ///   - lhs: A value to compare.
-        ///   - rhs: Another value to compare.
-        public static func == (a: Publishers.PrefetchStrategy, b: Publishers.PrefetchStrategy) -> Bool
-
-        /// The hash value.
-        ///
-        /// Hash values are not guaranteed to be equal across different executions of
-        /// your program. Do not save hash values to use during a future execution.
-        ///
-        /// - Important: `hashValue` is deprecated as a `Hashable` requirement. To
-        ///   conform to `Hashable`, implement the `hash(into:)` requirement instead.
-        public var hashValue: Int { get }
-
-        /// Hashes the essential components of this value by feeding them into the
-        /// given hasher.
-        ///
-        /// Implement this method to conform to the `Hashable` protocol. The
-        /// components used for hashing must be the same as the components compared
-        /// in your type's `==` operator implementation. Call `hasher.combine(_:)`
-        /// with each of these components.
-        ///
-        /// - Important: Never call `finalize()` on `hasher`. Doing so may become a
-        ///   compile-time error in the future.
-        ///
-        /// - Parameter hasher: The hasher to use when combining the components
-        ///   of this instance.
-        public func hash(into hasher: inout Hasher)
-    }
-
-    public enum BufferingStrategy<Failure> where Failure : Error {
-
-        case dropNewest
-
-        case dropOldest
-
-        case customError(() -> Failure)
-    }
-
-    public struct Buffer<Upstream> : Publisher where Upstream : Publisher {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = Upstream.Output
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Upstream.Failure
-
-        public let upstream: Upstream
-
-        public let size: Int
-
-        public let prefetch: Publishers.PrefetchStrategy
-
-        public let whenFull: Publishers.BufferingStrategy<Upstream.Failure>
-        
-        public init(upstream: Upstream, size: Int, prefetch: Publishers.PrefetchStrategy, whenFull: Publishers.BufferingStrategy<Publishers.Buffer<Upstream>.Failure>)
-
 
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///

@@ -47,6 +47,9 @@
 		5BF182F9074A7E138FB3D001F7321E9A /* Subject.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41662D311E89DBFA5861C5354771F3F /* Subject.swift */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		5CCFDD7C69BEED1A30EF9465E737BFB1 /* Sink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BB580B983FE5D8A9FE51BA00C7A154 /* Sink.swift */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		5F732BF8671759E685350C02EC1A571F /* IgnoreOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = B55F4BA71F1824A5DF3341B547F2495C /* IgnoreOutput.swift */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
+		620C08E622D5760E00DFA036 /* Collect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 620C08E522D5760E00DFA036 /* Collect.swift */; };
+		620C08E822D576AC00DFA036 /* CollectByCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 620C08E722D576AC00DFA036 /* CollectByCount.swift */; };
+		620C08F222D5971500DFA036 /* Buffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 620C08F122D5971500DFA036 /* Buffer.swift */; };
 		66B3A1836C086F9BFBFE867D1F47EE19 /* TryRemoveDuplicates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D930FEA02F659F5CE3022AA6A2E257D /* TryRemoveDuplicates.swift */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		66DD4C9122D4D0DB008A1F60 /* Deferred.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66DD4C9022D4D0DB008A1F60 /* Deferred.swift */; };
 		66DD4C9322D4D150008A1F60 /* Future.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66DD4C9222D4D150008A1F60 /* Future.swift */; };
@@ -152,6 +155,9 @@
 		52BB580B983FE5D8A9FE51BA00C7A154 /* Sink.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Sink.swift; sourceTree = "<group>"; };
 		5644149C8B692AF43429BDB14E084A10 /* TryCompactMap.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TryCompactMap.swift; sourceTree = "<group>"; };
 		5EF68B9C84AE337183364C14CA2FC656 /* CombineX-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "CombineX-dummy.m"; sourceTree = "<group>"; };
+		620C08E522D5760E00DFA036 /* Collect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Collect.swift; sourceTree = "<group>"; };
+		620C08E722D576AC00DFA036 /* CollectByCount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectByCount.swift; sourceTree = "<group>"; };
+		620C08F122D5971500DFA036 /* Buffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buffer.swift; sourceTree = "<group>"; };
 		66DD4C9022D4D0DB008A1F60 /* Deferred.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Deferred.swift; sourceTree = "<group>"; };
 		66DD4C9222D4D150008A1F60 /* Future.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Future.swift; sourceTree = "<group>"; };
 		66DD4C9422D4DA9E008A1F60 /* MakeConnectable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeConnectable.swift; sourceTree = "<group>"; };
@@ -284,11 +290,15 @@
 				26EF47CD5E1C08D0ABF163EC476B105E /* Autoconnect.swift */,
 				11D605B978D87AE53C03866A58CD1C81 /* BreakPoint.swift */,
 				8989293426FAE686A50CF99EF1914D37 /* Catch.swift */,
+				620C08E522D5760E00DFA036 /* Collect.swift */,
+				620C08E722D576AC00DFA036 /* CollectByCount.swift */,
 				C0AD0AB414E84859BD8F7EE97B839E9F /* CompactMap.swift */,
+				66DD4C9E22D4E049008A1F60 /* Comparison.swift */,
 				4F0D0F6F5257534E373F002822344D1E /* Concatenate.swift */,
 				7190D876894AD80FC8CF19E702F6E8D1 /* Contains.swift */,
 				1CFBBACA2FB727127976B2800A2BF7A1 /* ContainsWhere.swift */,
 				A5326C0C3097F8C2EBE42FE188A4C2ED /* Count.swift */,
+				66DD4C9022D4D0DB008A1F60 /* Deferred.swift */,
 				8A08D158CCA2E13E4261E0B1C13D68D1 /* Drop.swift */,
 				B12D1CAAA9DC003FAD05433CEED05614 /* DropWhile.swift */,
 				1AE24E21679F65B11CE927A0012AC647 /* Empty.swift */,
@@ -297,11 +307,13 @@
 				A292FE1AC72FB67E89425BF0E8AE9CD1 /* First.swift */,
 				306F358E06E42DDC8010353768F6AB8A /* FirstWhere.swift */,
 				96FCC26BA65E66A687213C2F7790038C /* FlatMap.swift */,
+				66DD4C9222D4D150008A1F60 /* Future.swift */,
 				A57E2A96BD50824BB0AC4AA0991C445E /* HandleEvents.swift */,
 				B55F4BA71F1824A5DF3341B547F2495C /* IgnoreOutput.swift */,
 				B0986C27BA845A65625C46E92C69A679 /* Just.swift */,
 				67B74630DC250BB8B0865432A2DF12A2 /* Last.swift */,
 				4A111711467F07E36EA7D7A7F33E5005 /* LastWhere.swift */,
+				66DD4C9422D4DA9E008A1F60 /* MakeConnectable.swift */,
 				4D5BF23E057C95DA341C42707FD9D1F4 /* Map.swift */,
 				E12FDE28729C1859F8E0B73541433EE9 /* MapError.swift */,
 				875CE06FBF09D189064F068B46E1B3C8 /* MeasureInterval.swift */,
@@ -309,39 +321,36 @@
 				2D2E6329291431A079D509DE63BDA722 /* Merge+.swift */,
 				93AF60E15DF6824ACB40BD0716CDAF2E /* Multicast.swift */,
 				89AFB95EDDF13335224C72757D61D2F2 /* Once.swift */,
-				66DD4CA822D4E92C008A1F60 /* Scan.swift */,
 				1C6D7BB13E5A403C5EC60CE2DB1A8678 /* Optional.swift */,
 				0AF8BC9769E2C53F47A1093869358C59 /* Output.swift */,
+				66DD4CA222D4E34A008A1F60 /* PrefixWhile.swift */,
 				CC627A02AC69324060A6343F02B01776 /* Print.swift */,
-				66DD4CA622D4E734008A1F60 /* TryScan.swift */,
 				48D311F9C2F6172A4C71EA9F45BB40C7 /* Publishers.swift */,
 				008A059776EE58D80252BD2232561435 /* ReceiveOn.swift */,
 				C6AB3A71588E572238B1546657852117 /* Reduce.swift */,
 				25AC5496E222F83478F0F3903E7CB070 /* RemoveDuplicates.swift */,
-				66DD4CA222D4E34A008A1F60 /* PrefixWhile.swift */,
-				66DD4CA422D4E395008A1F60 /* TryPrefixWhile.swift */,
 				2213645DDBB3404AE8088C54EB8D741B /* ReplaceEmpty.swift */,
 				2564BF4F5F216935374743F6599F44F0 /* ReplaceError.swift */,
+				66DD4CA822D4E92C008A1F60 /* Scan.swift */,
 				C89BC8F560BE6EAEF3F218B52ADBE661 /* Sequence.swift */,
 				C5F41BB49FDA4BC27F135104787C2153 /* SetFailureType.swift */,
-				E5946FFA2C78487902D71F8A273443CE /* SubscribeOn.swift */,
 				66DD4CA022D4E2CC008A1F60 /* Share.swift */,
+				E5946FFA2C78487902D71F8A273443CE /* SubscribeOn.swift */,
 				2C2C60019FD75B9BD5DF0EF60DCC4A6E /* TryAllSatisfy.swift */,
 				4CEE83103F9E3C4828104444C0E66D23 /* TryCatch.swift */,
 				5644149C8B692AF43429BDB14E084A10 /* TryCompactMap.swift */,
+				66DD4C9C22D4DB67008A1F60 /* TryComparison.swift */,
 				B2B39A5E64AE74241F6F74AAD8E9A203 /* TryContainsWhere.swift */,
 				D8CF970FB351CCC7AD4E2EE871D5DDFC /* TryDropWhile.swift */,
 				EA9854E2A741981A602B765A791D530E /* TryFilter.swift */,
 				0DAC8D8EBA3657BFCED3EE6675D0A2A4 /* TryFirstWhere.swift */,
-				66DD4C9E22D4E049008A1F60 /* Comparison.swift */,
 				451B03BB3DF5F0C49F80F67EFE07D6BA /* TryLastWhere.swift */,
 				D609C58CA51D4C7186FF76CEA6E777BE /* TryMap.swift */,
+				66DD4CA422D4E395008A1F60 /* TryPrefixWhile.swift */,
 				0456E54531696A9666E7F77A510386F6 /* TryReduce.swift */,
 				7D930FEA02F659F5CE3022AA6A2E257D /* TryRemoveDuplicates.swift */,
-				66DD4C9022D4D0DB008A1F60 /* Deferred.swift */,
-				66DD4C9222D4D150008A1F60 /* Future.swift */,
-				66DD4C9422D4DA9E008A1F60 /* MakeConnectable.swift */,
-				66DD4C9C22D4DB67008A1F60 /* TryComparison.swift */,
+				66DD4CA622D4E734008A1F60 /* TryScan.swift */,
+				620C08F122D5971500DFA036 /* Buffer.swift */,
 			);
 			name = Publishers;
 			path = Sources/CombineX/Publishers;
@@ -552,6 +561,7 @@
 				2261AF1A541B4257D4FDE0EF6B5085AE /* Const.swift in Sources */,
 				FF2D56C5BE9F57265D11E1620B5788D5 /* Contains.swift in Sources */,
 				489E6E13ECCBB88D32D74EB54F641FBF /* ContainsWhere.swift in Sources */,
+				620C08E622D5760E00DFA036 /* Collect.swift in Sources */,
 				86BF054F2DD8F460CCD1CE4D370A6A66 /* Count.swift in Sources */,
 				26DBBB18C91C1B007D386AF90479DE7F /* CurrentValueSubject.swift in Sources */,
 				7CCAB4E3C7EA9BD1680EE19407FEDD02 /* CustomCombineIdentifierConvertible.swift in Sources */,
@@ -578,6 +588,7 @@
 				A31F7E027AEDB4BAC02244706BC88F47 /* Last.swift in Sources */,
 				AF295A2E456E13400398008348E1E1D5 /* LastWhere.swift in Sources */,
 				FBEB43895662FEC6B9C58E235C7DBFF3 /* Lock.swift in Sources */,
+				620C08F222D5971500DFA036 /* Buffer.swift in Sources */,
 				22142FFD4E976EB3EA7AD9B9648EE734 /* Map.swift in Sources */,
 				3D7BE609683F2AD42AC222FEAFA81398 /* MapError.swift in Sources */,
 				872918C5538696912F8EC63B8B156BCB /* MeasureInterval.swift in Sources */,
@@ -625,6 +636,7 @@
 				2D6435596756E1AC3F4947844F1602EC /* TryMap.swift in Sources */,
 				46E998D66C94734ABFFC5897391A37E3 /* TryReduce.swift in Sources */,
 				66B3A1836C086F9BFBFE867D1F47EE19 /* TryRemoveDuplicates.swift in Sources */,
+				620C08E822D576AC00DFA036 /* CollectByCount.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
