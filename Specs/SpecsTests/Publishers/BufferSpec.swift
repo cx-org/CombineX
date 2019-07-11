@@ -15,7 +15,7 @@ class BufferSpec: QuickSpec {
         describe("Relay") {
             
             // MARK: 1.1 should relay values as expect when prefetch strategy is by request
-            fit("should relay values as expect when prefetch strategy is by request") {
+            it("should relay values as expect when prefetch strategy is by request") {
                 let pub = CustomSubject<Int, CustomError>()
                 
                 var subscription: Subscription?
@@ -58,7 +58,7 @@ class BufferSpec: QuickSpec {
             }
             
             // MARK: 1.2 should relay values as expect when prefetch strategy is keep full
-            it("should relay values as expect when prefetch strategy is keep full") {
+            fit("should relay values as expect when prefetch strategy is keep full") {
                 let pub = CustomSubject<Int, CustomError>()
                 
                 var subscription: Subscription?
@@ -81,9 +81,10 @@ class BufferSpec: QuickSpec {
                 
                 print(sub.events)
 //                expect(sub.events).to(equal([.value(0), .value(1)]))
-                
-                subscription?.request(.max(1))
-                subscription?.request(.max(1))
+                print("subscription request more", 5)
+                subscription?.request(.max(5))
+                print("subscription request more", 5)
+                subscription?.request(.max(5))
                 
                 for i in 10..<20 {
                     pub.send(i)
