@@ -40,32 +40,6 @@ extension SubscriptionState {
     }
 }
 
-extension Atomic where Value == SubscriptionState {
-    
-    var isWaiting: Bool {
-        return self.withLock {
-            $0.isWaiting
-        }
-    }
-    
-    var isSubscribing: Bool {
-        return self.withLock {
-            $0.isSubscribing
-        }    }
-    
-    var isFinished: Bool {
-        return self.withLock {
-            $0.isFinished
-        }
-    }
-    
-    var demand: Subscribers.Demand? {
-        return self.withLock {
-            $0.demand
-        }
-    }
-}
-
 extension SubscriptionState: Equatable {
     
     static func == (lhs: SubscriptionState, rhs: SubscriptionState) -> Bool {
@@ -115,28 +89,3 @@ extension SubscriptionState {
     }
 }
 
-extension Atomic where Value == SubscriptionState {
-    
-    typealias Demands = (before: Subscribers.Demand, after: Subscribers.Demand)
-    
-    func addIfSubscribing(_ demand: Int) -> Demands? {
-        return self.withLockMutating {
-            $0.addIfSubscribing(demand)
-        }
-    }
-    
-    /// Adds the provided demand to the existing demand if the current state is `subscribing`.
-    ///
-    /// - Returns: `(before, after)` if added, otherwise nil.
-    func addIfSubscribing(_ demand: Subscribers.Demand) -> Demands? {
-        return self.withLockMutating {
-            $0.addIfSubscribing(demand)
-        }
-    }
-
-    func finishIfSubscribing() -> Bool {
-        return self.withLockMutating {
-            $0.finishIfSubscribing()
-        }
-    }
-}

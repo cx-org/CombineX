@@ -50,6 +50,12 @@
 		620C08E622D5760E00DFA036 /* Collect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 620C08E522D5760E00DFA036 /* Collect.swift */; };
 		620C08E822D576AC00DFA036 /* CollectByCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 620C08E722D576AC00DFA036 /* CollectByCount.swift */; };
 		620C08F222D5971500DFA036 /* Buffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 620C08F122D5971500DFA036 /* Buffer.swift */; };
+		627BC3AC22D83AF300958070 /* Zip+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 627BC3AB22D83AF300958070 /* Zip+.swift */; };
+		627BC3AE22D83D0500958070 /* CombineLatest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 627BC3AD22D83D0500958070 /* CombineLatest.swift */; };
+		627BC3B022D83DA900958070 /* CombineLatest+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 627BC3AF22D83DA900958070 /* CombineLatest+.swift */; };
+		627BC3B222D83DE000958070 /* TryCombineLatest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 627BC3B122D83DE000958070 /* TryCombineLatest.swift */; };
+		627BC3B422D83E5800958070 /* TryCombineLatest+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 627BC3B322D83E5800958070 /* TryCombineLatest+.swift */; };
+		627BC3B622D8434600958070 /* Retry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 627BC3B522D8434600958070 /* Retry.swift */; };
 		664EF34522D620B400F6CA2E /* DropUntilOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664EF34422D620B400F6CA2E /* DropUntilOutput.swift */; };
 		664EF34A22D62A7B00F6CA2E /* PrefixUntilOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664EF34922D62A7B00F6CA2E /* PrefixUntilOutput.swift */; };
 		664EF35222D6332F00F6CA2E /* SwitchToLatest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 664EF35122D6332F00F6CA2E /* SwitchToLatest.swift */; };
@@ -107,7 +113,7 @@
 		EDA7919764D1F8D4E3F4E2F0DCD75B33 /* AssertNoFailure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC49DB11D718EF8C5D3217999BC3B56 /* AssertNoFailure.swift */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		EFCBA636FCE57EAD32F55B462EE343ED /* CombineX-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF68B9C84AE337183364C14CA2FC656 /* CombineX-dummy.m */; };
 		F731BBF95F4B608A126107F7B37FB5FF /* TryFirstWhere.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DAC8D8EBA3657BFCED3EE6675D0A2A4 /* TryFirstWhere.swift */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
-		F7F12BAAC331DFC6FAB69B324B72C7FE /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89A1CE8DF641D6A4F1278B988CE950D1 /* Atomic.swift */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
+		F7F12BAAC331DFC6FAB69B324B72C7FE /* Atom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89A1CE8DF641D6A4F1278B988CE950D1 /* Atom.swift */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		FB211ED2F7D1C2972C31F72986617356 /* Concatenate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0D0F6F5257534E373F002822344D1E /* Concatenate.swift */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		FB997C9FBF6BABF92624A36D42E252E7 /* FirstWhere.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306F358E06E42DDC8010353768F6AB8A /* FirstWhere.swift */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		FBEB43895662FEC6B9C58E235C7DBFF3 /* Lock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A1C807234C107F5C9A91E8438FAF1A /* Lock.swift */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
@@ -162,6 +168,12 @@
 		620C08E522D5760E00DFA036 /* Collect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Collect.swift; sourceTree = "<group>"; };
 		620C08E722D576AC00DFA036 /* CollectByCount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectByCount.swift; sourceTree = "<group>"; };
 		620C08F122D5971500DFA036 /* Buffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buffer.swift; sourceTree = "<group>"; };
+		627BC3AB22D83AF300958070 /* Zip+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Zip+.swift"; sourceTree = "<group>"; };
+		627BC3AD22D83D0500958070 /* CombineLatest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineLatest.swift; sourceTree = "<group>"; };
+		627BC3AF22D83DA900958070 /* CombineLatest+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CombineLatest+.swift"; sourceTree = "<group>"; };
+		627BC3B122D83DE000958070 /* TryCombineLatest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TryCombineLatest.swift; sourceTree = "<group>"; };
+		627BC3B322D83E5800958070 /* TryCombineLatest+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TryCombineLatest+.swift"; sourceTree = "<group>"; };
+		627BC3B522D8434600958070 /* Retry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Retry.swift; sourceTree = "<group>"; };
 		664EF34422D620B400F6CA2E /* DropUntilOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropUntilOutput.swift; sourceTree = "<group>"; };
 		664EF34922D62A7B00F6CA2E /* PrefixUntilOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrefixUntilOutput.swift; sourceTree = "<group>"; };
 		664EF35122D6332F00F6CA2E /* SwitchToLatest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchToLatest.swift; sourceTree = "<group>"; };
@@ -190,7 +202,7 @@
 		875CE06FBF09D189064F068B46E1B3C8 /* MeasureInterval.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeasureInterval.swift; sourceTree = "<group>"; };
 		88DBA84821FE53E6D01E288A6471D571 /* CombineX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CombineX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8989293426FAE686A50CF99EF1914D37 /* Catch.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Catch.swift; sourceTree = "<group>"; };
-		89A1CE8DF641D6A4F1278B988CE950D1 /* Atomic.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Atomic.swift; sourceTree = "<group>"; };
+		89A1CE8DF641D6A4F1278B988CE950D1 /* Atom.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Atom.swift; sourceTree = "<group>"; };
 		89AFB95EDDF13335224C72757D61D2F2 /* Once.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Once.swift; sourceTree = "<group>"; };
 		89B53B1707267406EC15D80BCD9180F9 /* CombineX.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = CombineX.modulemap; sourceTree = "<group>"; };
 		8A08D158CCA2E13E4261E0B1C13D68D1 /* Drop.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Drop.swift; sourceTree = "<group>"; };
@@ -290,16 +302,31 @@
 			path = Sources/CombineX/Schedulers;
 			sourceTree = "<group>";
 		};
+		6237F95122D8863D00BA38E7 /* A+ */ = {
+			isa = PBXGroup;
+			children = (
+				C7DCBD315D653030EBF49D99948AD73F /* Fail.swift */,
+				B0986C27BA845A65625C46E92C69A679 /* Just.swift */,
+				89AFB95EDDF13335224C72757D61D2F2 /* Once.swift */,
+				1C6D7BB13E5A403C5EC60CE2DB1A8678 /* Optional.swift */,
+			);
+			path = "A+";
+			sourceTree = "<group>";
+		};
 		63CC5B72B320D0753840EFCE605CBB18 /* Publishers */ = {
 			isa = PBXGroup;
 			children = (
+				6237F95122D8863D00BA38E7 /* A+ */,
 				3A6ADFA6E20ECEC09B02849E9B5DE2E9 /* AllSatisfy.swift */,
 				4AC49DB11D718EF8C5D3217999BC3B56 /* AssertNoFailure.swift */,
 				26EF47CD5E1C08D0ABF163EC476B105E /* Autoconnect.swift */,
 				11D605B978D87AE53C03866A58CD1C81 /* BreakPoint.swift */,
+				620C08F122D5971500DFA036 /* Buffer.swift */,
 				8989293426FAE686A50CF99EF1914D37 /* Catch.swift */,
 				620C08E522D5760E00DFA036 /* Collect.swift */,
 				620C08E722D576AC00DFA036 /* CollectByCount.swift */,
+				627BC3AD22D83D0500958070 /* CombineLatest.swift */,
+				627BC3AF22D83DA900958070 /* CombineLatest+.swift */,
 				C0AD0AB414E84859BD8F7EE97B839E9F /* CompactMap.swift */,
 				66DD4C9E22D4E049008A1F60 /* Comparison.swift */,
 				4F0D0F6F5257534E373F002822344D1E /* Concatenate.swift */,
@@ -308,9 +335,9 @@
 				A5326C0C3097F8C2EBE42FE188A4C2ED /* Count.swift */,
 				66DD4C9022D4D0DB008A1F60 /* Deferred.swift */,
 				8A08D158CCA2E13E4261E0B1C13D68D1 /* Drop.swift */,
+				664EF34422D620B400F6CA2E /* DropUntilOutput.swift */,
 				B12D1CAAA9DC003FAD05433CEED05614 /* DropWhile.swift */,
 				1AE24E21679F65B11CE927A0012AC647 /* Empty.swift */,
-				C7DCBD315D653030EBF49D99948AD73F /* Fail.swift */,
 				C6A76265F4241ECBE6D280E0FD65D99C /* Filter.swift */,
 				A292FE1AC72FB67E89425BF0E8AE9CD1 /* First.swift */,
 				306F358E06E42DDC8010353768F6AB8A /* FirstWhere.swift */,
@@ -318,10 +345,8 @@
 				66DD4C9222D4D150008A1F60 /* Future.swift */,
 				A57E2A96BD50824BB0AC4AA0991C445E /* HandleEvents.swift */,
 				B55F4BA71F1824A5DF3341B547F2495C /* IgnoreOutput.swift */,
-				B0986C27BA845A65625C46E92C69A679 /* Just.swift */,
 				67B74630DC250BB8B0865432A2DF12A2 /* Last.swift */,
 				4A111711467F07E36EA7D7A7F33E5005 /* LastWhere.swift */,
-				664EF34422D620B400F6CA2E /* DropUntilOutput.swift */,
 				66DD4C9422D4DA9E008A1F60 /* MakeConnectable.swift */,
 				4D5BF23E057C95DA341C42707FD9D1F4 /* Map.swift */,
 				E12FDE28729C1859F8E0B73541433EE9 /* MapError.swift */,
@@ -329,9 +354,8 @@
 				441F8F1AA3570E3311F00AA8CE6ED671 /* Merge.swift */,
 				2D2E6329291431A079D509DE63BDA722 /* Merge+.swift */,
 				93AF60E15DF6824ACB40BD0716CDAF2E /* Multicast.swift */,
-				89AFB95EDDF13335224C72757D61D2F2 /* Once.swift */,
-				1C6D7BB13E5A403C5EC60CE2DB1A8678 /* Optional.swift */,
 				0AF8BC9769E2C53F47A1093869358C59 /* Output.swift */,
+				664EF34922D62A7B00F6CA2E /* PrefixUntilOutput.swift */,
 				66DD4CA222D4E34A008A1F60 /* PrefixWhile.swift */,
 				CC627A02AC69324060A6343F02B01776 /* Print.swift */,
 				48D311F9C2F6172A4C71EA9F45BB40C7 /* Publishers.swift */,
@@ -340,13 +364,17 @@
 				25AC5496E222F83478F0F3903E7CB070 /* RemoveDuplicates.swift */,
 				2213645DDBB3404AE8088C54EB8D741B /* ReplaceEmpty.swift */,
 				2564BF4F5F216935374743F6599F44F0 /* ReplaceError.swift */,
+				627BC3B522D8434600958070 /* Retry.swift */,
 				66DD4CA822D4E92C008A1F60 /* Scan.swift */,
 				C89BC8F560BE6EAEF3F218B52ADBE661 /* Sequence.swift */,
 				C5F41BB49FDA4BC27F135104787C2153 /* SetFailureType.swift */,
 				66DD4CA022D4E2CC008A1F60 /* Share.swift */,
 				E5946FFA2C78487902D71F8A273443CE /* SubscribeOn.swift */,
+				664EF35122D6332F00F6CA2E /* SwitchToLatest.swift */,
 				2C2C60019FD75B9BD5DF0EF60DCC4A6E /* TryAllSatisfy.swift */,
 				4CEE83103F9E3C4828104444C0E66D23 /* TryCatch.swift */,
+				627BC3B122D83DE000958070 /* TryCombineLatest.swift */,
+				627BC3B322D83E5800958070 /* TryCombineLatest+.swift */,
 				5644149C8B692AF43429BDB14E084A10 /* TryCompactMap.swift */,
 				66DD4C9C22D4DB67008A1F60 /* TryComparison.swift */,
 				B2B39A5E64AE74241F6F74AAD8E9A203 /* TryContainsWhere.swift */,
@@ -359,10 +387,8 @@
 				0456E54531696A9666E7F77A510386F6 /* TryReduce.swift */,
 				7D930FEA02F659F5CE3022AA6A2E257D /* TryRemoveDuplicates.swift */,
 				66DD4CA622D4E734008A1F60 /* TryScan.swift */,
-				620C08F122D5971500DFA036 /* Buffer.swift */,
-				664EF34922D62A7B00F6CA2E /* PrefixUntilOutput.swift */,
-				664EF35122D6332F00F6CA2E /* SwitchToLatest.swift */,
 				664EF35322D6374500F6CA2E /* Zip.swift */,
+				627BC3AB22D83AF300958070 /* Zip+.swift */,
 			);
 			name = Publishers;
 			path = Sources/CombineX/Publishers;
@@ -419,7 +445,7 @@
 		D9C314C2243A7B94CAC0B2421B63849A /* Internal */ = {
 			isa = PBXGroup;
 			children = (
-				89A1CE8DF641D6A4F1278B988CE950D1 /* Atomic.swift */,
+				89A1CE8DF641D6A4F1278B988CE950D1 /* Atom.swift */,
 				E1B6CEAF3D4AE8F4E5A11AF5CF4272C1 /* Const.swift */,
 				769152B490DE81C395AC95BAA6299AF4 /* Extensions.swift */,
 				8053752738C50455D8073EF1DDA41B58 /* Global.swift */,
@@ -556,7 +582,7 @@
 				4E35D13B43E4B9FAAF3C108DEEA02161 /* AnySubscriber.swift in Sources */,
 				EDA7919764D1F8D4E3F4E2F0DCD75B33 /* AssertNoFailure.swift in Sources */,
 				0E9A9F4C66BBF5C43697EACAAFAE0588 /* Assign.swift in Sources */,
-				F7F12BAAC331DFC6FAB69B324B72C7FE /* Atomic.swift in Sources */,
+				F7F12BAAC331DFC6FAB69B324B72C7FE /* Atom.swift in Sources */,
 				1AF253D00C9113B9F44B86A474C61BBB /* Autoconnect.swift in Sources */,
 				5058906FF14E0A1F79AC2C4BCB7EBB2E /* BreakPoint.swift in Sources */,
 				517C4F55E0F8AB165294FC5ED3E2DC07 /* Cancellable.swift in Sources */,
@@ -578,6 +604,7 @@
 				26DBBB18C91C1B007D386AF90479DE7F /* CurrentValueSubject.swift in Sources */,
 				7CCAB4E3C7EA9BD1680EE19407FEDD02 /* CustomCombineIdentifierConvertible.swift in Sources */,
 				A9DC4A422D8B9FEC8F62185262DF9A82 /* Demand.swift in Sources */,
+				627BC3B022D83DA900958070 /* CombineLatest+.swift in Sources */,
 				0D52B808268F8461EB02FED73AE9013A /* Drop.swift in Sources */,
 				C2A2F670227B936308098BC36E4D441C /* DropWhile.swift in Sources */,
 				66DD4C9122D4D0DB008A1F60 /* Deferred.swift in Sources */,
@@ -587,6 +614,8 @@
 				664EF35222D6332F00F6CA2E /* SwitchToLatest.swift in Sources */,
 				D17B5852646F195BE61A9E636CD3DF58 /* Empty.swift in Sources */,
 				D2978173FF5F66B111F8ADAFB5DA2F9F /* Extensions.swift in Sources */,
+				627BC3AE22D83D0500958070 /* CombineLatest.swift in Sources */,
+				627BC3B422D83E5800958070 /* TryCombineLatest+.swift in Sources */,
 				66DD4CA922D4E92C008A1F60 /* Scan.swift in Sources */,
 				5ABE6439954B5032DD0E75C96A672D39 /* Fail.swift in Sources */,
 				1CF5F46D446EAC77E5BE5A28BF712C19 /* Filter.swift in Sources */,
@@ -604,6 +633,7 @@
 				664EF34A22D62A7B00F6CA2E /* PrefixUntilOutput.swift in Sources */,
 				620C08F222D5971500DFA036 /* Buffer.swift in Sources */,
 				22142FFD4E976EB3EA7AD9B9648EE734 /* Map.swift in Sources */,
+				627BC3B622D8434600958070 /* Retry.swift in Sources */,
 				3D7BE609683F2AD42AC222FEAFA81398 /* MapError.swift in Sources */,
 				872918C5538696912F8EC63B8B156BCB /* MeasureInterval.swift in Sources */,
 				930A6BDACB8C849F82469D2DFC164744 /* Merge+.swift in Sources */,
@@ -628,6 +658,7 @@
 				889D1A6082ADDDFE69F050D11B511CF1 /* RelayState.swift in Sources */,
 				80919223AA439D16213D174D0AA469BA /* RemoveDuplicates.swift in Sources */,
 				C7E3F9B80EDCB47EA723921A66BBCE28 /* ReplaceEmpty.swift in Sources */,
+				627BC3AC22D83AF300958070 /* Zip+.swift in Sources */,
 				19B77BDC5ED6614DF5B569EB987F2B8E /* ReplaceError.swift in Sources */,
 				9D571CF3C98BAA5405C84BA531F31C7F /* Scheduler.swift in Sources */,
 				9501A67300C82569F8B449EB72FF7975 /* SchedulerTimeIntervalConvertible.swift in Sources */,
@@ -648,6 +679,7 @@
 				7B6A68CA3852BAEC4593A7B6AE8CB5AE /* TryDropWhile.swift in Sources */,
 				449F1ABF42C29D50CCAEA1819E9FF6D3 /* TryFilter.swift in Sources */,
 				F731BBF95F4B608A126107F7B37FB5FF /* TryFirstWhere.swift in Sources */,
+				627BC3B222D83DE000958070 /* TryCombineLatest.swift in Sources */,
 				4B60AFE1AC05DF2ECC12A3385011B893 /* TryLastWhere.swift in Sources */,
 				2D6435596756E1AC3F4947844F1602EC /* TryMap.swift in Sources */,
 				46E998D66C94734ABFFC5897391A37E3 /* TryReduce.swift in Sources */,

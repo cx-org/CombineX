@@ -10,7 +10,7 @@ public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertibl
     private let receiveValueBody: ((Input) -> Subscribers.Demand)?
     private let receiveCompletionBody: ((Subscribers.Completion<Failure>) -> Void)?
     
-    private var subscription: Atomic<Subscription?>?
+    private var subscription: Atom<Subscription?>?
     
     /// A textual representation of this instance.
     ///
@@ -63,21 +63,21 @@ public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertibl
     
     public init<S>(_ s: S) where Input == S.Output, Failure == S.Failure, S : Subject {
         
-        let subscription = Atomic<Subscription?>(value: nil)
+        let subscription = Atom<Subscription?>(nil)
         
         self.receiveSubscriptionBody = {
-            subscription.store($0)
+            subscription.set($0)
             $0.request(.unlimited)
         }
         
         self.receiveValueBody = { v in
-            precondition(subscription.load().isNotNil)
+            precondition(subscription.get().isNotNil)
             s.send(v)
             return .none
         }
 
         self.receiveCompletionBody = { c in
-            precondition(subscription.load().isNotNil)
+            precondition(subscription.get().isNotNil)
             s.send(completion: c)
         }
         

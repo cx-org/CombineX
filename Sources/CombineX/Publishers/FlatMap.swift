@@ -46,7 +46,7 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, NewPublisher.Output == S.Input, Upstream.Failure == S.Failure {
-            let subscription = Inner(transform: self.transform, maxPublishers: self.maxPublishers, sub: subscriber)
+            let subscription = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(subscription)
         }
     }
@@ -68,6 +68,7 @@ extension Publishers.FlatMap {
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
         typealias Transform = (Upstream.Output) -> NewPublisher
+        typealias Pub = Publishers.FlatMap<NewPublisher, Upstream>
         typealias Sub = S
         
         // for upstream
@@ -83,9 +84,9 @@ extension Publishers.FlatMap {
         let maxPublishers: Subscribers.Demand
         let transform: Transform
         
-        init(transform: @escaping Transform, maxPublishers: Subscribers.Demand, sub: Sub) {
-            self.transform = transform
-            self.maxPublishers = maxPublishers
+        init(pub: Pub, sub: Sub) {
+            self.transform = pub.transform
+            self.maxPublishers = pub.maxPublishers
             self.sub = sub
         }
         
@@ -364,7 +365,7 @@ extension Publishers.FlatMap {
             
             let parent: Inner
             
-            let subscription = Atomic<Subscription?>(value: nil)
+            let subscription = Atom<Subscription?>(nil)
             var buffer: Input?
             
             init(parent: Inner) {
@@ -380,17 +381,19 @@ extension Publishers.FlatMap {
             }
             
             func receive(_ input: NewPublisher.Output) -> Subscribers.Demand {
-                if self.subscription.load() == nil {
+                guard self.subscription.isNotNil else {
                     return .none
                 }
                 return self.parent.receive(input, from: self)
             }
             
             func receive(completion: Subscribers.Completion<NewPublisher.Failure>) {
-                if let subscription = self.subscription.exchange(with: nil) {
-                    subscription.cancel()
-                    self.parent.receive(completion: completion, from: self)
+                guard let subscription = self.subscription.exchange(with: nil) else {
+                    return
                 }
+                
+                subscription.cancel()
+                self.parent.receive(completion: completion, from: self)
             }
         }
     }

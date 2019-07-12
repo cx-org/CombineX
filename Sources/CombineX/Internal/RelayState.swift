@@ -42,39 +42,6 @@ extension RelayState {
     }
 }
 
-extension Atomic where Value == RelayState {
-    
-    var isWaiting: Bool {
-        switch self.load() {
-        case .waiting:      return true
-        default:            return false
-        }
-    }
-    
-    var isRelaying: Bool {
-        switch self.load() {
-        case .relaying:  return true
-        default:            return false
-        }
-    }
-    
-    var isFinished: Bool {
-        switch self.load() {
-        case .finished:     return true
-        default:            return false
-        }
-    }
-    
-    var subscription: Subscription? {
-        switch self.load() {
-        case .relaying(let subscription):
-            return subscription
-        default:
-            return nil
-        }
-    }
-}
-
 extension RelayState {
     
     mutating func relay(_ subscription: Subscription) -> Bool {
@@ -99,26 +66,6 @@ extension RelayState {
             return subscription
         }
         return nil
-    }
-}
-
-extension Atomic where Value == RelayState {
-    
-    func finish() -> Subscription? {
-        return self.withLockMutating {
-            $0.finish()
-        }
-    }
-    
-    @available(*, deprecated)
-    func finishIfRelaying() -> Subscription? {
-        return self.withLockMutating {
-            if let subscription = $0.subscription {
-                $0 = .finished
-                return subscription
-            }
-            return nil
-        }
     }
 }
 

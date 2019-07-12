@@ -40,17 +40,17 @@ extension OptionalProtocol {
     }
 }
 
-extension Atomic where Value: OptionalProtocol {
+extension Atom where Val: OptionalProtocol {
     
     var isNil: Bool {
-        return self.load().optional == nil
+        return self.get().optional == nil
     }
     
     var isNotNil: Bool {
         return !self.isNil
     }
     
-    func ifNilStore(_ value: Value.Wrapped) -> Bool {
+    func ifNilStore(_ value: Val.Wrapped) -> Bool {
         return self.withLockMutating {
             $0.ifNilStore(value)
         }

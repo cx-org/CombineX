@@ -6,26 +6,21 @@ final class Lock {
     
     #if DEBUG
     private var q = DispatchQueue(label: UUID().uuidString)
-    private var _history: [String] = []
+    private var h: [String] = []
+    
     var history: [String] {
-        return q.sync {
-            self._history
-        }
+        return self.q.sync { self.h }
     }
     #endif
     
     init(recursive: Bool = false) {
-        if recursive {
-            self.locking = NSRecursiveLock()
-        } else {
-            self.locking = NSLock()
-        }
+        self.locking = recursive ? NSRecursiveLock() : NSLock()
     }
     
     func lock(file: StaticString = #file, line: UInt = #line) {
         #if DEBUG
         self.q.async {
-            self._history.append("LOCK: \(file)#\(line)")
+            self.h.append("LOCK: \(file)#\(line)")
         }
         #endif
         self.locking.lock()
@@ -34,7 +29,7 @@ final class Lock {
     func unlock(file: StaticString = #file, line: UInt = #line) {
         #if DEBUG
         self.q.async {
-            self._history.append("UNLOCK: \(file)#\(line)")
+            self.h.append("UNLOCK: \(file)#\(line)")
         }
         #endif
         self.locking.unlock()

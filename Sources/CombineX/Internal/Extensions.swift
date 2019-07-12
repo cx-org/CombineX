@@ -55,4 +55,10 @@ extension Optional {
     var isNotNil: Bool {
         return self != nil
     }
+    
+    mutating func exchange(with value: Wrapped?) -> Wrapped? {
+        let wrapped = self
+        self = value
+        return wrapped
+    }
 }

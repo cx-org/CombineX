@@ -11,6 +11,19 @@ extension Publisher {
     public func zip<P>(_ other: P) -> Publishers.Zip<Self, P> where P : Publisher, Self.Failure == P.Failure {
         return .init(self, other)
     }
+    
+    /// Combine elements from another publisher and deliver a transformed output.
+    ///
+    /// The returned publisher waits until both publishers have emitted an event, then delivers the oldest unconsumed event from each publisher together as a tuple to the subscriber.
+    /// For example, if publisher `P1` emits elements `a` and `b`, and publisher `P2` emits event `c`, the zip publisher emits the tuple `(a, c)`. It won’t emit a tuple with event `b` until `P2` emits another event.
+    /// If either upstream publisher finishes successfuly or fails with an error, the zipped publisher does the same.
+    ///
+    /// - Parameter other: Another publisher.
+    ///   - transform: A closure that receives the most recent value from each publisher and returns a new value to publish.
+    /// - Returns: A publisher that emits pairs of elements from the upstream publishers as tuples.
+    public func zip<P, T>(_ other: P, _ transform: @escaping (Self.Output, P.Output) -> T) -> Publishers.Map<Publishers.Zip<Self, P>, T> where P : Publisher, Self.Failure == P.Failure {
+        return self.zip(other).map(transform)
+    }
 }
 
 extension Publishers.Zip : Equatable where A : Equatable, B : Equatable {

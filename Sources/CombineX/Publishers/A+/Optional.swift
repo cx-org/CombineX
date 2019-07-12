@@ -359,11 +359,11 @@ extension Publishers.Optional {
         S.Failure == Failure
     {
         
-        let result: Result<Output?, Failure>
-    
         let lock = Lock()
         
         var state = SubscriptionState.waiting
+        
+        let result: Result<Output?, Failure>
         var sub: S?
         
         init(result: Result<Output?, Failure>, sub: S) {
