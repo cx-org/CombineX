@@ -116,7 +116,7 @@ extension Publishers.FlatMap {
         
         func cancel() {
             self.downLock.lock()
-            self.downState = .finished
+            self.downState = .done
             let children = self.children
             self.children = []
             self.downLock.unlock()
@@ -125,7 +125,7 @@ extension Publishers.FlatMap {
                 $0.subscription.exchange(with: nil)?.cancel()
             }
             
-            self.upLock.withLockGet(self.upState.finish())?.cancel()
+            self.upLock.withLockGet(self.upState.done())?.cancel()
         }
         
         // MARK: Subscriber
@@ -174,7 +174,7 @@ extension Publishers.FlatMap {
                         self.downLock.unlock()
                         return
                     }
-                    self.downState = .finished
+                    self.downState = .done
                     self.downLock.unlock()
                     self.sub.receive(completion: .finished)
                 } else {
@@ -187,7 +187,7 @@ extension Publishers.FlatMap {
                     return
                 }
                 
-                self.downState = .finished
+                self.downState = .done
                 let children = self.children
                 self.children = []
                 self.downLock.unlock()
@@ -253,7 +253,7 @@ extension Publishers.FlatMap {
                     subscription.request(.max(1))
                 } else {
                     if self.children.isEmpty {
-                        self.downState = .finished
+                        self.downState = .done
                         let children = self.children
                         self.children = []
                         self.downLock.unlock()
@@ -267,7 +267,7 @@ extension Publishers.FlatMap {
                     }
                 }
             case .failure(let error):
-                self.downState = .finished
+                self.downState = .done
                 
                 let children = self.children
                 self.children = []
@@ -278,7 +278,7 @@ extension Publishers.FlatMap {
                 }
                 self.sub.receive(completion: .failure(error))
                 
-                self.upLock.withLockGet(self.upState.finish())?.cancel()
+                self.upLock.withLockGet(self.upState.done())?.cancel()
             }
         }
         
@@ -373,7 +373,7 @@ extension Publishers.FlatMap {
             }
             
             func receive(subscription: Subscription) {
-                if self.subscription.ifNilStore(subscription) {
+                if self.subscription.setIfNil(subscription) {
                     subscription.request(.max(1))
                 } else {
                     subscription.cancel()

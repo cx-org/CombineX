@@ -63,9 +63,7 @@ extension Publishers {
                         return $1
                     }
                 }
-                .compactMap {
-                    $0
-                }
+                .compactMap { $0 }
                 .receive(subscriber: subscriber)
         }
     }

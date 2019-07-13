@@ -98,7 +98,7 @@ extension Publishers.ReplaceEmpty {
         }
         
         func cancel() {
-            self.lock.withLockGet(self.state.finish())?.cancel()
+            self.lock.withLockGet(self.state.done())?.cancel()
         }
         
         func receive(subscription: Subscription) {
@@ -125,7 +125,7 @@ extension Publishers.ReplaceEmpty {
         
         func receive(completion: Subscribers.Completion<Failure>) {
             self.lock.lock()
-            guard let subscription = self.state.finish() else {
+            guard let subscription = self.state.done() else {
                 self.lock.unlock()
                 return
             }

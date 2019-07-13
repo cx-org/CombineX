@@ -182,7 +182,7 @@ extension Publishers.Buffer {
             var demand = after
             while demand > 0 {
                 self.lock.lock()
-                guard let output = self.buffer.dequeue() else {
+                guard let output = self.buffer.popFirst() else {
                     self.lock.unlock()
                     return
                 }
@@ -198,7 +198,7 @@ extension Publishers.Buffer {
         }
         
         func cancel() {
-            self.lock.withLockGet(self.state.finish())?.cancel()
+            self.lock.withLockGet(self.state.done())?.cancel()
             self.buffer = []
         }
         
@@ -242,7 +242,7 @@ extension Publishers.Buffer {
                     case .dropNewest:
                         self.lock.unlock()
                     case .customError(let makeError):
-                        guard let subscription = self.state.finish() else {
+                        guard let subscription = self.state.done() else {
                             self.lock.unlock()
                             return .none
                         }
@@ -262,7 +262,7 @@ extension Publishers.Buffer {
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
-            guard let subscription = self.lock.withLockGet(self.state.finish()) else {
+            guard let subscription = self.lock.withLockGet(self.state.done()) else {
                 return
             }
             subscription.cancel()

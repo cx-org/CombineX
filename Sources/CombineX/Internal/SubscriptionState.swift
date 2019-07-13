@@ -6,7 +6,7 @@ enum SubscriptionState {
     case subscribing(Subscribers.Demand)
     
     // completed or cancelled
-    case finished
+    case done
 }
 
 extension SubscriptionState {
@@ -25,9 +25,9 @@ extension SubscriptionState {
         }
     }
     
-    var isFinished: Bool {
+    var isDone: Bool {
         switch self {
-        case .finished:     return true
+        case .done:         return true
         default:            return false
         }
     }
@@ -48,11 +48,21 @@ extension SubscriptionState: Equatable {
             return true
         case (.subscribing(let d0), .subscribing(let d1)):
             return d0 == d1
-        case (.finished, .finished):
+        case (.done, .done):
             return true
         default:
             return false
         }
+    }
+}
+
+extension SubscriptionState {
+    
+    mutating func done() -> Bool {
+        defer {
+            self = .done
+        }
+        return !self.isDone
     }
 }
 
@@ -80,12 +90,5 @@ extension SubscriptionState {
         }
     }
     
-    mutating func finishIfSubscribing() -> Bool {
-        if self.isSubscribing {
-            self = .finished
-            return true
-        }
-        return false
-    }
 }
 

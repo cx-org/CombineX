@@ -53,11 +53,7 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Failure == S.Failure, S : Subscriber, Upstream.Output == S.Input {
-            self.upstream
-                .mapError {
-                    $0 as! Failure
-                }
-                .receive(subscriber: subscriber)
+            Global.RequiresImplementation()
         }
         
         public func setFailureType<E>(to failure: E.Type) -> Publishers.SetFailureType<Upstream, E> where E : Error {

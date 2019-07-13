@@ -104,7 +104,7 @@ extension Publishers.TryCatch {
         }
         
         func cancel() {
-            self.lock.withLockGet(self.state.finish())?.cancel()
+            self.lock.withLockGet(self.state.done())?.cancel()
         }
         
         func receive(subscription: Subscription) {
@@ -127,7 +127,7 @@ extension Publishers.TryCatch {
                     
                     subscription.request(demand)
                 }
-            case .finished:
+            case .done:
                 self.lock.unlock()
             }
         }
@@ -147,7 +147,7 @@ extension Publishers.TryCatch {
         func receive(completion: Subscribers.Completion<Error>) {
             switch completion {
             case .finished:
-                guard let subscription = self.lock.withLockGet(self.state.finish()) else {
+                guard let subscription = self.lock.withLockGet(self.state.done()) else {
                     return
                 }
                 
@@ -169,7 +169,7 @@ extension Publishers.TryCatch {
                         let newPublisher = try self.handler(error as! Upstream.Failure)
                         newPublisher.mapError { $0 } .subscribe(self)
                     } catch let e {
-                        guard let subscription = self.state.finish() else {
+                        guard let subscription = self.state.done() else {
                             self.lock.unlock()
                             return
                         }
@@ -178,7 +178,7 @@ extension Publishers.TryCatch {
                         self.sub.receive(completion: .failure(e))
                     }
                 case .newPublisher:
-                    guard let subscription = self.state.finish() else {
+                    guard let subscription = self.state.done() else {
                         self.lock.unlock()
                         return
                     }

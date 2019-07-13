@@ -52,11 +52,10 @@ extension Publishers {
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, S.Input == Publishers.Count<Upstream>.Output {
             self.upstream
-                .reduce(0) { (count, output) -> Int in
-                    Swift.print(count, output)
-                    return count + 1
+                .reduce(0) { (count, _) in
+                    count + 1
                 }
-                .subscribe(subscriber)
+                .receive(subscriber: subscriber)
         }
     }
 }

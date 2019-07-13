@@ -45,7 +45,7 @@ extension Publishers {
             self.upstream
                 .tryPrefix(while: self.predicate)
                 .mapError {
-                    $0 as! Failure
+                    $0 as! Failure    
                 }
                 .receive(subscriber: subscriber)
         }

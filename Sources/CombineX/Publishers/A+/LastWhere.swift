@@ -40,10 +40,8 @@ extension Publishers {
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             self.upstream
-                .tryLast(where: predicate)
-                .mapError {
-                    $0 as! Failure
-                }
+                .tryLast(where: self.predicate)
+                .mapError { $0 as! Failure }
                 .receive(subscriber: subscriber)
         }
     }

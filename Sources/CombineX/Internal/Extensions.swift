@@ -1,15 +1,18 @@
-// MARK: - Array
+// MARK: - Collection
+extension Collection {
+    
+    var isNotEmpty: Bool {
+        return !self.isEmpty
+    }
+}
+
 extension Array {
     
-    mutating func dequeue() -> Element? {
+    mutating func popFirst() -> Element? {
         if self.isEmpty {
             return nil
         }
         return self.removeFirst()
-    }
-    
-    var isNotEmpty: Bool {
-        return !self.isEmpty
     }
 }
 
@@ -17,12 +20,10 @@ extension Array {
 extension Result {
     
     func tryMap<NewSuccess>(_ transform: (Success) throws -> NewSuccess) -> Result<NewSuccess, Error> {
-        
         switch self {
         case .success(let success):
             do {
-                let newSuccess = try transform(success)
-                return .success(newSuccess)
+                return .success(try transform(success))
             } catch {
                 return .failure(error)
             }
@@ -42,23 +43,5 @@ extension Subscribers.Completion {
         case .failure(let error):
             return .failure(transform(error))
         }
-    }
-}
-
-// MARK: - Optional
-extension Optional {
-    
-    var isNil: Bool {
-        return self == nil
-    }
-    
-    var isNotNil: Bool {
-        return self != nil
-    }
-    
-    mutating func exchange(with value: Wrapped?) -> Wrapped? {
-        let wrapped = self
-        self = value
-        return wrapped
     }
 }

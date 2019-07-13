@@ -43,10 +43,8 @@ extension Publishers {
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, S.Input == Publishers.ContainsWhere<Upstream>.Output {
             self.upstream
-                .first(where: predicate)
-                .map { _ in
-                    true
-                }
+                .first(where: self.predicate)
+                .map { _ in true }
                 .receive(subscriber: subscriber)
         }
     }

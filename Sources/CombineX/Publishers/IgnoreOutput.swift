@@ -50,13 +50,8 @@ extension Publishers {
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, S.Input == Publishers.IgnoreOutput<Upstream>.Output {
             self.upstream
-                .filter { _ in
-                    return false
-                }
-                .map { _ in
-                    // Used to cast output to Never, should never be called
-                    fatalError()
-                }
+                .filter { _ in false }
+                .map { _ in fatalError() }
                 .receive(subscriber: subscriber)
         }
     }

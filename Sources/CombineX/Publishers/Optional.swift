@@ -383,7 +383,7 @@ extension Publishers.Optional {
             let sub = self.sub
             self.sub = nil
             
-            self.state = .finished
+            self.state = .done
             
             self.lock.unlock()
             
@@ -402,7 +402,7 @@ extension Publishers.Optional {
         
         func cancel() {
             self.lock.withLock {
-                self.state = .finished
+                self.state = .done
                 self.sub = nil
             }
         }

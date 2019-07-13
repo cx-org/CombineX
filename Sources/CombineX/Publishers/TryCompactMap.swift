@@ -97,7 +97,7 @@ extension Publishers.TryCompactMap {
         }
         
         func cancel() {
-            self.lock.withLockGet(self.state.finish())?.cancel()
+            self.lock.withLockGet(self.state.done())?.cancel()
         }
         
         func receive(subscription: Subscription) {
@@ -132,7 +132,7 @@ extension Publishers.TryCompactMap {
         }
         
         private func complete(_ completion: Subscribers.Completion<Error>) {
-            guard let subscription = self.lock.withLockGet(self.state.finish()) else {
+            guard let subscription = self.lock.withLockGet(self.state.done()) else {
                 return
             }
             

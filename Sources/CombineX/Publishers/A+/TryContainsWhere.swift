@@ -43,7 +43,7 @@ extension Publishers {
             self.upstream
                 .tryFirst(where: self.predicate)
                 .map { _ in
-                    return true
+                    true
                 }
                 .receive(subscriber: subscriber)
         }

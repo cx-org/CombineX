@@ -17,7 +17,7 @@ class CombineIdentifierSpec: QuickSpec {
             
             // MARK: 1.1 should be unique to each other
             it("should be unique to each other") {
-                let set = Atomic<Set<CombineIdentifier>>(value: [])
+                let set = Atom<Set<CombineIdentifier>>([])
                 let g = DispatchGroup()
                 for _ in 0..<100 {
                     let id = CombineIdentifier()
@@ -27,7 +27,7 @@ class CombineIdentifierSpec: QuickSpec {
                 }
                 g.wait()
                 
-                expect(set.load().count).to(equal(100))
+                expect(set.get().count).to(equal(100))
             }
             
             // MARK: 1.2 should use object's address as id

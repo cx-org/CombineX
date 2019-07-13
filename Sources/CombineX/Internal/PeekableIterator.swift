@@ -19,6 +19,6 @@ struct PeekableIterator<Element>: IteratorProtocol {
     }
 
     mutating func next() -> Element? {
-        return self.buffer.dequeue() ?? self.iterator.next()
+        return self.buffer.popFirst() ?? self.iterator.next()
     }
 }

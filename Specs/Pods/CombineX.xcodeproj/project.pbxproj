@@ -308,7 +308,7 @@
 				C7DCBD315D653030EBF49D99948AD73F /* Fail.swift */,
 				B0986C27BA845A65625C46E92C69A679 /* Just.swift */,
 				89AFB95EDDF13335224C72757D61D2F2 /* Once.swift */,
-				1C6D7BB13E5A403C5EC60CE2DB1A8678 /* Optional.swift */,
+				4AC49DB11D718EF8C5D3217999BC3B56 /* AssertNoFailure.swift */,
 			);
 			path = "A+";
 			sourceTree = "<group>";
@@ -316,9 +316,9 @@
 		63CC5B72B320D0753840EFCE605CBB18 /* Publishers */ = {
 			isa = PBXGroup;
 			children = (
+				1C6D7BB13E5A403C5EC60CE2DB1A8678 /* Optional.swift */,
 				6237F95122D8863D00BA38E7 /* A+ */,
 				3A6ADFA6E20ECEC09B02849E9B5DE2E9 /* AllSatisfy.swift */,
-				4AC49DB11D718EF8C5D3217999BC3B56 /* AssertNoFailure.swift */,
 				26EF47CD5E1C08D0ABF163EC476B105E /* Autoconnect.swift */,
 				11D605B978D87AE53C03866A58CD1C81 /* BreakPoint.swift */,
 				620C08F122D5971500DFA036 /* Buffer.swift */,

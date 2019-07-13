@@ -6,7 +6,7 @@ enum RelayState {
     case relaying(Subscription)
     
     // completed or cancelled
-    case finished
+    case done
 }
 
 extension RelayState {
@@ -20,14 +20,14 @@ extension RelayState {
     
     var isRelaying: Bool {
         switch self {
-        case .relaying:  return true
+        case .relaying:     return true
         default:            return false
         }
     }
     
-    var isFinished: Bool {
+    var isDone: Bool {
         switch self {
-        case .finished:     return true
+        case .done:         return true
         default:            return false
         }
     }
@@ -42,6 +42,8 @@ extension RelayState {
     }
 }
 
+// MARK: - Transit
+
 extension RelayState {
     
     mutating func relay(_ subscription: Subscription) -> Bool {
@@ -52,20 +54,11 @@ extension RelayState {
         return false
     }
     
-    mutating func finish() -> Subscription? {
+    mutating func done() -> Subscription? {
         defer {
-            self = .finished
+            self = .done
         }
         return self.subscription
-    }
-    
-    @available(*, deprecated)
-    mutating func finishIfRelaying() -> Subscription? {
-        if let subscription = self.subscription {
-            self = .finished
-            return subscription
-        }
-        return nil
     }
 }
 
@@ -75,9 +68,9 @@ extension RelayState: Equatable {
         switch (lhs, rhs) {
         case (.waiting, .waiting):
             return true
-        case (.relaying(let d0), .relaying(let d1)):
-            return (d0 as AnyObject) === (d1 as AnyObject)
-        case (.finished, .finished):
+        case (.relaying(let a), .relaying(let b)):
+            return (a as AnyObject) === (b as AnyObject)
+        case (.done, .done):
             return true
         default:
             return false

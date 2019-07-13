@@ -45,10 +45,9 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, S.Input == Publishers.AllSatisfy<Upstream>.Output {
-            return self.upstream
-                .reduce(true) { (bool, output) -> Bool in
-                    return bool && self.predicate(output)
-                }
+            self.upstream
+                .tryAllSatisfy(self.predicate)
+                .mapError { $0 as! Failure }
                 .receive(subscriber: subscriber)
         }
     }

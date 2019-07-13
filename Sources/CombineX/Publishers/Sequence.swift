@@ -335,7 +335,7 @@ extension Publishers.Sequence {
                 } else if old == 0 && new > 0 {
                     self.slowPath(new)
                 }
-            case .finished:
+            case .done:
                 self.lock.unlock()
             }
         }
@@ -349,7 +349,7 @@ extension Publishers.Sequence {
                 _ = self.sub?.receive(element)
             }
 
-            if self.lock.withLockGet(self.state.finishIfSubscribing()) {
+            if self.lock.withLockGet(self.state.done()) {
                 self.sub?.receive(completion: .finished)
                 self.sub = nil
             }
@@ -360,7 +360,7 @@ extension Publishers.Sequence {
             while now > 0 {
                 self.lock.lock()
                 guard let element = self.iterator.next() else {
-                    let finish = self.state.finishIfSubscribing()
+                    let finish = self.state.done()
                     self.lock.unlock()
                     
                     if finish {
@@ -387,7 +387,7 @@ extension Publishers.Sequence {
                     
                     var finish = false
                     if peek == nil {
-                        finish = self.state.finishIfSubscribing()
+                        finish = self.state.done()
                     }
                     
                     self.lock.unlock()
@@ -407,7 +407,7 @@ extension Publishers.Sequence {
         
         func cancel() {
             self.lock.withLock {
-                self.state = .finished
+                self.state = .done
                 self.sub = nil
             }
         }

@@ -46,12 +46,116 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, S.Failure == Publishers.TryAllSatisfy<Upstream>.Failure, S.Input == Publishers.TryAllSatisfy<Upstream>.Output {
-            return self.upstream
-                .tryReduce(true) { (bool, output) -> Bool in
-                    let flag = try self.predicate(output)
-                    return bool && flag
+            let subscription = Inner(pub: self, sub: subscriber)
+            self.upstream.subscribe(subscription)
+        }
+    }
+}
+
+extension Publishers.TryAllSatisfy {
+    
+    private final class Inner<S>:
+        Subscription,
+        Subscriber,
+        CustomStringConvertible,
+        CustomDebugStringConvertible
+    where
+        S: Subscriber,
+        S.Input == Output,
+        S.Failure == Failure
+    {
+        
+        typealias Input = Upstream.Output
+        typealias Failure = Upstream.Failure
+        
+        typealias Pub = Publishers.TryAllSatisfy<Upstream>
+        typealias Sub = S
+        typealias Predicate = (Upstream.Output) throws -> Bool
+        
+        let lock = Lock()
+        
+        let predicate: Predicate
+        let sub: Sub
+        
+        var state: RelayState = .waiting
+        
+        init(pub: Pub, sub: Sub) {
+            self.predicate = pub.predicate
+            self.sub = sub
+        }
+        
+        func request(_ demand: Subscribers.Demand) {
+            precondition(demand > 0)
+            self.lock.withLockGet(self.state.subscription)?.request(.unlimited)
+        }
+        
+        func cancel() {
+            self.lock.withLockGet(self.state.done())?.cancel()
+        }
+        
+        func receive(subscription: Subscription) {
+            guard self.lock.withLockGet(self.state.relay(subscription)) else {
+                subscription.cancel()
+                return
+            }
+            
+            self.sub.receive(subscription: self)
+        }
+        
+        func receive(_ input: Input) -> Subscribers.Demand {
+            self.lock.lock()
+            guard self.state.isRelaying else {
+                self.lock.unlock()
+                return .none
+            }
+            
+            do {
+                if try self.predicate(input) {
+                    self.lock.unlock()
+                    return .none
                 }
-                .receive(subscriber: subscriber)
+                
+                let subscription = self.state.done()
+                self.lock.unlock()
+                
+                subscription?.cancel()
+                
+                _ = self.sub.receive(false)
+                self.sub.receive(completion: .finished)
+            } catch {
+                let subscription = self.state.done()
+                self.lock.unlock()
+                
+                subscription?.cancel()
+                
+                self.sub.receive(completion: .failure(error))
+            }
+            
+            return .none
+        }
+        
+        func receive(completion: Subscribers.Completion<Failure>) {
+            guard let subscription = self.lock.withLockGet(self.state.done()) else {
+                return
+            }
+            
+            subscription.cancel()
+            
+            switch completion {
+            case .failure(let e):
+                self.sub.receive(completion: .failure(e))
+            case .finished:
+                _ = self.sub.receive(true)
+                self.sub.receive(completion: .finished)
+            }
+        }
+        
+        var description: String {
+            return "TryAllSatisfy"
+        }
+        
+        var debugDescription: String {
+            return "TryAllSatisfy"
         }
     }
 }
