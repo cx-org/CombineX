@@ -148,7 +148,7 @@ extension Publishers.Concatenate {
         }
         
         func cancel() {
-            self.lock.withLockGet(self.state.done())?.cancel()
+            self.lock.withLockGet(self.state.complete())?.cancel()
         }
         
         func receive(subscription: Subscription) {
@@ -171,7 +171,7 @@ extension Publishers.Concatenate {
                     
                     subscription.request(demand)
                 }
-            case .done:
+            case .completed:
                 self.lock.unlock()
             }
         }
@@ -191,7 +191,7 @@ extension Publishers.Concatenate {
         func receive(completion: Subscribers.Completion<Prefix.Failure>) {
             switch completion {
             case .failure:
-                guard let subscription = self.lock.withLockGet(self.state.done()) else {
+                guard let subscription = self.lock.withLockGet(self.state.complete()) else {
                     return
                 }
                 
@@ -212,7 +212,7 @@ extension Publishers.Concatenate {
                     
                     suffix?.subscribe(self)
                 case .suffix:
-                    guard let subscription = self.state.done() else {
+                    guard let subscription = self.state.complete() else {
                         self.lock.unlock()
                         return
                     }

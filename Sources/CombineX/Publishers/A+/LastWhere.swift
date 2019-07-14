@@ -41,7 +41,9 @@ extension Publishers {
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             self.upstream
                 .tryLast(where: self.predicate)
-                .mapError { $0 as! Failure }
+                .mapError {
+                    $0 as! Failure
+                }
                 .receive(subscriber: subscriber)
         }
     }

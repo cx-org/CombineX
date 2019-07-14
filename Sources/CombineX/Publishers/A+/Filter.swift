@@ -49,7 +49,9 @@ extension Publishers {
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             self.upstream
-                .compactMap { self.isIncluded($0) ? $0 : nil }
+                .compactMap {
+                    self.isIncluded($0) ? $0 : nil
+                }
                 .receive(subscriber: subscriber)
         }
     }

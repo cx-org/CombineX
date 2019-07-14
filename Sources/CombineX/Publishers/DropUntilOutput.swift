@@ -103,7 +103,7 @@ extension Publishers.DropUntilOutput {
                 guard let self = self else { return }
                 self.other.cancel()
                 
-                guard let subscription = self.lock.withLockGet(self.state.done()) else {
+                guard let subscription = self.lock.withLockGet(self.state.complete()) else {
                     return
                 }
                 
@@ -129,7 +129,7 @@ extension Publishers.DropUntilOutput {
         }
 
         func cancel() {
-            self.lock.withLockGet(self.state.done())?.cancel()
+            self.lock.withLockGet(self.state.complete())?.cancel()
         }
 
         func receive(subscription: Subscription) {
@@ -158,7 +158,7 @@ extension Publishers.DropUntilOutput {
         }
 
         func receive(completion: Subscribers.Completion<Failure>) {
-            guard let subscription = self.lock.withLockGet(self.state.done()) else {
+            guard let subscription = self.lock.withLockGet(self.state.complete()) else {
                 return
             }
             

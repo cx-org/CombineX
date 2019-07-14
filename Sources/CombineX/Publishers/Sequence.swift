@@ -304,7 +304,7 @@ extension Publishers.Sequence {
         let lock = Lock()
         
         var iterator: PeekableIterator<Elements.Element>
-        var state: SubscriptionState = .waiting
+        var state: DemandState = .waiting
         var sub: S?
         
         init(sequence: Elements, sub: S) {
@@ -317,7 +317,7 @@ extension Publishers.Sequence {
             
             switch self.state {
             case .waiting:
-                self.state = .subscribing(demand)
+                self.state = .demanding(demand)
                 self.lock.unlock()
                 
                 if demand == .unlimited {
@@ -325,9 +325,9 @@ extension Publishers.Sequence {
                 } else {
                     self.slowPath(demand)
                 }
-            case .subscribing(let old):
+            case .demanding(let old):
                 let new = old + demand
-                self.state = .subscribing(new)
+                self.state = .demanding(new)
                 self.lock.unlock()
                 
                 if new == .unlimited {
@@ -335,21 +335,21 @@ extension Publishers.Sequence {
                 } else if old == 0 && new > 0 {
                     self.slowPath(new)
                 }
-            case .done:
+            case .completed:
                 self.lock.unlock()
             }
         }
         
         private func fastPath() {
             while let element = self.iterator.next() {
-                guard self.lock.withLockGet(self.state.isSubscribing) else {
+                guard self.lock.withLockGet(self.state.isDemanding) else {
                     return
                 }
                 
                 _ = self.sub?.receive(element)
             }
 
-            if self.lock.withLockGet(self.state.done()) {
+            if self.lock.withLockGet(self.state.complete()) {
                 self.sub?.receive(completion: .finished)
                 self.sub = nil
             }
@@ -360,7 +360,7 @@ extension Publishers.Sequence {
             while now > 0 {
                 self.lock.lock()
                 guard let element = self.iterator.next() else {
-                    let finish = self.state.done()
+                    let finish = self.state.complete()
                     self.lock.unlock()
                     
                     if finish {
@@ -370,24 +370,24 @@ extension Publishers.Sequence {
                     return
                 }
                 
-                guard self.state.isSubscribing else {
+                guard self.state.isDemanding else {
                     self.lock.unlock()
                     return
                 }
 
-                _ = self.state.addIfSubscribing(-1)
+                _ = self.state.sub(.max(1))
                 let sub = self.sub
                 self.lock.unlock()
                 
                 let new = sub?.receive(element) ?? .none
                 
                 self.lock.lock()
-                guard let after = self.state.addIfSubscribing(new)?.after, after > 0 else {
+                guard let after = self.state.add(new)?.new, after > 0 else {
                     let peek = self.iterator.peek()
                     
                     var finish = false
                     if peek == nil {
-                        finish = self.state.done()
+                        finish = self.state.complete()
                     }
                     
                     self.lock.unlock()
@@ -407,7 +407,7 @@ extension Publishers.Sequence {
         
         func cancel() {
             self.lock.withLock {
-                self.state = .done
+                self.state = .completed
                 self.sub = nil
             }
         }

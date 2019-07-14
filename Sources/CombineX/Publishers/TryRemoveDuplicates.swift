@@ -77,7 +77,7 @@ extension Publishers.TryRemoveDuplicates {
         }
         
         func cancel() {
-            self.lock.withLockGet(self.state.done())?.cancel()
+            self.lock.withLockGet(self.state.complete())?.cancel()
         }
         
         func receive(subscription: Subscription) {
@@ -112,7 +112,7 @@ extension Publishers.TryRemoveDuplicates {
                     return self.sub.receive(input)
                 }
             } catch {
-                let subscription = self.state.done()
+                let subscription = self.state.complete()
                 self.lock.unlock()
                 
                 subscription?.cancel()
@@ -127,7 +127,7 @@ extension Publishers.TryRemoveDuplicates {
         }
         
         private func complete(_ completion: Subscribers.Completion<Error>) {
-            guard let subscription = self.lock.withLockGet(self.state.done()) else {
+            guard let subscription = self.lock.withLockGet(self.state.complete()) else {
                 return
             }
             

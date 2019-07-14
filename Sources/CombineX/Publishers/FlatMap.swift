@@ -77,7 +77,7 @@ extension Publishers.FlatMap {
         
         // for downstream
         let downLock = Lock()
-        var downState: SubscriptionState = .waiting
+        var downState: DemandState = .waiting
         var children: [ChildSubscriber] = []
         var sub: Sub
         
@@ -95,15 +95,15 @@ extension Publishers.FlatMap {
             self.downLock.lock()
             switch self.downState {
             case .waiting:
-                self.downState = .subscribing(demand)
+                self.downState = .demanding(demand)
                 self.downLock.unlock()
                 
                 if demand > 0 {
                     self.drain(demand)
                 }
-            case .subscribing(let before):
+            case .demanding(let before):
                 let after = before + demand
-                self.downState = .subscribing(after)
+                self.downState = .demanding(after)
                 self.downLock.unlock()
                 
                 if before == 0 && after > 0 {
@@ -116,7 +116,7 @@ extension Publishers.FlatMap {
         
         func cancel() {
             self.downLock.lock()
-            self.downState = .done
+            self.downState = .completed
             let children = self.children
             self.children = []
             self.downLock.unlock()
@@ -125,7 +125,7 @@ extension Publishers.FlatMap {
                 $0.subscription.exchange(with: nil)?.cancel()
             }
             
-            self.upLock.withLockGet(self.upState.done())?.cancel()
+            self.upLock.withLockGet(self.upState.complete())?.cancel()
         }
         
         // MARK: Subscriber
@@ -147,7 +147,7 @@ extension Publishers.FlatMap {
             let child = ChildSubscriber(parent: self)
             
             self.downLock.lock()
-            guard self.downState.isSubscribing else {
+            guard self.downState.isDemanding else {
                 self.downLock.unlock()
                 return .none
             }
@@ -170,11 +170,11 @@ extension Publishers.FlatMap {
             case .finished:
                 self.downLock.lock()
                 if self.children.isEmpty {
-                    guard self.downState.isSubscribing else {
+                    guard self.downState.isDemanding else {
                         self.downLock.unlock()
                         return
                     }
-                    self.downState = .done
+                    self.downState = .completed
                     self.downLock.unlock()
                     self.sub.receive(completion: .finished)
                 } else {
@@ -182,12 +182,12 @@ extension Publishers.FlatMap {
                 }
             case .failure(let error):
                 self.downLock.lock()
-                guard self.downState.isSubscribing else {
+                guard self.downState.isDemanding else {
                     self.downLock.unlock()
                     return
                 }
                 
-                self.downState = .done
+                self.downState = .completed
                 let children = self.children
                 self.children = []
                 self.downLock.unlock()
@@ -209,7 +209,7 @@ extension Publishers.FlatMap {
             }
             
             if before > 0 {
-                self.downState = .subscribing(before - 1)
+                self.downState = .demanding(before - 1)
                 self.downLock.unlock()
                 
                 let new = self.sub.receive(input)
@@ -218,7 +218,7 @@ extension Publishers.FlatMap {
                 var after = Subscribers.Demand.max(0)
                 if let demand = self.downState.demand {
                     after = demand + new
-                    self.downState = .subscribing(after)
+                    self.downState = .demanding(after)
                 }
                 self.downLock.unlock()
                 
@@ -239,7 +239,7 @@ extension Publishers.FlatMap {
         
         func receive(completion: Subscribers.Completion<NewPublisher.Failure>, from child: ChildSubscriber) {
             self.downLock.lock()
-            guard self.downState.isSubscribing else {
+            guard self.downState.isDemanding else {
                 self.downLock.unlock()
                 return
             }
@@ -253,7 +253,7 @@ extension Publishers.FlatMap {
                     subscription.request(.max(1))
                 } else {
                     if self.children.isEmpty {
-                        self.downState = .done
+                        self.downState = .completed
                         let children = self.children
                         self.children = []
                         self.downLock.unlock()
@@ -267,7 +267,7 @@ extension Publishers.FlatMap {
                     }
                 }
             case .failure(let error):
-                self.downState = .done
+                self.downState = .completed
                 
                 let children = self.children
                 self.children = []
@@ -278,7 +278,7 @@ extension Publishers.FlatMap {
                 }
                 self.sub.receive(completion: .failure(error))
                 
-                self.upLock.withLockGet(self.upState.done())?.cancel()
+                self.upLock.withLockGet(self.upState.complete())?.cancel()
             }
         }
         
@@ -301,7 +301,7 @@ extension Publishers.FlatMap {
             }
             
             for output in buffer {
-                guard self.downLock.withLockGet(self.downState.isSubscribing) else {
+                guard self.downLock.withLockGet(self.downState.isDemanding) else {
                     return
                 }
                 _ = self.sub.receive(output)
@@ -327,7 +327,7 @@ extension Publishers.FlatMap {
                     self.downLock.unlock()
                     return
                 }
-                self.downState = .subscribing(before - 1)
+                self.downState = .demanding(before - 1)
                 self.downLock.unlock()
 
                 let new = self.sub.receive(input)
@@ -336,7 +336,7 @@ extension Publishers.FlatMap {
                 var after = Subscribers.Demand.max(0)
                 if let demand = self.downState.demand {
                     after = demand + new
-                    self.downState = .subscribing(after)
+                    self.downState = .demanding(after)
                 }
 
                 if after == 0 {

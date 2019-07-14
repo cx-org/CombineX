@@ -49,7 +49,9 @@ extension Publishers {
         public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, Upstream.Failure == S.Failure {
             self.upstream
                 .tryScan(self.initialResult, self.nextPartialResult)
-                .mapError { $0 as! Failure }
+                .mapError {
+                    $0 as! Failure    
+                }
                 .receive(subscriber: subscriber)
         }
     }

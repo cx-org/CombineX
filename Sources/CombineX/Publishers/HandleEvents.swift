@@ -113,7 +113,7 @@ extension Publishers.HandleEvents {
         
         func cancel() {
             self.receiveCancel?()
-            self.lock.withLockGet(self.state.done())?.cancel()
+            self.lock.withLockGet(self.state.complete())?.cancel()
         }
         
         func receive(subscription: Subscription) {
@@ -136,7 +136,7 @@ extension Publishers.HandleEvents {
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
-            guard let subscription = self.lock.withLockGet(self.state.done()) else {
+            guard let subscription = self.lock.withLockGet(self.state.complete()) else {
                 return
             }
             

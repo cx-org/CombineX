@@ -198,7 +198,7 @@ extension Publishers.Buffer {
         }
         
         func cancel() {
-            self.lock.withLockGet(self.state.done())?.cancel()
+            self.lock.withLockGet(self.state.complete())?.cancel()
             self.buffer = []
         }
         
@@ -242,7 +242,7 @@ extension Publishers.Buffer {
                     case .dropNewest:
                         self.lock.unlock()
                     case .customError(let makeError):
-                        guard let subscription = self.state.done() else {
+                        guard let subscription = self.state.complete() else {
                             self.lock.unlock()
                             return .none
                         }
@@ -262,7 +262,7 @@ extension Publishers.Buffer {
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
-            guard let subscription = self.lock.withLockGet(self.state.done()) else {
+            guard let subscription = self.lock.withLockGet(self.state.complete()) else {
                 return
             }
             subscription.cancel()

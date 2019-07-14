@@ -47,7 +47,9 @@ extension Publishers {
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, S.Input == Publishers.AllSatisfy<Upstream>.Output {
             self.upstream
                 .tryAllSatisfy(self.predicate)
-                .mapError { $0 as! Failure }
+                .mapError {
+                    $0 as! Failure
+                }
                 .receive(subscriber: subscriber)
         }
     }

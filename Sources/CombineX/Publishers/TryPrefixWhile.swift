@@ -84,7 +84,7 @@ extension Publishers.TryPrefixWhile {
         }
         
         func cancel() {
-            self.lock.withLockGet(self.state.done())?.cancel()
+            self.lock.withLockGet(self.state.complete())?.cancel()
         }
         
         func receive(subscription: Subscription) {
@@ -108,7 +108,7 @@ extension Publishers.TryPrefixWhile {
                     self.lock.unlock()
                     return self.sub.receive(input)
                 } else {
-                    let subscription = self.state.done()
+                    let subscription = self.state.complete()
                     self.lock.unlock()
                     
                     subscription?.cancel()
@@ -116,7 +116,7 @@ extension Publishers.TryPrefixWhile {
                     return .none
                 }
             } catch {
-                let subscription = self.state.done()
+                let subscription = self.state.complete()
                 self.lock.unlock()
                 
                 subscription?.cancel()
@@ -130,7 +130,7 @@ extension Publishers.TryPrefixWhile {
         }
         
         private func complete(_ completion: Subscribers.Completion<Error>) {
-            guard let subscription = self.lock.withLockGet(self.state.done()) else {
+            guard let subscription = self.lock.withLockGet(self.state.complete()) else {
                 return
             }
             

@@ -95,7 +95,7 @@ extension Publishers.TryReduce {
         }
         
         func cancel() {
-            self.lock.withLockGet(self.state.done())?.cancel()
+            self.lock.withLockGet(self.state.complete())?.cancel()
         }
         
         func receive(subscription: Subscription) {
@@ -120,7 +120,7 @@ extension Publishers.TryReduce {
                 self.output = next
                 self.lock.unlock()
             } catch {
-                let subscription = self.state.done()
+                let subscription = self.state.complete()
                 self.lock.unlock()
                 
                 subscription?.cancel()
@@ -131,7 +131,7 @@ extension Publishers.TryReduce {
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
-            guard let subscription = self.lock.withLockGet(self.state.done()) else {
+            guard let subscription = self.lock.withLockGet(self.state.complete()) else {
                 return
             }
             

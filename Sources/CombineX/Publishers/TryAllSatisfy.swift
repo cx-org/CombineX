@@ -90,7 +90,7 @@ extension Publishers.TryAllSatisfy {
         }
         
         func cancel() {
-            self.lock.withLockGet(self.state.done())?.cancel()
+            self.lock.withLockGet(self.state.complete())?.cancel()
         }
         
         func receive(subscription: Subscription) {
@@ -115,7 +115,7 @@ extension Publishers.TryAllSatisfy {
                     return .none
                 }
                 
-                let subscription = self.state.done()
+                let subscription = self.state.complete()
                 self.lock.unlock()
                 
                 subscription?.cancel()
@@ -123,7 +123,7 @@ extension Publishers.TryAllSatisfy {
                 _ = self.sub.receive(false)
                 self.sub.receive(completion: .finished)
             } catch {
-                let subscription = self.state.done()
+                let subscription = self.state.complete()
                 self.lock.unlock()
                 
                 subscription?.cancel()
@@ -135,7 +135,7 @@ extension Publishers.TryAllSatisfy {
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
-            guard let subscription = self.lock.withLockGet(self.state.done()) else {
+            guard let subscription = self.lock.withLockGet(self.state.complete()) else {
                 return
             }
             

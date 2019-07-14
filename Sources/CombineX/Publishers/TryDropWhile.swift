@@ -85,7 +85,7 @@ extension Publishers.TryDropWhile {
         }
         
         func cancel() {
-            self.lock.withLockGet(self.state.done())?.cancel()
+            self.lock.withLockGet(self.state.complete())?.cancel()
         }
         
         func receive(subscription: Subscription) {
@@ -120,7 +120,7 @@ extension Publishers.TryDropWhile {
                     return self.sub.receive(input)
                 }
             } catch {
-                let subscription = self.state.done()
+                let subscription = self.state.complete()
                 self.lock.unlock()
                 
                 subscription?.cancel()
@@ -134,7 +134,7 @@ extension Publishers.TryDropWhile {
         }
         
         private func complete(_ completion: Subscribers.Completion<Error>) {
-            guard let subscription = self.lock.withLockGet(self.state.done()) else {
+            guard let subscription = self.lock.withLockGet(self.state.complete()) else {
                 return
             }
             

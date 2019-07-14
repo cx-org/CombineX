@@ -361,7 +361,7 @@ extension Publishers.Optional {
         
         let lock = Lock()
         
-        var state = SubscriptionState.waiting
+        var state = DemandState.waiting
         
         let result: Result<Output?, Failure>
         var sub: S?
@@ -383,7 +383,7 @@ extension Publishers.Optional {
             let sub = self.sub
             self.sub = nil
             
-            self.state = .done
+            self.state = .completed
             
             self.lock.unlock()
             
@@ -402,7 +402,7 @@ extension Publishers.Optional {
         
         func cancel() {
             self.lock.withLock {
-                self.state = .done
+                self.state = .completed
                 self.sub = nil
             }
         }
