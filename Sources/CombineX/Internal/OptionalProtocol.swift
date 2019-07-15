@@ -10,12 +10,8 @@ protocol OptionalProtocol {
 extension Optional: OptionalProtocol {
 
     var optional: Wrapped? {
-        get {
-            return self
-        }
-        set {
-            self = newValue
-        }
+        get { return self }
+        set { self = newValue }
     }
 }
 
@@ -27,12 +23,6 @@ extension OptionalProtocol {
     
     var isNotNil: Bool {
         return !self.isNil
-    }
-    
-    mutating func exchange(with new: Wrapped?) -> Wrapped? {
-        let old = self.optional
-        self.optional = new
-        return old
     }
     
     mutating func setIfNil(_ value: Wrapped) -> Bool {
@@ -63,3 +53,9 @@ extension Atom where Val: OptionalProtocol {
     }
 }
 
+extension OptionalProtocol where Wrapped: OptionalProtocol {
+    
+    func unwrap() -> Wrapped.Wrapped? {
+        return self.optional?.optional ?? nil
+    }
+}

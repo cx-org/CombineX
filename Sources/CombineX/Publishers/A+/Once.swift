@@ -50,31 +50,18 @@ extension Publishers.Once {
     
     public func dropFirst(_ count: Int = 1) -> Publishers.Optional<Output, Failure> {
         precondition(count >= 0)
-        
-        if count == 0 {
-            return self.compactMap { $0 }
-        } else {
-            return .init(self.result.map { _ in nil })
-        }
+        return count == 0 ? self.compactMap { $0 } : .init(self.result.map { _ in nil })
     }
     
     public func drop(while predicate: (Output) -> Bool) -> Publishers.Optional<Output, Failure> {
         return self.compactMap {
-            if predicate($0) {
-                return nil
-            } else {
-                return $0
-            }
+            predicate($0) ? nil : $0
         }
     }
     
     public func tryDrop(while predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error> {
         return self.tryCompactMap {
-            if try predicate($0) {
-                return nil
-            } else {
-                return $0
-            }
+            try predicate($0) ? nil : $0
         }
     }
     
@@ -84,21 +71,13 @@ extension Publishers.Once {
     
     public func first(where predicate: (Output) -> Bool) -> Publishers.Optional<Output, Failure> {
         return self.compactMap {
-            if predicate($0) {
-                return $0
-            } else {
-                return nil
-            }
+            predicate($0) ? $0 : nil
         }
     }
     
     public func tryFirst(where predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error> {
         return self.tryCompactMap {
-            if try predicate($0) {
-                return $0
-            } else {
-                return nil
-            }
+            try predicate($0) ? $0 : nil
         }
     }
     
@@ -151,19 +130,11 @@ extension Publishers.Once {
     }
     
     public func output(at index: Int) -> Publishers.Optional<Output, Failure> {
-        if index == 0 {
-            return .init(self.result.map { $0 })
-        } else {
-            return .init(nil)
-        }
+        return index == 0 ? .init(self.result.map { $0 }) : .init(nil)
     }
     
     public func output<R>(in range: R) -> Publishers.Optional<Output, Failure> where R : RangeExpression, R.Bound == Int {
-        if range.contains(0) {
-            return self.output(at: 0)
-        } else {
-            return .init(nil)
-        }
+        return range.contains(0) ? self.output(at: 0) : .init(nil)
     }
     
     public func prefix(_ maxLength: Int) -> Publishers.Optional<Output, Failure> {
@@ -173,19 +144,13 @@ extension Publishers.Once {
     
     public func prefix(while predicate: (Output) -> Bool) -> Publishers.Optional<Output, Failure> {
         return .init(self.result.map {
-            if predicate($0) {
-                return $0
-            }
-            return nil
+            predicate($0) ? $0 : nil
         })
     }
     
     public func tryPrefix(while predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error> {
         return .init(self.result.tryMap {
-            if try predicate($0) {
-                return $0
-            }
-            return nil
+            try predicate($0) ? $0 : nil
         })
     }
     

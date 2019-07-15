@@ -43,12 +43,11 @@ extension RelayState {
 extension RelayState {
     
     mutating func relay(_ subscription: Subscription) -> Bool {
-        guard self.isWaiting else {
-            return false
-        }
+        guard self.isWaiting else { return false }
         self = .relaying(subscription)
         return true
     }
+    
     
     mutating func complete() -> Subscription? {
         defer {

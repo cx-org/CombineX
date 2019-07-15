@@ -28,12 +28,7 @@ class CustomSubscriber<Input, Failure>: Subscriber where Failure : Error {
     private var _events: [Event] = []
     
     var events: [Event] {
-        self.lock.lock()
-        defer {
-            self.lock.unlock()
-        }
-        
-        return self._events
+        return self.lock.withLockGet(self._events)
     }
     
     init(receiveSubscription: ((Subscription) -> Void)? = nil, receiveValue: ((Input) -> Subscribers.Demand)? = nil, receiveCompletion: ((Subscribers.Completion<Failure>) -> Void)? = nil) {
@@ -47,16 +42,16 @@ class CustomSubscriber<Input, Failure>: Subscriber where Failure : Error {
     }
     
     func receive(_ value: Input) -> Subscribers.Demand {
-        self.lock.lock()
-        self._events.append(.value(value))
-        self.lock.unlock()
+        self.lock.withLock {
+            self._events.append(.value(value))
+        }
         return self.receiveValueBody?(value) ?? .none
     }
     
     func receive(completion: Subscribers.Completion<Failure>) {
-        self.lock.lock()
-        self._events.append(.completion(completion))
-        self.lock.unlock()
+        self.lock.withLock {
+            self._events.append(.completion(completion))
+        }
         self.receiveCompletionBody?(completion)
     }
 }
@@ -65,10 +60,8 @@ extension CustomSubscriber.Event {
     
     func isFinished() -> Bool {
         switch self {
-        case .value:
-            return false
-        case .completion(let c):
-            return c.isFinished
+        case .value:                return false
+        case .completion(let c):    return c.isFinished
         }
     }
     
@@ -84,10 +77,8 @@ extension CustomSubscriber.Event where Input: Equatable {
     
     func isValue(_ value: Input) -> Bool {
         switch self {
-        case .value(let v):
-            return v == value
-        case .completion:
-            return false
+        case .value(let v):     return v == value
+        case .completion:       return false
         }
     }
 }
@@ -96,19 +87,14 @@ extension CustomSubscriber.Event: Equatable where Input: Equatable, Failure: Equ
     
     static func == (lhs: CustomSubscriber.Event, rhs: CustomSubscriber.Event) -> Bool {
         switch (lhs, rhs) {
-        case (.value(let v0), .value(let v1)):
-            return v0 == v1
-        case (.completion(let c0), .completion(let c1)):
-            switch (c0, c1) {
-            case (.finished, .finished):
-                return true
-            case (.failure(let e0), .failure(let e1)):
-                return e0 == e1
-            default:
-                return false
+        case (.value(let a), .value(let b)):            return a == b
+        case (.completion(let a), .completion(let b)):
+            switch (a, b) {
+            case (.finished, .finished):                return true
+            case (.failure(let e0), .failure(let e1)):  return e0 == e1
+            default:                                    return false
             }
-        default:
-            return false
+        default:                                        return false
         }
     }
 }
@@ -117,8 +103,8 @@ extension CustomSubscriber.Event: CustomStringConvertible {
     
     var description: String {
         switch self {
-        case .value(let i):
-            return "\(i)"
+        case .value(let v):
+            return "\(v)"
         case .completion(let c):
             return "\(c)"
         }

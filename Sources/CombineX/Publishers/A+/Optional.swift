@@ -2,10 +2,7 @@ extension Publishers.Optional {
     
     public func allSatisfy(_ predicate: (Output) -> Bool) -> Publishers.Optional<Bool, Failure> {
         return .init(self.result.map {
-            if let success = $0 {
-                return predicate(success)
-            }
-            return false
+            $0.map(predicate) ?? false
         })
     }
     
@@ -73,21 +70,13 @@ extension Publishers.Optional {
     
     public func drop(while predicate: (Output) -> Bool) -> Publishers.Optional<Output, Failure> {
         return self.compactMap {
-            if predicate($0) {
-                return nil
-            } else {
-                return $0
-            }
+            predicate($0) ? nil : $0
         }
     }
     
     public func tryDrop(while predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error> {
         return self.tryCompactMap {
-            if try predicate($0) {
-                return nil
-            } else {
-                return $0
-            }
+            try predicate($0) ? nil : $0
         }
     }
     
@@ -97,21 +86,13 @@ extension Publishers.Optional {
     
     public func first(where predicate: (Output) -> Bool) -> Publishers.Optional<Output, Failure> {
         return self.compactMap {
-            if predicate($0) {
-                return $0
-            } else {
-                return nil
-            }
+            predicate($0) ? $0 : nil
         }
     }
     
     public func tryFirst(where predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error> {
         return self.tryCompactMap {
-            if try predicate($0) {
-                return $0
-            } else {
-                return nil
-            }
+            try predicate($0) ? $0 : nil
         }
     }
     
@@ -180,19 +161,11 @@ extension Publishers.Optional {
     }
     
     public func output(at index: Int) -> Publishers.Optional<Output, Failure> {
-        if index == 0 {
-            return self
-        } else {
-            return .init(nil)
-        }
+        return index == 0 ? self : .init(nil)
     }
     
     public func output<R>(in range: R) -> Publishers.Optional<Output, Failure> where R : RangeExpression, R.Bound == Int {
-        if range.contains(0) {
-            return self.output(at: 0)
-        } else {
-            return .init(nil)
-        }
+        return range.contains(0) ? self.output(at: 0) : .init(nil)
     }
     
     public func prefix(_ maxLength: Int) -> Publishers.Optional<Output, Failure> {
@@ -341,7 +314,7 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
-            let s = Inner(result: self.result, sub: subscriber)
+            let s = Inner(pub: self, sub: subscriber)
             subscriber.receive(subscription: s)
         }
     }
@@ -359,15 +332,18 @@ extension Publishers.Optional {
         S.Failure == Failure
     {
         
+        typealias Pub = Publishers.Optional<Output, Failure>
+        typealias Sub = S
+        
         let lock = Lock()
         
         var state = DemandState.waiting
         
         let result: Result<Output?, Failure>
-        var sub: S?
+        var sub: Sub?
         
-        init(result: Result<Output?, Failure>, sub: S) {
-            self.result = result
+        init(pub: Pub, sub: Sub) {
+            self.result = pub.result
             self.sub = sub
         }
         
@@ -380,10 +356,10 @@ extension Publishers.Optional {
                 return
             }
             
+            self.state = .completed
+            
             let sub = self.sub
             self.sub = nil
-            
-            self.state = .completed
             
             self.lock.unlock()
             

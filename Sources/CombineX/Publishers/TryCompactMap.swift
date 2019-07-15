@@ -13,14 +13,9 @@ extension Publisher {
 extension Publishers.TryCompactMap {
     
     public func compactMap<T>(_ transform: @escaping (Output) throws -> T?) -> Publishers.TryCompactMap<Upstream, T> {
-        let newTransform: (Upstream.Output) throws -> T? = {
-            if let output = try self.transform($0) {
-                return try transform(output)
-            }
-            return nil
+        return self.upstream.tryCompactMap {
+            try self.transform($0).map(transform).unwrap()
         }
-        
-        return self.upstream.tryCompactMap(newTransform)
     }
 }
 
@@ -54,8 +49,8 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, S.Failure == Publishers.TryCompactMap<Upstream, Output>.Failure {
-            let subscription = Inner(pub: self, sub: subscriber)
-            self.upstream.receive(subscriber: subscription)
+            let s = Inner(pub: self, sub: subscriber)
+            self.upstream.receive(subscriber: s)
         }
     }
 }
@@ -81,7 +76,6 @@ extension Publishers.TryCompactMap {
         typealias Transform = (Upstream.Output) throws -> Output?
         
         let lock = Lock()
-        
         let transform: Transform
         let sub: Sub
         
@@ -110,7 +104,6 @@ extension Publishers.TryCompactMap {
         }
         
         func receive(_ input: Input) -> Subscribers.Demand {
-            // Against misbehaving upstream
             guard self.lock.withLockGet(self.state.isRelaying) else {
                 return .none
             }

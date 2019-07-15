@@ -87,6 +87,27 @@ class TryCompactMapSpec: QuickSpec {
                 }
             }
             
+//            fit("should ") {
+//                class Pub: Publisher {
+//                    typealias Output = Int
+//                    typealias Failure = CustomError
+//                    
+//                    // /BuildRoot/Library/Caches/com.apple.xbs/Sources/PubSub_Sim/PubSub-120/Combine/Source/FilterProducer.swift
+//                    func receive<S>(subscriber: S) where S : Subscriber, Failure == S.Failure, Output == S.Input {
+//                        
+//                        let url = URL(fileURLWithPath: "/BuildRoot/Library/Caches/com.apple.xbs/Sources/PubSub_Sim/PubSub-120/Combine/Source/FilterProducer.swift")
+//                        let str = try? String(contentsOf: url)
+//                        Swift.print(str)
+//                        
+//                        subscriber.receive(completion: .finished)
+//                    }
+//                }
+//                
+//                let pub = Pub().tryCompactMap { $0 }
+//                let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
+//                
+//                pub.subscribe(sub)
+//            }
         }
         
         

@@ -6,16 +6,6 @@ extension Collection {
     }
 }
 
-extension Array {
-    
-    mutating func popFirst() -> Element? {
-        if self.isEmpty {
-            return nil
-        }
-        return self.removeFirst()
-    }
-}
-
 // MARK: - Result
 extension Result {
     
