@@ -143,7 +143,7 @@ extension Publishers.Buffer {
         let whenFull: Publishers.BufferingStrategy<Upstream.Failure>
         
         var demand: Subscribers.Demand = .none
-        var buffer: [Output] = []
+        var buffer = Queue<Output>()
         
         var state = RelayState.waiting
         
@@ -199,7 +199,7 @@ extension Publishers.Buffer {
         
         func cancel() {
             self.lock.withLockGet(self.state.complete())?.cancel()
-            self.buffer = []
+            self.buffer = Queue()
         }
         
         func receive(subscription: Subscription) {
@@ -236,7 +236,7 @@ extension Publishers.Buffer {
                 case self.size:
                     switch self.whenFull {
                     case .dropOldest:
-                        _ = self.buffer.removeFirst()
+                        _ = self.buffer.popFirst()
                         self.buffer.append(input)
                         self.lock.unlock()
                     case .dropNewest:
@@ -249,7 +249,7 @@ extension Publishers.Buffer {
                         self.lock.unlock()
                         
                         subscription.cancel()
-                        self.buffer = []
+                        self.buffer = Queue()
                         
                         self.sub.receive(completion: .failure(makeError()))
                     }
@@ -267,7 +267,7 @@ extension Publishers.Buffer {
             }
             subscription.cancel()
             
-            self.buffer = []
+            self.buffer = Queue()
             self.sub.receive(completion: completion)
         }
         

@@ -2,12 +2,11 @@ struct PeekableIterator<Element>: IteratorProtocol {
     
     private var iterator: AnyIterator<Element>
     
-    // TODO: Use a circular buffer.
-    private var buffer: [Element]
+    private var buffer: Queue<Element>
     
     init<I: IteratorProtocol>(_ iterator: I) where I.Element == Element {
         self.iterator = AnyIterator(iterator)
-        self.buffer = []
+        self.buffer = Queue()
     }
     
     mutating func peek() -> Element? {
