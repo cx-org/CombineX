@@ -320,20 +320,14 @@ extension Publishers.Sequence {
                 self.state = .demanding(demand)
                 self.lock.unlock()
                 
-                if demand == .unlimited {
-                    self.fastPath()
-                } else {
-                    self.slowPath(demand)
-                }
+                demand == .unlimited ? self.fastPath() : self.slowPath(demand)
             case .demanding(let old):
                 let new = old + demand
                 self.state = .demanding(new)
                 self.lock.unlock()
-                
-                if new == .unlimited {
-                    self.fastPath()
-                } else if old == 0 && new > 0 {
-                    self.slowPath(new)
+
+                if old == 0 {
+                    new == .unlimited ? self.fastPath() : self.slowPath(demand)
                 }
             case .completed:
                 self.lock.unlock()
@@ -345,7 +339,6 @@ extension Publishers.Sequence {
                 guard self.lock.withLockGet(self.state.isDemanding) else {
                     return
                 }
-                
                 _ = self.sub?.receive(element)
             }
 
@@ -356,52 +349,57 @@ extension Publishers.Sequence {
         }
         
         private func slowPath(_ demand: Subscribers.Demand) {
-            var now = demand
-            while now > 0 {
+            var current = demand
+            
+            while current > 0 {
+                
                 self.lock.lock()
-                guard let element = self.iterator.next() else {
-                    let finish = self.state.complete()
+                guard self.state.isDemanding else {
                     self.lock.unlock()
-                    
-                    if finish {
-                        self.sub?.receive(completion: .finished)
-                        self.sub = nil
-                    }
                     return
                 }
                 
-                guard self.state.isDemanding else {
+                guard let element = self.iterator.next() else {
+                    self.state = .completed
+                    
+                    let sub = self.sub
+                    self.sub = nil
                     self.lock.unlock()
+                    
+                    sub?.receive(completion: .finished)
                     return
                 }
 
                 _ = self.state.sub(.max(1))
                 let sub = self.sub
-                self.lock.unlock()
+//                self.lock.unlock()
                 
-                let new = sub?.receive(element) ?? .none
+                let more = sub?.receive(element) ?? .none
                 
-                self.lock.lock()
-                guard let after = self.state.add(new)?.new, after > 0 else {
-                    let peek = self.iterator.peek()
-                    
-                    var finish = false
-                    if peek == nil {
-                        finish = self.state.complete()
-                    }
-                    
+//                self.lock.lock()
+                guard self.state.isDemanding else {
                     self.lock.unlock()
-                    
-                    if finish {
-                        self.sub?.receive(completion: .finished)
-                        self.sub = nil
-                    }
-                    
                     return
                 }
-                self.lock.unlock()
                 
-                now = after
+                guard self.iterator.peek() != nil else {
+                    self.state = .completed
+                    
+                    let sub = self.sub
+                    self.sub = nil
+                    self.lock.unlock()
+                    
+                    sub?.receive(completion: .finished)
+                    return
+                }
+                
+                guard let new = self.state.add(more)?.new, new > 0 else {
+                    self.lock.unlock()
+                    return
+                }
+                
+                self.lock.unlock()
+                current = new
             }
         }
         

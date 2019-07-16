@@ -1,7 +1,9 @@
 #if USE_COMBINE
 import Combine
-#else
+#elseif SWIFT_PACKAGE
 import CombineX
+#else
+import Specs
 #endif
 
 // MARK: - Subscribers.Completion
@@ -23,6 +25,15 @@ extension Subscribers.Completion {
             return true
         case .finished:
             return false
+        }
+    }
+    
+    func mapError<NewFailure>(_ transform: (Failure) -> NewFailure) -> Subscribers.Completion<NewFailure> {
+        switch self {
+        case .finished:
+            return .finished
+        case .failure(let error):
+            return .failure(transform(error))
         }
     }
 }

@@ -1,10 +1,8 @@
 PODS:
-  - CombineX (0.0.1)
   - Nimble (8.0.2)
   - Quick (2.1.0)
 
 DEPENDENCIES:
-  - CombineX (from `../`)
   - Nimble
   - Quick
 
@@ -13,15 +11,10 @@ SPEC REPOS:
     - Nimble
     - Quick
 
-EXTERNAL SOURCES:
-  CombineX:
-    :path: "../"
-
 SPEC CHECKSUMS:
-  CombineX: 2452d38b1a1fba68988a8a6e1a69c6fa1384ddae
   Nimble: 622629381bda1dd5678162f21f1368cec7cbba60
   Quick: 4be43f6634acfa727dd106bdf3929ce125ffa79d
 
-PODFILE CHECKSUM: 203bec6038a075b6a08a7bd8607bc2a9b95246df
+PODFILE CHECKSUM: e92602434ba8aa9083e9ee281691401f5c766f0f
 
 COCOAPODS: 1.7.3

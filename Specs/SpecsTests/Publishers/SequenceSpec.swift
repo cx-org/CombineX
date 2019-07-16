@@ -4,8 +4,10 @@ import Nimble
 
 #if USE_COMBINE
 import Combine
-#else
+#elseif SWIFT_PACKAGE
 import CombineX
+#else
+import Specs
 #endif
 
 class SequenceSpec: QuickSpec {
@@ -110,38 +112,41 @@ class SequenceSpec: QuickSpec {
         // MARK: - Concurrent
         describe("Concurrent") {
             
+            struct Seq: Sequence, IteratorProtocol {
+                var val = 0
+                mutating func next() -> Int? {
+                    defer {
+                        val += 1
+                    }
+                    return val
+                }
+            }
+            
             // MARK: 3.1 should send as many values as demand even if these are concurrently requested
             it("should send as many values as demand even if these are concurrently requested") {
-                typealias Sub = CustomSubscriber<Int, Never>
-                
-                struct Seq: Sequence, IteratorProtocol {
-                    var current = 0
-                    mutating func next() -> Int? {
-                        defer {
-                            current += 1
-                        }
-                        return current
-                    }
-                }
-            
                 let g = DispatchGroup()
                 let pub = Publishers.Sequence<Seq, Never>(sequence: Seq())
+                
+                var subscription: Subscription?
                 let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
-                    for _ in 0..<100 {
-                        DispatchQueue.global().async(group: g) {
-                            s.request(.max(1))
-                        }
-                    }
+                    subscription = s
                 }, receiveValue: { v in
+                    print("✅", Thread.current)
                     return .none
                 }, receiveCompletion: { c in
                 })
                 
                 pub.subscribe(sub)
+                
+                for _ in 0..<10 {
+                    DispatchQueue.global().async(group: g) {
+                        subscription?.request(.max(1))
+                    }
+                }
             
                 g.wait()
                 
-                expect(sub.events).to(equal((0..<100).map { Sub.Event.value($0) }))
+                expect(sub.events).to(equal((0..<10).map { CustomEvent<Int, Never>.value($0) }))
             }
         }
     }

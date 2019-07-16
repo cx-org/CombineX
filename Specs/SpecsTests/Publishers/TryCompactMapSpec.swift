@@ -3,8 +3,10 @@ import Nimble
 
 #if USE_COMBINE
 import Combine
-#else
+#elseif SWIFT_PACKAGE
 import CombineX
+#else
+import Specs
 #endif
 
 class TryCompactMapSpec: QuickSpec {
@@ -25,19 +27,18 @@ class TryCompactMapSpec: QuickSpec {
                 for i in 0..<100 {
                     pub.send(i)
                 }
-                
                 pub.send(completion: .finished)
                 
-                expect(sub.events.count).to(equal(51))
-                for (i, event) in zip(0...50, sub.events) {
-                    switch event {
-                    case .value(let output):
-                        expect(output).to(equal(i * 2))
-                    case .completion(let completion):
-                        expect(i).to(equal(50))
-                        expect(completion.isFinished).to(beTrue())
+                let valueEvents = (0..<50).map { CustomEvent<Int, Never>.value(2 * $0) }
+                let expected = valueEvents + [.completion(.finished)]
+                
+                let got = sub.events.map {
+                    $0.mapError { _ -> Never in
+                        fatalError("never happen")
                     }
                 }
+                
+                expect(got).to(equal(expected))
             }
             
             // MARK: 1.2 should send as many values as demand
@@ -46,7 +47,7 @@ class TryCompactMapSpec: QuickSpec {
                 
                 let sub = makeCustomSubscriber(Int.self, Error.self, .max(10))
                 
-                pub.tryCompactMap { $0 }.subscribe(sub)
+                pub.tryCompactMap { $0 % 2 == 0 ? $0 : nil }.subscribe(sub)
                 
                 for i in 0..<100 {
                     pub.send(i)
@@ -55,8 +56,8 @@ class TryCompactMapSpec: QuickSpec {
                 expect(sub.events.count).to(equal(10))
             }
             
-            // MARK: 1.3 should fail if transform throws error
-            it("should fail if transform throws error") {
+            // MARK: 1.3 should fail if transform throws an error
+            it("should fail if transform throws an error") {
                 let pub = PassthroughSubject<Int, CustomError>()
                 
                 let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
@@ -64,9 +65,8 @@ class TryCompactMapSpec: QuickSpec {
                 pub.tryCompactMap {
                     if $0 == 10 {
                         throw CustomError.e0
-                    } else {
-                        return $0
                     }
+                    return $0
                 }.subscribe(sub)
                 
                 for i in 0..<100 {
@@ -75,37 +75,34 @@ class TryCompactMapSpec: QuickSpec {
                 
                 pub.send(completion: .finished)
                 
-                expect(sub.events.count).to(equal(11))
-                for (i, event) in zip(0...10, sub.events) {
-                    switch event {
-                    case .value(let output):
-                        expect(output).to(equal(i))
-                    case .completion(let completion):
-                        expect(i).to(equal(10))
-                        expect(completion.isFailure).to(beTrue())
+                let valueEvents = (0..<10).map { CustomEvent<Int, CustomError>.value($0) }
+                let expected = valueEvents + [.completion(.failure(.e0))]
+                
+                let got = sub.events.map {
+                    $0.mapError { e -> CustomError in
+                        e as! CustomError
                     }
                 }
+                
+                expect(got).to(equal(expected))
             }
             
 //            fit("should ") {
 //                class Pub: Publisher {
 //                    typealias Output = Int
 //                    typealias Failure = CustomError
-//                    
+//
 //                    // /BuildRoot/Library/Caches/com.apple.xbs/Sources/PubSub_Sim/PubSub-120/Combine/Source/FilterProducer.swift
 //                    func receive<S>(subscriber: S) where S : Subscriber, Failure == S.Failure, Output == S.Input {
-//                        
-//                        let url = URL(fileURLWithPath: "/BuildRoot/Library/Caches/com.apple.xbs/Sources/PubSub_Sim/PubSub-120/Combine/Source/FilterProducer.swift")
-//                        let str = try? String(contentsOf: url)
-//                        Swift.print(str)
-//                        
+//
+//                        subscriber.receive(1)
 //                        subscriber.receive(completion: .finished)
 //                    }
 //                }
-//                
+//
 //                let pub = Pub().tryCompactMap { $0 }
 //                let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
-//                
+//
 //                pub.subscribe(sub)
 //            }
         }
@@ -114,26 +111,20 @@ class TryCompactMapSpec: QuickSpec {
         // MARK: - Release Resources
         describe("Release Resources") {
             
-            // MARK: 2.1 subscription should retain upstream, downstream and transform closure then only release upstream after upstream send finish
-            it("subscription should retain upstream, downstream and transform closure then only release upstream after upstream send finish") {
-                
-                weak var upstreamObj: PassthroughSubject<Int, Never>?
+            // MARK: 2.1 subscription should retain downstream and transform closure
+            it("should retain downstream and transform closure") {
                 weak var downstreamObj: AnyObject?
                 weak var closureObj: CustomObject?
-                
+
                 var subscription: Subscription?
                 
                 do {
-                    let subject = PassthroughSubject<Int, Never>()
-                    upstreamObj = subject
+                    let customPub = CustomPublisher<Int, CustomError> { (s) in
+                        s.receive(subscription: Subscriptions.empty)
+                    }
                     
                     let obj = CustomObject()
                     closureObj = obj
-                    
-                    let pub = subject.tryCompactMap { (v) -> Int in
-                        obj.run()
-                        return v
-                    }
                     
                     let sub = CustomSubscriber<Int, Error>(receiveSubscription: { (s) in
                         subscription = s
@@ -144,43 +135,35 @@ class TryCompactMapSpec: QuickSpec {
                     })
                     downstreamObj = sub
                     
-                    pub.subscribe(sub)
+                    customPub
+                        .tryCompactMap { i -> Int in
+                            obj.run()
+                            return i
+                        }
+                        .subscribe(sub)
                 }
                 
-                expect(upstreamObj).toNot(beNil())
-                expect(downstreamObj).toNot(beNil())
-                expect(closureObj).toNot(beNil())
-                
-                upstreamObj?.send(completion: .finished)
-                
-                expect(upstreamObj).to(beNil())
                 expect(downstreamObj).toNot(beNil())
                 expect(closureObj).toNot(beNil())
                 
                 _ = subscription
             }
             
-            // MARK: 2.2 subscription should retain upstream, downstream and transform closure then only release upstream after cancel
-            it("subscription should retain upstream, downstream and transform closure then only release upstream after cancel") {
-                
-                weak var upstreamObj: AnyObject?
+            // MARK: 2.2 subscription should not release downstream and transform closure after finish
+            it("subscription should not release downstream and transform closure after finish") {
                 weak var downstreamObj: AnyObject?
-                
                 weak var closureObj: CustomObject?
                 
                 var subscription: Subscription?
                 
                 do {
-                    let subject = PassthroughSubject<Int, Never>()
-                    upstreamObj = subject
+                    let customPub = CustomPublisher<Int, CustomError> { (s) in
+                        s.receive(subscription: Subscriptions.empty)
+                        s.receive(completion: .finished)
+                    }
                     
                     let obj = CustomObject()
                     closureObj = obj
-                    
-                    let pub = subject.tryCompactMap { (v) -> Int in
-                        obj.run()
-                        return v
-                    }
                     
                     let sub = CustomSubscriber<Int, Error>(receiveSubscription: { (s) in
                         subscription = s
@@ -191,18 +174,68 @@ class TryCompactMapSpec: QuickSpec {
                     })
                     downstreamObj = sub
                     
-                    pub.subscribe(sub)
+                    customPub
+                        .tryCompactMap { i -> Int in
+                            obj.run()
+                            return i
+                    }
+                    .subscribe(sub)
                 }
                 
-                expect(upstreamObj).toNot(beNil())
                 expect(downstreamObj).toNot(beNil())
                 expect(closureObj).toNot(beNil())
+                
+                _ = subscription
+            }
+            
+            // MARK: 2.3 subscription should not release downstream and transform closure after cancel
+            it("subscription should not release downstream and transform closure after cancel") {
+                weak var downstreamObj: AnyObject?
+                weak var closureObj: CustomObject?
+                
+                var subscription: Subscription?
+                
+                do {
+                    let customPub = CustomPublisher<Int, CustomError> { (s) in
+                        s.receive(subscription: Subscriptions.empty)
+                    }
+                    
+                    let obj = CustomObject()
+                    closureObj = obj
+                    
+                    let sub = CustomSubscriber<Int, Error>(receiveSubscription: { (s) in
+                        subscription = s
+                        s.request(.max(1))
+                    }, receiveValue: { v in
+                        return .none
+                    }, receiveCompletion: { s in
+                    })
+                    downstreamObj = sub
+                    
+                    customPub
+                        .tryCompactMap { i -> Int in
+                            obj.run()
+                            return i
+                    }
+                    .subscribe(sub)
+                }
                 
                 subscription?.cancel()
                 
-                expect(upstreamObj).to(beNil())
                 expect(downstreamObj).toNot(beNil())
                 expect(closureObj).toNot(beNil())
+                
+                _ = subscription
+            }
+        }
+        
+        // MARK: - Concurrent
+        describe("concurrent") {
+            
+            // MARK: should concurrent
+            it("should concurrent") {
+                
+                
             }
         }
     }

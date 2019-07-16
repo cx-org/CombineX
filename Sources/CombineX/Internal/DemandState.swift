@@ -40,6 +40,7 @@ extension DemandState {
 
 extension DemandState {
     
+    /// - Returns: `true` if the previous state is not `completed`.
     mutating func complete() -> Bool {
         defer {
             self = .completed

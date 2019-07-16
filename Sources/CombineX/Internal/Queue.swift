@@ -28,7 +28,7 @@ struct Queue<Element>: Collection, CustomStringConvertible {
     
     var count: Int {
         let d = self.tail - self.head
-        return d > 0 ? d : (self.storage.count + d)
+        return d >= 0 ? d : (self.storage.count + d)
     }
     
     var capacity: Int {
@@ -73,6 +73,10 @@ struct Queue<Element>: Collection, CustomStringConvertible {
     }
     
     mutating func popFirst() -> Element? {
+        if self.isEmpty {
+            return nil
+        }
+        
         let e = self.storage[self.head]
         self.storage[self.head] = nil
         self.advanceHead(by: 1)
@@ -80,17 +84,14 @@ struct Queue<Element>: Collection, CustomStringConvertible {
     }
     
     mutating func popLast() -> Element? {
+        if self.isEmpty {
+            return nil
+        }
+        
         self.advanceTail(by: -1)
         let e = self.storage[self.tail]
         self.storage[self.tail] = nil
         return e
-    }
-    
-    mutating func removeAll() {
-        self.storage.removeAll()
-        
-        self.head = 0
-        self.tail = 0
     }
     
     // MARK: - Collection

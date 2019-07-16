@@ -1,7 +1,9 @@
 #if USE_COMBINE
 import Combine
-#else
+#elseif SWIFT_PACKAGE
 import CombineX
+#else
+import Specs
 #endif
 
 func makeCustomSubscriber<Input, Failure: Error>(_ input: Input.Type, _ failure: Failure.Type, _ demand: Subscribers.Demand) -> CustomSubscriber<Input, Failure> {
@@ -13,16 +15,19 @@ func makeCustomSubscriber<Input, Failure: Error>(_ input: Input.Type, _ failure:
     })
 }
 
+enum CustomEvent<Input, Failure: Error> {
+    case value(Input)
+    case completion(Subscribers.Completion<Failure>)
+}
+
 class CustomSubscriber<Input, Failure>: Subscriber where Failure : Error {
+    
+    
+    typealias Event = CustomEvent<Input, Failure>
     
     private let receiveSubscriptionBody: ((Subscription) -> Void)?
     private let receiveValueBody: ((Input) -> Subscribers.Demand)?
     private let receiveCompletionBody: ((Subscribers.Completion<Failure>) -> Void)?
-
-    enum Event {
-        case value(Input)
-        case completion(Subscribers.Completion<Failure>)
-    }
     
     private let lock = Lock()
     private var _events: [Event] = []
@@ -56,7 +61,7 @@ class CustomSubscriber<Input, Failure>: Subscriber where Failure : Error {
     }
 }
 
-extension CustomSubscriber.Event {
+extension CustomEvent {
     
     func isFinished() -> Bool {
         switch self {
@@ -71,9 +76,16 @@ extension CustomSubscriber.Event {
         }
         return e
     }
+    
+    func mapError<NewFailure>(_ transform: (Failure) -> NewFailure) -> CustomSubscriber<Input, NewFailure>.Event {
+        switch self {
+        case .value(let i):         return .value(i)
+        case .completion(let c):    return .completion(c.mapError(transform))
+        }
+    }
 }
 
-extension CustomSubscriber.Event where Input: Equatable {
+extension CustomEvent where Input: Equatable {
     
     func isValue(_ value: Input) -> Bool {
         switch self {
@@ -83,9 +95,9 @@ extension CustomSubscriber.Event where Input: Equatable {
     }
 }
 
-extension CustomSubscriber.Event: Equatable where Input: Equatable, Failure: Equatable {
+extension CustomEvent: Equatable where Input: Equatable, Failure: Equatable {
     
-    static func == (lhs: CustomSubscriber.Event, rhs: CustomSubscriber.Event) -> Bool {
+    static func == (lhs: CustomEvent, rhs: CustomEvent) -> Bool {
         switch (lhs, rhs) {
         case (.value(let a), .value(let b)):            return a == b
         case (.completion(let a), .completion(let b)):
@@ -99,7 +111,7 @@ extension CustomSubscriber.Event: Equatable where Input: Equatable, Failure: Equ
     }
 }
 
-extension CustomSubscriber.Event: CustomStringConvertible {
+extension CustomEvent: CustomStringConvertible {
     
     var description: String {
         switch self {

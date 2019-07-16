@@ -38,6 +38,15 @@ extension RelayState {
     }
 }
 
+extension RelayState {
+    
+    func preconditionNotWaiting(_ message: @autoclosure () -> String = String(), file: StaticString = #file, line: UInt = #line) {
+        if self.isWaiting {
+            fatalError(message(), file: file, line: line)
+        }
+    }
+}
+
 // MARK: - Transit
 
 extension RelayState {
@@ -47,7 +56,6 @@ extension RelayState {
         self = .relaying(subscription)
         return true
     }
-    
     
     mutating func complete() -> Subscription? {
         defer {

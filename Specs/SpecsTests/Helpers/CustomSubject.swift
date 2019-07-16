@@ -1,7 +1,9 @@
 #if USE_COMBINE
 import Combine
-#else
+#elseif SWIFT_PACKAGE
 import CombineX
+#else
+import Specs
 #endif
 
 class CustomSubject<Output, Failure> : Subject where Failure : Error {

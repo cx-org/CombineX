@@ -25,8 +25,6 @@ target 'Specs' do
   
   use_frameworks!
   
-  pod "CombineX", :path => "../"
-
   target 'SpecsTests' do
     inherit! :search_paths
     

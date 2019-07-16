@@ -40,6 +40,120 @@
 		623227BD22C0CC73006D907B /* CustomSubject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 623227BB22C0CC73006D907B /* CustomSubject.swift */; };
 		623227C322C0D077006D907B /* Atom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 623227C222C0D077006D907B /* Atom.swift */; };
 		623227C422C0D077006D907B /* Atom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 623227C222C0D077006D907B /* Atom.swift */; };
+		62404FD422DD7F4800291766 /* CustomPublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62404FD322DD7F4800291766 /* CustomPublisher.swift */; };
+		62404FD522DD7F4800291766 /* CustomPublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62404FD322DD7F4800291766 /* CustomPublisher.swift */; };
+		624050ED22DDBAB000291766 /* Publisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240507622DDBAB000291766 /* Publisher.swift */; };
+		624050EE22DDBAB000291766 /* Coding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240507722DDBAB000291766 /* Coding.swift */; };
+		624050EF22DDBAB000291766 /* Subscriber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240507822DDBAB000291766 /* Subscriber.swift */; };
+		624050F022DDBAB000291766 /* CustomCombineIdentifierConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240507922DDBAB000291766 /* CustomCombineIdentifierConvertible.swift */; };
+		624050F122DDBAB000291766 /* ConnectablePublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240507A22DDBAB000291766 /* ConnectablePublisher.swift */; };
+		624050F222DDBAB000291766 /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240507C22DDBAB000291766 /* Global.swift */; };
+		624050F322DDBAB000291766 /* Lock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240507D22DDBAB000291766 /* Lock.swift */; };
+		624050F422DDBAB000291766 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240507E22DDBAB000291766 /* Extensions.swift */; };
+		624050F522DDBAB000291766 /* OptionalProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240507F22DDBAB000291766 /* OptionalProtocol.swift */; };
+		624050F622DDBAB000291766 /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240508022DDBAB000291766 /* Queue.swift */; };
+		624050F722DDBAB000291766 /* Atom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240508122DDBAB000291766 /* Atom.swift */; };
+		624050F822DDBAB000291766 /* Const.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240508222DDBAB000291766 /* Const.swift */; };
+		624050F922DDBAB000291766 /* DemandState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240508322DDBAB000291766 /* DemandState.swift */; };
+		624050FA22DDBAB000291766 /* PeekableIterator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240508422DDBAB000291766 /* PeekableIterator.swift */; };
+		624050FB22DDBAB000291766 /* RelayState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240508522DDBAB000291766 /* RelayState.swift */; };
+		624050FC22DDBAB000291766 /* AnyPublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240508622DDBAB000291766 /* AnyPublisher.swift */; };
+		624050FD22DDBAB000291766 /* empty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240508822DDBAB000291766 /* empty.swift */; };
+		624050FE22DDBAB000291766 /* Subscriptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240508922DDBAB000291766 /* Subscriptions.swift */; };
+		624050FF22DDBAB000291766 /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240508A22DDBAB000291766 /* Subscription.swift */; };
+		6240510022DDBAB000291766 /* Subject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240508B22DDBAB000291766 /* Subject.swift */; };
+		6240510122DDBAB000291766 /* CombineIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240508C22DDBAB000291766 /* CombineIdentifier.swift */; };
+		6240510222DDBAB000291766 /* Cancellable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240508D22DDBAB000291766 /* Cancellable.swift */; };
+		6240510322DDBAB000291766 /* PassthroughSubject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240508F22DDBAB000291766 /* PassthroughSubject.swift */; };
+		6240510422DDBAB000291766 /* CurrentValueSubject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240509022DDBAB000291766 /* CurrentValueSubject.swift */; };
+		6240510522DDBAB000291766 /* AnySubscriber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240509122DDBAB000291766 /* AnySubscriber.swift */; };
+		6240510622DDBAB000291766 /* Published.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240509222DDBAB000291766 /* Published.swift */; };
+		6240510722DDBAB000291766 /* SchedulerTimeIntervalConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240509322DDBAB000291766 /* SchedulerTimeIntervalConvertible.swift */; };
+		6240510822DDBAB000291766 /* Print.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240509522DDBAB000291766 /* Print.swift */; };
+		6240510922DDBAB000291766 /* HandleEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240509622DDBAB000291766 /* HandleEvents.swift */; };
+		6240510A22DDBAB000291766 /* Deferred.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240509722DDBAB000291766 /* Deferred.swift */; };
+		6240510B22DDBAB000291766 /* DropUntilOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240509822DDBAB000291766 /* DropUntilOutput.swift */; };
+		6240510C22DDBAB000291766 /* Buffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240509922DDBAB000291766 /* Buffer.swift */; };
+		6240510D22DDBAB000291766 /* SubscribeOn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240509A22DDBAB000291766 /* SubscribeOn.swift */; };
+		6240510E22DDBAB000291766 /* CollectByCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240509B22DDBAB000291766 /* CollectByCount.swift */; };
+		6240510F22DDBAB000291766 /* TryCombineLatest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240509C22DDBAB000291766 /* TryCombineLatest.swift */; };
+		6240511022DDBAB000291766 /* TryCombineLatest+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240509D22DDBAB000291766 /* TryCombineLatest+.swift */; };
+		6240511122DDBAB000291766 /* Future.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240509E22DDBAB000291766 /* Future.swift */; };
+		6240511222DDBAB000291766 /* CombineLatest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240509F22DDBAB000291766 /* CombineLatest.swift */; };
+		6240511322DDBAB000291766 /* Empty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050A022DDBAB000291766 /* Empty.swift */; };
+		6240511422DDBAB000291766 /* ReceiveOn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050A122DDBAB000291766 /* ReceiveOn.swift */; };
+		6240511522DDBAB000291766 /* FlatMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050A222DDBAB000291766 /* FlatMap.swift */; };
+		6240511622DDBAB000291766 /* Output.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050A322DDBAB000291766 /* Output.swift */; };
+		6240511722DDBAB000291766 /* MeasureInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050A422DDBAB000291766 /* MeasureInterval.swift */; };
+		6240511822DDBAB000291766 /* TryScan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050A522DDBAB000291766 /* TryScan.swift */; };
+		6240511922DDBAB000291766 /* Sequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050A622DDBAB000291766 /* Sequence.swift */; };
+		6240511A22DDBAB000291766 /* BreakPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050A722DDBAB000291766 /* BreakPoint.swift */; };
+		6240511B22DDBAB000291766 /* IgnoreOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050A822DDBAB000291766 /* IgnoreOutput.swift */; };
+		6240511C22DDBAB000291766 /* Autoconnect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050A922DDBAB000291766 /* Autoconnect.swift */; };
+		6240511D22DDBAB000291766 /* Multicast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050AA22DDBAB000291766 /* Multicast.swift */; };
+		6240511E22DDBAB000291766 /* MakeConnectable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050AB22DDBAB000291766 /* MakeConnectable.swift */; };
+		6240511F22DDBAB000291766 /* TryAllSatisfy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050AC22DDBAB000291766 /* TryAllSatisfy.swift */; };
+		6240512022DDBAB000291766 /* Merge+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050AD22DDBAB000291766 /* Merge+.swift */; };
+		6240512122DDBAB000291766 /* Once.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050AF22DDBAB000291766 /* Once.swift */; };
+		6240512222DDBAB000291766 /* TryLastWhere.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050B022DDBAB000291766 /* TryLastWhere.swift */; };
+		6240512322DDBAB000291766 /* PrefixWhile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050B122DDBAB000291766 /* PrefixWhile.swift */; };
+		6240512422DDBAB000291766 /* Contains.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050B222DDBAB000291766 /* Contains.swift */; };
+		6240512522DDBAB000291766 /* AssertNoFailure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050B322DDBAB000291766 /* AssertNoFailure.swift */; };
+		6240512622DDBAB000291766 /* Publishers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050B422DDBAB000291766 /* Publishers.swift */; };
+		6240512722DDBAB000291766 /* AllSatisfy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050B522DDBAB000291766 /* AllSatisfy.swift */; };
+		6240512822DDBAB000291766 /* First.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050B622DDBAB000291766 /* First.swift */; };
+		6240512922DDBAB000291766 /* TryFirstWhere.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050B722DDBAB000291766 /* TryFirstWhere.swift */; };
+		6240512A22DDBAB000291766 /* TryMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050B822DDBAB000291766 /* TryMap.swift */; };
+		6240512B22DDBAB000291766 /* CompactMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050B922DDBAB000291766 /* CompactMap.swift */; };
+		6240512C22DDBAB000291766 /* LastWhere.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050BA22DDBAB000291766 /* LastWhere.swift */; };
+		6240512D22DDBAB000291766 /* Comparison.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050BB22DDBAB000291766 /* Comparison.swift */; };
+		6240512E22DDBAB000291766 /* FirstWhere.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050BC22DDBAB000291766 /* FirstWhere.swift */; };
+		6240512F22DDBAB000291766 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050BD22DDBAB000291766 /* Filter.swift */; };
+		6240513022DDBAB000291766 /* Reduce.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050BE22DDBAB000291766 /* Reduce.swift */; };
+		6240513122DDBAB000291766 /* Last.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050BF22DDBAB000291766 /* Last.swift */; };
+		6240513222DDBAB000291766 /* Count.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050C022DDBAB000291766 /* Count.swift */; };
+		6240513322DDBAB000291766 /* TryComparison.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050C122DDBAB000291766 /* TryComparison.swift */; };
+		6240513422DDBAB000291766 /* ContainsWhere.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050C222DDBAB000291766 /* ContainsWhere.swift */; };
+		6240513522DDBAB000291766 /* TryFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050C322DDBAB000291766 /* TryFilter.swift */; };
+		6240513622DDBAB000291766 /* DropWhile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050C422DDBAB000291766 /* DropWhile.swift */; };
+		6240513722DDBAB000291766 /* Map.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050C522DDBAB000291766 /* Map.swift */; };
+		6240513822DDBAB000291766 /* Fail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050C622DDBAB000291766 /* Fail.swift */; };
+		6240513922DDBAB000291766 /* TryContainsWhere.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050C722DDBAB000291766 /* TryContainsWhere.swift */; };
+		6240513A22DDBAB000291766 /* Collect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050C822DDBAB000291766 /* Collect.swift */; };
+		6240513B22DDBAB000291766 /* Drop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050C922DDBAB000291766 /* Drop.swift */; };
+		6240513C22DDBAB000291766 /* Just.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050CA22DDBAB000291766 /* Just.swift */; };
+		6240513D22DDBAB000291766 /* Optional.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050CB22DDBAB000291766 /* Optional.swift */; };
+		6240513E22DDBAB000291766 /* RemoveDuplicates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050CC22DDBAB000291766 /* RemoveDuplicates.swift */; };
+		6240513F22DDBAB100291766 /* Scan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050CD22DDBAB000291766 /* Scan.swift */; };
+		6240514022DDBAB100291766 /* Catch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050CE22DDBAB000291766 /* Catch.swift */; };
+		6240514122DDBAB100291766 /* Zip+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050CF22DDBAB000291766 /* Zip+.swift */; };
+		6240514222DDBAB100291766 /* CombineLatest+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050D022DDBAB000291766 /* CombineLatest+.swift */; };
+		6240514322DDBAB100291766 /* TryRemoveDuplicates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050D122DDBAB000291766 /* TryRemoveDuplicates.swift */; };
+		6240514422DDBAB100291766 /* TryDropWhile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050D222DDBAB000291766 /* TryDropWhile.swift */; };
+		6240514522DDBAB100291766 /* TryCompactMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050D322DDBAB000291766 /* TryCompactMap.swift */; };
+		6240514622DDBAB100291766 /* ReplaceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050D422DDBAB000291766 /* ReplaceError.swift */; };
+		6240514722DDBAB100291766 /* Share.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050D522DDBAB000291766 /* Share.swift */; };
+		6240514822DDBAB100291766 /* Zip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050D622DDBAB000291766 /* Zip.swift */; };
+		6240514922DDBAB100291766 /* Merge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050D722DDBAB000291766 /* Merge.swift */; };
+		6240514A22DDBAB100291766 /* ReplaceEmpty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050D822DDBAB000291766 /* ReplaceEmpty.swift */; };
+		6240514B22DDBAB100291766 /* Concatenate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050D922DDBAB000291766 /* Concatenate.swift */; };
+		6240514C22DDBAB100291766 /* TryReduce.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050DA22DDBAB000291766 /* TryReduce.swift */; };
+		6240514D22DDBAB100291766 /* TryPrefixWhile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050DB22DDBAB000291766 /* TryPrefixWhile.swift */; };
+		6240514E22DDBAB100291766 /* SwitchToLatest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050DC22DDBAB000291766 /* SwitchToLatest.swift */; };
+		6240514F22DDBAB100291766 /* TryCatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050DD22DDBAB000291766 /* TryCatch.swift */; };
+		6240515022DDBAB100291766 /* MapError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050DE22DDBAB000291766 /* MapError.swift */; };
+		6240515122DDBAB100291766 /* PrefixUntilOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050DF22DDBAB000291766 /* PrefixUntilOutput.swift */; };
+		6240515222DDBAB100291766 /* SetFailureType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050E022DDBAB000291766 /* SetFailureType.swift */; };
+		6240515322DDBAB100291766 /* Retry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050E122DDBAB000291766 /* Retry.swift */; };
+		6240515422DDBAB100291766 /* Scheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050E222DDBAB000291766 /* Scheduler.swift */; };
+		6240515522DDBAB100291766 /* AnyCancellable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050E322DDBAB000291766 /* AnyCancellable.swift */; };
+		6240515622DDBAB100291766 /* Assign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050E522DDBAB000291766 /* Assign.swift */; };
+		6240515722DDBAB100291766 /* Sink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050E622DDBAB000291766 /* Sink.swift */; };
+		6240515822DDBAB100291766 /* Demand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050E722DDBAB000291766 /* Demand.swift */; };
+		6240515922DDBAB100291766 /* Subscribers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050E822DDBAB000291766 /* Subscribers.swift */; };
+		6240515A22DDBAB100291766 /* Completion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050E922DDBAB000291766 /* Completion.swift */; };
+		6240515B22DDBAB100291766 /* AnySubject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050EA22DDBAB000291766 /* AnySubject.swift */; };
+		6240515C22DDBAB100291766 /* ImmediateScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050EC22DDBAB000291766 /* ImmediateScheduler.swift */; };
 		625EC8B222B8AD3B006DB4D5 /* CurrentValueSubjectSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625EC8B122B8AD3B006DB4D5 /* CurrentValueSubjectSpec.swift */; };
 		625EC8B322B8AD3B006DB4D5 /* CurrentValueSubjectSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625EC8B122B8AD3B006DB4D5 /* CurrentValueSubjectSpec.swift */; };
 		625EC8B922B8B32A006DB4D5 /* DemandSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625EC8B822B8B32A006DB4D5 /* DemandSpec.swift */; };
@@ -158,6 +272,119 @@
 		6229E66722B7385A002CBEC2 /* PassthroughSubjectSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassthroughSubjectSpec.swift; sourceTree = "<group>"; };
 		623227BB22C0CC73006D907B /* CustomSubject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSubject.swift; sourceTree = "<group>"; };
 		623227C222C0D077006D907B /* Atom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Atom.swift; sourceTree = "<group>"; };
+		62404FD322DD7F4800291766 /* CustomPublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPublisher.swift; sourceTree = "<group>"; };
+		6240507622DDBAB000291766 /* Publisher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Publisher.swift; sourceTree = "<group>"; };
+		6240507722DDBAB000291766 /* Coding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Coding.swift; sourceTree = "<group>"; };
+		6240507822DDBAB000291766 /* Subscriber.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Subscriber.swift; sourceTree = "<group>"; };
+		6240507922DDBAB000291766 /* CustomCombineIdentifierConvertible.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomCombineIdentifierConvertible.swift; sourceTree = "<group>"; };
+		6240507A22DDBAB000291766 /* ConnectablePublisher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectablePublisher.swift; sourceTree = "<group>"; };
+		6240507C22DDBAB000291766 /* Global.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
+		6240507D22DDBAB000291766 /* Lock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Lock.swift; sourceTree = "<group>"; };
+		6240507E22DDBAB000291766 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		6240507F22DDBAB000291766 /* OptionalProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptionalProtocol.swift; sourceTree = "<group>"; };
+		6240508022DDBAB000291766 /* Queue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
+		6240508122DDBAB000291766 /* Atom.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Atom.swift; sourceTree = "<group>"; };
+		6240508222DDBAB000291766 /* Const.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Const.swift; sourceTree = "<group>"; };
+		6240508322DDBAB000291766 /* DemandState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DemandState.swift; sourceTree = "<group>"; };
+		6240508422DDBAB000291766 /* PeekableIterator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeekableIterator.swift; sourceTree = "<group>"; };
+		6240508522DDBAB000291766 /* RelayState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RelayState.swift; sourceTree = "<group>"; };
+		6240508622DDBAB000291766 /* AnyPublisher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnyPublisher.swift; sourceTree = "<group>"; };
+		6240508822DDBAB000291766 /* empty.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = empty.swift; sourceTree = "<group>"; };
+		6240508922DDBAB000291766 /* Subscriptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Subscriptions.swift; sourceTree = "<group>"; };
+		6240508A22DDBAB000291766 /* Subscription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
+		6240508B22DDBAB000291766 /* Subject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Subject.swift; sourceTree = "<group>"; };
+		6240508C22DDBAB000291766 /* CombineIdentifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CombineIdentifier.swift; sourceTree = "<group>"; };
+		6240508D22DDBAB000291766 /* Cancellable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cancellable.swift; sourceTree = "<group>"; };
+		6240508F22DDBAB000291766 /* PassthroughSubject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PassthroughSubject.swift; sourceTree = "<group>"; };
+		6240509022DDBAB000291766 /* CurrentValueSubject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentValueSubject.swift; sourceTree = "<group>"; };
+		6240509122DDBAB000291766 /* AnySubscriber.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnySubscriber.swift; sourceTree = "<group>"; };
+		6240509222DDBAB000291766 /* Published.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Published.swift; sourceTree = "<group>"; };
+		6240509322DDBAB000291766 /* SchedulerTimeIntervalConvertible.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SchedulerTimeIntervalConvertible.swift; sourceTree = "<group>"; };
+		6240509522DDBAB000291766 /* Print.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Print.swift; sourceTree = "<group>"; };
+		6240509622DDBAB000291766 /* HandleEvents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HandleEvents.swift; sourceTree = "<group>"; };
+		6240509722DDBAB000291766 /* Deferred.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Deferred.swift; sourceTree = "<group>"; };
+		6240509822DDBAB000291766 /* DropUntilOutput.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DropUntilOutput.swift; sourceTree = "<group>"; };
+		6240509922DDBAB000291766 /* Buffer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Buffer.swift; sourceTree = "<group>"; };
+		6240509A22DDBAB000291766 /* SubscribeOn.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubscribeOn.swift; sourceTree = "<group>"; };
+		6240509B22DDBAB000291766 /* CollectByCount.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectByCount.swift; sourceTree = "<group>"; };
+		6240509C22DDBAB000291766 /* TryCombineLatest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TryCombineLatest.swift; sourceTree = "<group>"; };
+		6240509D22DDBAB000291766 /* TryCombineLatest+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "TryCombineLatest+.swift"; sourceTree = "<group>"; };
+		6240509E22DDBAB000291766 /* Future.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Future.swift; sourceTree = "<group>"; };
+		6240509F22DDBAB000291766 /* CombineLatest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CombineLatest.swift; sourceTree = "<group>"; };
+		624050A022DDBAB000291766 /* Empty.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Empty.swift; sourceTree = "<group>"; };
+		624050A122DDBAB000291766 /* ReceiveOn.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReceiveOn.swift; sourceTree = "<group>"; };
+		624050A222DDBAB000291766 /* FlatMap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlatMap.swift; sourceTree = "<group>"; };
+		624050A322DDBAB000291766 /* Output.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Output.swift; sourceTree = "<group>"; };
+		624050A422DDBAB000291766 /* MeasureInterval.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeasureInterval.swift; sourceTree = "<group>"; };
+		624050A522DDBAB000291766 /* TryScan.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TryScan.swift; sourceTree = "<group>"; };
+		624050A622DDBAB000291766 /* Sequence.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sequence.swift; sourceTree = "<group>"; };
+		624050A722DDBAB000291766 /* BreakPoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BreakPoint.swift; sourceTree = "<group>"; };
+		624050A822DDBAB000291766 /* IgnoreOutput.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IgnoreOutput.swift; sourceTree = "<group>"; };
+		624050A922DDBAB000291766 /* Autoconnect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Autoconnect.swift; sourceTree = "<group>"; };
+		624050AA22DDBAB000291766 /* Multicast.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Multicast.swift; sourceTree = "<group>"; };
+		624050AB22DDBAB000291766 /* MakeConnectable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MakeConnectable.swift; sourceTree = "<group>"; };
+		624050AC22DDBAB000291766 /* TryAllSatisfy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TryAllSatisfy.swift; sourceTree = "<group>"; };
+		624050AD22DDBAB000291766 /* Merge+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Merge+.swift"; sourceTree = "<group>"; };
+		624050AF22DDBAB000291766 /* Once.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Once.swift; sourceTree = "<group>"; };
+		624050B022DDBAB000291766 /* TryLastWhere.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TryLastWhere.swift; sourceTree = "<group>"; };
+		624050B122DDBAB000291766 /* PrefixWhile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrefixWhile.swift; sourceTree = "<group>"; };
+		624050B222DDBAB000291766 /* Contains.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Contains.swift; sourceTree = "<group>"; };
+		624050B322DDBAB000291766 /* AssertNoFailure.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssertNoFailure.swift; sourceTree = "<group>"; };
+		624050B422DDBAB000291766 /* Publishers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Publishers.swift; sourceTree = "<group>"; };
+		624050B522DDBAB000291766 /* AllSatisfy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AllSatisfy.swift; sourceTree = "<group>"; };
+		624050B622DDBAB000291766 /* First.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = First.swift; sourceTree = "<group>"; };
+		624050B722DDBAB000291766 /* TryFirstWhere.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TryFirstWhere.swift; sourceTree = "<group>"; };
+		624050B822DDBAB000291766 /* TryMap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TryMap.swift; sourceTree = "<group>"; };
+		624050B922DDBAB000291766 /* CompactMap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompactMap.swift; sourceTree = "<group>"; };
+		624050BA22DDBAB000291766 /* LastWhere.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LastWhere.swift; sourceTree = "<group>"; };
+		624050BB22DDBAB000291766 /* Comparison.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Comparison.swift; sourceTree = "<group>"; };
+		624050BC22DDBAB000291766 /* FirstWhere.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirstWhere.swift; sourceTree = "<group>"; };
+		624050BD22DDBAB000291766 /* Filter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
+		624050BE22DDBAB000291766 /* Reduce.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reduce.swift; sourceTree = "<group>"; };
+		624050BF22DDBAB000291766 /* Last.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Last.swift; sourceTree = "<group>"; };
+		624050C022DDBAB000291766 /* Count.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Count.swift; sourceTree = "<group>"; };
+		624050C122DDBAB000291766 /* TryComparison.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TryComparison.swift; sourceTree = "<group>"; };
+		624050C222DDBAB000291766 /* ContainsWhere.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContainsWhere.swift; sourceTree = "<group>"; };
+		624050C322DDBAB000291766 /* TryFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TryFilter.swift; sourceTree = "<group>"; };
+		624050C422DDBAB000291766 /* DropWhile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DropWhile.swift; sourceTree = "<group>"; };
+		624050C522DDBAB000291766 /* Map.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Map.swift; sourceTree = "<group>"; };
+		624050C622DDBAB000291766 /* Fail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fail.swift; sourceTree = "<group>"; };
+		624050C722DDBAB000291766 /* TryContainsWhere.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TryContainsWhere.swift; sourceTree = "<group>"; };
+		624050C822DDBAB000291766 /* Collect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Collect.swift; sourceTree = "<group>"; };
+		624050C922DDBAB000291766 /* Drop.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Drop.swift; sourceTree = "<group>"; };
+		624050CA22DDBAB000291766 /* Just.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Just.swift; sourceTree = "<group>"; };
+		624050CB22DDBAB000291766 /* Optional.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Optional.swift; sourceTree = "<group>"; };
+		624050CC22DDBAB000291766 /* RemoveDuplicates.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoveDuplicates.swift; sourceTree = "<group>"; };
+		624050CD22DDBAB000291766 /* Scan.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Scan.swift; sourceTree = "<group>"; };
+		624050CE22DDBAB000291766 /* Catch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Catch.swift; sourceTree = "<group>"; };
+		624050CF22DDBAB000291766 /* Zip+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Zip+.swift"; sourceTree = "<group>"; };
+		624050D022DDBAB000291766 /* CombineLatest+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CombineLatest+.swift"; sourceTree = "<group>"; };
+		624050D122DDBAB000291766 /* TryRemoveDuplicates.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TryRemoveDuplicates.swift; sourceTree = "<group>"; };
+		624050D222DDBAB000291766 /* TryDropWhile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TryDropWhile.swift; sourceTree = "<group>"; };
+		624050D322DDBAB000291766 /* TryCompactMap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TryCompactMap.swift; sourceTree = "<group>"; };
+		624050D422DDBAB000291766 /* ReplaceError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReplaceError.swift; sourceTree = "<group>"; };
+		624050D522DDBAB000291766 /* Share.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Share.swift; sourceTree = "<group>"; };
+		624050D622DDBAB000291766 /* Zip.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Zip.swift; sourceTree = "<group>"; };
+		624050D722DDBAB000291766 /* Merge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Merge.swift; sourceTree = "<group>"; };
+		624050D822DDBAB000291766 /* ReplaceEmpty.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReplaceEmpty.swift; sourceTree = "<group>"; };
+		624050D922DDBAB000291766 /* Concatenate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Concatenate.swift; sourceTree = "<group>"; };
+		624050DA22DDBAB000291766 /* TryReduce.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TryReduce.swift; sourceTree = "<group>"; };
+		624050DB22DDBAB000291766 /* TryPrefixWhile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TryPrefixWhile.swift; sourceTree = "<group>"; };
+		624050DC22DDBAB000291766 /* SwitchToLatest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwitchToLatest.swift; sourceTree = "<group>"; };
+		624050DD22DDBAB000291766 /* TryCatch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TryCatch.swift; sourceTree = "<group>"; };
+		624050DE22DDBAB000291766 /* MapError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapError.swift; sourceTree = "<group>"; };
+		624050DF22DDBAB000291766 /* PrefixUntilOutput.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrefixUntilOutput.swift; sourceTree = "<group>"; };
+		624050E022DDBAB000291766 /* SetFailureType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetFailureType.swift; sourceTree = "<group>"; };
+		624050E122DDBAB000291766 /* Retry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Retry.swift; sourceTree = "<group>"; };
+		624050E222DDBAB000291766 /* Scheduler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Scheduler.swift; sourceTree = "<group>"; };
+		624050E322DDBAB000291766 /* AnyCancellable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnyCancellable.swift; sourceTree = "<group>"; };
+		624050E522DDBAB000291766 /* Assign.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Assign.swift; sourceTree = "<group>"; };
+		624050E622DDBAB000291766 /* Sink.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sink.swift; sourceTree = "<group>"; };
+		624050E722DDBAB000291766 /* Demand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Demand.swift; sourceTree = "<group>"; };
+		624050E822DDBAB000291766 /* Subscribers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Subscribers.swift; sourceTree = "<group>"; };
+		624050E922DDBAB000291766 /* Completion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Completion.swift; sourceTree = "<group>"; };
+		624050EA22DDBAB000291766 /* AnySubject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnySubject.swift; sourceTree = "<group>"; };
+		624050EC22DDBAB000291766 /* ImmediateScheduler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImmediateScheduler.swift; sourceTree = "<group>"; };
 		625EC8B122B8AD3B006DB4D5 /* CurrentValueSubjectSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentValueSubjectSpec.swift; sourceTree = "<group>"; };
 		625EC8B822B8B32A006DB4D5 /* DemandSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemandSpec.swift; sourceTree = "<group>"; };
 		625EC8C322B8D8F5006DB4D5 /* SequenceSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SequenceSpec.swift; sourceTree = "<group>"; };
@@ -278,6 +505,182 @@
 			path = Subjects;
 			sourceTree = "<group>";
 		};
+		6240507522DDBAB000291766 /* CombineX */ = {
+			isa = PBXGroup;
+			children = (
+				6240507622DDBAB000291766 /* Publisher.swift */,
+				6240507722DDBAB000291766 /* Coding.swift */,
+				6240507822DDBAB000291766 /* Subscriber.swift */,
+				6240507922DDBAB000291766 /* CustomCombineIdentifierConvertible.swift */,
+				6240507A22DDBAB000291766 /* ConnectablePublisher.swift */,
+				6240507B22DDBAB000291766 /* Internal */,
+				6240508622DDBAB000291766 /* AnyPublisher.swift */,
+				6240508722DDBAB000291766 /* Subscriptions */,
+				6240508A22DDBAB000291766 /* Subscription.swift */,
+				6240508B22DDBAB000291766 /* Subject.swift */,
+				6240508C22DDBAB000291766 /* CombineIdentifier.swift */,
+				6240508D22DDBAB000291766 /* Cancellable.swift */,
+				6240508E22DDBAB000291766 /* Subjects */,
+				6240509122DDBAB000291766 /* AnySubscriber.swift */,
+				6240509222DDBAB000291766 /* Published.swift */,
+				6240509322DDBAB000291766 /* SchedulerTimeIntervalConvertible.swift */,
+				6240509422DDBAB000291766 /* Publishers */,
+				624050E222DDBAB000291766 /* Scheduler.swift */,
+				624050E322DDBAB000291766 /* AnyCancellable.swift */,
+				624050E422DDBAB000291766 /* Subscribers */,
+				624050E922DDBAB000291766 /* Completion.swift */,
+				624050EA22DDBAB000291766 /* AnySubject.swift */,
+				624050EB22DDBAB000291766 /* Schedulers */,
+			);
+			name = CombineX;
+			path = ../../Sources/CombineX;
+			sourceTree = "<group>";
+		};
+		6240507B22DDBAB000291766 /* Internal */ = {
+			isa = PBXGroup;
+			children = (
+				6240507C22DDBAB000291766 /* Global.swift */,
+				6240507D22DDBAB000291766 /* Lock.swift */,
+				6240507E22DDBAB000291766 /* Extensions.swift */,
+				6240507F22DDBAB000291766 /* OptionalProtocol.swift */,
+				6240508022DDBAB000291766 /* Queue.swift */,
+				6240508122DDBAB000291766 /* Atom.swift */,
+				6240508222DDBAB000291766 /* Const.swift */,
+				6240508322DDBAB000291766 /* DemandState.swift */,
+				6240508422DDBAB000291766 /* PeekableIterator.swift */,
+				6240508522DDBAB000291766 /* RelayState.swift */,
+			);
+			path = Internal;
+			sourceTree = "<group>";
+		};
+		6240508722DDBAB000291766 /* Subscriptions */ = {
+			isa = PBXGroup;
+			children = (
+				6240508822DDBAB000291766 /* empty.swift */,
+				6240508922DDBAB000291766 /* Subscriptions.swift */,
+			);
+			path = Subscriptions;
+			sourceTree = "<group>";
+		};
+		6240508E22DDBAB000291766 /* Subjects */ = {
+			isa = PBXGroup;
+			children = (
+				6240508F22DDBAB000291766 /* PassthroughSubject.swift */,
+				6240509022DDBAB000291766 /* CurrentValueSubject.swift */,
+			);
+			path = Subjects;
+			sourceTree = "<group>";
+		};
+		6240509422DDBAB000291766 /* Publishers */ = {
+			isa = PBXGroup;
+			children = (
+				6240509522DDBAB000291766 /* Print.swift */,
+				6240509622DDBAB000291766 /* HandleEvents.swift */,
+				6240509722DDBAB000291766 /* Deferred.swift */,
+				6240509822DDBAB000291766 /* DropUntilOutput.swift */,
+				6240509922DDBAB000291766 /* Buffer.swift */,
+				6240509A22DDBAB000291766 /* SubscribeOn.swift */,
+				6240509B22DDBAB000291766 /* CollectByCount.swift */,
+				6240509C22DDBAB000291766 /* TryCombineLatest.swift */,
+				6240509D22DDBAB000291766 /* TryCombineLatest+.swift */,
+				6240509E22DDBAB000291766 /* Future.swift */,
+				6240509F22DDBAB000291766 /* CombineLatest.swift */,
+				624050A022DDBAB000291766 /* Empty.swift */,
+				624050A122DDBAB000291766 /* ReceiveOn.swift */,
+				624050A222DDBAB000291766 /* FlatMap.swift */,
+				624050A322DDBAB000291766 /* Output.swift */,
+				624050A422DDBAB000291766 /* MeasureInterval.swift */,
+				624050A522DDBAB000291766 /* TryScan.swift */,
+				624050A622DDBAB000291766 /* Sequence.swift */,
+				624050A722DDBAB000291766 /* BreakPoint.swift */,
+				624050A822DDBAB000291766 /* IgnoreOutput.swift */,
+				624050A922DDBAB000291766 /* Autoconnect.swift */,
+				624050AA22DDBAB000291766 /* Multicast.swift */,
+				624050AB22DDBAB000291766 /* MakeConnectable.swift */,
+				624050AC22DDBAB000291766 /* TryAllSatisfy.swift */,
+				624050AD22DDBAB000291766 /* Merge+.swift */,
+				624050AE22DDBAB000291766 /* A+ */,
+				624050CE22DDBAB000291766 /* Catch.swift */,
+				624050CF22DDBAB000291766 /* Zip+.swift */,
+				624050D022DDBAB000291766 /* CombineLatest+.swift */,
+				624050D122DDBAB000291766 /* TryRemoveDuplicates.swift */,
+				624050D222DDBAB000291766 /* TryDropWhile.swift */,
+				624050D322DDBAB000291766 /* TryCompactMap.swift */,
+				624050D422DDBAB000291766 /* ReplaceError.swift */,
+				624050D522DDBAB000291766 /* Share.swift */,
+				624050D622DDBAB000291766 /* Zip.swift */,
+				624050D722DDBAB000291766 /* Merge.swift */,
+				624050D822DDBAB000291766 /* ReplaceEmpty.swift */,
+				624050D922DDBAB000291766 /* Concatenate.swift */,
+				624050DA22DDBAB000291766 /* TryReduce.swift */,
+				624050DB22DDBAB000291766 /* TryPrefixWhile.swift */,
+				624050DC22DDBAB000291766 /* SwitchToLatest.swift */,
+				624050DD22DDBAB000291766 /* TryCatch.swift */,
+				624050DE22DDBAB000291766 /* MapError.swift */,
+				624050DF22DDBAB000291766 /* PrefixUntilOutput.swift */,
+				624050E022DDBAB000291766 /* SetFailureType.swift */,
+				624050E122DDBAB000291766 /* Retry.swift */,
+			);
+			path = Publishers;
+			sourceTree = "<group>";
+		};
+		624050AE22DDBAB000291766 /* A+ */ = {
+			isa = PBXGroup;
+			children = (
+				624050AF22DDBAB000291766 /* Once.swift */,
+				624050B022DDBAB000291766 /* TryLastWhere.swift */,
+				624050B122DDBAB000291766 /* PrefixWhile.swift */,
+				624050B222DDBAB000291766 /* Contains.swift */,
+				624050B322DDBAB000291766 /* AssertNoFailure.swift */,
+				624050B422DDBAB000291766 /* Publishers.swift */,
+				624050B522DDBAB000291766 /* AllSatisfy.swift */,
+				624050B622DDBAB000291766 /* First.swift */,
+				624050B722DDBAB000291766 /* TryFirstWhere.swift */,
+				624050B822DDBAB000291766 /* TryMap.swift */,
+				624050B922DDBAB000291766 /* CompactMap.swift */,
+				624050BA22DDBAB000291766 /* LastWhere.swift */,
+				624050BB22DDBAB000291766 /* Comparison.swift */,
+				624050BC22DDBAB000291766 /* FirstWhere.swift */,
+				624050BD22DDBAB000291766 /* Filter.swift */,
+				624050BE22DDBAB000291766 /* Reduce.swift */,
+				624050BF22DDBAB000291766 /* Last.swift */,
+				624050C022DDBAB000291766 /* Count.swift */,
+				624050C122DDBAB000291766 /* TryComparison.swift */,
+				624050C222DDBAB000291766 /* ContainsWhere.swift */,
+				624050C322DDBAB000291766 /* TryFilter.swift */,
+				624050C422DDBAB000291766 /* DropWhile.swift */,
+				624050C522DDBAB000291766 /* Map.swift */,
+				624050C622DDBAB000291766 /* Fail.swift */,
+				624050C722DDBAB000291766 /* TryContainsWhere.swift */,
+				624050C822DDBAB000291766 /* Collect.swift */,
+				624050C922DDBAB000291766 /* Drop.swift */,
+				624050CA22DDBAB000291766 /* Just.swift */,
+				624050CB22DDBAB000291766 /* Optional.swift */,
+				624050CC22DDBAB000291766 /* RemoveDuplicates.swift */,
+				624050CD22DDBAB000291766 /* Scan.swift */,
+			);
+			path = "A+";
+			sourceTree = "<group>";
+		};
+		624050E422DDBAB000291766 /* Subscribers */ = {
+			isa = PBXGroup;
+			children = (
+				624050E522DDBAB000291766 /* Assign.swift */,
+				624050E622DDBAB000291766 /* Sink.swift */,
+				624050E722DDBAB000291766 /* Demand.swift */,
+				624050E822DDBAB000291766 /* Subscribers.swift */,
+			);
+			path = Subscribers;
+			sourceTree = "<group>";
+		};
+		624050EB22DDBAB000291766 /* Schedulers */ = {
+			isa = PBXGroup;
+			children = (
+				624050EC22DDBAB000291766 /* ImmediateScheduler.swift */,
+			);
+			path = Schedulers;
+			sourceTree = "<group>";
+		};
 		62A73FBA22C5FA90007C962C /* Scheduler */ = {
 			isa = PBXGroup;
 			children = (
@@ -314,6 +717,7 @@
 		66312FAC22B665620081D8F1 /* Specs */ = {
 			isa = PBXGroup;
 			children = (
+				6240507522DDBAB000291766 /* CombineX */,
 				66312FAD22B665620081D8F1 /* AppDelegate.swift */,
 				66312FAF22B665620081D8F1 /* SceneDelegate.swift */,
 				66312FB122B665620081D8F1 /* ViewController.swift */,
@@ -388,6 +792,7 @@
 				6631302922B691C80081D8F1 /* Extensions.swift */,
 				621318A322C9E9F100B2FE41 /* Lock.swift */,
 				62125ACF22BB3081005B57AE /* Typealias.swift */,
+				62404FD322DD7F4800291766 /* CustomPublisher.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -488,7 +893,6 @@
 				66312FA622B665620081D8F1 /* Sources */,
 				66312FA722B665620081D8F1 /* Frameworks */,
 				66312FA822B665620081D8F1 /* Resources */,
-				F284849594AE63561A574911 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -720,23 +1124,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		F284849594AE63561A574911 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Specs/Pods-Specs-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Specs/Pods-Specs-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Specs/Pods-Specs-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		F411005D3BD50B8151CC2795 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -788,9 +1175,121 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6240511B22DDBAB000291766 /* IgnoreOutput.swift in Sources */,
+				6240515B22DDBAB100291766 /* AnySubject.swift in Sources */,
+				624050FE22DDBAB000291766 /* Subscriptions.swift in Sources */,
+				6240512122DDBAB000291766 /* Once.swift in Sources */,
+				6240512522DDBAB000291766 /* AssertNoFailure.swift in Sources */,
+				6240514022DDBAB100291766 /* Catch.swift in Sources */,
+				6240512622DDBAB000291766 /* Publishers.swift in Sources */,
+				6240513C22DDBAB000291766 /* Just.swift in Sources */,
+				624050ED22DDBAB000291766 /* Publisher.swift in Sources */,
+				6240511F22DDBAB000291766 /* TryAllSatisfy.swift in Sources */,
+				6240514C22DDBAB100291766 /* TryReduce.swift in Sources */,
+				6240515C22DDBAB100291766 /* ImmediateScheduler.swift in Sources */,
+				6240511922DDBAB000291766 /* Sequence.swift in Sources */,
+				6240513622DDBAB000291766 /* DropWhile.swift in Sources */,
+				6240510622DDBAB000291766 /* Published.swift in Sources */,
+				6240512A22DDBAB000291766 /* TryMap.swift in Sources */,
+				6240512722DDBAB000291766 /* AllSatisfy.swift in Sources */,
+				6240514622DDBAB100291766 /* ReplaceError.swift in Sources */,
+				6240510122DDBAB000291766 /* CombineIdentifier.swift in Sources */,
+				6240514422DDBAB100291766 /* TryDropWhile.swift in Sources */,
+				624050FD22DDBAB000291766 /* empty.swift in Sources */,
+				6240511322DDBAB000291766 /* Empty.swift in Sources */,
+				6240513422DDBAB000291766 /* ContainsWhere.swift in Sources */,
+				6240510422DDBAB000291766 /* CurrentValueSubject.swift in Sources */,
+				6240511C22DDBAB000291766 /* Autoconnect.swift in Sources */,
+				624050F122DDBAB000291766 /* ConnectablePublisher.swift in Sources */,
+				6240514522DDBAB100291766 /* TryCompactMap.swift in Sources */,
+				6240512422DDBAB000291766 /* Contains.swift in Sources */,
+				624050FF22DDBAB000291766 /* Subscription.swift in Sources */,
 				66312FB222B665620081D8F1 /* ViewController.swift in Sources */,
+				6240511222DDBAB000291766 /* CombineLatest.swift in Sources */,
+				6240512F22DDBAB000291766 /* Filter.swift in Sources */,
+				6240511722DDBAB000291766 /* MeasureInterval.swift in Sources */,
+				6240513022DDBAB000291766 /* Reduce.swift in Sources */,
 				66312FAE22B665620081D8F1 /* AppDelegate.swift in Sources */,
+				6240513122DDBAB000291766 /* Last.swift in Sources */,
+				6240514822DDBAB100291766 /* Zip.swift in Sources */,
+				6240515922DDBAB100291766 /* Subscribers.swift in Sources */,
+				6240513722DDBAB000291766 /* Map.swift in Sources */,
+				624050F622DDBAB000291766 /* Queue.swift in Sources */,
+				6240514E22DDBAB100291766 /* SwitchToLatest.swift in Sources */,
+				6240513822DDBAB000291766 /* Fail.swift in Sources */,
+				6240510022DDBAB000291766 /* Subject.swift in Sources */,
+				6240515622DDBAB100291766 /* Assign.swift in Sources */,
+				624050EF22DDBAB000291766 /* Subscriber.swift in Sources */,
+				6240510E22DDBAB000291766 /* CollectByCount.swift in Sources */,
+				6240515322DDBAB100291766 /* Retry.swift in Sources */,
+				6240513B22DDBAB000291766 /* Drop.swift in Sources */,
+				624050F922DDBAB000291766 /* DemandState.swift in Sources */,
+				6240515822DDBAB100291766 /* Demand.swift in Sources */,
+				6240512C22DDBAB000291766 /* LastWhere.swift in Sources */,
+				6240510922DDBAB000291766 /* HandleEvents.swift in Sources */,
+				624050EE22DDBAB000291766 /* Coding.swift in Sources */,
+				6240513222DDBAB000291766 /* Count.swift in Sources */,
+				6240510B22DDBAB000291766 /* DropUntilOutput.swift in Sources */,
+				6240513322DDBAB000291766 /* TryComparison.swift in Sources */,
+				6240511122DDBAB000291766 /* Future.swift in Sources */,
+				6240514A22DDBAB100291766 /* ReplaceEmpty.swift in Sources */,
+				6240513922DDBAB000291766 /* TryContainsWhere.swift in Sources */,
+				6240515122DDBAB100291766 /* PrefixUntilOutput.swift in Sources */,
+				6240514B22DDBAB100291766 /* Concatenate.swift in Sources */,
+				6240514222DDBAB100291766 /* CombineLatest+.swift in Sources */,
+				6240511522DDBAB000291766 /* FlatMap.swift in Sources */,
+				6240510522DDBAB000291766 /* AnySubscriber.swift in Sources */,
+				6240512E22DDBAB000291766 /* FirstWhere.swift in Sources */,
+				6240514922DDBAB100291766 /* Merge.swift in Sources */,
+				6240515722DDBAB100291766 /* Sink.swift in Sources */,
+				624050F322DDBAB000291766 /* Lock.swift in Sources */,
+				6240510722DDBAB000291766 /* SchedulerTimeIntervalConvertible.swift in Sources */,
+				6240512322DDBAB000291766 /* PrefixWhile.swift in Sources */,
+				6240512D22DDBAB000291766 /* Comparison.swift in Sources */,
+				624050F022DDBAB000291766 /* CustomCombineIdentifierConvertible.swift in Sources */,
+				6240510222DDBAB000291766 /* Cancellable.swift in Sources */,
 				66312FB022B665620081D8F1 /* SceneDelegate.swift in Sources */,
+				6240510C22DDBAB000291766 /* Buffer.swift in Sources */,
+				6240514F22DDBAB100291766 /* TryCatch.swift in Sources */,
+				6240510322DDBAB000291766 /* PassthroughSubject.swift in Sources */,
+				624050FB22DDBAB000291766 /* RelayState.swift in Sources */,
+				6240511A22DDBAB000291766 /* BreakPoint.swift in Sources */,
+				6240513D22DDBAB000291766 /* Optional.swift in Sources */,
+				6240513F22DDBAB100291766 /* Scan.swift in Sources */,
+				624050F522DDBAB000291766 /* OptionalProtocol.swift in Sources */,
+				6240512822DDBAB000291766 /* First.swift in Sources */,
+				6240515522DDBAB100291766 /* AnyCancellable.swift in Sources */,
+				6240514322DDBAB100291766 /* TryRemoveDuplicates.swift in Sources */,
+				6240510A22DDBAB000291766 /* Deferred.swift in Sources */,
+				624050FA22DDBAB000291766 /* PeekableIterator.swift in Sources */,
+				624050F422DDBAB000291766 /* Extensions.swift in Sources */,
+				6240512922DDBAB000291766 /* TryFirstWhere.swift in Sources */,
+				6240515422DDBAB100291766 /* Scheduler.swift in Sources */,
+				6240513522DDBAB000291766 /* TryFilter.swift in Sources */,
+				6240511D22DDBAB000291766 /* Multicast.swift in Sources */,
+				624050FC22DDBAB000291766 /* AnyPublisher.swift in Sources */,
+				6240515222DDBAB100291766 /* SetFailureType.swift in Sources */,
+				6240510F22DDBAB000291766 /* TryCombineLatest.swift in Sources */,
+				6240513A22DDBAB000291766 /* Collect.swift in Sources */,
+				6240511022DDBAB000291766 /* TryCombineLatest+.swift in Sources */,
+				6240510D22DDBAB000291766 /* SubscribeOn.swift in Sources */,
+				6240514D22DDBAB100291766 /* TryPrefixWhile.swift in Sources */,
+				6240515A22DDBAB100291766 /* Completion.swift in Sources */,
+				6240514122DDBAB100291766 /* Zip+.swift in Sources */,
+				6240510822DDBAB000291766 /* Print.swift in Sources */,
+				6240511622DDBAB000291766 /* Output.swift in Sources */,
+				6240514722DDBAB100291766 /* Share.swift in Sources */,
+				624050F722DDBAB000291766 /* Atom.swift in Sources */,
+				6240512022DDBAB000291766 /* Merge+.swift in Sources */,
+				6240511E22DDBAB000291766 /* MakeConnectable.swift in Sources */,
+				6240515022DDBAB100291766 /* MapError.swift in Sources */,
+				6240511422DDBAB000291766 /* ReceiveOn.swift in Sources */,
+				6240511822DDBAB000291766 /* TryScan.swift in Sources */,
+				6240513E22DDBAB000291766 /* RemoveDuplicates.swift in Sources */,
+				6240512222DDBAB000291766 /* TryLastWhere.swift in Sources */,
+				624050F222DDBAB000291766 /* Global.swift in Sources */,
+				6240512B22DDBAB000291766 /* CompactMap.swift in Sources */,
+				624050F822DDBAB000291766 /* Const.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -821,6 +1320,7 @@
 				6684B01622D38B9E008639D1 /* ReplaceErrorSpec.swift in Sources */,
 				62125AD022BB3081005B57AE /* Typealias.swift in Sources */,
 				6631302A22B691C80081D8F1 /* Extensions.swift in Sources */,
+				62404FD422DD7F4800291766 /* CustomPublisher.swift in Sources */,
 				6229E65722B72969002CBEC2 /* AnySubscriberSpec.swift in Sources */,
 				628BC8D322D34806000EF5DB /* TryRemoveDuplicatesSpec.swift in Sources */,
 				623227C322C0D077006D907B /* Atom.swift in Sources */,
@@ -883,6 +1383,7 @@
 				6684B01722D38B9E008639D1 /* ReplaceErrorSpec.swift in Sources */,
 				62125AD122BB3081005B57AE /* Typealias.swift in Sources */,
 				6631305322B693940081D8F1 /* Extensions.swift in Sources */,
+				62404FD522DD7F4800291766 /* CustomPublisher.swift in Sources */,
 				6229E65822B72969002CBEC2 /* AnySubscriberSpec.swift in Sources */,
 				628BC8D422D34806000EF5DB /* TryRemoveDuplicatesSpec.swift in Sources */,
 				623227C422C0D077006D907B /* Atom.swift in Sources */,
