@@ -384,11 +384,11 @@ extension Publishers.Optional {
         }
         
         var description: String {
-            return "Optinal"
+            return "Optional"
         }
         
         var debugDescription: String {
-            return "Optinal"
+            return "Optional"
         }
     }
 }

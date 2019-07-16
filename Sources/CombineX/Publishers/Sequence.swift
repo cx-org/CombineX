@@ -318,16 +318,27 @@ extension Publishers.Sequence {
             switch self.state {
             case .waiting:
                 self.state = .demanding(demand)
-                self.lock.unlock()
                 
-                demand == .unlimited ? self.fastPath() : self.slowPath(demand)
+                if demand == .unlimited {
+                    self.lock.unlock()
+                    self.fastPath()
+                } else {
+                    self.slowPath(demand)
+                }
             case .demanding(let old):
                 let new = old + demand
                 self.state = .demanding(new)
-                self.lock.unlock()
-
-                if old == 0 {
-                    new == .unlimited ? self.fastPath() : self.slowPath(demand)
+                
+                guard old == 0 else {
+                    self.lock.unlock()
+                    return
+                }
+                
+                if new == .unlimited {
+                    self.lock.unlock()
+                    self.fastPath()
+                } else {
+                    self.slowPath(new)
                 }
             case .completed:
                 self.lock.unlock()
@@ -348,59 +359,41 @@ extension Publishers.Sequence {
             }
         }
         
+        // still locking
         private func slowPath(_ demand: Subscribers.Demand) {
-            var current = demand
+            guard demand > 0 else {
+                self.lock.unlock()
+                return
+            }
             
-            while current > 0 {
-                
-                self.lock.lock()
+            while let value = self.iterator.next() {
                 guard self.state.isDemanding else {
                     self.lock.unlock()
-                    return
-                }
-                
-                guard let element = self.iterator.next() else {
-                    self.state = .completed
-                    
-                    let sub = self.sub
-                    self.sub = nil
-                    self.lock.unlock()
-                    
-                    sub?.receive(completion: .finished)
                     return
                 }
 
                 _ = self.state.sub(.max(1))
-                let sub = self.sub
-//                self.lock.unlock()
                 
-                let more = sub?.receive(element) ?? .none
+                let sub = self.sub!
+                self.lock.unlock()
                 
-//                self.lock.lock()
-                guard self.state.isDemanding else {
-                    self.lock.unlock()
-                    return
-                }
+                let more = sub.receive(value)
                 
-                guard self.iterator.peek() != nil else {
-                    self.state = .completed
-                    
-                    let sub = self.sub
-                    self.sub = nil
-                    self.lock.unlock()
-                    
-                    sub?.receive(completion: .finished)
-                    return
-                }
-                
+                self.lock.lock()
                 guard let new = self.state.add(more)?.new, new > 0 else {
                     self.lock.unlock()
                     return
                 }
-                
-                self.lock.unlock()
-                current = new
             }
+            
+            self.state = .completed
+            
+            let sub = self.sub!
+            self.sub = nil
+            
+            self.lock.unlock()
+            
+            sub.receive(completion: .finished)
         }
         
         func cancel() {

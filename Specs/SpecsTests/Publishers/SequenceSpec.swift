@@ -17,36 +17,36 @@ class SequenceSpec: QuickSpec {
         // MARK: - Send Values
         describe("Send Values") {
             typealias Sub = CustomSubscriber<Int, CustomError>
+            typealias Event = CustomEvent<Int, CustomError>
             
             // MARK: 1.1 should send values then send finished
             it("should send values then send finished") {
-                let array = Array(0..<100)
-                let pub = Publishers.Sequence<[Int], CustomError>(sequence: array)
-                
+                let values = Array(0..<100)
+                let pub = Publishers.Sequence<[Int], CustomError>(sequence: values)
                 let sub = makeCustomSubscriber(Int.self, CustomError.self, .unlimited)
                 
                 pub.subscribe(sub)
                 
-                let events = array.map { Sub.Event.value($0) }
-                let expected = events + [.completion(.finished)]
+                let valueEvents = values.map { Event.value($0) }
+                let expected = valueEvents + [.completion(.finished)]
                 expect(sub.events).to(equal(expected))
             }
             
-            // MARK: 1.2
+            // MARK: 1.2 should send as many values as demand
             it("should send as many values as demand") {
-                let array = Array(0..<100)
-                let pub = Publishers.Sequence<[Int], CustomError>(sequence: array)
+                let values = Array(0..<100)
                 
+                let pub = Publishers.Sequence<[Int], CustomError>(sequence: values)
                 let sub = CustomSubscriber<Int, CustomError>(receiveSubscription: { (s) in
                     s.request(.max(50))
                 }, receiveValue: { v in
-                    return v == 10 ? .max(10) : .none
+                    [0, 10].contains(v) ? .max(10) : .none
                 }, receiveCompletion: { c in
                 })
                 
                 pub.subscribe(sub)
                 
-                let events = (0..<60).map { Sub.Event.value($0) }
+                let events = (0..<70).map { Event.value($0) }
                 expect(sub.events).to(equal(events))
             }
         }
@@ -60,12 +60,10 @@ class SequenceSpec: QuickSpec {
                 weak var subObj: AnyObject?
                 
                 do {
-                    let array = Array(0..<10)
-                    let pub = Publishers.Sequence<[Int], Never>(sequence: array)
-                    
+                    let values = Array(0..<10)
+                    let pub = Publishers.Sequence<[Int], Never>(sequence: values)
                     let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
                         subscription = s
-                        s.request(.unlimited)
                     }, receiveValue: { v in
                         return .none
                     }, receiveCompletion: { s in
@@ -76,6 +74,8 @@ class SequenceSpec: QuickSpec {
                     pub.subscribe(sub)
                 }
                 
+                expect(subObj).toNot(beNil())
+                subscription?.request(.unlimited)
                 expect(subObj).to(beNil())
                 
                 _ = subscription
@@ -87,12 +87,11 @@ class SequenceSpec: QuickSpec {
                 weak var subObj: AnyObject?
                 
                 do {
-                    let array = Array(0..<10)
-                    let pub = Publishers.Sequence<[Int], Never>(sequence: array)
+                    let values = Array(0..<10)
+                    let pub = Publishers.Sequence<[Int], Never>(sequence: values)
                     
                     let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
                         subscription = s
-                        s.cancel()
                     }, receiveValue: { v in
                         return .none
                     }, receiveCompletion: { s in
@@ -103,6 +102,8 @@ class SequenceSpec: QuickSpec {
                     pub.subscribe(sub)
                 }
                 
+                expect(subObj).toNot(beNil())
+                subscription?.cancel()
                 expect(subObj).to(beNil())
                 
                 _ = subscription
@@ -131,7 +132,6 @@ class SequenceSpec: QuickSpec {
                 let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
                     subscription = s
                 }, receiveValue: { v in
-                    print("✅", Thread.current)
                     return .none
                 }, receiveCompletion: { c in
                 })
@@ -146,7 +146,35 @@ class SequenceSpec: QuickSpec {
             
                 g.wait()
                 
-                expect(sub.events).to(equal((0..<10).map { CustomEvent<Int, Never>.value($0) }))
+                let events = equal((0..<10).map { CustomEvent<Int, Never>.value($0) })
+                expect(sub.events).to(events)
+            }
+            
+            // MARK: 3.2 receiving value should not block cancel
+            fit("receiving value should not block") {
+                let pub = Publishers.Sequence<Seq, Never>(sequence: Seq())
+                
+                var subscription: Subscription?
+                let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
+                    subscription = s
+                }, receiveValue: { v in
+                    Thread.sleep(forTimeInterval: 0.1)
+                    return .none
+                }, receiveCompletion: { c in
+                })
+                
+                pub.subscribe(sub)
+                
+                let status = Atom(0)
+                DispatchQueue.global().asyncAfter(deadline: .now() + 0.2) {
+                    subscription?.cancel()
+                    status.set(2)
+                }
+                
+                subscription?.request(.max(5))
+                status.set(1)
+                
+                expect(status.get()).to(equal(1))
             }
         }
     }

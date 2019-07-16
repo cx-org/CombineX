@@ -111,45 +111,7 @@ class TryCompactMapSpec: QuickSpec {
         // MARK: - Release Resources
         describe("Release Resources") {
             
-            // MARK: 2.1 subscription should retain downstream and transform closure
-            it("should retain downstream and transform closure") {
-                weak var downstreamObj: AnyObject?
-                weak var closureObj: CustomObject?
-
-                var subscription: Subscription?
-                
-                do {
-                    let customPub = CustomPublisher<Int, CustomError> { (s) in
-                        s.receive(subscription: Subscriptions.empty)
-                    }
-                    
-                    let obj = CustomObject()
-                    closureObj = obj
-                    
-                    let sub = CustomSubscriber<Int, Error>(receiveSubscription: { (s) in
-                        subscription = s
-                        s.request(.max(1))
-                    }, receiveValue: { v in
-                        return .none
-                    }, receiveCompletion: { s in
-                    })
-                    downstreamObj = sub
-                    
-                    customPub
-                        .tryCompactMap { i -> Int in
-                            obj.run()
-                            return i
-                        }
-                        .subscribe(sub)
-                }
-                
-                expect(downstreamObj).toNot(beNil())
-                expect(closureObj).toNot(beNil())
-                
-                _ = subscription
-            }
-            
-            // MARK: 2.2 subscription should not release downstream and transform closure after finish
+            // MARK: 2.1 subscription should not release downstream and transform closure after finish
             it("subscription should not release downstream and transform closure after finish") {
                 weak var downstreamObj: AnyObject?
                 weak var closureObj: CustomObject?
@@ -167,7 +129,6 @@ class TryCompactMapSpec: QuickSpec {
                     
                     let sub = CustomSubscriber<Int, Error>(receiveSubscription: { (s) in
                         subscription = s
-                        s.request(.max(1))
                     }, receiveValue: { v in
                         return .none
                     }, receiveCompletion: { s in
@@ -205,7 +166,6 @@ class TryCompactMapSpec: QuickSpec {
                     
                     let sub = CustomSubscriber<Int, Error>(receiveSubscription: { (s) in
                         subscription = s
-                        s.request(.max(1))
                     }, receiveValue: { v in
                         return .none
                     }, receiveCompletion: { s in
@@ -221,7 +181,6 @@ class TryCompactMapSpec: QuickSpec {
                 }
                 
                 subscription?.cancel()
-                
                 expect(downstreamObj).toNot(beNil())
                 expect(closureObj).toNot(beNil())
                 

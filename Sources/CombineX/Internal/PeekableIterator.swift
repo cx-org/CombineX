@@ -1,22 +1,22 @@
 struct PeekableIterator<Element>: IteratorProtocol {
     
     private var iterator: AnyIterator<Element>
-    private var buffer: Queue<Element>
+    
+    private var nextValue: Element?
     
     init<I: IteratorProtocol>(_ iterator: I) where I.Element == Element {
         self.iterator = AnyIterator(iterator)
-        self.buffer = Queue()
+        self.nextValue = self.iterator.next()
     }
     
-    mutating func peek() -> Element? {
-        if let e = self.iterator.next() {
-            self.buffer.append(e)
-            return e
-        }
-        return nil
+    var isEmpty: Bool {
+        return self.nextValue == nil
     }
 
     mutating func next() -> Element? {
-        return self.buffer.popFirst() ?? self.iterator.next()
+        defer {
+            self.nextValue = self.iterator.next()
+        }
+        return self.nextValue
     }
 }
