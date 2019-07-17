@@ -40,13 +40,13 @@ extension RelayState {
 
 extension RelayState {
     
-    func receiveValuePrecondition(file: StaticString = #file, line: UInt = #line) {
+    func preconditionReceiveValue(file: StaticString = #file, line: UInt = #line) {
         if self.isWaiting {
             fatalError("Received value before receiving subscription", file: file, line: line)
         }
     }
     
-    func receiveCompletionPrecondition(file: StaticString = #file, line: UInt = #line) {
+    func preconditionReceiveCompletion(file: StaticString = #file, line: UInt = #line) {
         if self.isWaiting {
             fatalError("Received completion before receiving subscription", file: file, line: line)
         }

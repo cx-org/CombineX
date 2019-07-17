@@ -50,7 +50,7 @@ extension Publishers {
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, S.Failure == Publishers.TryCompactMap<Upstream, Output>.Failure {
             let s = Inner(pub: self, sub: subscriber)
-            self.upstream.receive(subscriber: s)
+            self.upstream.subscribe(s)
         }
     }
 }
@@ -105,7 +105,7 @@ extension Publishers.TryCompactMap {
         
         func receive(_ input: Input) -> Subscribers.Demand {
             self.lock.lock()
-            self.state.receiveValuePrecondition()
+            self.state.preconditionReceiveValue()
             guard self.state.isRelaying else {
                 self.lock.unlock()
                 return .none
@@ -130,7 +130,7 @@ extension Publishers.TryCompactMap {
         
         private func complete(_ completion: Subscribers.Completion<Error>) {
             self.lock.lock()
-            self.state.receiveCompletionPrecondition()
+            self.state.preconditionReceiveCompletion()
             guard let subscription = self.state.complete() else {
                 self.lock.unlock()
                 return

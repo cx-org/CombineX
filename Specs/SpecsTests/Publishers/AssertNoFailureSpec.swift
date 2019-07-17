@@ -17,17 +17,12 @@ class AssertNoFailureSpec: QuickSpec {
         describe("No Failure") {
             
             #if !SWIFT_PACKAGE
-            xit("should throw assertion if there is an error") {
+            it("should throw assertion if there is an error") {
                 
-                let pub = Publishers.Fail<Int, CustomError>(error: CustomError.e0)
+                let pub = Publishers.Fail<Int, CustomError>(error: .e0)
                     .assertNoFailure()
+                let sub = makeCustomSubscriber(Int.self, Never.self, .none)
                 
-                let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
-                }, receiveValue: { v in
-                    return .none
-                }, receiveCompletion: { c in
-                })
-             
                 expect {
                     pub.subscribe(sub)
                 }.to(throwAssertion())

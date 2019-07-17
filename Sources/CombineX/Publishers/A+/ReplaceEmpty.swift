@@ -1,32 +1,32 @@
 extension Publisher {
     
-    /// Replaces any errors in the stream with the provided element.
+    /// Replaces an empty stream with the provided element.
     ///
-    /// If the upstream publisher fails with an error, this publisher emits the provided element, then finishes normally.
-    /// - Parameter output: An element to emit when the upstream publisher fails.
-    /// - Returns: A publisher that replaces an error from the upstream publisher with the provided output element.
-    public func replaceError(with output: Self.Output) -> Publishers.ReplaceError<Self> {
+    /// If the upstream publisher finishes without producing any elements, this publisher emits the provided element, then finishes normally.
+    /// - Parameter output: An element to emit when the upstream publisher finishes without emitting any elements.
+    /// - Returns: A publisher that replaces an empty stream with the provided output element.
+    public func replaceEmpty(with output: Self.Output) -> Publishers.ReplaceEmpty<Self> {
         return .init(upstream: self, output: output)
     }
 }
 
-extension Publishers.ReplaceError : Equatable where Upstream : Equatable, Upstream.Output : Equatable {
+extension Publishers.ReplaceEmpty : Equatable where Upstream : Equatable, Upstream.Output : Equatable {
     
     /// Returns a Boolean value that indicates whether two publishers are equivalent.
     ///
     /// - Parameters:
-    ///   - lhs: A replace error publisher to compare for equality.
-    ///   - rhs: Another replace error publisher to compare for equality.
+    ///   - lhs: A replace empty publisher to compare for equality.
+    ///   - rhs: Another replace empty publisher to compare for equality.
     /// - Returns: `true` if the two publishers have equal upstream publishers and output elements, `false` otherwise.
-    public static func == (lhs: Publishers.ReplaceError<Upstream>, rhs: Publishers.ReplaceError<Upstream>) -> Bool {
+    public static func == (lhs: Publishers.ReplaceEmpty<Upstream>, rhs: Publishers.ReplaceEmpty<Upstream>) -> Bool {
         return lhs.upstream == rhs.upstream && lhs.output == rhs.output
     }
 }
 
 extension Publishers {
     
-    /// A publisher that replaces any errors in the stream with a provided element.
-    public struct ReplaceError<Upstream> : Publisher where Upstream : Publisher {
+    /// A publisher that replaces an empty stream with a provided element.
+    public struct ReplaceEmpty<Upstream> : Publisher where Upstream : Publisher {
         
         /// The kind of values published by this publisher.
         public typealias Output = Upstream.Output
@@ -34,15 +34,15 @@ extension Publishers {
         /// The kind of errors this publisher might publish.
         ///
         /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Never
+        public typealias Failure = Upstream.Failure
         
-        /// The element with which to replace errors from the upstream publisher.
+        /// The element to deliver when the upstream publisher finishes without delivering any elements.
         public let output: Upstream.Output
         
         /// The publisher from which this publisher receives elements.
         public let upstream: Upstream
         
-        public init(upstream: Upstream, output: Publishers.ReplaceError<Upstream>.Output) {
+        public init(upstream: Upstream, output: Publishers.ReplaceEmpty<Upstream>.Output) {
             self.upstream = upstream
             self.output = output
         }
@@ -53,14 +53,14 @@ extension Publishers {
         /// - Parameters:
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, S.Failure == Publishers.ReplaceError<Upstream>.Failure {
-            let subscription = Inner(pub: self, sub: subscriber)
-            self.upstream.subscribe(subscription)
+        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
+            let s = Inner(pub: self, sub: subscriber)
+            self.upstream.subscribe(s)
         }
     }
 }
 
-extension Publishers.ReplaceError {
+extension Publishers.ReplaceEmpty {
     
     private final class Inner<S>:
         Subscription,
@@ -76,14 +76,14 @@ extension Publishers.ReplaceError {
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
         
-        typealias Pub = Publishers.ReplaceError<Upstream>
+        typealias Pub = Publishers.ReplaceEmpty<Upstream>
         typealias Sub = S
         
         let lock = Lock()
-        
         let output: Upstream.Output
         let sub: Sub
         
+        var isEmpty = true
         var state = RelayState.waiting
         
         init(pub: Pub, sub: Sub) {
@@ -115,7 +115,8 @@ extension Publishers.ReplaceError {
                 self.lock.unlock()
                 return .none
             }
-
+            
+            self.isEmpty = false
             self.lock.unlock()
             
             return self.sub.receive(input)
@@ -127,25 +128,22 @@ extension Publishers.ReplaceError {
                 self.lock.unlock()
                 return
             }
+            let isEmpty = self.isEmpty
             self.lock.unlock()
             
             subscription.cancel()
-            
-            switch completion {
-            case .finished:
-                self.sub.receive(completion: .finished)
-            case .failure:
+            if isEmpty {
                 _ = self.sub.receive(self.output)
-                self.sub.receive(completion: .finished)
             }
+            self.sub.receive(completion: completion)
         }
         
         var description: String {
-            return "ReplaceError"
+            return "ReplaceEmpty"
         }
         
         var debugDescription: String {
-            return "ReplaceError"
+            return "ReplaceEmpty"
         }
     }
 }

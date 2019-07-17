@@ -27,21 +27,21 @@ class OptionalSpec: QuickSpec {
                 expect(sub.events).to(equal([.value(1), .completion(.finished)]))
             }
             
-            // MARK: 1.2 should send finished
+            // MARK: 1.2 should send finished even no demand
             it("should send finished") {
                 let pub = Publishers.Optional<Int, CustomError>(nil)
              
-                let sub = makeCustomSubscriber(Int.self, CustomError.self, .unlimited)
+                let sub = makeCustomSubscriber(Int.self, CustomError.self, .none)
                 pub.subscribe(sub)
                 
                 expect(sub.events).to(equal([.completion(.finished)]))
             }
             
-            // MARK: 1.3 should send failure
+            // MARK: 1.3 should send failure even no demand
             it("should send failure") {
                 let pub = Publishers.Optional<Int, CustomError>(.e0)
                 
-                let sub = makeCustomSubscriber(Int.self, CustomError.self, .unlimited)
+                let sub = makeCustomSubscriber(Int.self, CustomError.self, .none)
                 pub.subscribe(sub)
                 
                 expect(sub.events).to(equal([.completion(.failure(.e0))]))

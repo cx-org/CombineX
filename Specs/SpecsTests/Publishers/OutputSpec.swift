@@ -16,48 +16,83 @@ class OutputSpec: QuickSpec {
         // MARK: - Relay
         describe("Relay") {
             
-            // MARK: 1.1 should only send values in the specified range
+            // MARK: 1.1 should only send values specified by the range
             it("should only send values in the specified range") {
-                let sequence = Publishers.Sequence<[Int], Never>(sequence: Array(0..<100))
-                
-                let range = sequence.output(in: 10..<20)
-                
-                let subscriber = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
+                let subject = PassthroughSubject<Int, Never>()
+                let pub = subject.output(in: 10..<20)
+                let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
                     s.request(.unlimited)
                 }, receiveValue: { v in
                     return .none
                 }, receiveCompletion: { c in
                 })
                 
-                range.subscribe(subscriber)
+                pub.subscribe(sub)
                 
-                let events = (10..<20).map {
-                    CustomSubscriber<Int, Never>.Event.value($0)
+                100.times {
+                    subject.send($0)
                 }
-                let expected = events + [.completion(.finished)]
-                expect(subscriber.events).to(equal(expected))
+                
+                let valueEvents = (10..<20).map {
+                    CustomEvent<Int, Never>.value($0)
+                }
+                let expected = valueEvents + [.completion(.finished)]
+                expect(sub.events).to(equal(expected))
             }
             
             // MARK: 1.2 should send values as demand
             it("should send values as demand") {
-                let sequence = Publishers.Sequence<[Int], Never>(sequence: Array(0..<100))
-                
-                let range = sequence.output(in: 10..<20)
-                
-                let subscriber = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
+                let subject = PassthroughSubject<Int, Never>()
+                let pub = subject.output(in: 10..<20)
+                let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
                     s.request(.max(5))
                 }, receiveValue: { v in
-                    v == 10 ? .max(1) : .none
+                    [10, 15].contains(v) ? .max(1) : .none
                 }, receiveCompletion: { c in
                 })
                 
-                range.subscribe(subscriber)
+                pub.subscribe(sub)
                 
-                let expected = (10..<16).map {
-                    CustomSubscriber<Int, Never>.Event.value($0)
+                100.times {
+                    subject.send($0)
                 }
-                expect(subscriber.events).to(equal(expected))
+                
+                let expected = (10..<17).map {
+                    CustomEvent<Int, Never>.value($0)
+                }
+                expect(sub.events).to(equal(expected))
             }
+            
+            #if !SWIFT_PACKAGE
+            // MARK: 1.3 should not throw assertion when upstream send values before sending subscription
+            it("should not throw assertion when upstream send values before sending subscription") {
+                let upstream = CustomPublisher<Int, CustomError> { s in
+                    _ = s.receive(1)
+                }
+                
+                let pub = upstream.output(in: 0..<10)
+                let sub = makeCustomSubscriber(Int.self, CustomError.self, .unlimited)
+                
+                expect {
+                    pub.subscribe(sub)
+                }.toNot(throwAssertion())
+            }
+            
+            // MARK: 1.4 should not throw assertion when upstream send completion before sending subscription
+            it("should not throw assertion when upstream send values before sending subscription") {
+                let upstream = CustomPublisher<Int, CustomError> { s in
+                    s.receive(completion: .finished)
+                }
+                
+                let pub = upstream.output(in: 0..<10)
+                let sub = makeCustomSubscriber(Int.self, CustomError.self, .unlimited)
+                
+                expect {
+                    pub.subscribe(sub)
+                }.toNot(throwAssertion())
+            }
+            #endif
+            
         }
     }
 }

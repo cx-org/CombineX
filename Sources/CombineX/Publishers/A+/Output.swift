@@ -84,8 +84,8 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
-            let subscription = Inner(pub: self, sub: subscriber)
-            self.upstream.subscribe(subscription)
+            let s = Inner(pub: self, sub: subscriber)
+            self.upstream.subscribe(s)
         }
     }
 }
@@ -109,11 +109,10 @@ extension Publishers.Output {
         typealias Sub = S
         
         let lock = Lock()
-        
         let range: CountableRange<Int>
         let sub: Sub
         
-        var index = 0
+        var index = -1
         var state = RelayState.waiting
         
         init(pub: Pub, sub: Sub) {
@@ -145,26 +144,22 @@ extension Publishers.Output {
                 return .none
             }
             
-            guard self.range.contains(self.index) else {
-                self.index += 1
-                self.lock.unlock()
-                return .max(1)
-            }
-            
             self.index += 1
+            let index = self.index
             self.lock.unlock()
             
+            guard self.range.contains(index) else {
+                return .max(1)
+            }
             let demand = self.sub.receive(input)
             
-            self.lock.lock()
-            if self.index == self.range.upperBound {
-                let subscription = self.state.complete()
-                self.lock.unlock()
-                
-                subscription?.cancel()
+            if index == self.range.upperBound - 1 {
+                guard let subscription = self.lock.withLockGet(self.state.complete()) else {
+                    return .none
+                }
+
+                subscription.cancel()
                 self.sub.receive(completion: .finished)
-            } else {
-                self.lock.unlock()
             }
             
             return demand

@@ -101,11 +101,12 @@ extension Publishers.Sequence {
     }
     
     public func scan<T>(_ initialResult: T, _ nextPartialResult: @escaping (T, Publishers.Sequence<Elements, Failure>.Output) -> T) -> Publishers.Sequence<[T], Failure> {
-        var result = initialResult
-        return .init(sequence: self.sequence.map({
-            result = nextPartialResult(result, $0)
-            return result
-        }))
+        var r = initialResult
+        let s = self.sequence.map { v -> T in
+            r = nextPartialResult(r, v)
+            return r
+        }
+        return .init(sequence: s)
     }
     
     public func setFailureType<E>(to error: E.Type) -> Publishers.Sequence<Elements, E> where E : Error {
@@ -157,21 +158,17 @@ extension Publishers.Sequence where Elements.Element : Comparable {
 extension Publishers.Sequence where Elements.Element : Equatable {
     
     public func removeDuplicates() -> Publishers.Sequence<[Publishers.Sequence<Elements, Failure>.Output], Failure> {
-        
-        let lock = Lock()
-        var previous: Elements.Element?
-        let newSequence = self.sequence.lazy.compactMap { element -> Elements.Element? in
-            lock.withLock {
-                defer {
-                    previous = element
-                }
-                guard let prev = previous else {
-                    return element
-                }
-                return element == prev ? nil : element
+        var p: Elements.Element?
+        let s = self.sequence.compactMap { v -> Elements.Element? in
+            defer {
+                p = v
             }
+            guard let p = p else {
+                return v
+            }
+            return v == p ? nil : v
         }
-        return .init(sequence: Array(newSequence))
+        return .init(sequence: s)
     }
     
     public func contains(_ output: Elements.Element) -> Publishers.Once<Bool, Failure> {

@@ -15,28 +15,30 @@ class EmptySpec: QuickSpec {
         
         // MARK: - Send Values
         describe("Send Values") {
+            
             // MARK: 1.1 should send completion immediately
             it("should send completion immediately") {
                 let empty = Publishers.Empty<Int, Never>()
-
-                let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
-                }, receiveValue: { v in
-                    return .none
-                }, receiveCompletion: { s in
-                })
-                
+                let sub = makeCustomSubscriber(Int.self, Never.self, .unlimited)
                 empty.subscribe(sub)
                 
                 expect(sub.events).to(equal([.completion(.finished)]))
             }
             
+            // MARK: 1.2 should send nothing
+            it("should send nothing") {
+                let empty = Publishers.Empty<Int, Never>(completeImmediately: false)
+                let sub = makeCustomSubscriber(Int.self, Never.self, .unlimited)
+                empty.subscribe(sub)
+                expect(sub.events).to(equal([]))
+            }
         }
         
         // MARK: - Equal
         describe("Equal") {
             
-            // MARK: 2.1 should equal if 'immediately' are the same
-            it("should equal if 'immediately' are the same") {
+            // MARK: 2.1 should equal if 'completeImmediately' are the same
+            it("should equal if 'completeImmediately' are the same") {
                 
                 let e1 = Publishers.Empty<Int, Never>()
                 let e2 = Publishers.Empty<Int, Never>()

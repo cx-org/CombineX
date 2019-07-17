@@ -46,8 +46,8 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, S.Failure == Publishers.TryAllSatisfy<Upstream>.Failure, S.Input == Publishers.TryAllSatisfy<Upstream>.Output {
-            let subscription = Inner(pub: self, sub: subscriber)
-            self.upstream.subscribe(subscription)
+            let s = Inner(pub: self, sub: subscriber)
+            self.upstream.subscribe(s)
         }
     }
 }
@@ -73,7 +73,6 @@ extension Publishers.TryAllSatisfy {
         typealias Predicate = (Upstream.Output) throws -> Bool
         
         let lock = Lock()
-        
         let predicate: Predicate
         let sub: Sub
         
@@ -115,18 +114,18 @@ extension Publishers.TryAllSatisfy {
                     return .none
                 }
                 
-                let subscription = self.state.complete()
+                let subscription = self.state.complete()!
                 self.lock.unlock()
                 
-                subscription?.cancel()
+                subscription.cancel()
                 
                 _ = self.sub.receive(false)
                 self.sub.receive(completion: .finished)
             } catch {
-                let subscription = self.state.complete()
+                let subscription = self.state.complete()!
                 self.lock.unlock()
                 
-                subscription?.cancel()
+                subscription.cancel()
                 
                 self.sub.receive(completion: .failure(error))
             }

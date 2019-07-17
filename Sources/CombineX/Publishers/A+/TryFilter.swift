@@ -14,21 +14,21 @@ extension Publisher {
 extension Publishers.TryFilter {
     
     public func filter(_ isIncluded: @escaping (Publishers.TryFilter<Upstream>.Output) -> Bool) -> Publishers.TryFilter<Upstream> {
-        let newIsIncluded: (Upstream.Output) throws -> Bool = {
-            let lhs = try self.isIncluded($0)
-            let rhs = isIncluded($0)
-            return lhs && rhs
-        }
-        return self.upstream.tryFilter(newIsIncluded)
+        return self.upstream
+            .tryFilter {
+                let a = try self.isIncluded($0)
+                let b = isIncluded($0)
+                return a && b
+            }
     }
     
     public func tryFilter(_ isIncluded: @escaping (Publishers.TryFilter<Upstream>.Output) throws -> Bool) -> Publishers.TryFilter<Upstream> {
-        let newIsIncluded:  (Upstream.Output) throws -> Bool = {
-            let lhs = try self.isIncluded($0)
-            let rhs = try isIncluded($0)
-            return lhs && rhs
-        }
-        return self.upstream.tryFilter(newIsIncluded)
+        return self.upstream
+            .tryFilter {
+                let a = try self.isIncluded($0)
+                let b = try isIncluded($0)
+                return a && b
+            }
     }
 }
 

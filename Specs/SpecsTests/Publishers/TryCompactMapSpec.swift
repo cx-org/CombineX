@@ -44,7 +44,6 @@ class TryCompactMapSpec: QuickSpec {
             // MARK: 1.2 should send as many values as demand
             it("should send as many values as demand") {
                 let pub = PassthroughSubject<Int, Never>()
-                
                 let sub = makeCustomSubscriber(Int.self, Error.self, .max(10))
                 
                 pub.tryCompactMap { $0 % 2 == 0 ? $0 : nil }.subscribe(sub)
@@ -93,7 +92,6 @@ class TryCompactMapSpec: QuickSpec {
                 let upstream = CustomPublisher<Int, CustomError> { s in
                     _ = s.receive(1)
                 }
-                
                 let pub = upstream.tryCompactMap { $0 }
                 let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
                 
@@ -107,7 +105,6 @@ class TryCompactMapSpec: QuickSpec {
                 let upstream = CustomPublisher<Int, CustomError> { s in
                     s.receive(completion: .finished)
                 }
-                
                 let pub = upstream.tryCompactMap { $0 }
                 let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
 

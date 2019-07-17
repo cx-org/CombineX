@@ -47,8 +47,8 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, S.Failure == Publishers.TryReduce<Upstream, Output>.Failure {
-            let subscription = Inner(pub: self, sub: subscriber)
-            self.upstream.subscribe(subscription)
+            let s = Inner(pub: self, sub: subscriber)
+            self.upstream.subscribe(s)
         }
     }
 }
@@ -75,18 +75,17 @@ extension Publishers.TryReduce {
         typealias NextPartialResult = (Output, Upstream.Output) throws -> Output
         
         let lock = Lock()
-        
         let nextPartialResult: NextPartialResult
         let sub: Sub
         
         var state: RelayState = .waiting
-        
         var output: Output
         
         init(pub: Pub, sub: Sub) {
-            self.output = pub.initial
             self.nextPartialResult = pub.nextPartialResult
             self.sub = sub
+            
+            self.output = pub.initial
         }
         
         func request(_ demand: Subscribers.Demand) {
@@ -108,7 +107,6 @@ extension Publishers.TryReduce {
         }
         
         func receive(_ input: Input) -> Subscribers.Demand {
-            // Against misbehaving upstream
             self.lock.lock()
             guard self.state.isRelaying else {
                 self.lock.unlock()

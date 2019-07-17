@@ -314,8 +314,20 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
-            let s = Inner(pub: self, sub: subscriber)
-            subscriber.receive(subscription: s)
+            switch result {
+            case .failure(let e):
+                subscriber.receive(subscription: Subscriptions.empty)
+                subscriber.receive(completion: .failure(e))
+            case .success(let output):
+                guard let output = output else {
+                    subscriber.receive(subscription: Subscriptions.empty)
+                    subscriber.receive(completion: .finished)
+                    return
+                }
+                
+                let s = Inner(output: output, sub: subscriber)
+                subscriber.receive(subscription: s)
+            }
         }
     }
 }
@@ -339,11 +351,11 @@ extension Publishers.Optional {
         
         var state = DemandState.waiting
         
-        let result: Result<Output?, Failure>
+        let output: Output
         var sub: Sub?
         
-        init(pub: Pub, sub: Sub) {
-            self.result = pub.result
+        init(output: Output, sub: Sub) {
+            self.output = output
             self.sub = sub
         }
         
@@ -358,22 +370,13 @@ extension Publishers.Optional {
             
             self.state = .completed
             
-            let sub = self.sub
+            let sub = self.sub!
             self.sub = nil
             
             self.lock.unlock()
             
-            guard let s = sub else { return }
-            
-            switch self.result {
-            case .success(let optional):
-                if let output = optional {
-                    _ = s.receive(output)
-                }
-                s.receive(completion: .finished)
-            case .failure(let error):
-                s.receive(completion: .failure(error))
-            }
+            _ = sub.receive(output)
+            sub.receive(completion: .finished)
         }
         
         func cancel() {

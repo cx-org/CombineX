@@ -12,6 +12,10 @@ struct PeekableIterator<Element>: IteratorProtocol {
     var isEmpty: Bool {
         return self.nextValue == nil
     }
+    
+    func peek() -> Element? {
+        return self.nextValue
+    }
 
     mutating func next() -> Element? {
         defer {

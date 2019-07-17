@@ -42,8 +42,8 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Failure == S.Failure, S : Subscriber, Upstream.Output == S.Input {
-            let subscription = Inner(pub: self, sub: subscriber)
-            self.upstream.subscribe(subscription)
+            let s = Inner(pub: self, sub: subscriber)
+            self.upstream.subscribe(s)
         }
     }
 }
@@ -69,7 +69,6 @@ extension Publishers.MapError {
         typealias Transform = (Upstream.Failure) -> S.Failure
         
         let lock = Lock()
-        
         let transform: Transform
         let sub: Sub
         
@@ -101,6 +100,7 @@ extension Publishers.MapError {
             guard self.lock.withLockGet(self.state.isRelaying) else {
                 return .none
             }
+
             return self.sub.receive(input)
         }
         
@@ -108,6 +108,7 @@ extension Publishers.MapError {
             guard let subscription = self.lock.withLockGet(self.state.complete()) else {
                 return
             }
+            
             subscription.cancel()
             self.sub.receive(completion: completion.mapError(self.transform))
         }

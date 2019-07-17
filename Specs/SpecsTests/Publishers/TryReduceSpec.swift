@@ -21,55 +21,77 @@ class TryReduceSpec: QuickSpec {
                 let values = 0..<100
                 
                 let seq = Publishers.Sequence<[Int], Never>(sequence: Array(values))
-                
                 let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
                 
                 seq.tryReduce(0) {
                     $0 + $1
                 }.subscribe(sub)
                 
-                let final = values.reduce(0) { $0 + $1 }
-                for (i, event) in sub.events.enumerated() {
-                    switch i {
-                    case 0:
-                        expect(event.isValue(final)).to(beTrue())
-                    case 1:
-                        expect(event.isFinished()).to(beTrue())
-                    default:
-                        fail()
-                    }
+                let reduced = values.reduce(0) { $0 + $1 }
+                let got = sub.events.map {
+                    $0.mapError { $0 as! CustomError }
                 }
+
+                expect(got).to(equal([.value(reduced), .completion(.finished)]))
             }
             
-            // MARK: 1.2 should fail if closure throws error
-            it("should fail if closure throws error") {
+            // MARK: 1.2 should fail if closure throws an error
+            it("should fail if closure throws an error") {
                 let values = 0..<100
                 
                 let seq = Publishers.Sequence<[Int], Never>(sequence: Array(values))
-                
                 let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
                 
                 seq.tryReduce(0) {
                     if $0 == 10 {
                         throw CustomError.e0
-                    } else {
-                        return $0 + $1
                     }
+                    return $0 + $1
                 }.subscribe(sub)
                 
-                expect(sub.events.count).to(equal(1))
-                expect(sub.events.first?.error).to(matchError(CustomError.e0))
+                let got = sub.events.map {
+                    $0.mapError { $0 as! CustomError }
+                }
+                expect(got).to(equal([.completion(.failure(.e0))]))
             }
             
             #if !SWIFT_PACAKGE
-            // MARK: 1.3 should crash when the demand is 0
-            it("should crash when the demand is 0") {
-                let pub = Just(1).tryReduce(0) { $0 + $1 }
+            // MARK: 1.3 should throw assertion when the demand is 0
+            it("should throw assertion when the demand is 0") {
+                let pub = Publishers.Empty<Int, CustomError>().tryReduce(0) { $0 + $1 }
                 let sub = makeCustomSubscriber(Int.self, Error.self, .max(0))
                 
                 expect {
                     pub.subscribe(sub)
                 }.to(throwAssertion())
+            }
+            
+            // MARK: 1.4 should not throw assertion when upstream send values before sending subscription
+            it("should not throw assertion when upstream send values before sending subscription") {
+                let upstream = CustomPublisher<Int, CustomError> { s in
+                    _ = s.receive(1)
+                }
+                
+                let pub = upstream.tryReduce(0) { $0 + $1 }
+                let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
+                
+                expect {
+                    pub.subscribe(sub)
+                }.toNot(throwAssertion())
+            }
+            
+            // MARK: 1.5 should not throw assertion when upstream send completion before sending subscription
+            it("should not throw assertion when upstream send values before sending subscription") {
+                let upstream = CustomPublisher<Int, CustomError> { s in
+                    s.receive(completion: .finished)
+                }
+                
+                let pub = upstream.tryReduce(0) { $0 + $1 }
+                let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
+
+                expect {
+                    pub.subscribe(sub)
+                }.toNot(throwAssertion())
             }
             #endif
         }

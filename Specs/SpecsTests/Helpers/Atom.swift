@@ -4,7 +4,7 @@ final class Atom<Val> {
     
     private var val: Val
     
-    init(_ val: Val) {
+    init(val: Val) {
         self.val = val
     }
     

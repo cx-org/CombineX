@@ -112,14 +112,13 @@ class SequenceSpec: QuickSpec {
         
         // MARK: - Concurrent
         describe("Concurrent") {
-            
             struct Seq: Sequence, IteratorProtocol {
-                var val = 0
+                private var n = 0
                 mutating func next() -> Int? {
                     defer {
-                        val += 1
+                        n += 1
                     }
-                    return val
+                    return n
                 }
             }
             
@@ -138,7 +137,7 @@ class SequenceSpec: QuickSpec {
                 
                 pub.subscribe(sub)
                 
-                for _ in 0..<10 {
+                for _ in 0..<100 {
                     DispatchQueue.global().async(group: g) {
                         subscription?.request(.max(1))
                     }
@@ -146,7 +145,7 @@ class SequenceSpec: QuickSpec {
             
                 g.wait()
                 
-                let events = equal((0..<10).map { CustomEvent<Int, Never>.value($0) })
+                let events = equal((0..<100).map { CustomEvent<Int, Never>.value($0) })
                 expect(sub.events).to(events)
             }
             
@@ -165,7 +164,7 @@ class SequenceSpec: QuickSpec {
                 
                 pub.subscribe(sub)
                 
-                let status = Atom(0)
+                let status = Atom(val: 0)
                 DispatchQueue.global().asyncAfter(deadline: .now() + 0.2) {
                     subscription?.cancel()
                     status.set(2)
