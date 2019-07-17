@@ -151,7 +151,7 @@ class SequenceSpec: QuickSpec {
             }
             
             // MARK: 3.2 receiving value should not block cancel
-            fit("receiving value should not block") {
+            it("receiving value should not block") {
                 let pub = Publishers.Sequence<Seq, Never>(sequence: Seq())
                 
                 var subscription: Subscription?

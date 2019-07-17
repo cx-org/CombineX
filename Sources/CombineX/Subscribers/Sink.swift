@@ -64,7 +64,7 @@ extension Subscribers {
             return self.description
         }
         
-        private let subscription = Atom<Subscription?>(nil)
+        private let subscription = Atom<Subscription?>(val: nil)
         
         /// Initializes a sink with the provided closures.
         ///

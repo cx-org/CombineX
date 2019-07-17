@@ -37,6 +37,6 @@ extension Subscriber {
 extension Subscriber where Self.Input == Void {
     
     public func receive() -> Subscribers.Demand {
-        self.receive(())
+        return self.receive(())
     }
 }

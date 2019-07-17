@@ -16,7 +16,8 @@ class AssertNoFailureSpec: QuickSpec {
         // MARK: - No Failure
         describe("No Failure") {
             
-            it("should crash if there is an error") {
+            #if !SWIFT_PACKAGE
+            xit("should throw assertion if there is an error") {
                 
                 let pub = Publishers.Fail<Int, CustomError>(error: CustomError.e0)
                     .assertNoFailure()
@@ -31,6 +32,7 @@ class AssertNoFailureSpec: QuickSpec {
                     pub.subscribe(sub)
                 }.to(throwAssertion())
             }
+            #endif
         }
     }
 }

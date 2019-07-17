@@ -63,7 +63,7 @@ public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertibl
     
     public init<S>(_ s: S) where Input == S.Output, Failure == S.Failure, S : Subject {
         
-        let subscription = Atom<Subscription?>(nil)
+        let subscription = Atom<Subscription?>(val: nil)
         
         self.receiveSubscriptionBody = {
             subscription.set($0)

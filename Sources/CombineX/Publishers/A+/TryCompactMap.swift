@@ -104,9 +104,13 @@ extension Publishers.TryCompactMap {
         }
         
         func receive(_ input: Input) -> Subscribers.Demand {
-            guard self.lock.withLockGet(self.state.isRelaying) else {
+            self.lock.lock()
+            self.state.receiveValuePrecondition()
+            guard self.state.isRelaying else {
+                self.lock.unlock()
                 return .none
             }
+            self.lock.unlock()
             
             do {
                 if let transformed = try self.transform(input) {
@@ -125,9 +129,13 @@ extension Publishers.TryCompactMap {
         }
         
         private func complete(_ completion: Subscribers.Completion<Error>) {
-            guard let subscription = self.lock.withLockGet(self.state.complete()) else {
+            self.lock.lock()
+            self.state.receiveCompletionPrecondition()
+            guard let subscription = self.state.complete() else {
+                self.lock.unlock()
                 return
             }
+            self.lock.unlock()
             
             subscription.cancel()
             self.sub.receive(completion: completion.mapError { $0 })

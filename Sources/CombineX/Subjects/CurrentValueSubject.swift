@@ -4,7 +4,7 @@ final public class CurrentValueSubject<Output, Failure> : Subject where Failure 
     /// The value wrapped by this subject, published as a new element whenever it changes.
     final public var value: Output {
         get {
-            self.lock.withLock {
+            return self.lock.withLock {
                 self.current
             }
         }

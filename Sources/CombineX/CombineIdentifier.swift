@@ -1,4 +1,4 @@
-private let counter = Atom<UInt>(0)
+private let counter = Atom<UInt>(val: 0)
 
 public struct CombineIdentifier : Hashable, CustomStringConvertible {
     

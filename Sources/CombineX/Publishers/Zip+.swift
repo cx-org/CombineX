@@ -57,7 +57,7 @@ extension Publisher {
     ///   - transform: A closure that receives the most recent value from each publisher and returns a new value to publish.
     /// - Returns: A publisher that emits groups of elements from the upstream publishers as tuples.
     public func zip<P, Q, R, T>(_ publisher1: P, _ publisher2: Q, _ publisher3: R, _ transform: @escaping (Self.Output, P.Output, Q.Output, R.Output) -> T) -> Publishers.Map<Publishers.Zip4<Self, P, Q, R>, T> where P : Publisher, Q : Publisher, R : Publisher, Self.Failure == P.Failure, P.Failure == Q.Failure, Q.Failure == R.Failure {
-        self.zip(publisher1, publisher2, publisher3).map(transform)
+        return self.zip(publisher1, publisher2, publisher3).map(transform)
     }
     
 }

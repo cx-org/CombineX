@@ -365,7 +365,7 @@ extension Publishers.FlatMap {
             
             let parent: Inner
             
-            let subscription = Atom<Subscription?>(nil)
+            let subscription = Atom<Subscription?>(val: nil)
             var buffer: Input?
             
             init(parent: Inner) {

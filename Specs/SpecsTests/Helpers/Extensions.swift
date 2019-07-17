@@ -10,6 +10,23 @@ import Specs
 
 extension Subscribers.Completion {
     
+    func mapError<NewFailure>(_ transform: (Failure) -> NewFailure) -> Subscribers.Completion<NewFailure> {
+        switch self {
+        case .finished:
+            return .finished
+        case .failure(let error):
+            return .failure(transform(error))
+        }
+    }
+}
+
+
+// MARK: - Test
+
+// MARK: - Subscribers.Completion
+
+extension Subscribers.Completion {
+    
     var isFinished: Bool {
         switch self {
         case .finished:
@@ -27,18 +44,10 @@ extension Subscribers.Completion {
             return false
         }
     }
-    
-    func mapError<NewFailure>(_ transform: (Failure) -> NewFailure) -> Subscribers.Completion<NewFailure> {
-        switch self {
-        case .finished:
-            return .finished
-        case .failure(let error):
-            return .failure(transform(error))
-        }
-    }
 }
 
 // MARK: - Int
+
 extension Int {
     
     func times(_ body: (Int) -> Void) {
@@ -56,6 +65,7 @@ extension Int {
         }
     }
 }
+
 
 // MARK: - Optional
 extension Optional {

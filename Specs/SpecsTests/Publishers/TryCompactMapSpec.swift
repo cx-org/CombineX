@@ -87,24 +87,35 @@ class TryCompactMapSpec: QuickSpec {
                 expect(got).to(equal(expected))
             }
             
-//            fit("should ") {
-//                class Pub: Publisher {
-//                    typealias Output = Int
-//                    typealias Failure = CustomError
-//
-//                    // /BuildRoot/Library/Caches/com.apple.xbs/Sources/PubSub_Sim/PubSub-120/Combine/Source/FilterProducer.swift
-//                    func receive<S>(subscriber: S) where S : Subscriber, Failure == S.Failure, Output == S.Input {
-//
-//                        subscriber.receive(1)
-//                        subscriber.receive(completion: .finished)
-//                    }
-//                }
-//
-//                let pub = Pub().tryCompactMap { $0 }
-//                let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
-//
-//                pub.subscribe(sub)
-//            }
+            #if !SWIFT_PACKAGE
+            // MARK: 1.4 should throw assertion when upstream send values before sending subscription
+            it("should throw assertion when upstream send values before sending subscription") {
+                let upstream = CustomPublisher<Int, CustomError> { s in
+                    _ = s.receive(1)
+                }
+                
+                let pub = upstream.tryCompactMap { $0 }
+                let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
+                
+                expect {
+                    pub.subscribe(sub)
+                }.to(throwAssertion())
+            }
+            
+            // MARK: 1.5 should throw assertion when upstream send completion before sending subscription
+            it("should throw assertion when upstream send values before sending subscription") {
+                let upstream = CustomPublisher<Int, CustomError> { s in
+                    s.receive(completion: .finished)
+                }
+                
+                let pub = upstream.tryCompactMap { $0 }
+                let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
+
+                expect {
+                    pub.subscribe(sub)
+                }.to(throwAssertion())
+            }
+            #endif
         }
         
         
@@ -176,8 +187,8 @@ class TryCompactMapSpec: QuickSpec {
                         .tryCompactMap { i -> Int in
                             obj.run()
                             return i
-                    }
-                    .subscribe(sub)
+                        }
+                        .subscribe(sub)
                 }
                 
                 subscription?.cancel()
@@ -187,15 +198,6 @@ class TryCompactMapSpec: QuickSpec {
                 _ = subscription
             }
         }
-        
-        // MARK: - Concurrent
-        describe("concurrent") {
-            
-            // MARK: should concurrent
-            it("should concurrent") {
-                
-                
-            }
-        }
+
     }
 }

@@ -305,6 +305,7 @@ extension Publishers.Sequence {
         
         var iterator: PeekableIterator<Elements.Element>
         var state: DemandState = .waiting
+        var buffer = Atom(val: Queue<Output>())
         var sub: S?
         
         init(sequence: Elements, sub: S) {
@@ -374,10 +375,17 @@ extension Publishers.Sequence {
 
                 _ = self.state.sub(.max(1))
                 
+                self.buffer.withLockMutating {
+                    $0.append(value)
+                }
+                
                 let sub = self.sub!
                 self.lock.unlock()
                 
-                let more = sub.receive(value)
+                let first = self.buffer.withLockMutating {
+                    $0.popFirst()!
+                }
+                let more = sub.receive(first)
                 
                 self.lock.lock()
                 guard let new = self.state.add(more)?.new, new > 0 else {

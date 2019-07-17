@@ -39,10 +39,10 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, NewPublisher.Output == S.Input, S.Failure == Publishers.TryCatch<Upstream, NewPublisher>.Failure {
-            let subscription = Inner(pub: self, sub: subscriber)
+            let s = Inner(pub: self, sub: subscriber)
             self.upstream
                 .mapError { $0 }
-                .subscribe(subscription)
+                .receive(subscriber: s)
         }
     }
 

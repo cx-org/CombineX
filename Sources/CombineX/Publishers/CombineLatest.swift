@@ -22,7 +22,7 @@ extension Publisher {
     ///   - transform: A closure that receives the most recent value from each publisher and returns a new value to publish.
     /// - Returns: A publisher that receives and combines elements from this and another publisher.
     public func combineLatest<P, T>(_ other: P, _ transform: @escaping (Self.Output, P.Output) -> T) -> Publishers.Map<Publishers.CombineLatest<Self, P>, T> where P : Publisher, Self.Failure == P.Failure {
-        self.combineLatest(other).map(transform)
+        return self.combineLatest(other).map(transform)
     }
     
 }
