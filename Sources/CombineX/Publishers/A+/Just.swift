@@ -4,7 +4,7 @@ extension Just {
         return .init(predicate(self.output))
     }
     
-    public func tryAllSatisfy(_ predicate: (Output) throws -> Bool) -> Publishers.Once<Bool, Error> {
+    public func tryAllSatisfy(_ predicate: (Output) throws -> Bool) -> Result<Bool, Error>._Publisher {
         return .init(Result {
             try predicate(self.output)
         })
@@ -14,45 +14,31 @@ extension Just {
         return .init([self.output])
     }
     
-    public func compactMap<T>(_ transform: (Output) -> T?) -> Publishers.Optional<T, Just<Output>.Failure> {
+    public func compactMap<T>(_ transform: (Output) -> T?) -> Optional<T>._Publisher {
         return .init(transform(self.output))
-    }
-    
-    public func tryCompactMap<T>(_ transform: (Output) throws -> T?) -> Publishers.Optional<T, Error> {
-        return .init(Result {
-            try transform(self.output)
-        })
     }
     
     public func min(by areInIncreasingOrder: (Output, Output) -> Bool) -> Just<Output> {
         return self
-    }
-    
-    public func tryMin(by areInIncreasingOrder: (Output, Output) throws -> Bool) -> Publishers.Optional<Output, Never> {
-        return .init(self.output)
     }
 
     public func max(by areInIncreasingOrder: (Output, Output) -> Bool) -> Just<Output> {
         return self
     }
     
-    public func tryMax(by areInIncreasingOrder: (Output, Output) throws -> Bool) -> Publishers.Optional<Output, Never> {
-        return .init(self.output)
-    }
-    
-    public func prepend(_ elements: Output...) -> Publishers.Sequence<[Output], Just<Output>.Failure> {
+    public func prepend(_ elements: Output...) -> Publishers.Sequence<[Output], Failure> {
         return .init(sequence: elements + [self.output])
     }
     
-    public func prepend<S>(_ elements: S) -> Publishers.Sequence<[Output], Just<Output>.Failure> where Output == S.Element, S : Sequence {
+    public func prepend<S>(_ elements: S) -> Publishers.Sequence<[Output], Failure> where Output == S.Element, S : Sequence {
         return .init(sequence: elements + [self.output])
     }
     
-    public func append(_ elements: Output...) -> Publishers.Sequence<[Output], Just<Output>.Failure> {
+    public func append(_ elements: Output...) -> Publishers.Sequence<[Output], Failure> {
         return .init(sequence: [self.output] + elements)
     }
     
-    public func append<S>(_ elements: S) -> Publishers.Sequence<[Output], Just<Output>.Failure> where Output == S.Element, S : Sequence {
+    public func append<S>(_ elements: S) -> Publishers.Sequence<[Output], Failure> where Output == S.Element, S : Sequence {
         return .init(sequence: [self.output] + elements)
     }
     
@@ -60,7 +46,7 @@ extension Just {
         return self.allSatisfy(predicate)
     }
     
-    public func tryContains(where predicate: (Output) throws -> Bool) -> Publishers.Once<Bool, Error> {
+    public func tryContains(where predicate: (Output) throws -> Bool) -> Result<Bool, Error>._Publisher {
         return self.tryAllSatisfy(predicate)
     }
     
@@ -68,20 +54,14 @@ extension Just {
         return .init(1)
     }
     
-    public func dropFirst(_ count: Int = 1) -> Publishers.Optional<Output, Just<Output>.Failure> {
+    public func dropFirst(_ count: Int = 1) -> Optional<Output>._Publisher {
         precondition(count >= 0)
         return count == 0 ? self.compactMap { $0 } : .init(nil)
     }
     
-    public func drop(while predicate: (Output) -> Bool) -> Publishers.Optional<Output, Just<Output>.Failure> {
+    public func drop(while predicate: (Output) -> Bool) -> Optional<Output>._Publisher {
         return self.compactMap {
             predicate($0) ? nil : $0
-        }
-    }
-    
-    public func tryDrop(while predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error> {
-        return self.tryCompactMap {
-            try predicate($0) ? nil : $0
         }
     }
     
@@ -89,15 +69,9 @@ extension Just {
         return self
     }
     
-    public func first(where predicate: (Output) -> Bool) -> Publishers.Optional<Output, Just<Output>.Failure> {
+    public func first(where predicate: (Output) -> Bool) -> Optional<Output>._Publisher {
         return self.compactMap {
             predicate($0) ? $0 : nil
-        }
-    }
-    
-    public func tryFirst(where predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error> {
-        return self.tryCompactMap {
-            try predicate($0) ? $0 : nil
         }
     }
     
@@ -105,23 +79,15 @@ extension Just {
         return self.first()
     }
     
-    public func last(where predicate: (Output) -> Bool) -> Publishers.Optional<Output, Just<Output>.Failure> {
+    public func last(where predicate: (Output) -> Bool) -> Optional<Output>._Publisher {
         return self.first(where: predicate)
     }
     
-    public func tryLast(where predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error> {
-        return self.tryFirst(where: predicate)
-    }
-    
-    public func filter(_ isIncluded: (Output) -> Bool) -> Publishers.Optional<Output, Just<Output>.Failure> {
+    public func filter(_ isIncluded: (Output) -> Bool) -> Optional<Output>._Publisher {
         return self.first(where: isIncluded)
     }
     
-    public func tryFilter(_ isIncluded: (Output) throws -> Bool) -> Publishers.Optional<Output, Error> {
-        return self.tryFirst(where: isIncluded)
-    }
-    
-    public func ignoreOutput() -> Publishers.Empty<Output, Just<Output>.Failure> {
+    public func ignoreOutput() -> Empty<Output, Just<Output>.Failure> {
         return .init()
     }
     
@@ -129,58 +95,48 @@ extension Just {
         return .init(transform(self.output))
     }
     
-    public func tryMap<T>(_ transform: (Output) throws -> T) -> Publishers.Once<T, Error> {
+    public func tryMap<T>(_ transform: (Output) throws -> T) -> Result<T, Error>._Publisher {
         return .init(Result {
             try transform(self.output)
         })
     }
     
-    public func mapError<E>(_ transform: (Just<Output>.Failure) -> E) -> Publishers.Once<Output, E> where E : Error {
+    public func mapError<E>(_ transform: (Just<Output>.Failure) -> E) -> Result<Output, E>._Publisher where E : Error {
         return .init(self.output)
     }
     
-    public func reduce<T>(_ initialResult: T, _ nextPartialResult: (T, Output) -> T) -> Publishers.Once<T, Just<Output>.Failure> {
-        return .init(nextPartialResult(initialResult, self.output))
-    }
-    
-    public func tryReduce<T>(_ initialResult: T, _ nextPartialResult: (T, Output) throws -> T) -> Publishers.Once<T, Error> {
-        return .init(Result {
-            try nextPartialResult(initialResult, self.output)
-        })
-    }
-    
-    public func setFailureType<E>(to failureType: E.Type) -> Publishers.Once<Output, E> where E : Error {
-        return .init(self.output)
-    }
-    
-    public func output(at index: Int) -> Publishers.Optional<Output, Just<Output>.Failure> {
+    public func output(at index: Int) -> Optional<Output>._Publisher {
         return index == 0 ? .init(self.output) : .init(nil)
     }
     
-    public func output<R>(in range: R) -> Publishers.Optional<Output, Just<Output>.Failure> where R : RangeExpression, R.Bound == Int {
+    public func output<R>(in range: R) -> Optional<Output>._Publisher where R : RangeExpression, R.Bound == Int {
         return range.contains(0) ? .init(self.output) : .init(nil)
     }
     
-    public func prefix(_ maxLength: Int) -> Publishers.Optional<Output, Just<Output>.Failure> {
+    public func prefix(_ maxLength: Int) -> Optional<Output>._Publisher {
         precondition(maxLength > 0)
         return .init(self.output)
     }
     
-    public func prefix(while predicate: (Output) -> Bool) -> Publishers.Optional<Output, Just<Output>.Failure> {
+    public func prefix(while predicate: (Output) -> Bool) -> Optional<Output>._Publisher {
         return predicate(self.output) ? .init(self.output) : .init(nil)
     }
     
-    public func tryPrefix(while predicate: (Output) throws -> Bool) -> Publishers.Optional<Output, Error> {
-        return self.tryCompactMap {
-            try predicate($0) ? $0 : nil
-        }
+    public func reduce<T>(_ initialResult: T, _ nextPartialResult: (T, Output) -> T) -> Result<T, Failure>._Publisher {
+        return .init(nextPartialResult(initialResult, self.output))
+    }
+    
+    public func tryReduce<T>(_ initialResult: T, _ nextPartialResult: (T, Output) throws -> T) -> Result<T, Error>._Publisher {
+        return .init(Result {
+            try nextPartialResult(initialResult, self.output)
+        })
     }
     
     public func removeDuplicates(by predicate: (Output, Output) -> Bool) -> Just<Output> {
         return self
     }
     
-    public func tryRemoveDuplicates(by predicate: (Output, Output) throws -> Bool) -> Publishers.Once<Output, Error> {
+    public func tryRemoveDuplicates(by predicate: (Output, Output) throws -> Bool) -> Result<Output, Error>._Publisher {
         return .init(self.output)
     }
     
@@ -196,18 +152,18 @@ extension Just {
         return self
     }
     
-    public func retry() -> Just<Output> {
-        return self
-    }
-    
-    public func scan<T>(_ initialResult: T, _ nextPartialResult: (T, Output) -> T) -> Publishers.Once<T, Just<Output>.Failure> {
+    public func scan<T>(_ initialResult: T, _ nextPartialResult: (T, Output) -> T) -> Result<T, Just<Output>.Failure>._Publisher {
         return .init(nextPartialResult(initialResult, self.output))
     }
     
-    public func tryScan<T>(_ initialResult: T, _ nextPartialResult: (T, Output) throws -> T) -> Publishers.Once<T, Error> {
+    public func tryScan<T>(_ initialResult: T, _ nextPartialResult: (T, Output) throws -> T) -> Result<T, Error>._Publisher {
         return .init(Result {
             try nextPartialResult(initialResult, self.output)
         })
+    }
+    
+    public func setFailureType<E>(to failureType: E.Type) -> Result<Output, E>._Publisher where E : Error {
+        return .init(self.output)
     }
 }
 
@@ -253,7 +209,6 @@ extension Just where Output : Equatable {
 /// You can use a `Just` publisher to start a chain of publishers. A `Just` publisher is also useful when replacing a value with `Catch`.
 ///
 /// In contrast with `Publishers.Once`, a `Just` publisher cannot fail with an error.
-/// In contrast with `Publishers.Optional`, a `Just` publisher always produces a value.
 public struct Just<Output> : Publisher {
     
     /// The kind of errors this publisher might publish.
@@ -278,6 +233,70 @@ public struct Just<Output> : Publisher {
     ///     - subscriber: The subscriber to attach to this `Publisher`.
     ///                   once attached it can begin to receive values.
     public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, S.Failure == Just<Output>.Failure {
-        Publishers.Once(self.output).receive(subscriber: subscriber)
+        let s = Inner(pub: self, sub: subscriber)
+        subscriber.receive(subscription: s)
+    }
+}
+
+extension Just {
+    
+    private final class Inner<S>:
+        Subscription,
+        CustomStringConvertible,
+        CustomDebugStringConvertible
+    where
+        S : Subscriber,
+        S.Input == Output,
+        S.Failure == Failure
+    {
+        
+        typealias Pub = Just<Output>
+        typealias Sub = S
+        
+        let lock = Lock()
+        let output: Output
+        
+        var sub: Sub?
+        var state = DemandState.waiting
+        
+        init(pub: Pub, sub: Sub) {
+            self.output = pub.output
+            self.sub = sub
+        }
+        
+        func request(_ demand: Subscribers.Demand) {
+            precondition(demand > 0)
+
+            self.lock.lock()
+            guard self.state.isWaiting else {
+                self.lock.unlock()
+                return
+            }
+            
+            self.state = .completed
+            
+            let sub = self.sub!
+            self.sub = nil
+            
+            self.lock.unlock()
+            
+            _ = sub.receive(output)
+            sub.receive(completion: .finished)
+        }
+        
+        func cancel() {
+            self.lock.withLock {
+                self.state = .completed
+                self.sub = nil
+            }
+        }
+        
+        var description: String {
+            return "Just"
+        }
+        
+        var debugDescription: String {
+            return "Just"
+        }
     }
 }

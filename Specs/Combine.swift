@@ -14,6 +14,42 @@ extension Publisher where Self.Output : Encodable {
     public func encode<Coder>(encoder: Coder) -> Publishers.Encode<Self, Coder> where Coder : TopLevelEncoder
 }
 
+/// Adds a `Publisher` to a property.
+///
+/// Properties annotated with `@Published` contain both the stored value and a publisher which sends any new values after the property value has been sent. New subscribers will receive the current value of the property first.
+@propertyWrapper public struct Published<Value> {
+
+    /// Initialize the storage of the Published property as well as the corresponding `Publisher`.
+    public init(initialValue: Value)
+
+    /// The current value of the property.
+    public var wrappedValue: Value
+
+    public var value: Value
+
+    public class Publisher : Publisher {
+
+        /// The kind of values published by this publisher.
+        public typealias Output = Value
+
+        /// The kind of errors this publisher might publish.
+        ///
+        /// Use `Never` if this `Publisher` does not publish errors.
+        public typealias Failure = Never
+
+        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
+        ///
+        /// - SeeAlso: `subscribe(_:)`
+        /// - Parameters:
+        ///     - subscriber: The subscriber to attach to this `Publisher`.
+        ///                   once attached it can begin to receive values.
+        public func receive<S>(subscriber: S) where Value == S.Input, S : Subscriber, S.Failure == Published<Value>.Publisher.Failure
+    }
+
+    public var wrapperValue: Published<Value>.Publisher { mutating get }
+
+    public var delegateValue: Published<Value>.Publisher { mutating get }
+}
 
 
 extension Publisher {
@@ -80,7 +116,6 @@ extension Publisher {
     ///   - interval: The amount of time to delay.
     ///   - tolerance: The allowed tolerance in firing delayed events.
     ///   - scheduler: The scheduler to deliver the delayed events.
-    ///   - options: Options relevant to the scheduler’s behavior.
     /// - Returns: A publisher that delays delivery of elements and completion to the downstream receiver.
     public func delay<S>(for interval: S.SchedulerTimeType.Stride, tolerance: S.SchedulerTimeType.Stride? = nil, scheduler: S, options: S.SchedulerOptions? = nil) -> Publishers.Delay<Self, S> where S : Scheduler
 }
@@ -318,6 +353,8 @@ extension Publishers {
 
         /// The scheduler to deliver the delayed events.
         public let scheduler: Context
+        
+        public let options: Context.SchedulerOptions?
         
         public init(upstream: Upstream, interval: Context.SchedulerTimeType.Stride, tolerance: Context.SchedulerTimeType.Stride, scheduler: Context)
 

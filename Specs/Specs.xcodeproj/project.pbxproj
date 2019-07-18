@@ -40,6 +40,10 @@
 		623227BD22C0CC73006D907B /* CustomSubject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 623227BB22C0CC73006D907B /* CustomSubject.swift */; };
 		623227C322C0D077006D907B /* Atom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 623227C222C0D077006D907B /* Atom.swift */; };
 		623227C422C0D077006D907B /* Atom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 623227C222C0D077006D907B /* Atom.swift */; };
+		6235D6CA22E00A760069D59F /* Optional.Publisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6235D6C922E00A760069D59F /* Optional.Publisher.swift */; };
+		6235D6CC22E00DF30069D59F /* Result.Publisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6235D6CB22E00DF30069D59F /* Result.Publisher.swift */; };
+		6240386A22E005B700C25099 /* SetFailureTypeSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240386922E005B700C25099 /* SetFailureTypeSpec.swift */; };
+		6240386B22E005B700C25099 /* SetFailureTypeSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240386922E005B700C25099 /* SetFailureTypeSpec.swift */; };
 		62404FD422DD7F4800291766 /* CustomPublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62404FD322DD7F4800291766 /* CustomPublisher.swift */; };
 		62404FD522DD7F4800291766 /* CustomPublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62404FD322DD7F4800291766 /* CustomPublisher.swift */; };
 		624050ED22DDBAB000291766 /* Publisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240507622DDBAB000291766 /* Publisher.swift */; };
@@ -67,7 +71,6 @@
 		6240510322DDBAB000291766 /* PassthroughSubject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240508F22DDBAB000291766 /* PassthroughSubject.swift */; };
 		6240510422DDBAB000291766 /* CurrentValueSubject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240509022DDBAB000291766 /* CurrentValueSubject.swift */; };
 		6240510522DDBAB000291766 /* AnySubscriber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240509122DDBAB000291766 /* AnySubscriber.swift */; };
-		6240510622DDBAB000291766 /* Published.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240509222DDBAB000291766 /* Published.swift */; };
 		6240510722DDBAB000291766 /* SchedulerTimeIntervalConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240509322DDBAB000291766 /* SchedulerTimeIntervalConvertible.swift */; };
 		6240510822DDBAB000291766 /* Print.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240509522DDBAB000291766 /* Print.swift */; };
 		6240510922DDBAB000291766 /* HandleEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240509622DDBAB000291766 /* HandleEvents.swift */; };
@@ -94,7 +97,6 @@
 		6240511E22DDBAB000291766 /* MakeConnectable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050AB22DDBAB000291766 /* MakeConnectable.swift */; };
 		6240511F22DDBAB000291766 /* TryAllSatisfy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050AC22DDBAB000291766 /* TryAllSatisfy.swift */; };
 		6240512022DDBAB000291766 /* Merge+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050AD22DDBAB000291766 /* Merge+.swift */; };
-		6240512122DDBAB000291766 /* Once.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050AF22DDBAB000291766 /* Once.swift */; };
 		6240512222DDBAB000291766 /* TryLastWhere.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050B022DDBAB000291766 /* TryLastWhere.swift */; };
 		6240512322DDBAB000291766 /* PrefixWhile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050B122DDBAB000291766 /* PrefixWhile.swift */; };
 		6240512422DDBAB000291766 /* Contains.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050B222DDBAB000291766 /* Contains.swift */; };
@@ -122,7 +124,6 @@
 		6240513A22DDBAB000291766 /* Collect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050C822DDBAB000291766 /* Collect.swift */; };
 		6240513B22DDBAB000291766 /* Drop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050C922DDBAB000291766 /* Drop.swift */; };
 		6240513C22DDBAB000291766 /* Just.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050CA22DDBAB000291766 /* Just.swift */; };
-		6240513D22DDBAB000291766 /* Optional.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050CB22DDBAB000291766 /* Optional.swift */; };
 		6240513E22DDBAB000291766 /* RemoveDuplicates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050CC22DDBAB000291766 /* RemoveDuplicates.swift */; };
 		6240513F22DDBAB100291766 /* Scan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050CD22DDBAB000291766 /* Scan.swift */; };
 		6240514022DDBAB100291766 /* Catch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050CE22DDBAB000291766 /* Catch.swift */; };
@@ -154,6 +155,12 @@
 		6240515A22DDBAB100291766 /* Completion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050E922DDBAB000291766 /* Completion.swift */; };
 		6240515B22DDBAB100291766 /* AnySubject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050EA22DDBAB000291766 /* AnySubject.swift */; };
 		6240515C22DDBAB100291766 /* ImmediateScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624050EC22DDBAB000291766 /* ImmediateScheduler.swift */; };
+		625EC7BE22E0201D00585377 /* __Publisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625EC7BD22E0201D00585377 /* __Publisher.swift */; };
+		625EC7C022E0355600585377 /* MapKeyPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625EC7BF22E0355600585377 /* MapKeyPath.swift */; };
+		625EC7C622E047A900585377 /* JustSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625EC7C522E047A900585377 /* JustSpec.swift */; };
+		625EC7C722E047A900585377 /* JustSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625EC7C522E047A900585377 /* JustSpec.swift */; };
+		625EC7C922E04C2100585377 /* ResultSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625EC7C822E04C2100585377 /* ResultSpec.swift */; };
+		625EC7CA22E04C2100585377 /* ResultSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625EC7C822E04C2100585377 /* ResultSpec.swift */; };
 		625EC8B222B8AD3B006DB4D5 /* CurrentValueSubjectSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625EC8B122B8AD3B006DB4D5 /* CurrentValueSubjectSpec.swift */; };
 		625EC8B322B8AD3B006DB4D5 /* CurrentValueSubjectSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625EC8B122B8AD3B006DB4D5 /* CurrentValueSubjectSpec.swift */; };
 		625EC8B922B8B32A006DB4D5 /* DemandSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625EC8B822B8B32A006DB4D5 /* DemandSpec.swift */; };
@@ -274,6 +281,10 @@
 		6229E66722B7385A002CBEC2 /* PassthroughSubjectSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassthroughSubjectSpec.swift; sourceTree = "<group>"; };
 		623227BB22C0CC73006D907B /* CustomSubject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSubject.swift; sourceTree = "<group>"; };
 		623227C222C0D077006D907B /* Atom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Atom.swift; sourceTree = "<group>"; };
+		6235D6C822E007D70069D59F /* Combine-4.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Combine-4.swift"; sourceTree = "<group>"; };
+		6235D6C922E00A760069D59F /* Optional.Publisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Optional.Publisher.swift; sourceTree = "<group>"; };
+		6235D6CB22E00DF30069D59F /* Result.Publisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Result.Publisher.swift; sourceTree = "<group>"; };
+		6240386922E005B700C25099 /* SetFailureTypeSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetFailureTypeSpec.swift; sourceTree = "<group>"; };
 		62404FD322DD7F4800291766 /* CustomPublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPublisher.swift; sourceTree = "<group>"; };
 		6240507622DDBAB000291766 /* Publisher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Publisher.swift; sourceTree = "<group>"; };
 		6240507722DDBAB000291766 /* Coding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Coding.swift; sourceTree = "<group>"; };
@@ -300,7 +311,6 @@
 		6240508F22DDBAB000291766 /* PassthroughSubject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PassthroughSubject.swift; sourceTree = "<group>"; };
 		6240509022DDBAB000291766 /* CurrentValueSubject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentValueSubject.swift; sourceTree = "<group>"; };
 		6240509122DDBAB000291766 /* AnySubscriber.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnySubscriber.swift; sourceTree = "<group>"; };
-		6240509222DDBAB000291766 /* Published.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Published.swift; sourceTree = "<group>"; };
 		6240509322DDBAB000291766 /* SchedulerTimeIntervalConvertible.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SchedulerTimeIntervalConvertible.swift; sourceTree = "<group>"; };
 		6240509522DDBAB000291766 /* Print.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Print.swift; sourceTree = "<group>"; };
 		6240509622DDBAB000291766 /* HandleEvents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HandleEvents.swift; sourceTree = "<group>"; };
@@ -327,7 +337,6 @@
 		624050AB22DDBAB000291766 /* MakeConnectable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MakeConnectable.swift; sourceTree = "<group>"; };
 		624050AC22DDBAB000291766 /* TryAllSatisfy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TryAllSatisfy.swift; sourceTree = "<group>"; };
 		624050AD22DDBAB000291766 /* Merge+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Merge+.swift"; sourceTree = "<group>"; };
-		624050AF22DDBAB000291766 /* Once.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Once.swift; sourceTree = "<group>"; };
 		624050B022DDBAB000291766 /* TryLastWhere.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TryLastWhere.swift; sourceTree = "<group>"; };
 		624050B122DDBAB000291766 /* PrefixWhile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrefixWhile.swift; sourceTree = "<group>"; };
 		624050B222DDBAB000291766 /* Contains.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Contains.swift; sourceTree = "<group>"; };
@@ -355,7 +364,6 @@
 		624050C822DDBAB000291766 /* Collect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Collect.swift; sourceTree = "<group>"; };
 		624050C922DDBAB000291766 /* Drop.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Drop.swift; sourceTree = "<group>"; };
 		624050CA22DDBAB000291766 /* Just.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Just.swift; sourceTree = "<group>"; };
-		624050CB22DDBAB000291766 /* Optional.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Optional.swift; sourceTree = "<group>"; };
 		624050CC22DDBAB000291766 /* RemoveDuplicates.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoveDuplicates.swift; sourceTree = "<group>"; };
 		624050CD22DDBAB000291766 /* Scan.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Scan.swift; sourceTree = "<group>"; };
 		624050CE22DDBAB000291766 /* Catch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Catch.swift; sourceTree = "<group>"; };
@@ -387,6 +395,10 @@
 		624050E922DDBAB000291766 /* Completion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Completion.swift; sourceTree = "<group>"; };
 		624050EA22DDBAB000291766 /* AnySubject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnySubject.swift; sourceTree = "<group>"; };
 		624050EC22DDBAB000291766 /* ImmediateScheduler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImmediateScheduler.swift; sourceTree = "<group>"; };
+		625EC7BD22E0201D00585377 /* __Publisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = __Publisher.swift; sourceTree = "<group>"; };
+		625EC7BF22E0355600585377 /* MapKeyPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapKeyPath.swift; sourceTree = "<group>"; };
+		625EC7C522E047A900585377 /* JustSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JustSpec.swift; sourceTree = "<group>"; };
+		625EC7C822E04C2100585377 /* ResultSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultSpec.swift; sourceTree = "<group>"; };
 		625EC8B122B8AD3B006DB4D5 /* CurrentValueSubjectSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentValueSubjectSpec.swift; sourceTree = "<group>"; };
 		625EC8B822B8B32A006DB4D5 /* DemandSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemandSpec.swift; sourceTree = "<group>"; };
 		625EC8C322B8D8F5006DB4D5 /* SequenceSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SequenceSpec.swift; sourceTree = "<group>"; };
@@ -521,7 +533,6 @@
 				624050E922DDBAB000291766 /* Completion.swift */,
 				6240507A22DDBAB000291766 /* ConnectablePublisher.swift */,
 				6240507922DDBAB000291766 /* CustomCombineIdentifierConvertible.swift */,
-				6240509222DDBAB000291766 /* Published.swift */,
 				6240507622DDBAB000291766 /* Publisher.swift */,
 				624050E222DDBAB000291766 /* Scheduler.swift */,
 				6240509322DDBAB000291766 /* SchedulerTimeIntervalConvertible.swift */,
@@ -620,6 +631,8 @@
 		624050AE22DDBAB000291766 /* A+ */ = {
 			isa = PBXGroup;
 			children = (
+				6235D6C922E00A760069D59F /* Optional.Publisher.swift */,
+				625EC7BF22E0355600585377 /* MapKeyPath.swift */,
 				624050AC22DDBAB000291766 /* TryAllSatisfy.swift */,
 				624050D422DDBAB000291766 /* ReplaceError.swift */,
 				624050D822DDBAB000291766 /* ReplaceEmpty.swift */,
@@ -630,7 +643,6 @@
 				624050DE22DDBAB000291766 /* MapError.swift */,
 				624050CE22DDBAB000291766 /* Catch.swift */,
 				624050D322DDBAB000291766 /* TryCompactMap.swift */,
-				624050AF22DDBAB000291766 /* Once.swift */,
 				624050B022DDBAB000291766 /* TryLastWhere.swift */,
 				624050B122DDBAB000291766 /* PrefixWhile.swift */,
 				624050B222DDBAB000291766 /* Contains.swift */,
@@ -658,9 +670,10 @@
 				624050C822DDBAB000291766 /* Collect.swift */,
 				624050C922DDBAB000291766 /* Drop.swift */,
 				624050CA22DDBAB000291766 /* Just.swift */,
-				624050CB22DDBAB000291766 /* Optional.swift */,
 				624050CC22DDBAB000291766 /* RemoveDuplicates.swift */,
 				624050CD22DDBAB000291766 /* Scan.swift */,
+				6235D6CB22E00DF30069D59F /* Result.Publisher.swift */,
+				625EC7BD22E0201D00585377 /* __Publisher.swift */,
 			);
 			path = "A+";
 			sourceTree = "<group>";
@@ -777,6 +790,9 @@
 				664EF34622D6227B00F6CA2E /* DropUntilOutputSpec.swift */,
 				664EF34B22D62D4100F6CA2E /* PrefixUntilOutputSpec.swift */,
 				661DA49B22DF79670078E032 /* TryAllSatisfySpec.swift */,
+				6240386922E005B700C25099 /* SetFailureTypeSpec.swift */,
+				625EC7C522E047A900585377 /* JustSpec.swift */,
+				625EC7C822E04C2100585377 /* ResultSpec.swift */,
 			);
 			path = Publishers;
 			sourceTree = "<group>";
@@ -863,6 +879,7 @@
 				66DD4C9822D4DB2E008A1F60 /* Combine-2.swift */,
 				66DD4C9922D4DB2E008A1F60 /* Combine-3.swift */,
 				66DD4C9A22D4DB2E008A1F60 /* Combine.swift */,
+				6235D6C822E007D70069D59F /* Combine-4.swift */,
 			);
 			name = API;
 			sourceTree = "<group>";
@@ -1182,7 +1199,6 @@
 				6240511B22DDBAB000291766 /* IgnoreOutput.swift in Sources */,
 				6240515B22DDBAB100291766 /* AnySubject.swift in Sources */,
 				624050FE22DDBAB000291766 /* Subscriptions.swift in Sources */,
-				6240512122DDBAB000291766 /* Once.swift in Sources */,
 				6240512522DDBAB000291766 /* AssertNoFailure.swift in Sources */,
 				6240514022DDBAB100291766 /* Catch.swift in Sources */,
 				6240512622DDBAB000291766 /* Publishers.swift in Sources */,
@@ -1193,12 +1209,12 @@
 				6240515C22DDBAB100291766 /* ImmediateScheduler.swift in Sources */,
 				6240511922DDBAB000291766 /* Sequence.swift in Sources */,
 				6240513622DDBAB000291766 /* DropWhile.swift in Sources */,
-				6240510622DDBAB000291766 /* Published.swift in Sources */,
 				6240512A22DDBAB000291766 /* TryMap.swift in Sources */,
 				6240512722DDBAB000291766 /* AllSatisfy.swift in Sources */,
 				6240514622DDBAB100291766 /* ReplaceError.swift in Sources */,
 				6240510122DDBAB000291766 /* CombineIdentifier.swift in Sources */,
 				6240514422DDBAB100291766 /* TryDropWhile.swift in Sources */,
+				625EC7BE22E0201D00585377 /* __Publisher.swift in Sources */,
 				624050FD22DDBAB000291766 /* empty.swift in Sources */,
 				6240511322DDBAB000291766 /* Empty.swift in Sources */,
 				6240513422DDBAB000291766 /* ContainsWhere.swift in Sources */,
@@ -1258,11 +1274,12 @@
 				6240510322DDBAB000291766 /* PassthroughSubject.swift in Sources */,
 				624050FB22DDBAB000291766 /* RelayState.swift in Sources */,
 				6240511A22DDBAB000291766 /* BreakPoint.swift in Sources */,
-				6240513D22DDBAB000291766 /* Optional.swift in Sources */,
 				6240513F22DDBAB100291766 /* Scan.swift in Sources */,
 				624050F522DDBAB000291766 /* OptionalProtocol.swift in Sources */,
+				6235D6CA22E00A760069D59F /* Optional.Publisher.swift in Sources */,
 				6240512822DDBAB000291766 /* First.swift in Sources */,
 				6240515522DDBAB100291766 /* AnyCancellable.swift in Sources */,
+				625EC7C022E0355600585377 /* MapKeyPath.swift in Sources */,
 				6240514322DDBAB100291766 /* TryRemoveDuplicates.swift in Sources */,
 				6240510A22DDBAB000291766 /* Deferred.swift in Sources */,
 				624050FA22DDBAB000291766 /* PeekableIterator.swift in Sources */,
@@ -1292,6 +1309,7 @@
 				6240513E22DDBAB000291766 /* RemoveDuplicates.swift in Sources */,
 				6240512222DDBAB000291766 /* TryLastWhere.swift in Sources */,
 				624050F222DDBAB000291766 /* Global.swift in Sources */,
+				6235D6CC22E00DF30069D59F /* Result.Publisher.swift in Sources */,
 				6240512B22DDBAB000291766 /* CompactMap.swift in Sources */,
 				624050F822DDBAB000291766 /* Const.swift in Sources */,
 			);
@@ -1321,7 +1339,9 @@
 				6229E64D22B720E1002CBEC2 /* AnyCancellableSpec.swift in Sources */,
 				6213188222C9A86000B2FE41 /* ConcatenateSpec.swift in Sources */,
 				6229E65A22B729F1002CBEC2 /* CustomSubscription.swift in Sources */,
+				6240386A22E005B700C25099 /* SetFailureTypeSpec.swift in Sources */,
 				62A73FC022C5FAA0007C962C /* ImmediateSchedulerSpec.swift in Sources */,
+				625EC7C622E047A900585377 /* JustSpec.swift in Sources */,
 				6684B01622D38B9E008639D1 /* ReplaceErrorSpec.swift in Sources */,
 				62125AD022BB3081005B57AE /* Typealias.swift in Sources */,
 				6631302A22B691C80081D8F1 /* Extensions.swift in Sources */,
@@ -1340,6 +1360,7 @@
 				6219B14422C465D3002EC61B /* TryDropWhileSpec.swift in Sources */,
 				6229E66022B72F04002CBEC2 /* DeinitObserver.swift in Sources */,
 				6279183A22B77EAC00203B96 /* EmptySpec.swift in Sources */,
+				625EC7C922E04C2100585377 /* ResultSpec.swift in Sources */,
 				620C08F722D5C3D400DFA036 /* BufferSpec.swift in Sources */,
 				628BC8D022D33BC2000EF5DB /* AssertNoFailureSpec.swift in Sources */,
 				66CAF61622BF271500E8FAAC /* MergeSpec.swift in Sources */,
@@ -1385,7 +1406,9 @@
 				6229E64E22B720E1002CBEC2 /* AnyCancellableSpec.swift in Sources */,
 				6213188322C9A86000B2FE41 /* ConcatenateSpec.swift in Sources */,
 				6229E65B22B729F1002CBEC2 /* CustomSubscription.swift in Sources */,
+				6240386B22E005B700C25099 /* SetFailureTypeSpec.swift in Sources */,
 				62A73FC122C5FAA0007C962C /* ImmediateSchedulerSpec.swift in Sources */,
+				625EC7C722E047A900585377 /* JustSpec.swift in Sources */,
 				6684B01722D38B9E008639D1 /* ReplaceErrorSpec.swift in Sources */,
 				62125AD122BB3081005B57AE /* Typealias.swift in Sources */,
 				6631305322B693940081D8F1 /* Extensions.swift in Sources */,
@@ -1404,6 +1427,7 @@
 				6219B14522C465D3002EC61B /* TryDropWhileSpec.swift in Sources */,
 				6229E66122B72F04002CBEC2 /* DeinitObserver.swift in Sources */,
 				6279183B22B77EAC00203B96 /* EmptySpec.swift in Sources */,
+				625EC7CA22E04C2100585377 /* ResultSpec.swift in Sources */,
 				620C08F822D5C3D400DFA036 /* BufferSpec.swift in Sources */,
 				628BC8D122D33BC2000EF5DB /* AssertNoFailureSpec.swift in Sources */,
 				66CAF61722BF271500E8FAAC /* MergeSpec.swift in Sources */,
@@ -1597,7 +1621,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.v2ambition.Specs;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG CombineX";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

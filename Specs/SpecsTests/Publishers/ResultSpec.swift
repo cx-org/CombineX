@@ -11,12 +11,12 @@ import Specs
 #endif
 
 #if USE_COMBINE
-typealias OptionalPublisher<Wrapped> = Optional<Wrapped>.Publisher
+typealias ResultPublisher<Success, Failure: Error> = Result<Success, Failure>.Publisher
 #else
-typealias OptionalPublisher<Wrapped> = Optional<Wrapped>._Publisher
+typealias ResultPublisher<Success, Failure: Error> = Result<Success, Failure>._Publisher
 #endif
 
-class OptionalSpec: QuickSpec {
+class ResultSpec: QuickSpec {
     
     override func spec() {
         
@@ -25,38 +25,38 @@ class OptionalSpec: QuickSpec {
             
             // MARK: 1.1 should send a value then send finished
             it("should send value then send finished") {
-                let pub = OptionalPublisher<Int>(1)
+                let pub = ResultPublisher<Int, CustomError>(1)
                 
-                let sub = makeCustomSubscriber(Int.self, Never.self, .unlimited)
+                let sub = makeCustomSubscriber(Int.self, CustomError.self, .unlimited)
                 pub.subscribe(sub)
                 
                 expect(sub.events).to(equal([.value(1), .completion(.finished)]))
             }
             
-            // MARK: 1.2 should send finished even no demand
-            it("should send finished") {
-                let pub = OptionalPublisher<Int>(nil)
-             
-                let sub = makeCustomSubscriber(Int.self, Never.self, .none)
+            // MARK: 1.2 should send failure even no demand
+            it("should send failure") {
+                let pub = ResultPublisher<Int, CustomError>(.e0)
+                
+                let sub = makeCustomSubscriber(Int.self, CustomError.self, .none)
                 pub.subscribe(sub)
                 
-                expect(sub.events).to(equal([.completion(.finished)]))
+                expect(sub.events).to(equal([.completion(.failure(.e0))]))
             }
             
             #if !SWIFT_PACKAGE
             // MARK: 1.3 should throw assertion when none demand is requested
             it("should throw assertion when less than one demand is requested") {
-                let pub = OptionalPublisher<Int>(1)
-                let sub = makeCustomSubscriber(Int.self, Never.self, .none)
+                let pub = ResultPublisher<Int, CustomError>(1)
+                let sub = makeCustomSubscriber(Int.self, CustomError.self, .none)
                 expect {
                     pub.subscribe(sub)
                 }.to(throwAssertion())
             }
             
             // MARK: 1.4 should not throw assertion when none demand is requested if is nil
-            it("should not throw assertion when none demand is requested if is nil") {
-                let pub = OptionalPublisher<Int>(nil)
-                let sub = makeCustomSubscriber(Int.self, Never.self, .none)
+            it("should not throw assertion when none demand is requested if is failure") {
+                let pub = ResultPublisher<Int, CustomError>(.e0)
+                let sub = makeCustomSubscriber(Int.self, CustomError.self, .none)
                 expect {
                     pub.subscribe(sub)
                 }.toNot(throwAssertion())

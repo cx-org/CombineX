@@ -5,6 +5,12 @@ extension Publisher {
     }
 }
 
+extension Publishers.PrefetchStrategy : Equatable {
+}
+
+extension Publishers.PrefetchStrategy : Hashable {
+}
+
 extension Publishers {
     
     public enum PrefetchStrategy {

@@ -5,7 +5,7 @@ extension Publisher {
     /// The following example replaces any error from the upstream publisher and replaces the upstream with a `Just` publisher. This continues the stream by publishing a single value and completing normally.
     /// ```
     /// enum SimpleError: Error { case error }
-    /// let errorPublisher = (0..<10).publisher().tryMap { v -> Int in
+    /// let errorPublisher = (0..<10).publisher.tryMap { v -> Int in
     ///     if v < 5 {
     ///         return v
     ///     } else {

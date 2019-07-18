@@ -18,7 +18,7 @@ class RepleaceErrorSpec: QuickSpec {
             
             // MARK: 1.1 should send default value if error
             it("should send default value if error") {
-                let pub = Publishers.Fail<Int, CustomError>(error: .e0).replaceError(with: 1)
+                let pub = Fail<Int, CustomError>(error: .e0).replaceError(with: 1)
                 let sub = makeCustomSubscriber(Int.self, Never.self, .unlimited)
                 pub.subscribe(sub)
                 expect(sub.events).to(equal([.value(1), .completion(.finished)]))
@@ -27,7 +27,7 @@ class RepleaceErrorSpec: QuickSpec {
             #if !SWIFT_PACAKGE
             // MARK: 1.2 should crash when the demand is 0
             it("should crash when the demand is 0") {
-                let pub = Publishers.Fail<Int, CustomError>(error: .e0).replaceError(with: 1)
+                let pub = Fail<Int, CustomError>(error: .e0).replaceError(with: 1)
                 let sub = makeCustomSubscriber(Int.self, Never.self, .max(0))
                 expect {
                     pub.subscribe(sub)

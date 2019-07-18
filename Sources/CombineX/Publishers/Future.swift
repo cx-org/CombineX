@@ -1,3 +1,4 @@
+/// A publisher that eventually produces one value and then finishes or fails.
 final public class Future<Output, Failure> : Publisher where Failure : Error {
     
     public typealias Promise = (Result<Output, Failure>) -> Void
@@ -16,7 +17,10 @@ final public class Future<Output, Failure> : Publisher where Failure : Error {
     ///                   once attached it can begin to receive values.
     final public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
         if let output = self.subject.value {
-            Publishers.Once<Output, Failure>(output).receive(subscriber: subscriber)
+            Result<Output, Failure>
+                .success(output)
+                .publisher
+                .receive(subscriber: subscriber)
         } else {
             self.subject
                 .compactMap { $0 }

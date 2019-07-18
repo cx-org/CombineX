@@ -58,7 +58,7 @@ class TryReduceSpec: QuickSpec {
             #if !SWIFT_PACAKGE
             // MARK: 1.3 should throw assertion when the demand is 0
             it("should throw assertion when the demand is 0") {
-                let pub = Publishers.Empty<Int, CustomError>().tryReduce(0) { $0 + $1 }
+                let pub = Empty<Int, CustomError>().tryReduce(0) { $0 + $1 }
                 let sub = makeCustomSubscriber(Int.self, Error.self, .max(0))
                 
                 expect {

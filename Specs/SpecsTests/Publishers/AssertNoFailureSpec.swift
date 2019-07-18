@@ -19,7 +19,7 @@ class AssertNoFailureSpec: QuickSpec {
             #if !SWIFT_PACKAGE
             it("should throw assertion if there is an error") {
                 
-                let pub = Publishers.Fail<Int, CustomError>(error: .e0)
+                let pub = Fail<Int, CustomError>(error: .e0)
                     .assertNoFailure()
                 let sub = makeCustomSubscriber(Int.self, Never.self, .none)
                 

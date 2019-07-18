@@ -3,7 +3,7 @@ extension Publisher {
     /// Transforms elements from the upstream publisher by providing the current element to a closure along with the last value returned by the closure.
     ///
     ///     let pub = (0...5)
-    ///         .publisher()
+    ///         .publisher
     ///         .scan(0, { return $0 + $1 })
     ///         .sink(receiveValue: { print ("\($0)", terminator: " ") })
     ///      // Prints "0 1 3 6 10 15 ".

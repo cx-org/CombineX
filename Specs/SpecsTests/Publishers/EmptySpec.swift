@@ -18,7 +18,7 @@ class EmptySpec: QuickSpec {
             
             // MARK: 1.1 should send completion immediately
             it("should send completion immediately") {
-                let empty = Publishers.Empty<Int, Never>()
+                let empty = Empty<Int, Never>()
                 let sub = makeCustomSubscriber(Int.self, Never.self, .unlimited)
                 empty.subscribe(sub)
                 
@@ -27,7 +27,7 @@ class EmptySpec: QuickSpec {
             
             // MARK: 1.2 should send nothing
             it("should send nothing") {
-                let empty = Publishers.Empty<Int, Never>(completeImmediately: false)
+                let empty = Empty<Int, Never>(completeImmediately: false)
                 let sub = makeCustomSubscriber(Int.self, Never.self, .unlimited)
                 empty.subscribe(sub)
                 expect(sub.events).to(equal([]))
@@ -40,9 +40,9 @@ class EmptySpec: QuickSpec {
             // MARK: 2.1 should equal if 'completeImmediately' are the same
             it("should equal if 'completeImmediately' are the same") {
                 
-                let e1 = Publishers.Empty<Int, Never>()
-                let e2 = Publishers.Empty<Int, Never>()
-                let e3 = Publishers.Empty<Int, Never>(completeImmediately: false)
+                let e1 = Empty<Int, Never>()
+                let e2 = Empty<Int, Never>()
+                let e3 = Empty<Int, Never>(completeImmediately: false)
                 
                 expect(e1).to(equal(e2))
                 expect(e1).toNot(equal(e3))

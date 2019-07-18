@@ -18,7 +18,7 @@ class RepleaceEmptySpec: QuickSpec {
             
             // MARK: 1.1 should send default value if empty
             it("should send default value if empty") {
-                let pub = Publishers.Empty<Int, Never>().replaceEmpty(with: 1)
+                let pub = Empty<Int, Never>().replaceEmpty(with: 1)
                 let sub = makeCustomSubscriber(Int.self, Never.self, .unlimited)
                 pub.subscribe(sub)
                 
@@ -37,7 +37,7 @@ class RepleaceEmptySpec: QuickSpec {
             #if !SWIFT_PACAKGE
             // MARK: 1.3 should throw assertion when the demand is 0
             it("should throw assertion when the demand is 0") {
-                let pub = Publishers.Empty<Int, Never>().replaceEmpty(with: 1)
+                let pub = Empty<Int, Never>().replaceEmpty(with: 1)
                 let sub = makeCustomSubscriber(Int.self, Never.self, .max(0))
                 
                 expect {
