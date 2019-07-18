@@ -16,7 +16,7 @@ class TryRemoveDuplicatesSpec: QuickSpec {
         // MARK: - Relay
         describe("Relay") {
             
-            // MARK: 1.1 should reduce values from upstream
+            // MARK: 1.1 should remove duplicate values from upstream
             it("should remove duplicate values from upstream") {
                 let pub = PassthroughSubject<Int, Never>()
                 let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
@@ -31,21 +31,25 @@ class TryRemoveDuplicatesSpec: QuickSpec {
                 pub.send(3)
                 pub.send(3)
                 
-                for (i, event) in sub.events.enumerated() {
-                    switch i {
-                    case 0:
-                        expect(event.isValue(1)).to(beTrue())
-                    case 1:
-                        expect(event.isValue(2)).to(beTrue())
-                    case 2:
-                        expect(event.isValue(3)).to(beTrue())
-                    default:
-                        fail()
-                    }
-                }
+                let got = sub.events.mapError { $0 as! CustomError }
+                
+                expect(got).to(equal([.value(1), .value(2), .value(3)]))
             }
             
-            // MARK: 1.2 should fail if closure throws error
+            // MARK: 1.2 should send as many values as demand
+            it("should send as many values as demand") {
+                let pub = PassthroughSubject<Int, Never>()
+                let sub = makeCustomSubscriber(Int.self, Error.self, .max(10))
+                pub.tryRemoveDuplicates(by: ==).subscribe(sub)
+                
+                for _ in 0..<100 {
+                    pub.send(Int.random(in: 0..<100))
+                }
+                
+                expect(sub.events.count).to(equal(10))
+            }
+            
+            // MARK: 1.3 should fail if closure throws error
             it("should fail if closure throws error") {
                 let pub = PassthroughSubject<Int, Never>()
                 let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
@@ -57,9 +61,9 @@ class TryRemoveDuplicatesSpec: QuickSpec {
                 pub.send(1)
                 pub.send(1)
                 
-                expect(sub.events.count).to(equal(2))
-                expect(sub.events.first?.isValue(1)).to(beTrue())
-                expect(sub.events.last?.error).to(matchError(CustomError.e0))
+                let got = sub.events.mapError { $0 as! CustomError }
+                
+                expect(got).to(equal([.completion(.failure(.e0))]))
             }
         }
     }

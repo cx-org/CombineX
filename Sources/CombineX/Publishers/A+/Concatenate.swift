@@ -87,8 +87,8 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Suffix.Failure == S.Failure, Suffix.Output == S.Input {
-            let subscription = Inner(pub: self, sub: subscriber)
-            self.prefix.subscribe(subscription)
+            let s = Inner(pub: self, sub: subscriber)
+            self.prefix.subscribe(s)
         }
     }
 }
@@ -134,16 +134,19 @@ extension Publishers.Concatenate {
         
         func request(_ demand: Subscribers.Demand) {
             self.lock.lock()
-            let subscription = self.state.subscription
+            guard let subscription = self.state.subscription else {
+                self.lock.unlock()
+                return
+            }
             
-            let before = self.demand
+            let old = self.demand
             self.demand += demand
-            let after = self.demand
+            let new = self.demand
             
             self.lock.unlock()
             
-            if before == 0 {
-                subscription?.request(after)
+            if old == 0 {
+                subscription.request(new)
             }
         }
         
@@ -173,6 +176,7 @@ extension Publishers.Concatenate {
                 }
             case .completed:
                 self.lock.unlock()
+                subscription.cancel()
             }
         }
         
@@ -185,7 +189,12 @@ extension Publishers.Concatenate {
             
             self.demand -= 1
             self.lock.unlock()
-            return self.sub.receive(input)
+
+            let new = self.sub.receive(input)
+            self.lock.withLock {
+                self.demand += new
+            }
+            return new
         }
         
         func receive(completion: Subscribers.Completion<Prefix.Failure>) {
@@ -205,21 +214,19 @@ extension Publishers.Concatenate {
                 }
                 switch self.stage {
                 case .prefix:
+                    self.stage = .halftime
                     let suffix = self.suffix
                     self.suffix = nil
-                    self.stage = .halftime
                     self.lock.unlock()
                     
                     suffix?.subscribe(self)
                 case .suffix:
-                    guard let subscription = self.state.complete() else {
-                        self.lock.unlock()
-                        return
-                    }
+                    let subscription = self.state.complete()!
                     self.lock.unlock()
+                    
                     subscription.cancel()
                     self.sub.receive(completion: completion)
-                default:
+                case .halftime:
                     self.lock.unlock()
                 }
             }

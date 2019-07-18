@@ -6,153 +6,143 @@ import CombineX
 import Specs
 #endif
 
-import Dispatch
+import Foundation
 
-public struct CustomScheduler: Scheduler {
+final class CustomScheduler: Scheduler {
     
-    public struct SchedulerTimeType: Strideable {
+    struct SchedulerTimeType: Strideable {
         
-        public let time: DispatchTime
+        let time: DispatchTime
         
-        public init(time: DispatchTime) {
+        init(time: DispatchTime) {
             self.time = time
         }
         
-        public func distance(to other: SchedulerTimeType) -> Stride {
+        func distance(to other: SchedulerTimeType) -> Stride {
             let distance = self.time.uptimeNanoseconds.distance(to: other.time.uptimeNanoseconds)
             return Stride.nanoseconds(distance)
         }
         
-        public func advanced(by n: Stride) -> SchedulerTimeType {
+        func advanced(by n: Stride) -> SchedulerTimeType {
             let advanced = self.time + n.seconds
             return SchedulerTimeType(time: advanced)
         }
         
-        public static var now: SchedulerTimeType {
+        static var now: SchedulerTimeType {
             return SchedulerTimeType(time: .now())
         }
         
-        public struct Stride: ExpressibleByFloatLiteral, Comparable, SignedNumeric, Codable, SchedulerTimeIntervalConvertible {
+        struct Stride: ExpressibleByFloatLiteral, Comparable, SignedNumeric, Codable, SchedulerTimeIntervalConvertible {
             
-            public typealias Magnitude = Double
+            typealias Magnitude = Double
             
-            public let seconds: Double
+            let seconds: Double
             
-            public init(seconds: Double) {
+            init(seconds: Double) {
                 self.seconds = seconds
             }
             
-            public var magnitude: Double {
+            var magnitude: Double {
                 return self.seconds.magnitude
             }
             
-            public init(integerLiteral value: Int) {
+            init(integerLiteral value: Int) {
                 self.seconds = Double(value)
             }
             
-            public init(floatLiteral value: Double) {
+            init(floatLiteral value: Double) {
                 self.seconds = value
             }
             
-            public init?<T>(exactly source: T) where T : BinaryInteger {
+            init?<T>(exactly source: T) where T : BinaryInteger {
                 guard let v = Double(exactly: source) else {
                     return nil
                 }
                 self.seconds = v
             }
             
-            public static func < (lhs: Stride, rhs: Stride) -> Bool {
+            static func < (lhs: Stride, rhs: Stride) -> Bool {
                 return lhs.seconds < rhs.seconds
             }
             
-            public static func * (lhs: Stride, rhs: Stride) -> Stride {
+            static func * (lhs: Stride, rhs: Stride) -> Stride {
                 return Stride(floatLiteral: lhs.seconds * rhs.seconds)
             }
             
-            public static func + (lhs: Stride, rhs: Stride) -> Stride {
+            static func + (lhs: Stride, rhs: Stride) -> Stride {
                 return Stride(floatLiteral: lhs.seconds + rhs.seconds)
             }
             
-            public static func - (lhs: Stride, rhs: Stride) -> Stride {
+            static func - (lhs: Stride, rhs: Stride) -> Stride {
                 return Stride(floatLiteral: lhs.seconds - rhs.seconds)
             }
             
-            public static func -= (lhs: inout Stride, rhs: Stride) {
+            static func -= (lhs: inout Stride, rhs: Stride) {
                 lhs = lhs - rhs
             }
             
-            public static func *= (lhs: inout Stride, rhs: Stride) {
+            static func *= (lhs: inout Stride, rhs: Stride) {
                 lhs = lhs * rhs
             }
             
-            public static func += (lhs: inout Stride, rhs: Stride) {
+            static func += (lhs: inout Stride, rhs: Stride) {
                 lhs = lhs + rhs
             }
             
-            public static func seconds(_ s: Int) -> Stride {
+            static func seconds(_ s: Int) -> Stride {
                 return Stride(integerLiteral: s)
             }
             
-            public static func seconds(_ s: Double) -> Stride {
+            static func seconds(_ s: Double) -> Stride {
                 return Stride(floatLiteral: s)
             }
             
-            public static func milliseconds(_ ms: Int) -> Stride {
+            static func milliseconds(_ ms: Int) -> Stride {
                 return Stride(floatLiteral: Double(ms) / Double(Const.msec_per_sec))
             }
             
-            public static func microseconds(_ us: Int) -> Stride {
+            static func microseconds(_ us: Int) -> Stride {
                 return Stride(floatLiteral: Double(us) / Double(Const.usec_per_sec))
             }
             
-            public static func nanoseconds(_ ns: Int) -> Stride {
+            static func nanoseconds(_ ns: Int) -> Stride {
                 return Stride(floatLiteral: Double(ns) / Double(Const.nsec_per_sec))
             }
             
-            public static var zero: Stride {
+            static var zero: Stride {
                 return Stride.seconds(0)
             }
         }
     }
     
-    public typealias SchedulerOptions = DispatchWorkItemFlags
+    typealias SchedulerOptions = DispatchWorkItemFlags
     
     let dispatchQueue: DispatchQueue
     
-    public init(dispatchQueue: DispatchQueue) {
+    init(dispatchQueue: DispatchQueue) {
         self.dispatchQueue = dispatchQueue
     }
     
-    public static let main = CustomScheduler(dispatchQueue: .main)
+    let minimumTolerance: SchedulerTimeType.Stride = .seconds(0)
     
-    public static func serial(label: String) -> CustomScheduler {
-        return CustomScheduler(dispatchQueue: DispatchQueue(label: label))
-    }
-    
-    public static func global(qos: DispatchQoS.QoSClass = .default) -> CustomScheduler {
-        return CustomScheduler(dispatchQueue: DispatchQueue.global(qos: qos))
-    }
-    
-    public let minimumTolerance: SchedulerTimeType.Stride = .seconds(0)
-    
-    public var now: SchedulerTimeType {
+    var now: SchedulerTimeType {
         return SchedulerTimeType(time: .now())
     }
     
-    public func schedule(options: DispatchWorkItemFlags?, _ action: @escaping () -> Void) {
+    func schedule(options: DispatchWorkItemFlags?, _ action: @escaping () -> Void) {
         self.dispatchQueue.async(flags: options ?? [], execute: action)
     }
     
-    public func schedule(after date: SchedulerTimeType, tolerance: SchedulerTimeType.Stride, options: SchedulerOptions?, _ action: @escaping () -> Void) {
+    func schedule(after date: SchedulerTimeType, tolerance: SchedulerTimeType.Stride, options: SchedulerOptions?, _ action: @escaping () -> Void) {
         let timer = DispatchSource.makeTimerSource()
         
-        var ref: DispatchSourceTimer? = timer
+        var hold: DispatchSourceTimer? = timer
         
         timer.setEventHandler(flags: options ?? []) {
             action()
             
-            ref?.cancel()
-            ref = nil
+            hold?.cancel()
+            hold = nil
         }
         
         let leeway = Int(Swift.max(tolerance, self.minimumTolerance).seconds * Double(Const.nsec_per_sec))
@@ -160,7 +150,7 @@ public struct CustomScheduler: Scheduler {
         timer.resume()
     }
     
-    public func schedule(after date: SchedulerTimeType, interval: SchedulerTimeType.Stride, tolerance: SchedulerTimeType.Stride, options: SchedulerOptions?, _ action: @escaping () -> Void) -> Cancellable {
+    func schedule(after date: SchedulerTimeType, interval: SchedulerTimeType.Stride, tolerance: SchedulerTimeType.Stride, options: SchedulerOptions?, _ action: @escaping () -> Void) -> Cancellable {
         
         let timer = DispatchSource.makeTimerSource()
         
@@ -176,5 +166,20 @@ public struct CustomScheduler: Scheduler {
         return AnyCancellable {
             timer.cancel()
         }
+    }
+}
+
+extension CustomScheduler {
+    
+    class var main: CustomScheduler {
+        return CustomScheduler(dispatchQueue: .main)
+    }
+    
+    class func serial(label: String = UUID().uuidString) -> CustomScheduler {
+        return CustomScheduler(dispatchQueue: DispatchQueue(label: label))
+    }
+    
+    class func global(qos: DispatchQoS.QoSClass = .default) -> CustomScheduler {
+        return CustomScheduler(dispatchQueue: DispatchQueue.global(qos: qos))
     }
 }

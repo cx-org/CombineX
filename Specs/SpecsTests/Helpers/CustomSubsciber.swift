@@ -77,7 +77,7 @@ extension CustomEvent {
         return e
     }
     
-    func mapError<NewFailure>(_ transform: (Failure) -> NewFailure) -> CustomSubscriber<Input, NewFailure>.Event {
+    func mapError<NewFailure: Error>(_ transform: (Failure) -> NewFailure) -> CustomEvent<Input, NewFailure> {
         switch self {
         case .value(let i):         return .value(i)
         case .completion(let c):    return .completion(c.mapError(transform))
@@ -119,6 +119,36 @@ extension CustomEvent: CustomStringConvertible {
             return "\(v)"
         case .completion(let c):
             return "\(c)"
+        }
+    }
+}
+
+protocol CustomEventProtocol {
+    associatedtype Input
+    associatedtype Failure: Error
+    
+    var customEvent: CustomEvent<Input, Failure> {
+        get set
+    }
+}
+
+extension CustomEvent: CustomEventProtocol {
+    
+    var customEvent: CustomEvent<Input, Failure> {
+        get {
+            return self
+        }
+        set {
+            self = newValue
+        }
+    }
+}
+
+extension Collection where Element: CustomEventProtocol {
+    
+    func mapError<NewFailure: Error>(_ transform: (Element.Failure) -> NewFailure) -> [CustomEvent<Element.Input, NewFailure>] {
+        return self.map {
+            $0.customEvent.mapError(transform)
         }
     }
 }

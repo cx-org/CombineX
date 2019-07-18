@@ -1,29 +1,42 @@
 extension Publisher {
     
-    public func tryRemoveDuplicates(by predicate: @escaping (Self.Output, Self.Output) throws -> Bool) -> Publishers.TryRemoveDuplicates<Self> {
-        return .init(upstream: self, predicate: predicate)
+    /// Measures and emits the time interval between events received from an upstream publisher.
+    ///
+    /// The output type of the returned scheduler is the time interval of the provided scheduler.
+    /// - Parameters:
+    ///   - scheduler: The scheduler on which to deliver elements.
+    ///   - options: Options that customize the delivery of elements.
+    /// - Returns: A publisher that emits elements representing the time interval between the elements it receives.
+    public func measureInterval<S>(using scheduler: S, options: S.SchedulerOptions? = nil) -> Publishers.MeasureInterval<Self, S> where S : Scheduler {
+        return .init(upstream: self, scheduler: scheduler, options: options)
     }
 }
 
 extension Publishers {
     
-    public struct TryRemoveDuplicates<Upstream> : Publisher where Upstream : Publisher {
+    /// A publisher that measures and emits the time interval between events received from an upstream publisher.
+    public struct MeasureInterval<Upstream, Context> : Publisher where Upstream : Publisher, Context : Scheduler {
         
         /// The kind of values published by this publisher.
-        public typealias Output = Upstream.Output
+        public typealias Output = Context.SchedulerTimeType.Stride
         
         /// The kind of errors this publisher might publish.
         ///
         /// Use `Never` if this `Publisher` does not publish errors.
-        public typealias Failure = Error
+        public typealias Failure = Upstream.Failure
         
+        /// The publisher from which this publisher receives elements.
         public let upstream: Upstream
         
-        public let predicate: (Upstream.Output, Upstream.Output) throws -> Bool
+        /// The scheduler on which to deliver elements.
+        public let scheduler: Context
         
-        public init(upstream: Upstream, predicate: @escaping (Publishers.TryRemoveDuplicates<Upstream>.Output, Publishers.TryRemoveDuplicates<Upstream>.Output) throws -> Bool) {
+        private let options: Context.SchedulerOptions?
+        
+        init(upstream: Upstream, scheduler: Context, options: Context.SchedulerOptions?) {
             self.upstream = upstream
-            self.predicate = predicate
+            self.scheduler = scheduler
+            self.options = options
         }
         
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
@@ -32,14 +45,14 @@ extension Publishers {
         /// - Parameters:
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, S.Failure == Publishers.TryRemoveDuplicates<Upstream>.Failure {
-            let subscription = Inner(pub: self, sub: subscriber)
-            self.upstream.subscribe(subscription)
+        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, S.Input == Context.SchedulerTimeType.Stride {
+            let s = Inner(pub: self, sub: subscriber)
+            self.upstream.subscribe(s)
         }
     }
 }
 
-extension Publishers.TryRemoveDuplicates {
+extension Publishers.MeasureInterval {
     
     private final class Inner<S>:
         Subscription,
@@ -55,21 +68,24 @@ extension Publishers.TryRemoveDuplicates {
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
         
-        typealias Pub = Publishers.TryRemoveDuplicates<Upstream>
+        typealias Pub = Publishers.MeasureInterval<Upstream, Context>
         typealias Sub = S
-        typealias Predicate = (Upstream.Output, Upstream.Output) throws -> Bool
         
         let lock = Lock()
         
-        let predicate: Predicate
         let sub: Sub
+        let scheduler: Context
+        let options: Context.SchedulerOptions?
         
-        var previous: Output? = nil
-        var state = RelayState.waiting
+        var timestamp: Context.SchedulerTimeType
+        var state: RelayState = .waiting
         
         init(pub: Pub, sub: Sub) {
-            self.predicate = pub.predicate
             self.sub = sub
+            
+            self.scheduler = pub.scheduler
+            self.options = pub.options
+            self.timestamp = pub.scheduler.now
         }
         
         func request(_ demand: Subscribers.Demand) {
@@ -96,51 +112,30 @@ extension Publishers.TryRemoveDuplicates {
                 return .none
             }
             
-            guard let previous = self.previous else {
-                self.previous = input
-                self.lock.unlock()
-                return self.sub.receive(input)
-            }
-
-            do {
-                if try self.predicate(previous, input) {
-                    self.lock.unlock()
-                    return .max(1)
-                } else {
-                    self.previous = input
-                    self.lock.unlock()
-                    return self.sub.receive(input)
-                }
-            } catch {
-                let subscription = self.state.complete()
-                self.lock.unlock()
-                
-                subscription?.cancel()
-                self.sub.receive(completion: .failure(error))
-                
-                return .none
-            }
+            let now = self.scheduler.now
+            let interval = self.timestamp.distance(to: now)
+            self.timestamp = now
+            self.lock.unlock()
+            
+            return sub.receive(interval)
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
-            self.complete(completion.mapError { $0 })
-        }
-        
-        private func complete(_ completion: Subscribers.Completion<Error>) {
             guard let subscription = self.lock.withLockGet(self.state.complete()) else {
                 return
             }
             
             subscription.cancel()
-            self.sub.receive(completion: completion.mapError { $0 })
+            self.sub.receive(completion: completion)
         }
         
         var description: String {
-            return "TryRemoveDuplicates"
+            return "MeasureInterval"
         }
         
         var debugDescription: String {
-            return "TryRemoveDuplicates"
+            return "MeasureInterval"
         }
     }
 }
+

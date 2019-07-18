@@ -22,37 +22,67 @@ class ConcatenateSpec: QuickSpec {
                 let p1 = Just(5)
                 
                 let pub = Publishers.Concatenate(prefix: p0, suffix: p1)
-                let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
-                    s.request(.unlimited)
-                }, receiveValue: { v in
-                    return .none
-                }, receiveCompletion: { c in
-                })
+                let sub = makeCustomSubscriber(Int.self, Never.self, .unlimited)
                 
                 pub.subscribe(sub)
                 
-                let events = Array(1...5).map { CustomSubscriber<Int, Never>.Event.value($0) }
-                let expected = events + [.completion(.finished)]
+                let valueEvents = (1...5).map { CustomEvent<Int, Never>.value($0) }
+                let expected = valueEvents + [.completion(.finished)]
                 expect(sub.events).to(equal(expected))
             }
             
             // MARK: 1.2 should send as many value as demand
             it("should send as many value as demand") {
-                let p0 = Publishers.Sequence<[Int], Never>(sequence: [1, 2, 3, 4, 5])
-                let p1 = Publishers.Sequence<[Int], Never>(sequence: [6, 7, 8, 9, 10])
+                let p0 = Publishers.Sequence<[Int], Never>(sequence: Array(0..<10))
+                let p1 = Publishers.Sequence<[Int], Never>(sequence: Array(10..<20))
                 
                 let pub = Publishers.Concatenate(prefix: p0, suffix: p1)
                 let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
-                    s.request(.max(7))
+                    s.request(.max(10))
                 }, receiveValue: { v in
-                    return .none
+                    [0, 10].contains(v) ? .max(1) : .none
                 }, receiveCompletion: { c in
                 })
                 
                 pub.subscribe(sub)
                 
-                let events = Array(1...7).map { CustomSubscriber<Int, Never>.Event.value($0) }
+                let events = (0..<12).map { CustomEvent<Int, Never>.value($0) }
                 expect(sub.events).to(equal(events))
+            }
+            
+            // MARK: 1.3 should subscribe suffix after the finish of prefix
+            it("should subscribe suffix after the finish of prefix") {
+                enum Event {
+                    case subscribeToPrefix
+                    case beforePrefixFinish
+                    case afterPrefixFinish
+                    case subscribeToSuffix
+                }
+                var events: [Event] = []
+                
+                let pub1 = CustomPublisher<Int, Never> { (s) in
+                    events.append(.subscribeToPrefix)
+                    s.receive(subscription: Subscriptions.empty)
+                    events.append(.beforePrefixFinish)
+                    s.receive(completion: .finished)
+                    events.append(.afterPrefixFinish)
+                }
+                let pub2 = CustomPublisher<Int, Never> { (s) in
+                    events.append(.subscribeToSuffix)
+                    s.receive(subscription: Subscriptions.empty)
+                }
+                
+                let pub = pub1.append(pub2)
+                let sub = makeCustomSubscriber(Int.self, Never.self, .unlimited)
+                
+                pub.subscribe(sub)
+                
+                expect(events).to(equal([
+                    .subscribeToPrefix,
+                    .beforePrefixFinish,
+                    .subscribeToSuffix,
+                    .afterPrefixFinish
+                ]))
             }
         }
     }

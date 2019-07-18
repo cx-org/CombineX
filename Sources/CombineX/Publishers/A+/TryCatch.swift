@@ -90,16 +90,19 @@ extension Publishers.TryCatch {
         
         func request(_ demand: Subscribers.Demand) {
             self.lock.lock()
-            let subscription = self.state.subscription
+            guard let subscription = self.state.subscription else {
+                self.lock.unlock()
+                return
+            }
             
-            let before = self.demand
+            let old = self.demand
             self.demand += demand
-            let after = self.demand
+            let new = self.demand
             
             self.lock.unlock()
             
-            if before == 0 {
-                subscription?.request(after)
+            if old == 0 {
+                subscription.request(new)
             }
         }
         
@@ -129,6 +132,7 @@ extension Publishers.TryCatch {
                 }
             case .completed:
                 self.lock.unlock()
+                subscription.cancel()
             }
         }
         
@@ -141,7 +145,12 @@ extension Publishers.TryCatch {
             
             self.demand -= 1
             self.lock.unlock()
-            return self.sub.receive(input)
+            
+            let new = self.sub.receive(input)
+            self.lock.withLock {
+                self.demand += new
+            }
+            return new
         }
         
         func receive(completion: Subscribers.Completion<Error>) {
@@ -162,30 +171,25 @@ extension Publishers.TryCatch {
                 switch self.stage {
                 case .upstream:
                     self.stage = .halftime
+                    self.lock.unlock()
                     
                     do {
-                        self.lock.unlock()
-                        
                         let newPublisher = try self.handler(error as! Upstream.Failure)
                         newPublisher.mapError { $0 } .subscribe(self)
                     } catch let e {
-                        guard let subscription = self.state.complete() else {
-                            self.lock.unlock()
+                        guard let subscription = self.lock.withLockGet(self.state.complete()) else {
                             return
                         }
-                        self.lock.unlock()
                         subscription.cancel()
                         self.sub.receive(completion: .failure(e))
                     }
                 case .newPublisher:
-                    guard let subscription = self.state.complete() else {
-                        self.lock.unlock()
-                        return
-                    }
+                    let subscription = self.state.complete()!
                     self.lock.unlock()
+                    
                     subscription.cancel()
                     self.sub.receive(completion: completion)
-                default:
+                case .halftime:
                     self.lock.unlock()
                 }
             }
