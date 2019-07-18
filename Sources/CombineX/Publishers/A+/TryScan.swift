@@ -1,54 +1,52 @@
 extension Publisher {
     
-    /// Omits elements from the upstream publisher until an error-throwing closure returns false, before republishing all remaining elements.
+    /// Transforms elements from the upstream publisher by providing the current element to an error-throwing closure along with the last value returned by the closure.
     ///
-    /// If the predicate closure throws, the publisher fails with an error.
-    ///
-    /// - Parameter predicate: A closure that takes an element as a parameter and returns a Boolean value indicating whether to drop the element from the publisher’s output.
-    /// - Returns: A publisher that skips over elements until the provided closure returns `false`, and then republishes all remaining elements. If the predicate closure throws, the publisher fails with an error.
-    public func tryDrop(while predicate: @escaping (Self.Output) throws -> Bool) -> Publishers.TryDropWhile<Self> {
-        return .init(upstream: self, predicate: predicate)
+    /// If the closure throws an error, the publisher fails with the error.
+    /// - Parameters:
+    ///   - initialResult: The previous result returned by the `nextPartialResult` closure.
+    ///   - nextPartialResult: An error-throwing closure that takes as its arguments the previous value returned by the closure and the next element emitted from the upstream publisher.
+    /// - Returns: A publisher that transforms elements by applying a closure that receives its previous return value and the next element from the upstream publisher.
+    public func tryScan<T>(_ initialResult: T, _ nextPartialResult: @escaping (T, Self.Output) throws -> T) -> Publishers.TryScan<Self, T> {
+        return .init(upstream: self, initialResult: initialResult, nextPartialResult: nextPartialResult)
     }
 }
 
 extension Publishers {
     
-    /// A publisher that omits elements from an upstream publisher until a given error-throwing closure returns false.
-    public struct TryDropWhile<Upstream> : Publisher where Upstream : Publisher {
-
-        /// The kind of values published by this publisher.
-        public typealias Output = Upstream.Output
-
+    public struct TryScan<Upstream, Output> : Publisher where Upstream : Publisher {
+        
         /// The kind of errors this publisher might publish.
         ///
         /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = Error
-
-        /// The publisher from which this publisher receives elements.
-        public let upstream: Upstream
-
-        /// The error-throwing closure that indicates whether to drop the element.
-        public let predicate: (Upstream.Output) throws -> Bool
         
-        public init(upstream: Upstream, predicate: @escaping (Publishers.TryDropWhile<Upstream>.Output) throws -> Bool) {
+        public let upstream: Upstream
+        
+        public let initialResult: Output
+        
+        public let nextPartialResult: (Output, Upstream.Output) throws -> Output
+        
+        public init(upstream: Upstream, initialResult: Output, nextPartialResult: @escaping (Output, Upstream.Output) throws -> Output) {
             self.upstream = upstream
-            self.predicate = predicate
+            self.initialResult = initialResult
+            self.nextPartialResult = nextPartialResult
         }
-
+        
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
         /// - SeeAlso: `subscribe(_:)`
         /// - Parameters:
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, S.Failure == Publishers.TryDropWhile<Upstream>.Failure {
-            let subscription = Inner(pub: self, sub: subscriber)
-            self.upstream.subscribe(subscription)
+        public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, S.Failure == Publishers.TryScan<Upstream, Output>.Failure {
+            let s = Inner(pub: self, sub: subscriber)
+            self.upstream.receive(subscriber: s)
         }
     }
 }
 
-extension Publishers.TryDropWhile {
+extension Publishers.TryScan {
     
     private final class Inner<S>:
         Subscription,
@@ -60,24 +58,26 @@ extension Publishers.TryDropWhile {
         S.Input == Output,
         S.Failure == Failure
     {
+        
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
         
-        typealias Pub = Publishers.TryDropWhile<Upstream>
+        typealias Pub = Publishers.TryScan<Upstream, Output>
         typealias Sub = S
-        typealias Predicate = (Upstream.Output) throws -> Bool
+        typealias NextPartialResult = (Output, Upstream.Output) throws -> Output
         
         let lock = Lock()
-        
+        let nextPartialResult: NextPartialResult
         let sub: Sub
-        let predicate: Predicate
-        var stop = false
         
+        var output: Output
         var state = RelayState.waiting
         
         init(pub: Pub, sub: Sub) {
-            self.predicate = pub.predicate
+            self.nextPartialResult = pub.nextPartialResult
             self.sub = sub
+            
+            self.output = pub.initialResult
         }
         
         func request(_ demand: Subscribers.Demand) {
@@ -103,22 +103,13 @@ extension Publishers.TryDropWhile {
                 self.lock.unlock()
                 return .none
             }
-            
+
             do {
-                if self.stop {
-                    self.lock.unlock()
-                    return self.sub.receive(input)
-                }
+                let output = try self.nextPartialResult(self.output, input)
+                self.output = output
+                self.lock.unlock()
                 
-                if try self.predicate(input) {
-                    self.lock.unlock()
-                    return .max(1)
-                } else {
-                    self.stop = true
-                    self.lock.unlock()
-                    
-                    return self.sub.receive(input)
-                }
+                return self.sub.receive(output)
             } catch {
                 let subscription = self.state.complete()
                 self.lock.unlock()
@@ -130,10 +121,6 @@ extension Publishers.TryDropWhile {
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
-            self.complete(completion.mapError { $0 })
-        }
-        
-        private func complete(_ completion: Subscribers.Completion<Error>) {
             guard let subscription = self.lock.withLockGet(self.state.complete()) else {
                 return
             }
@@ -143,11 +130,11 @@ extension Publishers.TryDropWhile {
         }
         
         var description: String {
-            return "TryDropWhile"
+            return "TryScan"
         }
         
         var debugDescription: String {
-            return "TryDropWhile"
+            return "TryScan"
         }
     }
 }

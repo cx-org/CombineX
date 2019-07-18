@@ -9,7 +9,7 @@ import CombineX
 import Specs
 #endif
 
-class RepleaceEmptySpec: QuickSpec {
+class ReplaceEmptySpec: QuickSpec {
     
     override func spec() {
         

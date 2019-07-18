@@ -1,37 +1,38 @@
 extension Publisher {
     
-    
-    /// Transforms elements from the upstream publisher by providing the current element to an error-throwing closure along with the last value returned by the closure.
+    /// Republishes elements while a error-throwing predicate closure indicates publishing should continue.
     ///
-    /// If the closure throws an error, the publisher fails with the error.
-    /// - Parameters:
-    ///   - initialResult: The previous result returned by the `nextPartialResult` closure.
-    ///   - nextPartialResult: An error-throwing closure that takes as its arguments the previous value returned by the closure and the next element emitted from the upstream publisher.
-    /// - Returns: A publisher that transforms elements by applying a closure that receives its previous return value and the next element from the upstream publisher.
-    public func tryScan<T>(_ initialResult: T, _ nextPartialResult: @escaping (T, Self.Output) throws -> T) -> Publishers.TryScan<Self, T> {
-        return .init(upstream: self, initialResult: initialResult, nextPartialResult: nextPartialResult)
+    /// The publisher finishes when the closure returns `false`. If the closure throws, the publisher fails with the thrown error.
+    ///
+    /// - Parameter predicate: A closure that takes an element as its parameter and returns a Boolean value indicating whether publishing should continue.
+    /// - Returns: A publisher that passes through elements until the predicate throws or indicates publishing should finish.
+    public func tryPrefix(while predicate: @escaping (Self.Output) throws -> Bool) -> Publishers.TryPrefixWhile<Self> {
+        return .init(upstream: self, predicate: predicate)
     }
 }
 
 extension Publishers {
     
-    public struct TryScan<Upstream, Output> : Publisher where Upstream : Publisher {
+    /// A publisher that republishes elements while an error-throwing predicate closure indicates publishing should continue.
+    public struct TryPrefixWhile<Upstream> : Publisher where Upstream : Publisher {
+        
+        /// The kind of values published by this publisher.
+        public typealias Output = Upstream.Output
         
         /// The kind of errors this publisher might publish.
         ///
         /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = Error
         
+        /// The publisher from which this publisher receives elements.
         public let upstream: Upstream
         
-        public let initialResult: Output
+        /// The error-throwing closure that determines whether publishing should continue.
+        public let predicate: (Upstream.Output) throws -> Bool
         
-        public let nextPartialResult: (Output, Upstream.Output) throws -> Output
-        
-        public init(upstream: Upstream, initialResult: Output, nextPartialResult: @escaping (Output, Upstream.Output) throws -> Output) {
+        public init(upstream: Upstream, predicate: @escaping (Publishers.TryPrefixWhile<Upstream>.Output) throws -> Bool) {
             self.upstream = upstream
-            self.initialResult = initialResult
-            self.nextPartialResult = nextPartialResult
+            self.predicate = predicate
         }
         
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
@@ -40,14 +41,14 @@ extension Publishers {
         /// - Parameters:
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, S.Failure == Publishers.TryScan<Upstream, Output>.Failure {
-            let subscription = Inner(pub: self, sub: subscriber)
-            self.upstream.receive(subscriber: subscription)
+        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, S.Failure == Publishers.TryPrefixWhile<Upstream>.Failure {
+            let s = Inner(pub: self, sub: subscriber)
+            self.upstream.subscribe(s)
         }
     }
 }
 
-extension Publishers.TryScan {
+extension Publishers.TryPrefixWhile {
     
     private final class Inner<S>:
         Subscription,
@@ -59,25 +60,21 @@ extension Publishers.TryScan {
         S.Input == Output,
         S.Failure == Failure
     {
-        
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
         
-        typealias Pub = Publishers.TryScan<Upstream, Output>
+        typealias Pub = Publishers.TryPrefixWhile<Upstream>
         typealias Sub = S
-        typealias NextPartialResult = (Output, Upstream.Output) throws -> Output?
+        typealias Predicate = (Upstream.Output) throws -> Bool
         
         let lock = Lock()
-        
-        var initialResult: Output
-        let nextPartialResult: (Output, Upstream.Output) throws -> Output
+        let predicate: Predicate
         let sub: Sub
         
         var state = RelayState.waiting
         
         init(pub: Pub, sub: Sub) {
-            self.initialResult = pub.initialResult
-            self.nextPartialResult = pub.nextPartialResult
+            self.predicate = pub.predicate
             self.sub = sub
         }
         
@@ -98,19 +95,25 @@ extension Publishers.TryScan {
             self.sub.receive(subscription: self)
         }
         
-        func receive(_ input: Input) -> Subscribers.Demand {
+        func receive(_ input: Input) -> Subscribers.Demand {            
             self.lock.lock()
             guard self.state.isRelaying else {
                 self.lock.unlock()
                 return .none
             }
-
+            
             do {
-                let output = try self.nextPartialResult(self.initialResult, input)
-                self.initialResult = output
-                self.lock.unlock()
-                
-                return self.sub.receive(output)
+                if try self.predicate(input) {
+                    self.lock.unlock()
+                    return self.sub.receive(input)
+                } else {
+                    let subscription = self.state.complete()
+                    self.lock.unlock()
+                    
+                    subscription?.cancel()
+                    self.sub.receive(completion: .finished)
+                    return .none
+                }
             } catch {
                 let subscription = self.state.complete()
                 self.lock.unlock()
@@ -122,6 +125,10 @@ extension Publishers.TryScan {
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
+            self.complete(completion.mapError { $0 })
+        }
+        
+        private func complete(_ completion: Subscribers.Completion<Error>) {
             guard let subscription = self.lock.withLockGet(self.state.complete()) else {
                 return
             }
@@ -131,11 +138,11 @@ extension Publishers.TryScan {
         }
         
         var description: String {
-            return "TryScan"
+            return "TryPrefixWhile"
         }
         
         var debugDescription: String {
-            return "TryScan"
+            return "TryPrefixWhile"
         }
     }
 }

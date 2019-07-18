@@ -1,54 +1,54 @@
 extension Publisher {
     
-    /// Republishes elements while a error-throwing predicate closure indicates publishing should continue.
+    /// Omits elements from the upstream publisher until an error-throwing closure returns false, before republishing all remaining elements.
     ///
-    /// The publisher finishes when the closure returns `false`. If the closure throws, the publisher fails with the thrown error.
+    /// If the predicate closure throws, the publisher fails with an error.
     ///
-    /// - Parameter predicate: A closure that takes an element as its parameter and returns a Boolean value indicating whether publishing should continue.
-    /// - Returns: A publisher that passes through elements until the predicate throws or indicates publishing should finish.
-    public func tryPrefix(while predicate: @escaping (Self.Output) throws -> Bool) -> Publishers.TryPrefixWhile<Self> {
+    /// - Parameter predicate: A closure that takes an element as a parameter and returns a Boolean value indicating whether to drop the element from the publisher’s output.
+    /// - Returns: A publisher that skips over elements until the provided closure returns `false`, and then republishes all remaining elements. If the predicate closure throws, the publisher fails with an error.
+    public func tryDrop(while predicate: @escaping (Self.Output) throws -> Bool) -> Publishers.TryDropWhile<Self> {
         return .init(upstream: self, predicate: predicate)
     }
 }
 
 extension Publishers {
     
-    /// A publisher that republishes elements while an error-throwing predicate closure indicates publishing should continue.
-    public struct TryPrefixWhile<Upstream> : Publisher where Upstream : Publisher {
-        
+    /// A publisher that omits elements from an upstream publisher until a given error-throwing closure returns false.
+    public struct TryDropWhile<Upstream> : Publisher where Upstream : Publisher {
+
         /// The kind of values published by this publisher.
         public typealias Output = Upstream.Output
-        
+
         /// The kind of errors this publisher might publish.
         ///
         /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = Error
-        
+
         /// The publisher from which this publisher receives elements.
         public let upstream: Upstream
-        
-        /// The error-throwing closure that determines whether publishing should continue.
+
+        /// The error-throwing closure that indicates whether to drop the element.
         public let predicate: (Upstream.Output) throws -> Bool
         
-        public init(upstream: Upstream, predicate: @escaping (Publishers.TryPrefixWhile<Upstream>.Output) throws -> Bool) {
+        public init(upstream: Upstream, predicate: @escaping (Publishers.TryDropWhile<Upstream>.Output) throws -> Bool) {
             self.upstream = upstream
             self.predicate = predicate
         }
-        
+
         /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
         ///
         /// - SeeAlso: `subscribe(_:)`
         /// - Parameters:
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, S.Failure == Publishers.TryPrefixWhile<Upstream>.Failure {
-            let subscription = Inner(pub: self, sub: subscriber)
-            self.upstream.subscribe(subscription)
+        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, S.Failure == Publishers.TryDropWhile<Upstream>.Failure {
+            let s = Inner(pub: self, sub: subscriber)
+            self.upstream.subscribe(s)
         }
     }
 }
 
-extension Publishers.TryPrefixWhile {
+extension Publishers.TryDropWhile {
     
     private final class Inner<S>:
         Subscription,
@@ -63,15 +63,15 @@ extension Publishers.TryPrefixWhile {
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
         
-        typealias Pub = Publishers.TryPrefixWhile<Upstream>
+        typealias Pub = Publishers.TryDropWhile<Upstream>
         typealias Sub = S
         typealias Predicate = (Upstream.Output) throws -> Bool
         
         let lock = Lock()
-        
-        let sub: Sub
         let predicate: Predicate
+        let sub: Sub
         
+        var stop = false
         var state = RelayState.waiting
         
         init(pub: Pub, sub: Sub) {
@@ -104,16 +104,18 @@ extension Publishers.TryPrefixWhile {
             }
             
             do {
-                if try self.predicate(input) {
+                if self.stop {
                     self.lock.unlock()
                     return self.sub.receive(input)
-                } else {
-                    let subscription = self.state.complete()
+                }
+                
+                if try self.predicate(input) {
                     self.lock.unlock()
-                    
-                    subscription?.cancel()
-                    self.sub.receive(completion: .finished)
-                    return .none
+                    return .max(1)
+                } else {
+                    self.stop = true
+                    self.lock.unlock()
+                    return self.sub.receive(input)
                 }
             } catch {
                 let subscription = self.state.complete()
@@ -139,11 +141,11 @@ extension Publishers.TryPrefixWhile {
         }
         
         var description: String {
-            return "TryPrefixWhile"
+            return "TryDropWhile"
         }
         
         var debugDescription: String {
-            return "TryPrefixWhile"
+            return "TryDropWhile"
         }
     }
 }
