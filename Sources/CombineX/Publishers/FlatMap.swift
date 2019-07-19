@@ -46,8 +46,8 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, NewPublisher.Output == S.Input, Upstream.Failure == S.Failure {
-            let subscription = Inner(pub: self, sub: subscriber)
-            self.upstream.subscribe(subscription)
+            let s = Inner(pub: self, sub: subscriber)
+            self.upstream.subscribe(s)
         }
     }
 }
@@ -67,9 +67,12 @@ extension Publishers.FlatMap {
         
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
-        typealias Transform = (Upstream.Output) -> NewPublisher
         typealias Pub = Publishers.FlatMap<NewPublisher, Upstream>
         typealias Sub = S
+        typealias Transform = (Upstream.Output) -> NewPublisher
+        
+        let maxPublishers: Subscribers.Demand
+        let transform: Transform
         
         // for upstream
         let upLock = Lock()
@@ -77,12 +80,9 @@ extension Publishers.FlatMap {
         
         // for downstream
         let downLock = Lock()
+        let sub: Sub
         var downState: DemandState = .waiting
-        var children: [ChildSubscriber] = []
-        var sub: Sub
-        
-        let maxPublishers: Subscribers.Demand
-        let transform: Transform
+        var children: [Child] = []
         
         init(pub: Pub, sub: Sub) {
             self.transform = pub.transform
@@ -101,13 +101,13 @@ extension Publishers.FlatMap {
                 if demand > 0 {
                     self.drain(demand)
                 }
-            case .demanding(let before):
-                let after = before + demand
-                self.downState = .demanding(after)
+            case .demanding(let old):
+                let new = old + demand
+                self.downState = .demanding(new)
                 self.downLock.unlock()
                 
-                if before == 0 && after > 0 {
-                    self.drain(after)
+                if old == 0 && new > 0 {
+                    self.drain(new)
                 }
             default:
                 self.downLock.unlock()
@@ -116,13 +116,17 @@ extension Publishers.FlatMap {
         
         func cancel() {
             self.downLock.lock()
-            self.downState = .completed
+            guard self.downState.complete() else {
+                self.downLock.unlock()
+                return
+            }
+            
             let children = self.children
             self.children = []
             self.downLock.unlock()
             
             children.forEach {
-                $0.subscription.exchange(with: nil)?.cancel()
+                $0.cancel()
             }
             
             self.upLock.withLockGet(self.upState.complete())?.cancel()
@@ -139,12 +143,11 @@ extension Publishers.FlatMap {
         }
         
         func receive(_ input: Input) -> Subscribers.Demand {
-            // Against misbehaving upstream
             guard self.upLock.withLockGet(self.upState.isRelaying) else {
                 return .none
             }
             
-            let child = ChildSubscriber(parent: self)
+            let child = Child(parent: self)
             
             self.downLock.lock()
             guard self.downState.isDemanding else {
@@ -160,7 +163,7 @@ extension Publishers.FlatMap {
         }
         
         func receive(completion: Subscribers.Completion<NewPublisher.Failure>) {
-            guard let subscription = self.upLock.withLockGet(self.upState.subscription) else {
+            guard let subscription = self.upLock.withLockGet(self.upState.complete()) else {
                 return
             }
             
@@ -170,11 +173,10 @@ extension Publishers.FlatMap {
             case .finished:
                 self.downLock.lock()
                 if self.children.isEmpty {
-                    guard self.downState.isDemanding else {
+                    guard self.downState.complete() else {
                         self.downLock.unlock()
                         return
                     }
-                    self.downState = .completed
                     self.downLock.unlock()
                     self.sub.receive(completion: .finished)
                 } else {
@@ -182,18 +184,17 @@ extension Publishers.FlatMap {
                 }
             case .failure(let error):
                 self.downLock.lock()
-                guard self.downState.isDemanding else {
+                guard self.downState.complete() else {
                     self.downLock.unlock()
                     return
                 }
                 
-                self.downState = .completed
                 let children = self.children
                 self.children = []
                 self.downLock.unlock()
                 
                 children.forEach {
-                    $0.subscription.exchange(with: nil)?.cancel()
+                    $0.cancel()
                 }
                 
                 self.sub.receive(completion: .failure(error))
@@ -201,34 +202,34 @@ extension Publishers.FlatMap {
         }
         
         // MARK: ChildSubsciber
-        func receive(_ input: NewPublisher.Output, from child: ChildSubscriber) -> Subscribers.Demand {
+        private func receive(_ input: NewPublisher.Output, from child: Child) -> Subscribers.Demand {
             self.downLock.lock()
-            guard let before = self.downState.demand else {
+            guard let old = self.downState.demand else {
                 self.downLock.unlock()
                 return .none
             }
             
-            if before > 0 {
-                self.downState = .demanding(before - 1)
+            if old > 0 {
+                _ = self.downState.sub(.max(1))
                 self.downLock.unlock()
                 
-                let new = self.sub.receive(input)
+                let more = self.sub.receive(input)
                 
                 self.downLock.lock()
-                var after = Subscribers.Demand.max(0)
-                if let demand = self.downState.demand {
-                    after = demand + new
-                    self.downState = .demanding(after)
+                guard let (old, new) = self.downState.add(more), old == 0, new > 0 else {
+                    self.downLock.unlock()
+                    return .none
                 }
                 self.downLock.unlock()
                 
-                if after > 0 {
-                    self.drain(after)
-                }
+                self.drain(new)
+                
                 return .max(1)
             } else {
                 if child.buffer == nil {
                     child.buffer = input
+                    
+                    // TODO: use a linked list?
                     self.children.removeAll(where: { $0 === child })
                     self.children.append(child)
                 }
@@ -237,7 +238,7 @@ extension Publishers.FlatMap {
             }
         }
         
-        func receive(completion: Subscribers.Completion<NewPublisher.Failure>, from child: ChildSubscriber) {
+        private func receive(completion: Subscribers.Completion<NewPublisher.Failure>, from child: Child) {
             self.downLock.lock()
             guard self.downState.isDemanding else {
                 self.downLock.unlock()
@@ -254,12 +255,13 @@ extension Publishers.FlatMap {
                 } else {
                     if self.children.isEmpty {
                         self.downState = .completed
+                        
                         let children = self.children
                         self.children = []
                         self.downLock.unlock()
                         
                         children.forEach {
-                            $0.subscription.exchange(with: nil)?.cancel()
+                            $0.cancel()
                         }
                         self.sub.receive(completion: .finished)
                     } else {
@@ -274,7 +276,7 @@ extension Publishers.FlatMap {
                 self.downLock.unlock()
                 
                 children.forEach {
-                    $0.subscription.exchange(with: nil)?.cancel()
+                    $0.cancel()
                 }
                 self.sub.receive(completion: .failure(error))
                 
@@ -357,8 +359,7 @@ extension Publishers.FlatMap {
             return "FlatMap"
         }
         
-        // MARK: - ChildSubscriber
-        final class ChildSubscriber: Subscriber {
+        final class Child: Subscriber {
             
             typealias Input = NewPublisher.Output
             typealias Failure = NewPublisher.Failure
@@ -394,6 +395,10 @@ extension Publishers.FlatMap {
                 
                 subscription.cancel()
                 self.parent.receive(completion: completion, from: self)
+            }
+            
+            func cancel() {
+                self.subscription.exchange(with: nil)?.cancel()
             }
         }
     }

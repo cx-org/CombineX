@@ -92,7 +92,6 @@ class OutputSpec: QuickSpec {
                 }.toNot(throwAssertion())
             }
             #endif
-            
         }
     }
 }

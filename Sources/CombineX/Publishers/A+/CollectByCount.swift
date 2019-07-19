@@ -94,6 +94,8 @@ extension Publishers.CollectByCount {
         init(pub: Pub, sub: Sub) {
             self.count = pub.count
             self.sub = sub
+        
+            self.buffer.reserveCapacity(self.count)
         }
         
         func request(_ demand: Subscribers.Demand) {
@@ -120,15 +122,16 @@ extension Publishers.CollectByCount {
                 return .none
             }
             
+            self.buffer.append(input)
+            
             switch self.buffer.count {
-            case self.count - 1:
-                let output = self.buffer + [input]
-                self.buffer = []
+            case self.count:
+                let output = self.buffer
+                self.buffer.removeAll(keepingCapacity: true)
                 self.lock.unlock()
                 
-                return self.sub.receive(output) * 2
+                return self.sub.receive(output) * self.count
             default:
-                self.buffer.append(input)
                 self.lock.unlock()
                 return .none
             }

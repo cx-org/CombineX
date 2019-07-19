@@ -4,6 +4,7 @@ extension Result {
     typealias Publisher = _Publisher
     #endif
     
+    // FIXME: `var publisher: Result<Success, Failure>.Publisher { get }` can not be compiled event if `Combine` is not imported,  the error message is "Ambiguous type name 'Publisher' in 'Result<Success, Failure>'".
     public var publisher: Result<Success, Failure>._Publisher {
         return .init(self)
     }

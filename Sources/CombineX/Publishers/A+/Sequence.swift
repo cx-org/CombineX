@@ -261,8 +261,8 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Failure == S.Failure, S : Subscriber, Elements.Element == S.Input {
-            let subscription = Inner(sequence: self.sequence, sub: subscriber)
-            subscriber.receive(subscription: subscription)
+            let s = Inner(sequence: self.sequence, sub: subscriber)
+            subscriber.receive(subscription: s)
         }
     }
 }
@@ -338,8 +338,8 @@ extension Publishers.Sequence {
             }
         }
         
-        // still locking
         private func slowPath(_ demand: Subscribers.Demand) {
+            // still locking
             guard demand > 0 else {
                 self.lock.unlock()
                 return

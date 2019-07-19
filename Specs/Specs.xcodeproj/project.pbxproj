@@ -593,10 +593,8 @@
 				624050A922DDBAB000291766 /* Autoconnect.swift */,
 				624050A722DDBAB000291766 /* BreakPoint.swift */,
 				6240509922DDBAB000291766 /* Buffer.swift */,
-				6240509B22DDBAB000291766 /* CollectByCount.swift */,
 				6240509F22DDBAB000291766 /* CombineLatest.swift */,
 				624050D022DDBAB000291766 /* CombineLatest+.swift */,
-				6240509822DDBAB000291766 /* DropUntilOutput.swift */,
 				624050A222DDBAB000291766 /* FlatMap.swift */,
 				6240509E22DDBAB000291766 /* Future.swift */,
 				6240509622DDBAB000291766 /* HandleEvents.swift */,
@@ -604,7 +602,6 @@
 				624050D722DDBAB000291766 /* Merge.swift */,
 				624050AD22DDBAB000291766 /* Merge+.swift */,
 				624050AA22DDBAB000291766 /* Multicast.swift */,
-				624050DF22DDBAB000291766 /* PrefixUntilOutput.swift */,
 				6240509522DDBAB000291766 /* Print.swift */,
 				624050A122DDBAB000291766 /* ReceiveOn.swift */,
 				624050E122DDBAB000291766 /* Retry.swift */,
@@ -623,6 +620,9 @@
 		624050AE22DDBAB000291766 /* A+ */ = {
 			isa = PBXGroup;
 			children = (
+				624050DF22DDBAB000291766 /* PrefixUntilOutput.swift */,
+				6240509822DDBAB000291766 /* DropUntilOutput.swift */,
+				6240509B22DDBAB000291766 /* CollectByCount.swift */,
 				624050A422DDBAB000291766 /* MeasureInterval.swift */,
 				624050DD22DDBAB000291766 /* TryCatch.swift */,
 				624050D922DDBAB000291766 /* Concatenate.swift */,

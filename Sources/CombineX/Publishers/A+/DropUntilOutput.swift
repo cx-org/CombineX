@@ -88,40 +88,20 @@ extension Publishers.DropUntilOutput {
         typealias Sub = S
 
         let lock = Lock()
-
         let sub: Sub
-        var stop = false
-
+        
+        var stopDropping = false
         var state = RelayState.waiting
         
-        var other: Cancellable!
-
+        var child: Child?
+        
         init(pub: Pub, sub: Sub) {
             self.sub = sub
             
-            self.other = pub.other.sink(receiveCompletion: { [weak self] (c) in
-                guard let self = self else { return }
-                self.other.cancel()
-                
-                guard let subscription = self.lock.withLockGet(self.state.complete()) else {
-                    return
-                }
-                
-                subscription.cancel()
-                self.sub.receive(completion: c)
-            }, receiveValue: { [weak self] o in
-                guard let self = self else { return }
-                self.other.cancel()
-                
-                self.lock.lock()
-                guard self.state.isRelaying else {
-                    self.lock.unlock()
-                    return
-                }
-                
-                self.stop = true
-                self.lock.unlock()
-            })
+            let child = Child(parent: self)
+            pub.other.subscribe(child)
+            
+            self.child = child
         }
 
         func request(_ demand: Subscribers.Demand) {
@@ -129,7 +109,18 @@ extension Publishers.DropUntilOutput {
         }
 
         func cancel() {
-            self.lock.withLockGet(self.state.complete())?.cancel()
+            self.lock.lock()
+            guard let subscription = self.state.complete() else {
+                self.lock.unlock()
+                return
+            }
+            
+            let child = self.child
+            self.child = nil
+            self.lock.unlock()
+            
+            subscription.cancel()
+            child?.cancel()
         }
 
         func receive(subscription: Subscription) {
@@ -147,8 +138,8 @@ extension Publishers.DropUntilOutput {
                 self.lock.unlock()
                 return .none
             }
-
-            if self.stop {
+            
+            if self.stopDropping {
                 self.lock.unlock()
                 return self.sub.receive(input)
             }
@@ -158,6 +149,29 @@ extension Publishers.DropUntilOutput {
         }
 
         func receive(completion: Subscribers.Completion<Failure>) {
+            self.lock.lock()
+            guard let subscription = self.state.complete() else {
+                self.lock.unlock()
+                return
+            }
+            
+            let child = self.child
+            self.child = nil
+            self.lock.unlock()
+            
+            subscription.cancel()
+            child?.cancel()
+            
+            self.sub.receive(completion: completion)
+        }
+        
+        func childReceive(_ input: Other.Output) {
+            self.lock.withLock {
+                self.stopDropping = true
+            }
+        }
+        
+        func childReceive(completion: Subscribers.Completion<Failure>) {
             guard let subscription = self.lock.withLockGet(self.state.complete()) else {
                 return
             }
@@ -172,6 +186,48 @@ extension Publishers.DropUntilOutput {
 
         var debugDescription: String {
             return "DropUntilOutput"
+        }
+        
+        final class Child: Subscriber {
+            typealias Input = Other.Output
+            typealias Failure = Other.Failure
+            
+            let subscription = Atom<Subscription?>(val: nil)
+            let parent: Inner
+            
+            init(parent: Inner) {
+                self.parent = parent
+            }
+            
+            func receive(subscription: Subscription) {
+                guard self.subscription.setIfNil(subscription) else {
+                    subscription.cancel()
+                    return
+                }
+                subscription.request(.max(1))
+            }
+            
+            func receive(_ input: Input) -> Subscribers.Demand {
+                guard let subscription = self.subscription.exchange(with: nil) else {
+                    return .none
+                }
+                subscription.cancel()
+                
+                self.parent.childReceive(input)
+                return .none
+            }
+            
+            func receive(completion: Subscribers.Completion<Failure>) {
+                guard let subscription = self.subscription.exchange(with: nil) else {
+                    return
+                }
+                subscription.cancel()
+                self.parent.childReceive(completion: completion)
+            }
+            
+            func cancel() {
+                self.subscription.exchange(with: nil)?.cancel()
+            }
         }
     }
 }
