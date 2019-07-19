@@ -14,7 +14,6 @@ extension Publisher {
         return .init(upstream: self, maxPublishers: maxPublishers, transform: transform)
     }
 }
-
 extension Publishers {
     
     public struct FlatMap<NewPublisher, Upstream> : Publisher where NewPublisher : Publisher, Upstream : Publisher, NewPublisher.Failure == Upstream.Failure {
@@ -51,7 +50,6 @@ extension Publishers {
         }
     }
 }
-
 extension Publishers.FlatMap {
     
     private final class Inner<S>:
@@ -96,18 +94,26 @@ extension Publishers.FlatMap {
             switch self.downState {
             case .waiting:
                 self.downState = .demanding(demand)
-                self.downLock.unlock()
-                
-                if demand > 0 {
-                    self.drain(demand)
+            
+                if demand == .unlimited {
+                    self.fastPath()
+                } else {
+                    self.slowPath(demand)
                 }
+                
             case .demanding(let old):
                 let new = old + demand
                 self.downState = .demanding(new)
-                self.downLock.unlock()
                 
-                if old == 0 && new > 0 {
-                    self.drain(new)
+                guard old == 0 else {
+                    self.downLock.unlock()
+                    return
+                }
+                
+                if new == .unlimited {
+                    self.fastPath()
+                } else {
+                    self.slowPath(new)
                 }
             default:
                 self.downLock.unlock()
@@ -150,7 +156,7 @@ extension Publishers.FlatMap {
             let child = Child(parent: self)
             
             self.downLock.lock()
-            guard self.downState.isDemanding else {
+            if self.downState.isCompleted {
                 self.downLock.unlock()
                 return .none
             }
@@ -204,28 +210,7 @@ extension Publishers.FlatMap {
         // MARK: ChildSubsciber
         private func receive(_ input: NewPublisher.Output, from child: Child) -> Subscribers.Demand {
             self.downLock.lock()
-            guard let old = self.downState.demand else {
-                self.downLock.unlock()
-                return .none
-            }
-            
-            if old > 0 {
-                _ = self.downState.sub(.max(1))
-                self.downLock.unlock()
-                
-                let more = self.sub.receive(input)
-                
-                self.downLock.lock()
-                guard let (old, new) = self.downState.add(more), old == 0, new > 0 else {
-                    self.downLock.unlock()
-                    return .none
-                }
-                self.downLock.unlock()
-                
-                self.drain(new)
-                
-                return .max(1)
-            } else {
+            guard let old = self.downState.demand, old > 0 else {
                 if child.buffer == nil {
                     child.buffer = input
                     
@@ -236,6 +221,25 @@ extension Publishers.FlatMap {
                 self.downLock.unlock()
                 return .none
             }
+            
+            _ = self.downState.sub(.max(1))
+            self.downLock.unlock()
+            
+            let more = self.sub.receive(input)
+            
+            self.downLock.lock()
+            guard let new = self.downState.add(more)?.new, new > 0 else {
+                self.downLock.unlock()
+                return .max(1)
+            }
+            
+            if new == .unlimited {
+                self.fastPath()
+            } else {
+                self.slowPath(new)
+            }
+            
+            return .max(1)
         }
         
         private func receive(completion: Subscribers.Completion<NewPublisher.Failure>, from child: Child) {
@@ -285,68 +289,68 @@ extension Publishers.FlatMap {
         }
         
         // MARK: Drain
-        func drain(_ demand: Subscribers.Demand) {
-            if demand == .unlimited {
-                self.fastPath()
-            } else {
-                self.slowPath(demand)
-            }
-        }
-        
         private func fastPath() {
-            let buffer = self.downLock.withLock {
-                self.children.compactMap { child -> NewPublisher.Output? in
-                    let buffer = child.buffer
-                    child.buffer = nil
-                    return buffer
-                }
+            // still locking
+            
+            var consumed: [Child] = []
+            
+            let outputs = self.children.compactMap { child -> NewPublisher.Output? in
+                let output = child.buffer
+                child.buffer = nil
+                consumed.append(child)
+                return output
             }
             
-            for output in buffer {
+            self.downLock.unlock()
+            
+            for output in outputs {
                 guard self.downLock.withLockGet(self.downState.isDemanding) else {
                     return
                 }
                 _ = self.sub.receive(output)
             }
+            
+            consumed.forEach {
+                $0.requestOne()
+            }
         }
         
         private func slowPath(_ demand: Subscribers.Demand) {
-            var current = demand
-
-            self.downLock.lock()
+            // still locking
+            guard demand > 0 else {
+                self.downLock.unlock()
+                return
+            }
+            
+            var consumed: [Child] = []
+            defer {
+                consumed.forEach {
+                    $0.requestOne()
+                }
+            }
+            
             for child in self.children {
-                guard current > 0 else {
+                guard self.downState.isDemanding else {
                     self.downLock.unlock()
                     return
                 }
-
+                
                 guard let input = child.buffer else {
                     continue
                 }
                 child.buffer = nil
-
-                guard let before = self.downState.demand else {
-                    self.downLock.unlock()
-                    return
-                }
-                self.downState = .demanding(before - 1)
+                consumed.append(child)
+                
+                _ = self.downState.sub(.max(1))
                 self.downLock.unlock()
-
-                let new = self.sub.receive(input)
-
+                
+                let more = self.sub.receive(input)
+                
                 self.downLock.lock()
-                var after = Subscribers.Demand.max(0)
-                if let demand = self.downState.demand {
-                    after = demand + new
-                    self.downState = .demanding(after)
-                }
-
-                if after == 0 {
+                guard let new = self.downState.add(more)?.new, new > 0 else {
                     self.downLock.unlock()
                     return
                 }
-
-                current = after
             }
             self.downLock.unlock()
         }
@@ -399,6 +403,10 @@ extension Publishers.FlatMap {
             
             func cancel() {
                 self.subscription.exchange(with: nil)?.cancel()
+            }
+            
+            func requestOne() {
+                self.subscription.get()?.request(.max(1))
             }
         }
     }

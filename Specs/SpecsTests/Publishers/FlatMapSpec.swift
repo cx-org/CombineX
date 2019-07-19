@@ -15,7 +15,7 @@ class FlatMapSpec: QuickSpec {
     override func spec() {
         
         // MARK: Send Values
-        xdescribe("Send Values") {
+        describe("Send Values") {
             
             // MARK: 1.1 should send sub-subscriber's value
             it("should send sub-subscriber's value") {
@@ -150,7 +150,7 @@ class FlatMapSpec: QuickSpec {
         }
         
         // MARK: - Release Resources
-        xdescribe("Release Resources") {
+        describe("Release Resources") {
             
             // MARK: 2.1 subscription should retain upstream, downstream and transform closure then only release upstream after upstream send finish
             it("subscription should retain upstream, downstream and transform closure then only release upstream after upstream send finish") {
@@ -245,10 +245,10 @@ class FlatMapSpec: QuickSpec {
         }
         
         // MARK: - Concurrent
-        xdescribe("Concurrent") {
+        describe("Concurrent") {
             
             // MARK: 3.1 should send as many values ad demand event if there are sent concurrently
-            it("should send as many values ad demand event if there are sent concurrently") {
+            fit("should send as many values ad demand event if there are sent concurrently") {
                 let sequence = Publishers.Sequence<[Int], Never>(sequence: [0, 1, 2])
                 
                 let subjects = [
