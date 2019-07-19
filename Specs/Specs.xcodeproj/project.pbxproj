@@ -595,7 +595,6 @@
 				6240509922DDBAB000291766 /* Buffer.swift */,
 				6240509F22DDBAB000291766 /* CombineLatest.swift */,
 				624050D022DDBAB000291766 /* CombineLatest+.swift */,
-				624050A222DDBAB000291766 /* FlatMap.swift */,
 				6240509E22DDBAB000291766 /* Future.swift */,
 				6240509622DDBAB000291766 /* HandleEvents.swift */,
 				624050AB22DDBAB000291766 /* MakeConnectable.swift */,
@@ -620,6 +619,7 @@
 		624050AE22DDBAB000291766 /* A+ */ = {
 			isa = PBXGroup;
 			children = (
+				624050A222DDBAB000291766 /* FlatMap.swift */,
 				624050DF22DDBAB000291766 /* PrefixUntilOutput.swift */,
 				6240509822DDBAB000291766 /* DropUntilOutput.swift */,
 				6240509B22DDBAB000291766 /* CollectByCount.swift */,
