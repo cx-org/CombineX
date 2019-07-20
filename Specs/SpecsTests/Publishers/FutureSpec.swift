@@ -63,50 +63,26 @@ class FutureSpec: QuickSpec {
         describe("Concurrent") {
             
             // MARK: should send events to all subscribers even if they subscribe concurrently
-            xit("should send events to all subscribers even if they subscribe concurrently") {
+            fit("should send events to all subscribers even if they subscribe concurrently") {
+                let g = DispatchGroup()
+                
                 let f = Future<Int, CustomError> { (p) in
-                    DispatchQueue.main.async {
+                    DispatchQueue.global().async(group: g) {
                         p(.failure(.e0))
                     }
                 }
-                let subs = Array.make(count: 100, make: CustomSubscriber<Int, CustomError>(receiveSubscription: { (s) in
-                    print("receive subscription", s)
-                    s.request(.unlimited)
-                }, receiveValue: { v in
-                    print("receive value", v)
-                    return .none
-                }, receiveCompletion: { c in
-                    if c == .finished {
-                        print("😄 receive completion", c)
-                    }
-                }))
+                let subs = Array.make(count: 100, make: makeCustomSubscriber(Int.self, CustomError.self, .max(1)))
                 
-                var holder: Atom<[Any]> = Atom(val: [])
                 100.times { i in
-                    DispatchQueue.global().async {
+                    DispatchQueue.global().async(group: g) {
                         f.subscribe(subs[i])
-//                        let sink = f.sink(receiveCompletion: { (c) in
-//                            if c == .finished {
-//                                print("👌 receive completion", c)
-//                            }
-//                        }, receiveValue: { v in
-//                        })
-//                        holder.withLockMutating { $0.append(sink) }
                     }
                 }
                 
-                waitUntil { (done) in
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-//                        for sub in subs {
-//                            if sub.events == [.completion(.failure(.e0))] {
-//
-//                            } else {
-//                                print("😈", sub.events)
-//                            }
-//                            expect(sub.events).to(equal([.completion(.failure(.e0))]))
-//                        }
-                        done()
-                    }
+                g.wait()
+                
+                for sub in subs {
+                    expect(sub.events).to(equal([.completion(.failure(.e0))]))
                 }
             }
         }
