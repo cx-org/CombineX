@@ -30,9 +30,7 @@ class TryScanSpec: QuickSpec {
                 }
                 subject.send(completion: .finished)
                 
-                let got = sub.events.map {
-                    $0.mapError { $0 as! CustomError }
-                }
+                let got = sub.events.mapError { $0 as! CustomError }
                 
                 var initial = 0
                 let valueEvents = (0..<100).map { n -> CustomEvent<Int, CustomError> in
@@ -57,9 +55,7 @@ class TryScanSpec: QuickSpec {
                     subject.send($0)
                 }
                 
-                let got = sub.events.map {
-                    $0.mapError { $0 as! CustomError }
-                }
+                let got = sub.events.mapError { $0 as! CustomError }
                 expect(got).to(equal([.completion(.failure(.e0))]))
             }
             

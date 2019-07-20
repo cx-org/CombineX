@@ -31,9 +31,7 @@ class TryReduceSpec: QuickSpec {
                 subject.send(completion: .finished)
                 
                 let reduced = (0..<100).reduce(0) { $0 + $1 }
-                let got = sub.events.map {
-                    $0.mapError { $0 as! CustomError }
-                }
+                let got = sub.events.mapError { $0 as! CustomError }
 
                 expect(got).to(equal([.value(reduced), .completion(.finished)]))
             }
@@ -51,9 +49,7 @@ class TryReduceSpec: QuickSpec {
                     subject.send($0)
                 }
                 
-                let got = sub.events.map {
-                    $0.mapError { $0 as! CustomError }
-                }
+                let got = sub.events.mapError { $0 as! CustomError }
                 expect(got).to(equal([.completion(.failure(.e0))]))
             }
             

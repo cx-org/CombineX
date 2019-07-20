@@ -28,9 +28,7 @@ class TryDropWhileSpec: QuickSpec {
                 }
                 subject.send(completion: .finished)
                 
-                let got = sub.events.map {
-                    $0.mapError { $0 as! CustomError }
-                }
+                let got = sub.events.mapError { $0 as! CustomError }
                 
                 let valueEvents = (50..<100).map {
                     CustomEvent<Int, CustomError>.value($0)
@@ -67,9 +65,7 @@ class TryDropWhileSpec: QuickSpec {
                 
                 pub.send(completion: .finished)
                 
-                let got = sub.events.map {
-                    $0.mapError { $0 as! CustomError }
-                }
+                let got = sub.events.mapError { $0 as! CustomError }
                 expect(got).to(equal([.completion(.failure(.e0))]))
             }
             

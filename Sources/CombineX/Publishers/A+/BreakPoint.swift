@@ -84,100 +84,25 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
-            let subscription = Inner(pub: self, sub: subscriber)
-            self.upstream.subscribe(subscription)
+
+            self.upstream
+                .handleEvents(receiveSubscription: { s in
+                    if let body = self.receiveSubscription, body(s) {
+                        Signal.sigtrap.raise()
+                    }
+                }, receiveOutput: { v in
+                    if let body = self.receiveOutput, body(v) {
+                        Signal.sigtrap.raise()
+                    }
+                }, receiveCompletion: { c in
+                    if let body = self.receiveCompletion, body(c) {
+                        Signal.sigtrap.raise()
+                    }
+                })
+                .receive(subscriber: subscriber)
         }
     }
 }
-
-extension Publishers.Breakpoint {
-    
-    private final class Inner<S>:
-        Subscription,
-        Subscriber,
-        CustomStringConvertible,
-        CustomDebugStringConvertible
-    where
-        S: Subscriber,
-        S.Input == Output,
-        S.Failure == Failure
-    {
-        
-        typealias Input = Upstream.Output
-        typealias Failure = Upstream.Failure
-        
-        typealias Pub = Publishers.Breakpoint<Upstream>
-        typealias Sub = S
-        
-        let lock = Lock()
-        
-        let receiveSubscription: ((Subscription) -> Bool)?
-        let receiveOutput: ((Upstream.Output) -> Bool)?
-        let receiveCompletion: ((Subscribers.Completion<Upstream.Failure>) -> Bool)?
-        let sub: Sub
-        
-        var state = RelayState.waiting
-        
-        init(pub: Pub, sub: Sub) {
-            self.receiveSubscription = pub.receiveSubscription
-            self.receiveOutput = pub.receiveOutput
-            self.receiveCompletion = pub.receiveCompletion
-            self.sub = sub
-        }
-        
-        func request(_ demand: Subscribers.Demand) {
-            self.lock.withLockGet(self.state.subscription)?.request(demand)
-        }
-        
-        func cancel() {
-            self.lock.withLockGet(self.state.complete())?.cancel()
-        }
-        
-        func receive(subscription: Subscription) {
-            guard self.lock.withLockGet(self.state.relay(subscription)) else {
-                subscription.cancel()
-                return
-            }
-            
-            if let receiveSubscription = self.receiveSubscription, receiveSubscription(subscription) {
-                Signal.sigtrap.raise()
-            }
-            self.sub.receive(subscription: self)
-        }
-        
-        func receive(_ input: Input) -> Subscribers.Demand {
-            guard self.lock.withLockGet(self.state.isRelaying) else {
-                return .none
-            }
-            if let receiveOutput = self.receiveOutput, receiveOutput(input) {
-                Signal.sigtrap.raise()
-            }
-            return self.sub.receive(input)
-        }
-        
-        func receive(completion: Subscribers.Completion<Failure>) {
-            guard let subscription = self.lock.withLockGet(self.state.complete()) else {
-                return
-            }
-            subscription.cancel()
-            
-            if let receiveCompletion = self.receiveCompletion, receiveCompletion(completion) {
-                Signal.sigtrap.raise()
-            }
-            
-            self.sub.receive(completion: completion)
-        }
-        
-        var description: String {
-            return "Breakpoint"
-        }
-        
-        var debugDescription: String {
-            return "Breakpoint"
-        }
-    }
-}
-
 
 private enum Signal {
     
@@ -195,7 +120,7 @@ private enum Signal {
         #elseif canImport(Glibc)
         Glibc.raise(self.code)
         #else
-        print("how to raise a signal?")
+        Global.RequiresImplementation()
         #endif
     }
 }

@@ -83,8 +83,8 @@ extension Publishers.Print {
         let lock = Lock()
         
         let prefix: String
-        var stream: TextOutputStream
         let sub: Sub
+        var stream: TextOutputStream
         
         var state: RelayState = .waiting
         
@@ -95,10 +95,10 @@ extension Publishers.Print {
         }
         
         private func write(_ string: String) {
-            let output = self.prefix + ": \(string)\n"
-            
             self.lock.withLock {
-                self.stream.write(output)
+                self.stream.write("")
+                self.stream.write(self.prefix + ": \(string)")
+                self.stream.write("\n")
             }
         }
         
@@ -171,7 +171,7 @@ private extension Subscribers.Demand {
     }
 }
 
-private class ConsoleOutputStream: TextOutputStream {
+private struct ConsoleOutputStream: TextOutputStream {
     
     func write(_ string: String) {
         print(string, terminator: "")

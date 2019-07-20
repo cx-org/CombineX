@@ -77,11 +77,7 @@ class TryCompactMapSpec: QuickSpec {
                 let valueEvents = (0..<10).map { CustomEvent<Int, CustomError>.value($0) }
                 let expected = valueEvents + [.completion(.failure(.e0))]
                 
-                let got = sub.events.map {
-                    $0.mapError { e -> CustomError in
-                        e as! CustomError
-                    }
-                }
+                let got = sub.events.mapError { $0 as! CustomError }
                 
                 expect(got).to(equal(expected))
             }

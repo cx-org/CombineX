@@ -105,8 +105,6 @@ extension CustomSubject {
             self.demand -= 1
             let more = self.sub.receive(value)
             self.demand += more
-            
-             Swift.print("receive value", value, "request more", more)
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
@@ -128,8 +126,6 @@ extension CustomSubject {
             defer {
                 self.lock.unlock()
             }
-            
-            Swift.print("request demand", demand)
             
             if self.isCancelled {
                 return

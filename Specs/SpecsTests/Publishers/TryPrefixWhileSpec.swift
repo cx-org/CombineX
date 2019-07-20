@@ -28,9 +28,7 @@ class TryPrefixWhileSpec: QuickSpec {
                 }
                 subject.send(completion: .finished)
                 
-                let got = sub.events.map {
-                    $0.mapError { $0 as! CustomError }
-                }
+                let got = sub.events.mapError { $0 as! CustomError }
                 
                 let valueEvents = (0..<50).map {
                     CustomEvent<Int, CustomError>.value($0)
@@ -52,9 +50,7 @@ class TryPrefixWhileSpec: QuickSpec {
                 }
                 subject.send(completion: .failure(.e0))
                 
-                let got = sub.events.map {
-                    $0.mapError { $0 as! CustomError }
-                }
+                let got = sub.events.mapError { $0 as! CustomError }
                 expect(got).to(equal([.completion(.finished)]))
             }
             
@@ -85,9 +81,7 @@ class TryPrefixWhileSpec: QuickSpec {
                 
                 pub.send(completion: .finished)
                 
-                let got = sub.events.map {
-                    $0.mapError { $0 as! CustomError }
-                }
+                let got = sub.events.mapError { $0 as! CustomError }
                 expect(got).to(equal([.completion(.failure(.e0))]))
             }
         }

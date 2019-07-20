@@ -129,19 +129,19 @@ extension Publishers.HandleEvents {
             guard self.lock.withLockGet(self.state.isRelaying) else {
                 return .none
             }
-            self.receiveOutput?(input)
-            let demand = sub.receive(input)
             
-            return demand
+            self.receiveOutput?(input)
+            let more = sub.receive(input)
+            self.receiveRequest?(more)
+            return more
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
             guard let subscription = self.lock.withLockGet(self.state.complete()) else {
                 return
             }
-            
             subscription.cancel()
-        
+            
             self.receiveCompletion?(completion)
             self.sub.receive(completion: completion)
         }
