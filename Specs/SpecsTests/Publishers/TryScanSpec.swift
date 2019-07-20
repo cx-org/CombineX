@@ -59,7 +59,7 @@ class TryScanSpec: QuickSpec {
                 expect(got).to(equal([.completion(.failure(.e0))]))
             }
             
-            #if !SWIFT_PACAKGE
+            #if !SWIFT_PACKAGE
             // MARK: 1.3 should not throw assertion when upstream send values before sending subscription
             it("should not throw assertion when upstream send values before sending subscription") {
                 let upstream = CustomPublisher<Int, CustomError> { s in

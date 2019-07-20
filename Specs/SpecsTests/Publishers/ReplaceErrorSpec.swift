@@ -24,7 +24,7 @@ class RepleaceErrorSpec: QuickSpec {
                 expect(sub.events).to(equal([.value(1), .completion(.finished)]))
             }
             
-            #if !SWIFT_PACAKGE
+            #if !SWIFT_PACKAGE
             // MARK: 1.2 should crash when the demand is 0
             it("should crash when the demand is 0") {
                 let pub = Fail<Int, CustomError>(error: .e0).replaceError(with: 1)

@@ -63,7 +63,7 @@ class FutureSpec: QuickSpec {
         describe("Concurrent") {
             
             // MARK: should send events to all subscribers even if they subscribe concurrently
-            fit("should send events to all subscribers even if they subscribe concurrently") {
+            it("should send events to all subscribers even if they subscribe concurrently") {
                 let g = DispatchGroup()
                 
                 let f = Future<Int, CustomError> { (p) in
