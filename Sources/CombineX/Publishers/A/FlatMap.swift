@@ -14,6 +14,7 @@ extension Publisher {
         return .init(upstream: self, maxPublishers: maxPublishers, transform: transform)
     }
 }
+
 extension Publishers {
     
     public struct FlatMap<NewPublisher, Upstream> : Publisher where NewPublisher : Publisher, Upstream : Publisher, NewPublisher.Failure == Upstream.Failure {
@@ -50,6 +51,7 @@ extension Publishers {
         }
     }
 }
+
 extension Publishers.FlatMap {
     
     private final class Inner<S>:
@@ -311,7 +313,7 @@ extension Publishers.FlatMap {
             }
             
             consumed.forEach {
-                $0.requestOne()
+                $0.request(.max(1))
             }
         }
         
@@ -323,11 +325,6 @@ extension Publishers.FlatMap {
             }
             
             var consumed: [Child] = []
-            defer {
-                consumed.forEach {
-                    $0.requestOne()
-                }
-            }
             
             for child in self.children {
                 guard self.downState.isDemanding else {
@@ -349,10 +346,17 @@ extension Publishers.FlatMap {
                 self.downLock.lock()
                 guard let new = self.downState.add(more)?.new, new > 0 else {
                     self.downLock.unlock()
+                    consumed.forEach {
+                        $0.request(.max(1))
+                    }
                     return
                 }
             }
             self.downLock.unlock()
+            
+            consumed.forEach {
+                $0.request(.max(1))
+            }
         }
         
         var description: String {
@@ -405,8 +409,8 @@ extension Publishers.FlatMap {
                 self.subscription.exchange(with: nil)?.cancel()
             }
             
-            func requestOne() {
-                self.subscription.get()?.request(.max(1))
+            func request(_ demand: Subscribers.Demand) {
+                self.subscription.get()?.request(demand)
             }
         }
     }

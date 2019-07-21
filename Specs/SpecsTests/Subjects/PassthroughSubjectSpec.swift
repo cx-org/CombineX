@@ -258,6 +258,8 @@ class PassthroughSubjectSpec: QuickSpec {
                     })
                     
                     pub.subscribe(sub)
+                    
+                    sub.releaseSubscription()
                 }
                 
                 expect(subscriptionObj).toNot(beNil())

@@ -257,8 +257,9 @@ class CurrentValueSubjectSpec: QuickSpec {
                         return .none
                     }, receiveCompletion: { c in
                     })
-                    
                     pub.subscribe(sub)
+                    
+                    sub.releaseSubscription()
                 }
                 
                 expect(subscriptionObj).toNot(beNil())

@@ -117,8 +117,8 @@ extension Publishers {
 //                let subscription = KeepFullInner(pub: self, sub: subscriber)
 //                self.upstream.subscribe(subscription)
             case .byRequest:
-                let subscription = ByRequestInner(pub: self, sub: subscriber)
-                self.upstream.subscribe(subscription)
+                let s = ByRequestInner(pub: self, sub: subscriber)
+                self.upstream.subscribe(s)
             }
         }
     }
@@ -167,13 +167,13 @@ extension Publishers.Buffer {
                 return
             }
             
-            let before = self.demand
-            let after = before + demand
-            self.demand = after
+            let old = self.demand
+            let new = old + demand
+            self.demand = new
             
             var drain = Subscribers.Demand.none
-            if before == 0, after > 0, self.buffer.isNotEmpty {
-                drain = after
+            if old == 0, new > 0, self.buffer.isNotEmpty {
+                drain = new
             }
             self.lock.unlock()
             
@@ -184,9 +184,9 @@ extension Publishers.Buffer {
             subscription.request(demand)
         }
         
-        private func drain(_ after: Subscribers.Demand) {
-            var demand = after
-            while demand > 0 {
+        private func drain(_ demand: Subscribers.Demand) {
+            var now = demand
+            while now > 0 {
                 self.lock.lock()
                 guard let output = self.buffer.popFirst() else {
                     self.lock.unlock()
@@ -198,7 +198,7 @@ extension Publishers.Buffer {
                 let more = self.sub.receive(output)
                 self.lock.withLock {
                     self.demand += more
-                    demand = self.demand
+                    now = self.demand
                 }
             }
         }

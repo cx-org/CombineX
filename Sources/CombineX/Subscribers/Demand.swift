@@ -118,7 +118,7 @@ extension Subscribers {
             case (.max, .unlimited):
                 return .max(0)
             case (.max(let d0), .max(let d1)):
-                // FIXME: Docs say "any operation that would result in a negative value is clamped to .max(0)", but it will actually crash. See DemandSpec.swift#2.3 for more information.
+                // FIXME: Docs say "any operation that would result in a negative value is clamped to .max(0)", but it will actually crash. See "DemandSpec.swift#2.3" for more information.
                 return .max(d0 - d1)
             }
         }

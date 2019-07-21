@@ -183,3 +183,11 @@ extension CustomScheduler {
         return CustomScheduler(dispatchQueue: DispatchQueue.global(qos: qos))
     }
 }
+
+
+extension CustomScheduler {
+    
+    var isCurrent: Bool {
+        return self.dispatchQueue.isCurrent
+    }
+}

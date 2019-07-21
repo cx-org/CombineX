@@ -68,7 +68,6 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, B.Failure == S.Failure, S.Input == (A.Output, B.Output) {
-            Global.RequiresImplementation()
 //            let s = Inner(pub: self, sub: subscriber)
 //            subscriber.receive(subscription: s)
         }
@@ -77,6 +76,27 @@ extension Publishers {
 
 /*
 
+private struct CombineLatestState: OptionSet {
+    let rawValue: Int
+    
+    static let aCompleted = CombineLatestState(rawValue: 1 << 0)
+    static let bCompleted = CombineLatestState(rawValue: 1 << 1)
+    static let initial: CombineLatestState = []
+    static let completed: CombineLatestState = [.aCompleted, .bCompleted]
+    
+    var isACompleted: Bool {
+        return self.contains(.aCompleted)
+    }
+    
+    var isBCompleted: Bool {
+        return self.contains(.bCompleted)
+    }
+    
+    var isCompleted: Bool {
+        return self == .completed
+    }
+}
+ 
 extension Publishers.CombineLatest {
 
     private final class Inner<S>:
@@ -93,110 +113,138 @@ extension Publishers.CombineLatest {
         typealias Sub = S
 
         let lock = Lock()
-
         let sub: Sub
         
-        var doneCount = 0
+        var state: CombineLatestState = .initial
         
         var outputA: A.Output?
         var outputB: B.Output?
+        
+        var upcomingA: Subscribers.Demand = .none
+        var upcomingB: Subscribers.Demand = .none
+        
         var childA: Child<A.Output>?
         var childB: Child<B.Output>?
-
-        var state: SubscriptionState = .waiting
 
         init(pub: Pub, sub: Sub) {
             self.sub = sub
 
-            let childA = Child<A.Output>(parent: self, index: 0) { [unowned self] a in
+            let childA = Child<A.Output>(parent: self, index: 0) { output in
                 self.lock.lock()
-                guard self.state.isSubscribing else {
+                
+                if self.state.isACompleted {
                     self.lock.unlock()
                     return .none
                 }
                 
-
-                
-                if let b = self.outputB {
-                    self.lock.unlock()
-                    let demand = self.sub.receive((a, b))
-                    
-                    self.lock.lock()
-                    let childA = self.childA
-                    let childB = self.childB
-                    self.lock.unlock()
-                    
-                    childA?.request(demand)
-                    childB?.request(demand)
-                } else if self.outputA == nil {
-                    
-                }
-                return .none
+                self.outputA = output
+                return self.childReceiveValue(from: 0)
             }
             pub.a.subscribe(childA)
             self.childA = childA
-
-            let childB = Child<B.Output>(parent: self, index: 1) { [unowned self] output in
-                return .none
+            
+            let childB = Child<B.Output>(parent: self, index: 1) { output in
+                self.lock.lock()
+                
+                if self.state.isBCompleted {
+                    self.lock.unlock()
+                    return .none
+                }
+                
+                self.outputB = output
+                return self.childReceiveValue(from: 1)
             }
             pub.b.subscribe(childB)
             self.childB = childB
         }
 
         func request(_ demand: Subscribers.Demand) {
+            guard demand > 0 else {
+                return
+            }
             self.lock.lock()
-            var demandA = demand
-            if demand > 0 && self.outputA.isNotNil {
-                demandA -= 1
+            var a = demand
+            if self.outputA.isNotNil {
+                a -= 1
             }
             
-            var demandB = demand
-            if demand > 0 && self.outputB.isNotNil {
-                demandB -= 1
+            var b = demand
+            if self.outputB.isNotNil {
+                b -= 1
             }
             
             let childA = self.childA
             let childB = self.childB
             self.lock.unlock()
             
-            childA?.request(demandA)
-            childB?.request(demandB)
+            childA?.request(a)
+            childB?.request(b)
         }
 
         func cancel() {
             self.lock.lock()
-            self.state = .finished
-            let childA = self.childA.exchange(with: nil)
-            let childB = self.childB.exchange(with: nil)
+            self.state = .completed
+            let (childA, childB) = self.release()
             self.lock.unlock()
             
             childA?.cancel()
             childB?.cancel()
         }
         
-        func receive(completion: Subscribers.Completion<A.Failure>, from index: Int) {
+        private func release() -> (Child<A.Output>?, Child<B.Output>?){
+            defer {
+                self.outputA = nil
+                self.outputB = nil
+                
+                self.childA = nil
+                self.childB = nil
+            }
+            return (self.childA, self.childB)
+        }
+        
+        func childReceiveValue(from index: Int) -> Subscribers.Demand {
+            let action = CombineLatestState(rawValue: index + 1)
+            if self.state.contains(action) {
+                self.lock.unlock()
+                return .none
+            }
+            
+            // in locking
+            switch (self.outputA, self.outputB) {
+            case (.some(let a), .some(let b)):
+                self.lock.unlock()
+                let more = self.sub.receive((a, b))
+                
+                self.lock.lock()
+                return more
+            default:
+                self.lock.unlock()
+                return .none
+            }
+        }
+        
+        func childReceive(completion: Subscribers.Completion<A.Failure>, from index: Int) {
+            let action = CombineLatestState(rawValue: index + 1)
+            
             self.lock.lock()
-            guard self.state.isSubscribing else {
+            if self.state.contains(action) {
                 self.lock.unlock()
                 return
             }
             
             switch completion {
             case .failure:
-                self.state = .finished
-                let childA = self.childA.exchange(with: nil)
-                let childB = self.childB.exchange(with: nil)
+                self.state = .completed
+                let (childA, childB) = self.release()
                 self.lock.unlock()
                 
                 childA?.cancel()
                 childB?.cancel()
                 self.sub.receive(completion: completion)
             case .finished:
-                self.doneCount += 1
-                if self.doneCount == 2 {
-                    self.state = .finished
-                    let childA = self.childA.exchange(with: nil)
-                    let childB = self.childB.exchange(with: nil)
+                self.state.insert(action)
+                if self.state.isCompleted {
+                    let (childA, childB) = self.release()
                     self.lock.unlock()
                     
                     childA?.cancel()
@@ -217,55 +265,52 @@ extension Publishers.CombineLatest {
         }
 
         final class Child<Output>: Subscriber {
-
+            
             typealias Input = Output
             typealias Failure = A.Failure
-            typealias Parent = Inner
-
-            let parent: Parent
-            let index: Int
             
-            let whenReceiveInput: (Input) -> Subscribers.Demand
-
-            init(parent: Parent, index: Int, whenReceiveInput: @escaping (Input) -> Subscribers.Demand) {
+            let subscription = Atom<Subscription?>(val: nil)
+            let parent: Inner
+            let index: Int
+            let whenReceiveValue: (Output) -> Subscribers.Demand
+            
+            init(parent: Inner, index: Int, whenReceiveValue: @escaping (Output) -> Subscribers.Demand) {
                 self.parent = parent
                 self.index = index
-                
-                self.whenReceiveInput = whenReceiveInput
+                self.whenReceiveValue = whenReceiveValue
             }
-
-            let subscription = Atomic<Subscription?>(value: nil)
-
+            
             func receive(subscription: Subscription) {
-                guard self.subscription.ifNilStore(subscription) else {
+                if self.subscription.setIfNil(subscription) {
+                    subscription.request(.max(1))
+                } else {
                     subscription.cancel()
-                    return
                 }
             }
-
+            
             func receive(_ input: Input) -> Subscribers.Demand {
                 guard self.subscription.isNotNil else {
                     return .none
                 }
-                return self.whenReceiveInput(input)
+                return self.whenReceiveValue(input)
             }
-
+            
             func receive(completion: Subscribers.Completion<Failure>) {
                 guard let subscription = self.subscription.exchange(with: nil) else {
                     return
                 }
+                
                 subscription.cancel()
-                self.parent.receive(completion: completion, from: self.index)
-            }
-            
-            func request(_ demand: Subscribers.Demand) {
-                self.subscription.load()?.request(demand)
+                self.parent.childReceive(completion: completion, from: self.index)
             }
             
             func cancel() {
                 self.subscription.exchange(with: nil)?.cancel()
             }
             
+            func request(_ demand: Subscribers.Demand) {
+                self.subscription.get()?.request(demand)
+            }
         }
     }
 }

@@ -64,6 +64,8 @@ extension Publishers {
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             Global.RequiresImplementation()
+//            let s = Inner(pub: self, sub: subscriber)
+//            self.upstream.subscribe(s)
         }
     }
 }

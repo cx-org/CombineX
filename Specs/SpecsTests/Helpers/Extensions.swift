@@ -1,3 +1,5 @@
+import Foundation
+
 #if USE_COMBINE
 import Combine
 #elseif SWIFT_PACKAGE
@@ -98,3 +100,15 @@ extension Array where Element: Equatable {
     }
 }
 
+// MARK: DispatchQueue
+extension DispatchQueue {
+    
+    var isCurrent: Bool {
+        let key = DispatchSpecificKey<Void>()
+        self.setSpecific(key: key, value: ())
+        defer {
+            self.setSpecific(key: key, value: nil)
+        }
+        return DispatchQueue.getSpecific(key: key) != nil
+    }
+}

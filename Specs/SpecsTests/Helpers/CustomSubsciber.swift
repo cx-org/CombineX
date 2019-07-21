@@ -30,10 +30,15 @@ class CustomSubscriber<Input, Failure>: Subscriber where Failure : Error {
     private let receiveCompletionBody: ((Subscribers.Completion<Failure>) -> Void)?
     
     private let lock = Lock()
+    private var _subscription: Subscription?
     private var _events: [Event] = []
     
     var events: [Event] {
         return self.lock.withLockGet(self._events)
+    }
+    
+    var subscription: Subscription? {
+        return self.lock.withLockGet(self._subscription)
     }
     
     init(receiveSubscription: ((Subscription) -> Void)? = nil, receiveValue: ((Input) -> Subscribers.Demand)? = nil, receiveCompletion: ((Subscribers.Completion<Failure>) -> Void)? = nil) {
@@ -43,6 +48,9 @@ class CustomSubscriber<Input, Failure>: Subscriber where Failure : Error {
     }
     
     func receive(subscription: Subscription) {
+        self.lock.withLock {
+            self._subscription = subscription
+        }
         self.receiveSubscriptionBody?(subscription)
     }
     
@@ -56,8 +64,15 @@ class CustomSubscriber<Input, Failure>: Subscriber where Failure : Error {
     func receive(completion: Subscribers.Completion<Failure>) {
         self.lock.withLock {
             self._events.append(.completion(completion))
+            self._subscription = nil
         }
         self.receiveCompletionBody?(completion)
+    }
+    
+    func releaseSubscription() {
+        self.lock.withLock {
+            self._subscription = nil
+        }
     }
 }
 
