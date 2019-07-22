@@ -216,7 +216,7 @@ extension Publishers.FlatMap {
                 if child.buffer == nil {
                     child.buffer = input
                     
-                    // TODO: use a linked list?
+                    // TODO: Use a linked list
                     self.children.removeAll(where: { $0 === child })
                     self.children.append(child)
                 }

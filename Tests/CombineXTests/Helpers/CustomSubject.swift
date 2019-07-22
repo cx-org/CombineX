@@ -104,6 +104,7 @@ extension CustomSubject {
             
             self.demand -= 1
             let more = self.sub.receive(value)
+            Swift.print("subject sync more", more)
             self.demand += more
         }
         
@@ -132,6 +133,7 @@ extension CustomSubject {
             }
             
             self.demand += demand
+            Swift.print("subject more", demand)
         }
         
         func cancel() {

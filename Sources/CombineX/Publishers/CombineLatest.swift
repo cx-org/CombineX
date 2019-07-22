@@ -68,13 +68,12 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, B.Failure == S.Failure, S.Input == (A.Output, B.Output) {
-//            let s = Inner(pub: self, sub: subscriber)
-//            subscriber.receive(subscription: s)
+            let s = Inner(pub: self, sub: subscriber)
+            subscriber.receive(subscription: s)
         }
     }
 }
 
-/*
 
 private struct CombineLatestState: OptionSet {
     let rawValue: Int
@@ -120,40 +119,17 @@ extension Publishers.CombineLatest {
         var outputA: A.Output?
         var outputB: B.Output?
         
-        var upcomingA: Subscribers.Demand = .none
-        var upcomingB: Subscribers.Demand = .none
-        
         var childA: Child<A.Output>?
         var childB: Child<B.Output>?
 
         init(pub: Pub, sub: Sub) {
             self.sub = sub
 
-            let childA = Child<A.Output>(parent: self, index: 0) { output in
-                self.lock.lock()
-                
-                if self.state.isACompleted {
-                    self.lock.unlock()
-                    return .none
-                }
-                
-                self.outputA = output
-                return self.childReceiveValue(from: 0)
-            }
+            let childA = Child<A.Output>(parent: self, index: 0)
             pub.a.subscribe(childA)
             self.childA = childA
             
-            let childB = Child<B.Output>(parent: self, index: 1) { output in
-                self.lock.lock()
-                
-                if self.state.isBCompleted {
-                    self.lock.unlock()
-                    return .none
-                }
-                
-                self.outputB = output
-                return self.childReceiveValue(from: 1)
-            }
+            let childB = Child<B.Output>(parent: self, index: 1)
             pub.b.subscribe(childB)
             self.childB = childB
         }
@@ -202,21 +178,28 @@ extension Publishers.CombineLatest {
             return (self.childA, self.childB)
         }
         
-        func childReceiveValue(from index: Int) -> Subscribers.Demand {
+        func childReceive(_ value: Any, from index: Int) -> Subscribers.Demand {
+            self.lock.unlock()
             let action = CombineLatestState(rawValue: index + 1)
             if self.state.contains(action) {
                 self.lock.unlock()
                 return .none
             }
             
-            // in locking
+            switch index {
+            case 0:     self.outputA = value as? A.Output
+            case 1:     self.outputB = value as? B.Output
+            default:    break
+            }
+            
             switch (self.outputA, self.outputB) {
             case (.some(let a), .some(let b)):
                 self.lock.unlock()
+            
                 let more = self.sub.receive((a, b))
-                
-                self.lock.lock()
-                return more
+                self.childA?.request(more)
+                self.childB?.request(more)
+                return .none
             default:
                 self.lock.unlock()
                 return .none
@@ -272,12 +255,10 @@ extension Publishers.CombineLatest {
             let subscription = Atom<Subscription?>(val: nil)
             let parent: Inner
             let index: Int
-            let whenReceiveValue: (Output) -> Subscribers.Demand
             
-            init(parent: Inner, index: Int, whenReceiveValue: @escaping (Output) -> Subscribers.Demand) {
+            init(parent: Inner, index: Int) {
                 self.parent = parent
                 self.index = index
-                self.whenReceiveValue = whenReceiveValue
             }
             
             func receive(subscription: Subscription) {
@@ -292,7 +273,7 @@ extension Publishers.CombineLatest {
                 guard self.subscription.isNotNil else {
                     return .none
                 }
-                return self.whenReceiveValue(input)
+                return self.parent.childReceive(input, from: self.index)
             }
             
             func receive(completion: Subscribers.Completion<Failure>) {
@@ -315,4 +296,3 @@ extension Publishers.CombineLatest {
     }
 }
 
- */

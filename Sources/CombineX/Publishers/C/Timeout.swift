@@ -75,7 +75,7 @@ extension Publishers.Timeout {
         typealias Pub = Publishers.Timeout<Upstream, Context>
         typealias Sub = S
         
-        let lock = Lock()
+        let lock = Lock(recursive: true)
         let interval: Context.SchedulerTimeType.Stride
         let scheduler: Context
         let options: Context.SchedulerOptions?
@@ -91,6 +91,8 @@ extension Publishers.Timeout {
             self.options = pub.options
             self.customError = pub.customError
             self.sub = sub
+            
+            rescheduleTimeout()
         }
         
         func rescheduleTimeout() {
