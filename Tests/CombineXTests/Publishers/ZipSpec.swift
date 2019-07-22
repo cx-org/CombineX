@@ -9,19 +9,19 @@ import CombineX
 import Specs
 #endif
 
-class CombineLatestSpec: QuickSpec {
- 
+class ZipSpec: QuickSpec {
+    
     override func spec() {
         
         // MARK: - Relay
         describe("Relay") {
-            
-            // MARK: 1.1 should combine latest of 2
-            it("should combine latest of 2") {
+        
+            // MARK: 1.1 should zip of 2
+            it("should zip of 2") {
                 let subject0 = PassthroughSubject<String, CustomError>()
                 let subject1 = PassthroughSubject<String, CustomError>()
                 
-                let pub = subject0.combineLatest(subject1, +)
+                let pub = subject0.zip(subject1, +)
                 let sub = makeCustomSubscriber(String.self, CustomError.self, .unlimited)
                 pub.subscribe(sub)
                 
@@ -33,7 +33,7 @@ class CombineLatestSpec: QuickSpec {
                 subject1.send("b")
                 subject1.send("c")
                 
-                let expected = ["1a", "2a", "2b", "2c"].map { CustomEvent<String, CustomError>.value($0) }
+                let expected = ["0a", "1b", "2c"].map { CustomEvent<String, CustomError>.value($0) }
                 expect(sub.events).to(equal(expected))
             }
             
@@ -43,7 +43,7 @@ class CombineLatestSpec: QuickSpec {
                 let subject1 = PassthroughSubject<String, CustomError>()
                 let subject2 = PassthroughSubject<String, CustomError>()
                 
-                let pub = subject0.combineLatest(subject1, subject2, { $0 + $1 + $2 })
+                let pub = subject0.zip(subject1, subject2, { $0 + $1 + $2 })
                 let sub = makeCustomSubscriber(String.self, CustomError.self, .unlimited)
                 pub.subscribe(sub)
                 
@@ -61,7 +61,7 @@ class CombineLatestSpec: QuickSpec {
                 subject2.send("C")
                 subject2.send("D")
                 
-                let expected = ["2bA", "3bA", "3cA", "3dA", "3dB", "3dC", "3dD"].map { CustomEvent<String, CustomError>.value($0) }
+                let expected = ["0aA", "1bB", "2cC", "3dD"].map { CustomEvent<String, CustomError>.value($0) }
                 expect(sub.events).to(equal(expected))
             }
             
@@ -71,7 +71,7 @@ class CombineLatestSpec: QuickSpec {
                 let subject1 = CustomSubject<String, CustomError>()
                 
                 var counter = 0
-                let pub = subject0.combineLatest(subject1, +)
+                let pub = subject0.zip(subject1, +)
                 let sub = CustomSubscriber<String, CustomError>(receiveSubscription: { (s) in
                     s.request(.max(10))
                 }, receiveValue: { v in

@@ -27,7 +27,7 @@ CombineX will try to provide:
 When CombineX is officially released, all you need to do is:
 
 ```swift
-#if CAN_USE_COMBINE
+#if USE_COMBINE
 import Combine
 #else
 import CombineX
@@ -48,8 +48,8 @@ You can:
 Since some people may not have macOS 10.15 beta installed, the recommended contributing way is: 
 
 1. Fork the project.
-2. Open `Specs/Specs.xcworkspace`, make your changes under `CombineX.xcodeproje`. 
-3. All tests go `Specs/SpecsTests`. Make sure both scheme `Specs` and scheme `CombineSpecs` pass the test you wrote.
+2. Open `Specs/Specs.xcworkspace`, make your changes under `Specs/CombineX` folder. 
+3. All tests go `SpecsTests/CombineXTests` folder. Make sure both scheme `Specs` and scheme `CombineSpecs` pass the tests you wrote.
 
 ## State
 
@@ -62,9 +62,10 @@ Since some people may not have macOS 10.15 beta installed, the recommended contr
 |`AnySubject`| done |   |   |
 |`AnySubscriber`| done | done |   |
 |`Cancellable`| done | no need |   |
-|`CombineIdentifier`| done |   |   |
-|`ConnectablePublisher`| done |   |   |
+|`CombineIdentifier`| done | done |   |
+|`ConnectablePublisher`|   |   |   |
 |`CustomCombineIdentifierConvertible`| done | no need |   |
+|`Published`|   |   |   |
 |`Publisher`| done | no need |   |
 |`Scheduler`| done | no need |   |
 |`SchedulerTimeIntervalConvertible`| done | no need |   |
@@ -77,54 +78,84 @@ Since some people may not have macOS 10.15 beta installed, the recommended contr
 | API | Status | Test | Notes |
 |:--|:--|:--|:--|
 |`AllSatisfy`| done |   |   |
-|`AssertNoFailure`| done |   |   |
+|`AssertNoFailure`| done | done |   |
 |`Autoconnect`|   |   |   |
 |`Breakpoint`| done |   |   |
-|`Catch`|   |   |   |
+|`Buffer`|   |   |   |
+|`Catch`| done |   |   |
+|`Collect`| done |   |   |
+|`CollectByCount`| done | done |   |
+|`CollectByTime`|   |   |   |
+|`CombineLatest`| done | basic | b |
 |`CompactMap`| done |   |   |
-|`Concatenate`| done | basic |   |
+|`Comparison`| done |   |   |
+|`Concatenate`| done | done |   |
 |`Contains`| done |   |   |
 |`ContainsWhere`| done |   |   |
 |`Count`| done | basic |   |
+|`Debounce`|   |   |   |
+|`Delay`|   |   |   |
 |`Drop`| done |   |   |
+|`Decode`| done |   |   |
+|`DropUntilOutput`| done | done |   |
 |`DropWhile`| done |   |   |
 |`Empty`| done | done |   |
+|`Encode`| done |   |   |
 |`Fail`| done |   |   |
 |`Filter`| done |   |   |
 |`First`| done |   |   |
 |`FirstWhere`| done |   |   |
 |`FlatMap`| done | done |   |
-|`Just`| done |   |   |
+|`Future`| done | basic | b |
+|`HandleEvents`| done |   | wip |
+|`IgnoreOutput`| done |   |   |
+|`Just`| done | done |   |
 |`Last`| done |   |   |
 |`LastWhere`| done |   |   |
-|`IgnoreOutput`| done |   |   |
+|`MakeConnectable`|   |   |   |
 |`Map`| done |   |   |
 |`MapError`| done | done |   |
-|`MeasureInterval`| done | basic |   |
-|`Merge`| done | basic |   |
-|`Once`| done |   |   |
+|`MapKeyPath`| done |   |   |
+|`MeasureInterval`| done | done |   |
+|`Merge`| done | done |   |
+|`Multicast`|   |   |   |
 |`Optional`| done | done |   |
 |`Output`| done | done |   |
+|`PrefixUntilOutput`| done | done |   |
+|`PrefixWhile`| done |   |   |
 |`Print`| done | done |   |
 |`Publishers`| done | no need |   |
-|`ReceiveOn`| done |   |   |
+|`ReceiveOn`| done | basic | b |
 |`Reduce`| done |   |   |
-|`RemoveDuplicates`| done |   |   |
+|`RemoveDuplicates`| done | done |   |
 |`ReplaceEmpty`| done | done |   |
 |`ReplaceError`| done | done |   |
+|`Result`| done | done |   |
+|`Retry`|   |   |   |
+|`Scan`| done |   |   |
 |`Sequence`| done | done |   |
 |`SetFailureType`| done |   |   |
-|`SubscribeOn`|   |   |   |
-|`TryAllSatisfy`| done |   |   |
+|`Share`|   |   |   |
+|`SubscribeOn`| done | basic | b |
+|`SwitchToLatest`| done | basic | b |
+|`Throttle`|   |   |   |
+|`Timeout`|   |   |   |
+|`TryAllSatisfy`| done | done |   |
+|`TryCatch`| done | done |   |
+|`TryCombineLatest`| done |   | b |
 |`TryCompactMap`| done | done |   |
+|`TryComparison`| done |   |   |
 |`TryContainsWhere`| done |   |   |
-|`TryDropWhere`| done | basic |   |
+|`TryDropWhere`| done | done |   |
 |`TryFilter`| done |   |   |
-|`TryFirst`| done |   |   |
+|`TryFirstWhere`| done |   |   |
 |`TryLastWhere`| done |   |   |
 |`TryMap`| done |   |   |
+|`TryPrefixWhile`| done | done |   |
 |`TryReduce`| done | done |   |
 |`TryRemoveDuplicates`| done | done |   |
+|`TryScan`| done | done |   |
+|`Zip`| done | basic | b |
 
 ### Schedulers
 
@@ -146,11 +177,11 @@ Since some people may not have macOS 10.15 beta installed, the recommended contr
 |`Assign`| done | done  |   |
 |`Demand`| done | done |   |
 |`Sink`| done | done |   |
-|`Subscribers`| done  | no need |   |
+|`Subscribers`| done | no need |   |
 
 ### Subscriptions
 
 | API | Status | Test | Notes |
 |:--|:--|:--|:--|
-|`empty`| done  |   |   |
+|`empty`| done |   |   |
 |`Subscriptions`| done  | no need |   |

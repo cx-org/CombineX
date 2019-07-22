@@ -114,22 +114,29 @@ extension Publishers.CombineLatest {
         let lock = Lock()
         let sub: Sub
         
-        var state: CombineLatestState = .initial
+        enum Source: Int {
+            case a = 1
+            case b = 2
+        }
         
-        var outputA: A.Output?
-        var outputB: B.Output?
+        var state: CombineLatestState = .initial
         
         var childA: Child<A.Output>?
         var childB: Child<B.Output>?
 
+        var outputA: A.Output?
+        var outputB: B.Output?
+        
+        var demand: Subscribers.Demand = .none
+        
         init(pub: Pub, sub: Sub) {
             self.sub = sub
 
-            let childA = Child<A.Output>(parent: self, index: 0)
+            let childA = Child<A.Output>(parent: self, source: .a)
             pub.a.subscribe(childA)
             self.childA = childA
             
-            let childB = Child<B.Output>(parent: self, index: 1)
+            let childB = Child<B.Output>(parent: self, source: .b)
             pub.b.subscribe(childB)
             self.childB = childB
         }
@@ -139,22 +146,19 @@ extension Publishers.CombineLatest {
                 return
             }
             self.lock.lock()
-            var a = demand
-            if self.outputA.isNotNil {
-                a -= 1
+            if self.state == .completed {
+                self.lock.unlock()
+                return
             }
             
-            var b = demand
-            if self.outputB.isNotNil {
-                b -= 1
-            }
+            self.demand += demand
             
             let childA = self.childA
             let childB = self.childB
             self.lock.unlock()
             
-            childA?.request(a)
-            childB?.request(b)
+            childA?.request(demand)
+            childB?.request(demand)
         }
 
         func cancel() {
@@ -178,27 +182,35 @@ extension Publishers.CombineLatest {
             return (self.childA, self.childB)
         }
         
-        func childReceive(_ value: Any, from index: Int) -> Subscribers.Demand {
-            self.lock.unlock()
-            let action = CombineLatestState(rawValue: index + 1)
+        func childReceive(_ value: Any, from source: Source) -> Subscribers.Demand {
+            self.lock.lock()
+            let action = CombineLatestState(rawValue: source.rawValue)
             if self.state.contains(action) {
                 self.lock.unlock()
                 return .none
             }
             
-            switch index {
-            case 0:     self.outputA = value as? A.Output
-            case 1:     self.outputB = value as? B.Output
-            default:    break
+            switch source {
+            case .a:
+                self.outputA = value as? A.Output
+            case .b:
+                self.outputB = value as? B.Output
+            }
+            
+            if self.demand == 0 {
+                self.lock.unlock()
+                return .none
             }
             
             switch (self.outputA, self.outputB) {
             case (.some(let a), .some(let b)):
+                self.demand -= 1
                 self.lock.unlock()
-            
                 let more = self.sub.receive((a, b))
-                self.childA?.request(more)
-                self.childB?.request(more)
+                // FIXME: Apple's Combine doesn't strictly support sync backpressure.
+                self.lock.lock()
+                self.demand += more
+                self.lock.unlock()
                 return .none
             default:
                 self.lock.unlock()
@@ -206,8 +218,8 @@ extension Publishers.CombineLatest {
             }
         }
         
-        func childReceive(completion: Subscribers.Completion<A.Failure>, from index: Int) {
-            let action = CombineLatestState(rawValue: index + 1)
+        func childReceive(completion: Subscribers.Completion<A.Failure>, from source: Source) {
+            let action = CombineLatestState(rawValue: source.rawValue)
             
             self.lock.lock()
             if self.state.contains(action) {
@@ -249,23 +261,23 @@ extension Publishers.CombineLatest {
 
         final class Child<Output>: Subscriber {
             
+            typealias Parent = Inner
             typealias Input = Output
             typealias Failure = A.Failure
             
             let subscription = Atom<Subscription?>(val: nil)
-            let parent: Inner
-            let index: Int
+            let parent: Parent
+            let source: Source
             
-            init(parent: Inner, index: Int) {
+            init(parent: Parent, source: Source) {
                 self.parent = parent
-                self.index = index
+                self.source = source
             }
             
             func receive(subscription: Subscription) {
-                if self.subscription.setIfNil(subscription) {
-                    subscription.request(.max(1))
-                } else {
+                guard self.subscription.setIfNil(subscription) else {
                     subscription.cancel()
+                    return
                 }
             }
             
@@ -273,7 +285,7 @@ extension Publishers.CombineLatest {
                 guard self.subscription.isNotNil else {
                     return .none
                 }
-                return self.parent.childReceive(input, from: self.index)
+                return self.parent.childReceive(input, from: self.source)
             }
             
             func receive(completion: Subscribers.Completion<Failure>) {
@@ -282,7 +294,7 @@ extension Publishers.CombineLatest {
                 }
                 
                 subscription.cancel()
-                self.parent.childReceive(completion: completion, from: self.index)
+                self.parent.childReceive(completion: completion, from: self.source)
             }
             
             func cancel() {

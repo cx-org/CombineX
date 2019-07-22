@@ -259,6 +259,8 @@
 		66C364AC22E4C0D8002236BF /* Const.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C3643D22E4C0D8002236BF /* Const.swift */; };
 		66C364AD22E4C0D8002236BF /* CustomScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C3643E22E4C0D8002236BF /* CustomScheduler.swift */; };
 		66C364AE22E4C0D8002236BF /* CustomScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C3643E22E4C0D8002236BF /* CustomScheduler.swift */; };
+		66FF340122E604CF00C4BA70 /* ZipSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FF340022E604CF00C4BA70 /* ZipSpec.swift */; };
+		66FF340222E604CF00C4BA70 /* ZipSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FF340022E604CF00C4BA70 /* ZipSpec.swift */; };
 		7F9942FD698289992DD81303 /* Pods_CombineSpecsTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AD6E92871F844C3BEA668A8D /* Pods_CombineSpecsTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -505,6 +507,7 @@
 		66DD4C9922D4DB2E008A1F60 /* Combine-3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Combine-3.swift"; sourceTree = "<group>"; };
 		66DD4C9A22D4DB2E008A1F60 /* Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Combine.swift; sourceTree = "<group>"; };
 		66DD4C9B22D4DB2E008A1F60 /* Combine-1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Combine-1.swift"; sourceTree = "<group>"; };
+		66FF340022E604CF00C4BA70 /* ZipSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZipSpec.swift; sourceTree = "<group>"; };
 		7B6EF3BDA1443688A3AA9E81 /* Pods-CombineSpecsTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CombineSpecsTests.debug.xcconfig"; path = "Target Support Files/Pods-CombineSpecsTests/Pods-CombineSpecsTests.debug.xcconfig"; sourceTree = "<group>"; };
 		7B7B29DCD1CF4F3B86F1F1FA /* Pods-Specs.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Specs.debug.xcconfig"; path = "Target Support Files/Pods-Specs/Pods-Specs.debug.xcconfig"; sourceTree = "<group>"; };
 		8DCB044E242447A73457C8E7 /* Pods_SpecsTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpecsTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -564,6 +567,7 @@
 				624050E922DDBAB000291766 /* Completion.swift */,
 				6240507A22DDBAB000291766 /* ConnectablePublisher.swift */,
 				6240507922DDBAB000291766 /* CustomCombineIdentifierConvertible.swift */,
+				66C363EA22E4B179002236BF /* Published.swift */,
 				6240507622DDBAB000291766 /* Publisher.swift */,
 				624050E222DDBAB000291766 /* Scheduler.swift */,
 				6240509322DDBAB000291766 /* SchedulerTimeIntervalConvertible.swift */,
@@ -576,7 +580,6 @@
 				6240508E22DDBAB000291766 /* Subjects */,
 				624050E422DDBAB000291766 /* Subscribers */,
 				6240508722DDBAB000291766 /* Subscriptions */,
-				66C363EA22E4B179002236BF /* Published.swift */,
 			);
 			name = CombineX;
 			path = ../../Sources/CombineX;
@@ -622,21 +625,15 @@
 			children = (
 				624050A922DDBAB000291766 /* Autoconnect.swift */,
 				6240509922DDBAB000291766 /* Buffer.swift */,
-				6240509F22DDBAB000291766 /* CombineLatest.swift */,
-				624050D022DDBAB000291766 /* CombineLatest+.swift */,
 				66C363F722E4B991002236BF /* Debounce.swift */,
 				624050AB22DDBAB000291766 /* MakeConnectable.swift */,
 				624050AA22DDBAB000291766 /* Multicast.swift */,
 				624050E122DDBAB000291766 /* Retry.swift */,
 				624050D522DDBAB000291766 /* Share.swift */,
 				66C363F522E4B949002236BF /* Throttle.swift */,
-				6240509C22DDBAB000291766 /* TryCombineLatest.swift */,
-				6240509D22DDBAB000291766 /* TryCombineLatest+.swift */,
-				624050D622DDBAB000291766 /* Zip.swift */,
-				624050CF22DDBAB000291766 /* Zip+.swift */,
 				624050AE22DDBAB000291766 /* A */,
 				66C363E422E4AC51002236BF /* B */,
-				66C363E722E4B043002236BF /* C */,
+				66C363E722E4B043002236BF /* unchecked */,
 			);
 			path = Publishers;
 			sourceTree = "<group>";
@@ -644,8 +641,6 @@
 		624050AE22DDBAB000291766 /* A */ = {
 			isa = PBXGroup;
 			children = (
-				66C363F122E4B869002236BF /* Encode.swift */,
-				66C363EF22E4B76D002236BF /* Decode.swift */,
 				625EC7BD22E0201D00585377 /* __Publisher.swift */,
 				624050B522DDBAB000291766 /* AllSatisfy.swift */,
 				624050B322DDBAB000291766 /* AssertNoFailure.swift */,
@@ -659,11 +654,13 @@
 				624050B222DDBAB000291766 /* Contains.swift */,
 				624050C222DDBAB000291766 /* ContainsWhere.swift */,
 				624050C022DDBAB000291766 /* Count.swift */,
+				66C363EF22E4B76D002236BF /* Decode.swift */,
 				6240509722DDBAB000291766 /* Deferred.swift */,
 				624050C922DDBAB000291766 /* Drop.swift */,
 				6240509822DDBAB000291766 /* DropUntilOutput.swift */,
 				624050C422DDBAB000291766 /* DropWhile.swift */,
 				624050A022DDBAB000291766 /* Empty.swift */,
+				66C363F122E4B869002236BF /* Encode.swift */,
 				624050C622DDBAB000291766 /* Fail.swift */,
 				624050BD22DDBAB000291766 /* Filter.swift */,
 				624050B622DDBAB000291766 /* First.swift */,
@@ -829,22 +826,28 @@
 		66C363E422E4AC51002236BF /* B */ = {
 			isa = PBXGroup;
 			children = (
-				624050DC22DDBAB000291766 /* SwitchToLatest.swift */,
+				6240509F22DDBAB000291766 /* CombineLatest.swift */,
+				624050D022DDBAB000291766 /* CombineLatest+.swift */,
+				6240509E22DDBAB000291766 /* Future.swift */,
 				624050A122DDBAB000291766 /* ReceiveOn.swift */,
 				6240509A22DDBAB000291766 /* SubscribeOn.swift */,
-				6240509E22DDBAB000291766 /* Future.swift */,
+				624050DC22DDBAB000291766 /* SwitchToLatest.swift */,
+				6240509C22DDBAB000291766 /* TryCombineLatest.swift */,
+				6240509D22DDBAB000291766 /* TryCombineLatest+.swift */,
+				624050D622DDBAB000291766 /* Zip.swift */,
+				624050CF22DDBAB000291766 /* Zip+.swift */,
 			);
 			path = B;
 			sourceTree = "<group>";
 		};
-		66C363E722E4B043002236BF /* C */ = {
+		66C363E722E4B043002236BF /* unchecked */ = {
 			isa = PBXGroup;
 			children = (
 				66C363E822E4B0CD002236BF /* CollectByTime.swift */,
 				66C363F322E4B8E5002236BF /* Timeout.swift */,
 				66C363E522E4AE66002236BF /* Delay.swift */,
 			);
-			path = C;
+			path = unchecked;
 			sourceTree = "<group>";
 		};
 		66C3640122E4C0D8002236BF /* CombineXTests */ = {
@@ -854,6 +857,7 @@
 				66C3640322E4C0D8002236BF /* DemandSpec.swift */,
 				66C3640422E4C0D8002236BF /* AnyCancellableSpec.swift */,
 				66C3640522E4C0D8002236BF /* CombineIdentifierSpec.swift */,
+				66C3640D22E4C0D8002236BF /* PublishedSpec.swift */,
 				66C3640622E4C0D8002236BF /* Scheduler */,
 				66C3640822E4C0D8002236BF /* Subjects */,
 				66C3640B22E4C0D8002236BF /* Publishers */,
@@ -887,6 +891,7 @@
 				66C3642022E4C0D8002236BF /* AssertNoFailureSpec.swift */,
 				66C3641822E4C0D8002236BF /* BufferSpec.swift */,
 				66C3642522E4C0D8002236BF /* CollectByCountSpec.swift */,
+				6279F1F522E57F590005840F /* CombineLatestSpec.swift */,
 				66C3641D22E4C0D8002236BF /* ConcatenateSpec.swift */,
 				66C3640E22E4C0D8002236BF /* DropUntilOutputSpec.swift */,
 				66C3642222E4C0D8002236BF /* EmptySpec.swift */,
@@ -901,7 +906,6 @@
 				66C3641F22E4C0D8002236BF /* OutputSpec.swift */,
 				66C3642422E4C0D8002236BF /* PrefixUntilOutputSpec.swift */,
 				66C3641A22E4C0D8002236BF /* PrintSpec.swift */,
-				66C3640D22E4C0D8002236BF /* PublishedSpec.swift */,
 				66C3641622E4C0D8002236BF /* ReceiveOnSpec.swift */,
 				66C3642B22E4C0D8002236BF /* RemoveDuplicatesSpec.swift */,
 				66C3642122E4C0D8002236BF /* ReplaceEmptySpec.swift */,
@@ -918,7 +922,7 @@
 				66C3641722E4C0D8002236BF /* TryReduceSpec.swift */,
 				66C3641222E4C0D8002236BF /* TryRemoveDuplicatesSpec.swift */,
 				66C3641322E4C0D8002236BF /* TryScanSpec.swift */,
-				6279F1F522E57F590005840F /* CombineLatestSpec.swift */,
+				66FF340022E604CF00C4BA70 /* ZipSpec.swift */,
 			);
 			path = Publishers;
 			sourceTree = "<group>";
@@ -1440,6 +1444,7 @@
 				66C3645D22E4C0D8002236BF /* TryAllSatisfySpec.swift in Sources */,
 				66C3647122E4C0D8002236BF /* JustSpec.swift in Sources */,
 				66C364A522E4C0D8002236BF /* Atom.swift in Sources */,
+				66FF340122E604CF00C4BA70 /* ZipSpec.swift in Sources */,
 				66C3649322E4C0D8002236BF /* SinkSpec.swift in Sources */,
 				66C3645522E4C0D8002236BF /* SequenceSpec.swift in Sources */,
 				66C3644522E4C0D8002236BF /* CombineIdentifierSpec.swift in Sources */,
@@ -1515,6 +1520,7 @@
 				66C3645E22E4C0D8002236BF /* TryAllSatisfySpec.swift in Sources */,
 				66C3647222E4C0D8002236BF /* JustSpec.swift in Sources */,
 				66C364A622E4C0D8002236BF /* Atom.swift in Sources */,
+				66FF340222E604CF00C4BA70 /* ZipSpec.swift in Sources */,
 				66C3649422E4C0D8002236BF /* SinkSpec.swift in Sources */,
 				66C3645622E4C0D8002236BF /* SequenceSpec.swift in Sources */,
 				66C3644622E4C0D8002236BF /* CombineIdentifierSpec.swift in Sources */,

@@ -43,6 +43,7 @@ QCKMain([
     TryReduceSpec.self,
     TryRemoveDuplicatesSpec.self,
     TryScanSpec.self,
+    ZipSpec.self,
     
     ImmediateSchedulerSpec.self,
     
