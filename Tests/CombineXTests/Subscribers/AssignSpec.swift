@@ -116,10 +116,10 @@ class AssignSpec: QuickSpec {
                 let obj = Obj()
                 let assign = Subscribers.Assign<Obj, Int>(object: obj, keyPath: \Obj.value)
                 
-                weak var subscription: CustomSubscription?
+                weak var subscription: TestSubscription?
                 
                 do {
-                    let s = CustomSubscription(request: { (demand) in
+                    let s = TestSubscription(request: { (demand) in
                     }, cancel: {
                     })
                     
@@ -137,10 +137,10 @@ class AssignSpec: QuickSpec {
                 let obj = Obj()
                 let assign = Subscribers.Assign<Obj, Int>(object: obj, keyPath: \Obj.value)
                 
-                weak var subscription: CustomSubscription?
+                weak var subscription: TestSubscription?
                 
                 do {
-                    let s = CustomSubscription(request: { (demand) in
+                    let s = TestSubscription(request: { (demand) in
                     }, cancel: {
                     })
                     

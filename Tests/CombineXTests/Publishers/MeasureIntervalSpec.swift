@@ -21,8 +21,8 @@ class MeasureIntervalSpec: QuickSpec {
             it("should measure interval as expected") {
                 let subject = PassthroughSubject<Int, Never>()
                 
-                let pub = subject.measureInterval(using: CustomScheduler.main)
-                let sub = CustomSubscriber<CustomScheduler.SchedulerTimeType.Stride, Never>(receiveSubscription: { (s) in
+                let pub = subject.measureInterval(using: TestDispatchQueueScheduler.main)
+                let sub = TestSubscriber<TestDispatchQueueScheduler.SchedulerTimeType.Stride, Never>(receiveSubscription: { (s) in
                     s.request(.unlimited)
                 }, receiveValue: { v in
                     return .none

@@ -6,8 +6,8 @@ import CombineX
 import Specs
 #endif
 
-func makeCustomSubscriber<Input, Failure: Error>(_ input: Input.Type, _ failure: Failure.Type, _ demand: Subscribers.Demand) -> CustomSubscriber<Input, Failure> {
-    return CustomSubscriber<Input, Failure>(receiveSubscription: { (s) in
+func makeTestSubscriber<Input, Failure: Error>(_ input: Input.Type, _ failure: Failure.Type, _ demand: Subscribers.Demand) -> TestSubscriber<Input, Failure> {
+    return TestSubscriber<Input, Failure>(receiveSubscription: { (s) in
         s.request(demand)
     }, receiveValue: { v in
         return .none
@@ -15,15 +15,15 @@ func makeCustomSubscriber<Input, Failure: Error>(_ input: Input.Type, _ failure:
     })
 }
 
-enum CustomEvent<Input, Failure: Error> {
+enum TestEvent<Input, Failure: Error> {
     case value(Input)
     case completion(Subscribers.Completion<Failure>)
 }
 
-class CustomSubscriber<Input, Failure>: Subscriber where Failure : Error {
+class TestSubscriber<Input, Failure>: Subscriber where Failure : Error {
     
     
-    typealias Event = CustomEvent<Input, Failure>
+    typealias Event = TestEvent<Input, Failure>
     
     private let receiveSubscriptionBody: ((Subscription) -> Void)?
     private let receiveValueBody: ((Input) -> Subscribers.Demand)?
@@ -76,7 +76,7 @@ class CustomSubscriber<Input, Failure>: Subscriber where Failure : Error {
     }
 }
 
-extension CustomEvent {
+extension TestEvent {
     
     func isFinished() -> Bool {
         switch self {
@@ -92,7 +92,7 @@ extension CustomEvent {
         return e
     }
     
-    func mapError<NewFailure: Error>(_ transform: (Failure) -> NewFailure) -> CustomEvent<Input, NewFailure> {
+    func mapError<NewFailure: Error>(_ transform: (Failure) -> NewFailure) -> TestEvent<Input, NewFailure> {
         switch self {
         case .value(let i):         return .value(i)
         case .completion(let c):    return .completion(c.mapError(transform))
@@ -100,7 +100,7 @@ extension CustomEvent {
     }
 }
 
-extension CustomEvent where Input: Equatable {
+extension TestEvent where Input: Equatable {
     
     func isValue(_ value: Input) -> Bool {
         switch self {
@@ -110,9 +110,9 @@ extension CustomEvent where Input: Equatable {
     }
 }
 
-extension CustomEvent: Equatable where Input: Equatable, Failure: Equatable {
+extension TestEvent: Equatable where Input: Equatable, Failure: Equatable {
     
-    static func == (lhs: CustomEvent, rhs: CustomEvent) -> Bool {
+    static func == (lhs: TestEvent, rhs: TestEvent) -> Bool {
         switch (lhs, rhs) {
         case (.value(let a), .value(let b)):            return a == b
         case (.completion(let a), .completion(let b)):
@@ -126,7 +126,7 @@ extension CustomEvent: Equatable where Input: Equatable, Failure: Equatable {
     }
 }
 
-extension CustomEvent: CustomStringConvertible {
+extension TestEvent: CustomStringConvertible {
     
     var description: String {
         switch self {
@@ -138,18 +138,18 @@ extension CustomEvent: CustomStringConvertible {
     }
 }
 
-protocol CustomEventProtocol {
+protocol TestEventProtocol {
     associatedtype Input
     associatedtype Failure: Error
     
-    var customEvent: CustomEvent<Input, Failure> {
+    var testEvent: TestEvent<Input, Failure> {
         get set
     }
 }
 
-extension CustomEvent: CustomEventProtocol {
+extension TestEvent: TestEventProtocol {
     
-    var customEvent: CustomEvent<Input, Failure> {
+    var testEvent: TestEvent<Input, Failure> {
         get {
             return self
         }
@@ -159,11 +159,11 @@ extension CustomEvent: CustomEventProtocol {
     }
 }
 
-extension Collection where Element: CustomEventProtocol {
+extension Collection where Element: TestEventProtocol {
     
-    func mapError<NewFailure: Error>(_ transform: (Element.Failure) -> NewFailure) -> [CustomEvent<Element.Input, NewFailure>] {
+    func mapError<NewFailure: Error>(_ transform: (Element.Failure) -> NewFailure) -> [TestEvent<Element.Input, NewFailure>] {
         return self.map {
-            $0.customEvent.mapError(transform)
+            $0.testEvent.mapError(transform)
         }
     }
 }

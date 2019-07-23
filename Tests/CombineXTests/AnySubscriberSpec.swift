@@ -26,7 +26,7 @@ class AnySubscriberSpec: QuickSpec {
                     
                     var demand: Demand?
                     
-                    let subscription = CustomSubscription(request: {
+                    let subscription = TestSubscription(request: {
                         demand = $0
                     }, cancel: {
                     })
@@ -41,16 +41,16 @@ class AnySubscriberSpec: QuickSpec {
                     let subject = PassthroughSubject<Int, Error>()
                     let sub = AnySubscriber(subject)
 
-                    sub.receive(subscription: CustomSubscription())
+                    sub.receive(subscription: TestSubscription())
 
                     expect(sub.receive(1)).to(equal(.max(0)))
                 }
                 
                 // MARK: 1.3 should relay events when receive events
                 it("should relay events when receive events") {
-                    let subject = PassthroughSubject<Int, CustomError>()
+                    let subject = PassthroughSubject<Int, TestError>()
                     
-                    let sub = CustomSubscriber<Int, CustomError>(receiveSubscription: { (s) in
+                    let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
                         s.request(.unlimited)
                     }, receiveValue: { v in
                         return .none
@@ -59,7 +59,7 @@ class AnySubscriberSpec: QuickSpec {
                     
                     subject.subscribe(sub)
                     
-                    let pub = PassthroughSubject<Int, CustomError>()
+                    let pub = PassthroughSubject<Int, TestError>()
                     pub.subscribe(AnySubscriber(subject))
                     
                     pub.send(1)
@@ -76,9 +76,9 @@ class AnySubscriberSpec: QuickSpec {
                 
                 // MARK: 2.1 should do nothing when closures are nil
                 it("should do nothing when closures are nil") {
-                    let sub = AnySubscriber<Int, CustomError>(receiveSubscription: nil, receiveValue: nil, receiveCompletion: nil)
+                    let sub = AnySubscriber<Int, TestError>(receiveSubscription: nil, receiveValue: nil, receiveCompletion: nil)
                     
-                    let subscription = CustomSubscription(request: { (_) in
+                    let subscription = TestSubscription(request: { (_) in
                         fail()
                     }, cancel: {
                         fail()

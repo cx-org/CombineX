@@ -34,7 +34,7 @@ class CombineIdentifierSpec: QuickSpec {
             
             // MARK: 1.2 should use object's address as id
             it("should use object's address as id") {
-                let obj = CustomObject()
+                let obj = TestObject()
                 
                 let id1 = CombineIdentifier(obj)
                 let id2 = CombineIdentifier(obj)

@@ -21,7 +21,7 @@ class JustSpec: QuickSpec {
             it("should send value then send finished") {
                 let pub = Just<Int>(1)
                 
-                let sub = makeCustomSubscriber(Int.self, Never.self, .unlimited)
+                let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
                 pub.subscribe(sub)
                 
                 expect(sub.events).to(equal([.value(1), .completion(.finished)]))
@@ -31,7 +31,7 @@ class JustSpec: QuickSpec {
             // MARK: 1.2 should throw assertion when none demand is requested
             it("should throw assertion when less than one demand is requested") {
                 let pub = Just<Int>(1)
-                let sub = makeCustomSubscriber(Int.self, Never.self, .none)
+                let sub = makeTestSubscriber(Int.self, Never.self, .none)
                 expect {
                     pub.subscribe(sub)
                 }.to(throwAssertion())
@@ -42,7 +42,7 @@ class JustSpec: QuickSpec {
                 var subscription: Subscription?
                 
                 let pub = Just<Int>(1)
-                let sub = CustomSubscriber<Int, Never>(receiveSubscription: { s in
+                let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
                     subscription = s
                     s.request(.unlimited)
                 }, receiveValue: { v in
@@ -68,7 +68,7 @@ class JustSpec: QuickSpec {
                 
                 do {
                     let pub = Just<Int>(1)
-                    let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
+                    let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
                         subscription = s
                     }, receiveValue: { v in
                         return .none
@@ -92,7 +92,7 @@ class JustSpec: QuickSpec {
                 
                 do {
                     let pub = Just<Int>(1)
-                    let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
+                    let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
                         subscription = s
                     }, receiveValue: { v in
                         return .none
@@ -113,14 +113,14 @@ class JustSpec: QuickSpec {
             // MARK: 2.3 subscription should not release the initial object after complete
             it("subscription should not release the initial object after complete") {
                 var subscription: Subscription?
-                weak var customObj: AnyObject?
+                weak var testObj: AnyObject?
                 
                 do {
-                    let obj = CustomObject()
-                    customObj = obj
+                    let obj = TestObject()
+                    testObj = obj
                     
-                    let pub = Just<CustomObject>(obj)
-                    let sub = CustomSubscriber<CustomObject, Never>(receiveSubscription: { (s) in
+                    let pub = Just<TestObject>(obj)
+                    let sub = TestSubscriber<TestObject, Never>(receiveSubscription: { (s) in
                         subscription = s
                     }, receiveValue: { v in
                         return .none
@@ -130,9 +130,9 @@ class JustSpec: QuickSpec {
                     pub.subscribe(sub)
                 }
                 
-                expect(customObj).toNot(beNil())
+                expect(testObj).toNot(beNil())
                 subscription?.request(.unlimited)
-                expect(customObj).toNot(beNil())
+                expect(testObj).toNot(beNil())
                 
                 _ = subscription
             }
@@ -140,14 +140,14 @@ class JustSpec: QuickSpec {
             // MARK: 2.4 subscription should not release the initial object after cancel
             it("subscription should not release the initial object after cancel") {
                 var subscription: Subscription?
-                weak var customObj: AnyObject?
+                weak var testObj: AnyObject?
                 
                 do {
-                    let obj = CustomObject()
-                    customObj = obj
+                    let obj = TestObject()
+                    testObj = obj
                     
-                    let pub = Just<CustomObject>(obj)
-                    let sub = CustomSubscriber<CustomObject, Never>(receiveSubscription: { (s) in
+                    let pub = Just<TestObject>(obj)
+                    let sub = TestSubscriber<TestObject, Never>(receiveSubscription: { (s) in
                         subscription = s
                     }, receiveValue: { v in
                         return .none
@@ -157,9 +157,9 @@ class JustSpec: QuickSpec {
                     pub.subscribe(sub)
                 }
 
-                expect(customObj).toNot(beNil())
+                expect(testObj).toNot(beNil())
                 subscription?.cancel()
-                expect(customObj).toNot(beNil())
+                expect(testObj).toNot(beNil())
             }
         }
         
@@ -171,7 +171,7 @@ class JustSpec: QuickSpec {
                 var subscription: Subscription?
                 
                 let pub = Just<Int>(1)
-                let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
                     subscription = s
                 }, receiveValue: { v in
                     return .none

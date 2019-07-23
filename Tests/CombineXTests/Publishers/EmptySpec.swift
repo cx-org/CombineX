@@ -19,7 +19,7 @@ class EmptySpec: QuickSpec {
             // MARK: 1.1 should send completion immediately
             it("should send completion immediately") {
                 let empty = Empty<Int, Never>()
-                let sub = makeCustomSubscriber(Int.self, Never.self, .unlimited)
+                let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
                 empty.subscribe(sub)
                 
                 expect(sub.events).to(equal([.completion(.finished)]))
@@ -28,7 +28,7 @@ class EmptySpec: QuickSpec {
             // MARK: 1.2 should send nothing
             it("should send nothing") {
                 let empty = Empty<Int, Never>(completeImmediately: false)
-                let sub = makeCustomSubscriber(Int.self, Never.self, .unlimited)
+                let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
                 empty.subscribe(sub)
                 expect(sub.events).to(equal([]))
             }

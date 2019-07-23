@@ -18,9 +18,9 @@ class TryCompactMapSpec: QuickSpec {
             
             // MARK: 1.1 should compact map values from upstream
             it("should compact map values from upstream") {
-                let pub = PassthroughSubject<Int, CustomError>()
+                let pub = PassthroughSubject<Int, TestError>()
                 
-                let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
+                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
                 
                 pub.tryCompactMap { $0 % 2 == 0 ? $0 : nil }.subscribe(sub)
                 
@@ -29,7 +29,7 @@ class TryCompactMapSpec: QuickSpec {
                 }
                 pub.send(completion: .finished)
                 
-                let valueEvents = (0..<50).map { CustomEvent<Int, Never>.value(2 * $0) }
+                let valueEvents = (0..<50).map { TestEvent<Int, Never>.value(2 * $0) }
                 let expected = valueEvents + [.completion(.finished)]
                 
                 let got = sub.events.map {
@@ -44,7 +44,7 @@ class TryCompactMapSpec: QuickSpec {
             // MARK: 1.2 should send as many values as demand
             it("should send as many values as demand") {
                 let pub = PassthroughSubject<Int, Never>()
-                let sub = makeCustomSubscriber(Int.self, Error.self, .max(10))
+                let sub = makeTestSubscriber(Int.self, Error.self, .max(10))
                 
                 pub.tryCompactMap { $0 % 2 == 0 ? $0 : nil }.subscribe(sub)
                 
@@ -57,13 +57,13 @@ class TryCompactMapSpec: QuickSpec {
             
             // MARK: 1.3 should fail if transform throws an error
             it("should fail if transform throws an error") {
-                let pub = PassthroughSubject<Int, CustomError>()
+                let pub = PassthroughSubject<Int, TestError>()
                 
-                let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
+                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
                 
                 pub.tryCompactMap {
                     if $0 == 10 {
-                        throw CustomError.e0
+                        throw TestError.e0
                     }
                     return $0
                 }.subscribe(sub)
@@ -74,10 +74,10 @@ class TryCompactMapSpec: QuickSpec {
                 
                 pub.send(completion: .finished)
                 
-                let valueEvents = (0..<10).map { CustomEvent<Int, CustomError>.value($0) }
+                let valueEvents = (0..<10).map { TestEvent<Int, TestError>.value($0) }
                 let expected = valueEvents + [.completion(.failure(.e0))]
                 
-                let got = sub.events.mapError { $0 as! CustomError }
+                let got = sub.events.mapError { $0 as! TestError }
                 
                 expect(got).to(equal(expected))
             }
@@ -85,11 +85,11 @@ class TryCompactMapSpec: QuickSpec {
             #if !SWIFT_PACKAGE
             // MARK: 1.4 should throw assertion when upstream send values before sending subscription
             it("should throw assertion when upstream send values before sending subscription") {
-                let upstream = CustomPublisher<Int, CustomError> { s in
+                let upstream = TestPublisher<Int, TestError> { s in
                     _ = s.receive(1)
                 }
                 let pub = upstream.tryCompactMap { $0 }
-                let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
+                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
                 
                 expect {
                     pub.subscribe(sub)
@@ -98,11 +98,11 @@ class TryCompactMapSpec: QuickSpec {
             
             // MARK: 1.5 should throw assertion when upstream send completion before sending subscription
             it("should throw assertion when upstream send values before sending subscription") {
-                let upstream = CustomPublisher<Int, CustomError> { s in
+                let upstream = TestPublisher<Int, TestError> { s in
                     s.receive(completion: .finished)
                 }
                 let pub = upstream.tryCompactMap { $0 }
-                let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
+                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
 
                 expect {
                     pub.subscribe(sub)
@@ -118,20 +118,20 @@ class TryCompactMapSpec: QuickSpec {
             // MARK: 2.1 subscription should not release downstream and transform closure after finish
             it("subscription should not release downstream and transform closure after finish") {
                 weak var downstreamObj: AnyObject?
-                weak var closureObj: CustomObject?
+                weak var closureObj: TestObject?
                 
                 var subscription: Subscription?
                 
                 do {
-                    let customPub = CustomPublisher<Int, CustomError> { (s) in
+                    let testPub = TestPublisher<Int, TestError> { (s) in
                         s.receive(subscription: Subscriptions.empty)
                         s.receive(completion: .finished)
                     }
                     
-                    let obj = CustomObject()
+                    let obj = TestObject()
                     closureObj = obj
                     
-                    let sub = CustomSubscriber<Int, Error>(receiveSubscription: { (s) in
+                    let sub = TestSubscriber<Int, Error>(receiveSubscription: { (s) in
                         subscription = s
                     }, receiveValue: { v in
                         return .none
@@ -139,7 +139,7 @@ class TryCompactMapSpec: QuickSpec {
                     })
                     downstreamObj = sub
                     
-                    customPub
+                    testPub
                         .tryCompactMap { i -> Int in
                             obj.run()
                             return i
@@ -156,19 +156,19 @@ class TryCompactMapSpec: QuickSpec {
             // MARK: 2.3 subscription should not release downstream and transform closure after cancel
             it("subscription should not release downstream and transform closure after cancel") {
                 weak var downstreamObj: AnyObject?
-                weak var closureObj: CustomObject?
+                weak var closureObj: TestObject?
                 
                 var subscription: Subscription?
                 
                 do {
-                    let customPub = CustomPublisher<Int, CustomError> { (s) in
+                    let testPub = TestPublisher<Int, TestError> { (s) in
                         s.receive(subscription: Subscriptions.empty)
                     }
                     
-                    let obj = CustomObject()
+                    let obj = TestObject()
                     closureObj = obj
                     
-                    let sub = CustomSubscriber<Int, Error>(receiveSubscription: { (s) in
+                    let sub = TestSubscriber<Int, Error>(receiveSubscription: { (s) in
                         subscription = s
                     }, receiveValue: { v in
                         return .none
@@ -176,7 +176,7 @@ class TryCompactMapSpec: QuickSpec {
                     })
                     downstreamObj = sub
                     
-                    customPub
+                    testPub
                         .tryCompactMap { i -> Int in
                             obj.run()
                             return i

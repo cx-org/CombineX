@@ -22,11 +22,11 @@ class ConcatenateSpec: QuickSpec {
                 let p1 = Just(5)
                 
                 let pub = Publishers.Concatenate(prefix: p0, suffix: p1)
-                let sub = makeCustomSubscriber(Int.self, Never.self, .unlimited)
+                let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
                 
                 pub.subscribe(sub)
                 
-                let valueEvents = (1...5).map { CustomEvent<Int, Never>.value($0) }
+                let valueEvents = (1...5).map { TestEvent<Int, Never>.value($0) }
                 let expected = valueEvents + [.completion(.finished)]
                 expect(sub.events).to(equal(expected))
             }
@@ -37,7 +37,7 @@ class ConcatenateSpec: QuickSpec {
                 let p1 = Publishers.Sequence<[Int], Never>(sequence: Array(10..<20))
                 
                 let pub = Publishers.Concatenate(prefix: p0, suffix: p1)
-                let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
                     s.request(.max(10))
                 }, receiveValue: { v in
                     [0, 10].contains(v) ? .max(1) : .none
@@ -46,7 +46,7 @@ class ConcatenateSpec: QuickSpec {
                 
                 pub.subscribe(sub)
                 
-                let events = (0..<12).map { CustomEvent<Int, Never>.value($0) }
+                let events = (0..<12).map { TestEvent<Int, Never>.value($0) }
                 expect(sub.events).to(equal(events))
             }
             
@@ -60,20 +60,20 @@ class ConcatenateSpec: QuickSpec {
                 }
                 var events: [Event] = []
                 
-                let pub1 = CustomPublisher<Int, Never> { (s) in
+                let pub1 = TestPublisher<Int, Never> { (s) in
                     events.append(.subscribeToPrefix)
                     s.receive(subscription: Subscriptions.empty)
                     events.append(.beforePrefixFinish)
                     s.receive(completion: .finished)
                     events.append(.afterPrefixFinish)
                 }
-                let pub2 = CustomPublisher<Int, Never> { (s) in
+                let pub2 = TestPublisher<Int, Never> { (s) in
                     events.append(.subscribeToSuffix)
                     s.receive(subscription: Subscriptions.empty)
                 }
                 
                 let pub = pub1.append(pub2)
-                let sub = makeCustomSubscriber(Int.self, Never.self, .unlimited)
+                let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
                 
                 pub.subscribe(sub)
                 

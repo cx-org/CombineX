@@ -19,9 +19,9 @@ class PassthroughSubjectSpec: QuickSpec {
 
             // MARK: 1.1 should send as many values as the subscriber's demand
             it("should send as many values as the subscriber's demand") {
-                typealias Sub = CustomSubscriber<Int, CustomError>
+                typealias Sub = TestSubscriber<Int, TestError>
                 
-                let subject = PassthroughSubject<Int, CustomError>()
+                let subject = PassthroughSubject<Int, TestError>()
                 
                 var subscription: Subscription?
                 
@@ -52,9 +52,9 @@ class PassthroughSubjectSpec: QuickSpec {
             
             // MARK: 1.2 should not send values to subscribers after sending completion
             it("should not send values to subscribers after sending completion") {
-                typealias Sub = CustomSubscriber<Int, CustomError>
+                typealias Sub = TestSubscriber<Int, TestError>
                 
-                let subject = PassthroughSubject<Int, CustomError>()
+                let subject = PassthroughSubject<Int, TestError>()
                 
                 let sub = Sub(receiveSubscription: { s in
                     s.request(.unlimited)
@@ -76,9 +76,9 @@ class PassthroughSubjectSpec: QuickSpec {
             
             // MARK: 1.3 should not send completion to subscribers after sending completion
             it("should not send completion to subscribers after sending completion") {
-                typealias Sub = CustomSubscriber<Int, CustomError>
+                typealias Sub = TestSubscriber<Int, TestError>
                 
-                let subject = PassthroughSubject<Int, CustomError>()
+                let subject = PassthroughSubject<Int, TestError>()
                 
                 let sub = Sub(receiveSubscription: { s in
                     s.request(.unlimited)
@@ -98,9 +98,9 @@ class PassthroughSubjectSpec: QuickSpec {
             
             // MARK: 1.4 should not send values before the subscriber requests
             it("should not send values before the subscriber requests") {
-                let subject = PassthroughSubject<Int, CustomError>()
+                let subject = PassthroughSubject<Int, TestError>()
                 
-                let sub = CustomSubscriber<Int, CustomError>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
                 }, receiveValue: { v in
                     return .none
                 }, receiveCompletion: { s in
@@ -115,9 +115,9 @@ class PassthroughSubjectSpec: QuickSpec {
             
             // MARK: 1.5 should send completion even if the subscriber does not request
             it("should send completion even if the subscriber does not request") {
-                let subject = PassthroughSubject<Int, CustomError>()
+                let subject = PassthroughSubject<Int, TestError>()
                 
-                let sub = CustomSubscriber<Int, CustomError>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
                 }, receiveValue: { v in
                     return .none
                 }, receiveCompletion: { s in
@@ -131,9 +131,9 @@ class PassthroughSubjectSpec: QuickSpec {
             
             // MARK: 1.6 should not send events after the subscription is cancelled
             it("should not send events after the subscription is cancelled") {
-                let subject = PassthroughSubject<Int, CustomError>()
+                let subject = PassthroughSubject<Int, TestError>()
                 
-                let sub = CustomSubscriber<Int, CustomError>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
                     s.cancel()
                 }, receiveValue: { v in
                     return .none
@@ -150,10 +150,10 @@ class PassthroughSubjectSpec: QuickSpec {
             
             // MARK: 1.7 should resend completion if the subscription happens after sending completion
             it("should resend completion if the subscription happens after sending completion") {
-                let subject = PassthroughSubject<Int, CustomError>()
+                let subject = PassthroughSubject<Int, TestError>()
                 subject.send(completion: .finished)
                 
-                let sub = CustomSubscriber<Int, CustomError>(receiveSubscription: { s in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.unlimited)
                 }, receiveValue: { v in
                     return .none
@@ -169,11 +169,11 @@ class PassthroughSubjectSpec: QuickSpec {
             it("should send as many values to multi-subscribers as their demands") {
                 let subject = PassthroughSubject<Int, Error>()
                 
-                var subs: [CustomSubscriber<Int, Error>] = []
+                var subs: [TestSubscriber<Int, Error>] = []
                 let nums = (0..<10).map { _ in Int.random(in: 0..<10) }
                 
                 for i in nums {
-                    let sub = CustomSubscriber<Int, Error>(receiveSubscription: { s in
+                    let sub = TestSubscriber<Int, Error>(receiveSubscription: { s in
                         s.request(.max(i))
                     }, receiveValue: { v in
                         return .none
@@ -204,7 +204,7 @@ class PassthroughSubjectSpec: QuickSpec {
                 
                 weak var subscription: AnyObject?
                 
-                let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
                     s.request(.max(1))
                     subscription = s as AnyObject
                 }, receiveValue: { v in
@@ -226,7 +226,7 @@ class PassthroughSubjectSpec: QuickSpec {
                 weak var subObj: AnyObject?
                 
                 do {
-                    let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
+                    let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
                         s.request(.max(1))
                     }, receiveValue: { v in
                         return .none
@@ -249,7 +249,7 @@ class PassthroughSubjectSpec: QuickSpec {
                 weak var subscriptionObj: AnyObject?
                 
                 do {
-                    let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
+                    let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
                         subscriptionObj = s as AnyObject
                         s.request(.max(1))
                     }, receiveValue: { v in
@@ -277,7 +277,7 @@ class PassthroughSubjectSpec: QuickSpec {
                 weak var subObj: AnyObject?
                 
                 do {
-                    let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
+                    let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
                         s.request(.max(1))
                     }, receiveValue: { v in
                         return .none
@@ -301,7 +301,7 @@ class PassthroughSubjectSpec: QuickSpec {
                     let pub = PassthroughSubject<Int, Never>()
                     pubObj = pub
                     
-                    let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
+                    let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
                         s.request(.max(1))
                         subscription = s
                     }, receiveValue: { v in
@@ -334,7 +334,7 @@ class PassthroughSubjectSpec: QuickSpec {
                     let pub = PassthroughSubject<Int, Never>()
                     pubObj = pub
                     
-                    let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
+                    let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
                         s.request(.max(1))
                         subscription = s
                     }, receiveValue: { v in
@@ -366,7 +366,7 @@ class PassthroughSubjectSpec: QuickSpec {
                 var enters: [Date] = []
                 var exits: [Date] = []
                 
-                let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
                     s.request(.unlimited)
                 }, receiveValue: { v in
                     Thread.sleep(forTimeInterval: 1)
@@ -402,7 +402,7 @@ class PassthroughSubjectSpec: QuickSpec {
             it("should send as many values as the subscriber's demand even if these are sent concurrently") {
                 let subject = PassthroughSubject<Int, Never>()
                 
-                let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
                     s.request(.max(10))
                 }, receiveValue: { v in
                     return .none
@@ -428,7 +428,7 @@ class PassthroughSubjectSpec: QuickSpec {
             it("no guarantee of synchronous backpressure") {
                 let subject = PassthroughSubject<Int, Never>()
                 
-                let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
                     s.request(.max(10))
                 }, receiveValue: { v in
                     if v == 1 {

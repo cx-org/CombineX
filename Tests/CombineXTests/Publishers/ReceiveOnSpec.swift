@@ -20,10 +20,10 @@ class ReceiveOnSpec: QuickSpec {
             // MARK: 1.1 should receive events on the specified queue
             it("should receive events on the specified queue") {
                 let subject = PassthroughSubject<Int, Never>()
-                let scheduler = CustomScheduler.serial()
+                let scheduler = TestDispatchQueueScheduler.serial()
                 let pub = subject.receive(on: scheduler)
                 
-                let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
                     s.request(.max(100))
                     expect(scheduler.isCurrent).to(beTrue())
                 }, receiveValue: { v in

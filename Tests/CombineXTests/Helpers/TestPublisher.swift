@@ -6,7 +6,7 @@ import CombineX
 import Specs
 #endif
 
-class CustomPublisher<Output, Failure>: Publisher where Failure : Error {
+class TestPublisher<Output, Failure>: Publisher where Failure : Error {
     
     let subscribeBody: (AnySubscriber<Output, Failure>) -> Void
     

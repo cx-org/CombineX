@@ -19,7 +19,7 @@ class TryScanSpec: QuickSpec {
             // MARK: 1.1 should scan values from upstream
             it("should scan values from upstream") {
                 let subject = PassthroughSubject<Int, Never>()
-                let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
+                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
                 
                 subject.tryScan(0) {
                     $0 + $1
@@ -30,12 +30,12 @@ class TryScanSpec: QuickSpec {
                 }
                 subject.send(completion: .finished)
                 
-                let got = sub.events.mapError { $0 as! CustomError }
+                let got = sub.events.mapError { $0 as! TestError }
                 
                 var initial = 0
-                let valueEvents = (0..<100).map { n -> CustomEvent<Int, CustomError> in
+                let valueEvents = (0..<100).map { n -> TestEvent<Int, TestError> in
                     initial = initial + n
-                    return CustomEvent<Int, CustomError>.value(initial)
+                    return TestEvent<Int, TestError>.value(initial)
                 }
                 let expected = valueEvents + [.completion(.finished)]
 
@@ -45,29 +45,29 @@ class TryScanSpec: QuickSpec {
             // MARK: 1.2 should fail if closure throws an error
             it("should fail if closure throws an error") {
                 let subject = PassthroughSubject<Int, Never>()
-                let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
+                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
                 
                 subject.tryScan(0) { (_, _) in
-                    throw CustomError.e0
+                    throw TestError.e0
                 }.subscribe(sub)
                 
                 100.times {
                     subject.send($0)
                 }
                 
-                let got = sub.events.mapError { $0 as! CustomError }
+                let got = sub.events.mapError { $0 as! TestError }
                 expect(got).to(equal([.completion(.failure(.e0))]))
             }
             
             #if !SWIFT_PACKAGE
             // MARK: 1.3 should not throw assertion when upstream send values before sending subscription
             it("should not throw assertion when upstream send values before sending subscription") {
-                let upstream = CustomPublisher<Int, CustomError> { s in
+                let upstream = TestPublisher<Int, TestError> { s in
                     _ = s.receive(1)
                 }
                 
                 let pub = upstream.tryScan(0) { $0 + $1 }
-                let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
+                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
                 
                 expect {
                     pub.subscribe(sub)
@@ -76,12 +76,12 @@ class TryScanSpec: QuickSpec {
             
             // MARK: 1.4 should not throw assertion when upstream send completion before sending subscription
             it("should not throw assertion when upstream send values before sending subscription") {
-                let upstream = CustomPublisher<Int, CustomError> { s in
+                let upstream = TestPublisher<Int, TestError> { s in
                     s.receive(completion: .finished)
                 }
                 
                 let pub = upstream.tryScan(0) { $0 + $1 }
-                let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
+                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
 
                 expect {
                     pub.subscribe(sub)

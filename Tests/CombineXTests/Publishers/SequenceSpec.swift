@@ -16,14 +16,14 @@ class SequenceSpec: QuickSpec {
         
         // MARK: - Send Values
         describe("Send Values") {
-            typealias Sub = CustomSubscriber<Int, CustomError>
-            typealias Event = CustomEvent<Int, CustomError>
+            typealias Sub = TestSubscriber<Int, TestError>
+            typealias Event = TestEvent<Int, TestError>
             
             // MARK: 1.1 should send values then send finished
             it("should send values then send finished") {
                 let values = Array(0..<100)
-                let pub = Publishers.Sequence<[Int], CustomError>(sequence: values)
-                let sub = makeCustomSubscriber(Int.self, CustomError.self, .unlimited)
+                let pub = Publishers.Sequence<[Int], TestError>(sequence: values)
+                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
                 
                 pub.subscribe(sub)
                 
@@ -36,8 +36,8 @@ class SequenceSpec: QuickSpec {
             it("should send as many values as demand") {
                 let values = Array(0..<100)
                 
-                let pub = Publishers.Sequence<[Int], CustomError>(sequence: values)
-                let sub = CustomSubscriber<Int, CustomError>(receiveSubscription: { (s) in
+                let pub = Publishers.Sequence<[Int], TestError>(sequence: values)
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
                     s.request(.max(50))
                 }, receiveValue: { v in
                     [0, 10].contains(v) ? .max(10) : .none
@@ -62,7 +62,7 @@ class SequenceSpec: QuickSpec {
                 do {
                     let values = Array(0..<10)
                     let pub = Publishers.Sequence<[Int], Never>(sequence: values)
-                    let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
+                    let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
                         subscription = s
                     }, receiveValue: { v in
                         return .none
@@ -90,7 +90,7 @@ class SequenceSpec: QuickSpec {
                     let values = Array(0..<10)
                     let pub = Publishers.Sequence<[Int], Never>(sequence: values)
                     
-                    let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
+                    let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
                         subscription = s
                     }, receiveValue: { v in
                         return .none
@@ -128,7 +128,7 @@ class SequenceSpec: QuickSpec {
                 let pub = Publishers.Sequence<Seq, Never>(sequence: Seq())
                 
                 var subscription: Subscription?
-                let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
                     subscription = s
                 }, receiveValue: { v in
                     return .none
@@ -153,7 +153,7 @@ class SequenceSpec: QuickSpec {
                 let pub = Publishers.Sequence<Seq, Never>(sequence: Seq())
                 
                 var subscription: Subscription?
-                let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
                     subscription = s
                 }, receiveValue: { v in
                     Thread.sleep(forTimeInterval: 0.1)

@@ -20,7 +20,7 @@ class TryDropWhileSpec: QuickSpec {
             it("should drop until predicate return false") {
                 let subject = PassthroughSubject<Int, Never>()
                 let pub = subject.tryDrop(while: { $0 < 50 })
-                let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
+                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
                 pub.subscribe(sub)
                 
                 100.times {
@@ -28,10 +28,10 @@ class TryDropWhileSpec: QuickSpec {
                 }
                 subject.send(completion: .finished)
                 
-                let got = sub.events.mapError { $0 as! CustomError }
+                let got = sub.events.mapError { $0 as! TestError }
                 
                 let valueEvents = (50..<100).map {
-                    CustomEvent<Int, CustomError>.value($0)
+                    TestEvent<Int, TestError>.value($0)
                 }
                 let expected = valueEvents + [.completion(.finished)]
                 
@@ -41,7 +41,7 @@ class TryDropWhileSpec: QuickSpec {
             // MARK: 1.2 should send as many values as demand
             it("should send as many values as demand") {
                 let pub = PassthroughSubject<Int, Never>()
-                let sub = makeCustomSubscriber(Int.self, Error.self, .max(10))
+                let sub = makeTestSubscriber(Int.self, Error.self, .max(10))
                 pub.tryDrop { $0 < 50 }.subscribe(sub)
                 
                 for i in 0..<100 {
@@ -53,10 +53,10 @@ class TryDropWhileSpec: QuickSpec {
             
             // MARK: 1.3 should fail if predicate throws error
             it("should fail if predicate throws error") {
-                let pub = PassthroughSubject<Int, CustomError>()
-                let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
+                let pub = PassthroughSubject<Int, TestError>()
+                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
                 pub.tryDrop { _ in
-                    throw CustomError.e0
+                    throw TestError.e0
                 }.subscribe(sub)
                 
                 for i in 0..<100 {
@@ -65,19 +65,19 @@ class TryDropWhileSpec: QuickSpec {
                 
                 pub.send(completion: .finished)
                 
-                let got = sub.events.mapError { $0 as! CustomError }
+                let got = sub.events.mapError { $0 as! TestError }
                 expect(got).to(equal([.completion(.failure(.e0))]))
             }
             
             #if !SWIFT_PACKAGE
             // MARK: 1.4 should not throw assertion when upstream send values before sending subscription
             it("should not throw assertion when upstream send values before sending subscription") {
-                let upstream = CustomPublisher<Int, CustomError> { s in
+                let upstream = TestPublisher<Int, TestError> { s in
                     _ = s.receive(1)
                 }
                 
                 let pub = upstream.tryDrop { _ in true}
-                let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
+                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
                 
                 expect {
                     pub.subscribe(sub)
@@ -86,12 +86,12 @@ class TryDropWhileSpec: QuickSpec {
             
             // MARK: 1.5 should not throw assertion when upstream send completion before sending subscription
             it("should not throw assertion when upstream send values before sending subscription") {
-                let upstream = CustomPublisher<Int, CustomError> { s in
+                let upstream = TestPublisher<Int, TestError> { s in
                     s.receive(completion: .finished)
                 }
                 
                 let pub = upstream.tryDrop { _ in true}
-                let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
+                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
 
                 expect {
                     pub.subscribe(sub)

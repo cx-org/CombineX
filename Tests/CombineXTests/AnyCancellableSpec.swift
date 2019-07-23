@@ -64,10 +64,10 @@ class AnyCancellableSpec: QuickSpec {
             // MARK: 2.1 should release closure after cancelled
             it("should release closure after cancelled") {
                 var cancel: Cancellable?
-                weak var object: CustomObject?
+                weak var object: TestObject?
                 
                 do {
-                    let obj = CustomObject()
+                    let obj = TestObject()
                     
                     cancel = AnyCancellable {
                         obj.run()

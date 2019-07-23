@@ -20,10 +20,10 @@ class PrintSpec: QuickSpec {
             it("should print cancel even if the sub is completed") {
                 let stream = Stream()
                 
-                let subject = PassthroughSubject<Int, CustomError>()
+                let subject = PassthroughSubject<Int, TestError>()
                 let pub = subject.print("[Q]", to: stream)
                 var subscription: Subscription?
-                let sub = CustomSubscriber<Int, CustomError>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
                     subscription = s
                 }, receiveValue: { v in
                     return .none
@@ -43,10 +43,10 @@ class PrintSpec: QuickSpec {
             it("should print request demand even if the sub is completed") {
                 let stream = Stream()
                 
-                let subject = PassthroughSubject<Int, CustomError>()
+                let subject = PassthroughSubject<Int, TestError>()
                 let pub = subject.print("[Q]", to: stream)
                 var subscription: Subscription?
-                let sub = CustomSubscriber<Int, CustomError>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
                     subscription = s
                 }, receiveValue: { v in
                     return .none
@@ -66,10 +66,10 @@ class PrintSpec: QuickSpec {
             it("should not print events after complete") {
                 let stream = Stream()
                 
-                let subject = PassthroughSubject<Int, CustomError>()
+                let subject = PassthroughSubject<Int, TestError>()
                 let pub = subject.print("[Q]", to: stream)
                 var subscription: Subscription?
-                let sub = CustomSubscriber<Int, CustomError>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
                     subscription = s
                 }, receiveValue: { v in
                     return .none
@@ -96,11 +96,11 @@ class PrintSpec: QuickSpec {
                 
                 let stream = Stream()
                 
-                let subject = PassthroughSubject<Int, CustomError>()
+                let subject = PassthroughSubject<Int, TestError>()
                 let pub = subject.print("[Q]", to: stream)
                 
                 var subscription: Subscription?
-                let sub = CustomSubscriber<Int, CustomError>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
                     s.request(.unlimited)
                     subscription = s
                 }, receiveValue: { v in
