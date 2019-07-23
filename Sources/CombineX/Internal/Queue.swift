@@ -1,4 +1,4 @@
-struct Queue<Element>: Collection, CustomStringConvertible {
+struct Queue<Element>: BidirectionalCollection, CustomStringConvertible {
     
     private var storage: ContiguousArray<Element?>
     private var head = 0
@@ -118,6 +118,10 @@ struct Queue<Element>: Collection, CustomStringConvertible {
     
     func index(after i: Index) -> Index {
         return Index(distanceToHead: i.distanceToHead + 1)
+    }
+    
+    func index(before i: Index) -> Index {
+        return Index(distanceToHead: i.distanceToHead - 1)
     }
     
     subscript(position: Index) -> Element {
