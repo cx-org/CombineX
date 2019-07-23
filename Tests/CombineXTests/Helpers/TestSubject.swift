@@ -6,7 +6,7 @@ import CombineX
 import Specs
 #endif
 
-class CustomSubject<Output, Failure> : Subject where Failure : Error {
+class TestSubject<Output, Failure> : Subject where Failure : Error {
     
     private let lock = Lock()
     private var subscriptions: [Inner] = []
@@ -68,11 +68,11 @@ class CustomSubject<Output, Failure> : Subject where Failure : Error {
     }
 }
 
-extension CustomSubject {
+extension TestSubject {
     
     private class Inner: Subscription, CustomStringConvertible, CustomDebugStringConvertible {
         
-        typealias Pub = CustomSubject<Output, Failure>
+        typealias Pub = TestSubject<Output, Failure>
         typealias Sub = AnySubscriber<Output, Failure>
         
         var pub: Pub?
@@ -155,11 +155,11 @@ extension CustomSubject {
         }
         
         var description: String {
-            return "CustomSubject"
+            return "TestSubject"
         }
         
         var debugDescription: String {
-            return "CustomSubject"
+            return "TestSubject"
         }
     }
 }

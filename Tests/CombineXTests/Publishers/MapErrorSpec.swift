@@ -18,8 +18,8 @@ class MapErrorSpec: QuickSpec {
             
             // MARK: 1.1 should map error
             it("should map error") {
-                let pub = PassthroughSubject<Int, CustomError>()
-                let sub = makeCustomSubscriber(Int.self, CustomError.self, .unlimited)
+                let pub = PassthroughSubject<Int, TestError>()
+                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
                 pub.mapError { _ in .e2 }.subscribe(sub)
                 
                 for i in 0..<100 {
@@ -28,7 +28,7 @@ class MapErrorSpec: QuickSpec {
                 
                 pub.send(completion: .failure(.e0))
                 
-                let valueEvents = (0..<100).map { CustomEvent<Int, CustomError>.value($0) }
+                let valueEvents = (0..<100).map { TestEvent<Int, TestError>.value($0) }
                 let expected = valueEvents + [.completion(.failure(.e2))]
                 expect(sub.events).to(equal(expected))
             }
@@ -37,12 +37,12 @@ class MapErrorSpec: QuickSpec {
             #if !SWIFT_PACKAGE
             // MARK: 1.2 should throw assertion when upstream send values before sending subscription
             it("should throw assertion when upstream send values before sending subscription") {
-                let upstream = CustomPublisher<Int, CustomError> { s in
+                let upstream = TestPublisher<Int, TestError> { s in
                     _ = s.receive(1)
                 }
                 
                 let pub = upstream.mapError { $0 as Error }
-                let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
+                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
                 
                 expect {
                     pub.subscribe(sub)
@@ -51,12 +51,12 @@ class MapErrorSpec: QuickSpec {
             
             // MARK: 1.3 should throw assertion when upstream send completion before sending subscription
             it("should throw assertion when upstream send values before sending subscription") {
-                let upstream = CustomPublisher<Int, CustomError> { s in
+                let upstream = TestPublisher<Int, TestError> { s in
                     s.receive(completion: .finished)
                 }
                 
                 let pub = upstream.mapError { $0 as Error }
-                let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
+                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
                 
                 expect {
                     pub.subscribe(sub)

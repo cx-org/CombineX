@@ -19,7 +19,7 @@ class TryReduceSpec: QuickSpec {
             // MARK: 1.1 should reduce values from upstream
             it("should reduce values from upstream") {
                 let subject = PassthroughSubject<Int, Never>()
-                let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
+                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
                 
                 subject.tryReduce(0) {
                     $0 + $1
@@ -31,7 +31,7 @@ class TryReduceSpec: QuickSpec {
                 subject.send(completion: .finished)
                 
                 let reduced = (0..<100).reduce(0) { $0 + $1 }
-                let got = sub.events.mapError { $0 as! CustomError }
+                let got = sub.events.mapError { $0 as! TestError }
 
                 expect(got).to(equal([.value(reduced), .completion(.finished)]))
             }
@@ -39,25 +39,25 @@ class TryReduceSpec: QuickSpec {
             // MARK: 1.2 should fail if closure throws an error
             it("should fail if closure throws an error") {
                 let subject = PassthroughSubject<Int, Never>()
-                let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
+                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
                 
                 subject.tryReduce(0) { (_, _) in
-                    throw CustomError.e0
+                    throw TestError.e0
                 }.subscribe(sub)
                 
                 100.times {
                     subject.send($0)
                 }
                 
-                let got = sub.events.mapError { $0 as! CustomError }
+                let got = sub.events.mapError { $0 as! TestError }
                 expect(got).to(equal([.completion(.failure(.e0))]))
             }
             
             #if !SWIFT_PACKAGE
             // MARK: 1.3 should throw assertion when the demand is 0
             it("should throw assertion when the demand is 0") {
-                let pub = Empty<Int, CustomError>().tryReduce(0) { $0 + $1 }
-                let sub = makeCustomSubscriber(Int.self, Error.self, .max(0))
+                let pub = Empty<Int, TestError>().tryReduce(0) { $0 + $1 }
+                let sub = makeTestSubscriber(Int.self, Error.self, .max(0))
                 
                 expect {
                     pub.subscribe(sub)
@@ -66,12 +66,12 @@ class TryReduceSpec: QuickSpec {
             
             // MARK: 1.4 should not throw assertion when upstream send values before sending subscription
             it("should not throw assertion when upstream send values before sending subscription") {
-                let upstream = CustomPublisher<Int, CustomError> { s in
+                let upstream = TestPublisher<Int, TestError> { s in
                     _ = s.receive(1)
                 }
                 
                 let pub = upstream.tryReduce(0) { $0 + $1 }
-                let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
+                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
                 
                 expect {
                     pub.subscribe(sub)
@@ -80,12 +80,12 @@ class TryReduceSpec: QuickSpec {
             
             // MARK: 1.5 should not throw assertion when upstream send completion before sending subscription
             it("should not throw assertion when upstream send values before sending subscription") {
-                let upstream = CustomPublisher<Int, CustomError> { s in
+                let upstream = TestPublisher<Int, TestError> { s in
                     s.receive(completion: .finished)
                 }
                 
                 let pub = upstream.tryReduce(0) { $0 + $1 }
-                let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
+                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
 
                 expect {
                     pub.subscribe(sub)

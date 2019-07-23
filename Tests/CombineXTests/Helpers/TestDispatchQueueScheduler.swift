@@ -8,7 +8,7 @@ import Specs
 
 import Foundation
 
-struct CustomSchedulerTime: Strideable {
+struct TestSchedulerTime: Strideable {
     
     let time: Date
     
@@ -16,18 +16,18 @@ struct CustomSchedulerTime: Strideable {
         self.time = time
     }
     
-    func distance(to other: CustomSchedulerTime) -> Stride {
+    func distance(to other: TestSchedulerTime) -> Stride {
         let distance = other.time.timeIntervalSince(self.time)
         return Stride.seconds(distance)
     }
     
-    func advanced(by n: Stride) -> CustomSchedulerTime {
+    func advanced(by n: Stride) -> TestSchedulerTime {
         let advanced = self.time + n.seconds
-        return CustomSchedulerTime(time: advanced)
+        return TestSchedulerTime(time: advanced)
     }
     
-    static var now: CustomSchedulerTime {
-        return CustomSchedulerTime(time: Date())
+    static var now: TestSchedulerTime {
+        return TestSchedulerTime(time: Date())
     }
     
     struct Stride: ExpressibleByFloatLiteral, Comparable, SignedNumeric, Codable, SchedulerTimeIntervalConvertible {
@@ -113,9 +113,9 @@ struct CustomSchedulerTime: Strideable {
     }
 }
 
-final class CustomScheduler: Scheduler {
+final class TestDispatchQueueScheduler: Scheduler {
     
-    typealias SchedulerTimeType = CustomSchedulerTime
+    typealias SchedulerTimeType = TestSchedulerTime
     enum SchedulerOptions {
         case x
     }
@@ -172,23 +172,23 @@ final class CustomScheduler: Scheduler {
     }
 }
 
-extension CustomScheduler {
+extension TestDispatchQueueScheduler {
     
-    class var main: CustomScheduler {
-        return CustomScheduler(dispatchQueue: .main)
+    class var main: TestDispatchQueueScheduler {
+        return TestDispatchQueueScheduler(dispatchQueue: .main)
     }
     
-    class func serial(label: String = UUID().uuidString) -> CustomScheduler {
-        return CustomScheduler(dispatchQueue: DispatchQueue(label: label))
+    class func serial(label: String = UUID().uuidString) -> TestDispatchQueueScheduler {
+        return TestDispatchQueueScheduler(dispatchQueue: DispatchQueue(label: label))
     }
     
-    class func global(qos: DispatchQoS.QoSClass = .default) -> CustomScheduler {
-        return CustomScheduler(dispatchQueue: DispatchQueue.global(qos: qos))
+    class func global(qos: DispatchQoS.QoSClass = .default) -> TestDispatchQueueScheduler {
+        return TestDispatchQueueScheduler(dispatchQueue: DispatchQueue.global(qos: qos))
     }
 }
 
 
-extension CustomScheduler {
+extension TestDispatchQueueScheduler {
     
     var isCurrent: Bool {
         return self.dispatchQueue.isCurrent

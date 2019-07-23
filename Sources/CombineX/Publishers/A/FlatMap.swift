@@ -82,7 +82,7 @@ extension Publishers.FlatMap {
         let downLock = Lock()
         let sub: Sub
         var downState: DemandState = .waiting
-        var children: [Child] = []
+        var children = LinkedList<Child>()
         
         init(pub: Pub, sub: Sub) {
             self.transform = pub.transform
@@ -130,7 +130,7 @@ extension Publishers.FlatMap {
             }
             
             let children = self.children
-            self.children = []
+            self.children = LinkedList()
             self.downLock.unlock()
             
             children.forEach {
@@ -198,7 +198,7 @@ extension Publishers.FlatMap {
                 }
                 
                 let children = self.children
-                self.children = []
+                self.children = LinkedList()
                 self.downLock.unlock()
                 
                 children.forEach {
@@ -216,8 +216,7 @@ extension Publishers.FlatMap {
                 if child.buffer == nil {
                     child.buffer = input
                     
-                    // TODO: Use a linked list
-                    self.children.removeAll(where: { $0 === child })
+                    _ = self.children.remove(child)
                     self.children.append(child)
                 }
                 self.downLock.unlock()
@@ -253,7 +252,7 @@ extension Publishers.FlatMap {
             
             switch completion {
             case .finished:
-                self.children.removeAll(where: { $0 === child })
+                _ = self.children.remove(child)
                 
                 if let subscription = self.upLock.withLockGet(self.upState.subscription) {
                     self.downLock.unlock()
@@ -263,7 +262,7 @@ extension Publishers.FlatMap {
                         self.downState = .completed
                         
                         let children = self.children
-                        self.children = []
+                        self.children = LinkedList()
                         self.downLock.unlock()
                         
                         children.forEach {
@@ -278,7 +277,7 @@ extension Publishers.FlatMap {
                 self.downState = .completed
                 
                 let children = self.children
-                self.children = []
+                self.children = LinkedList()
                 self.downLock.unlock()
                 
                 children.forEach {
@@ -367,7 +366,7 @@ extension Publishers.FlatMap {
             return "FlatMap"
         }
         
-        final class Child: Subscriber {
+        final class Child: Subscriber, Equatable {
             
             typealias Input = NewPublisher.Output
             typealias Failure = NewPublisher.Failure
@@ -411,6 +410,10 @@ extension Publishers.FlatMap {
             
             func request(_ demand: Subscribers.Demand) {
                 self.subscription.get()?.request(demand)
+            }
+            
+            static func == (a: Child, b: Child) -> Bool {
+                return a === b
             }
         }
     }

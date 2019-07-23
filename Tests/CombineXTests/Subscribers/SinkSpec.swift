@@ -137,10 +137,10 @@ class SinkSpec: QuickSpec {
                 }, receiveValue: { v in
                 })
                 
-                weak var subscription: CustomSubscription?
+                weak var subscription: TestSubscription?
                 
                 do {
-                    let s = CustomSubscription(request: { (demand) in
+                    let s = TestSubscription(request: { (demand) in
                     }, cancel: {
                     })
                     
@@ -159,10 +159,10 @@ class SinkSpec: QuickSpec {
                 }, receiveValue: { v in
                 })
                 
-                weak var subscription: CustomSubscription?
+                weak var subscription: TestSubscription?
                 
                 do {
-                    let s = CustomSubscription(request: { (demand) in
+                    let s = TestSubscription(request: { (demand) in
                     }, cancel: {
                     })
                     

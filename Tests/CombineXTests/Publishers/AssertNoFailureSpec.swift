@@ -19,9 +19,9 @@ class AssertNoFailureSpec: QuickSpec {
             #if !SWIFT_PACKAGE
             it("should throw assertion if there is an error") {
                 
-                let pub = Fail<Int, CustomError>(error: .e0)
+                let pub = Fail<Int, TestError>(error: .e0)
                     .assertNoFailure()
-                let sub = makeCustomSubscriber(Int.self, Never.self, .none)
+                let sub = makeTestSubscriber(Int.self, Never.self, .none)
                 
                 expect {
                     pub.subscribe(sub)

@@ -19,11 +19,11 @@ class DropUntilOutputSpec: QuickSpec {
             // MARK: 1.1 should drop until other sends a value
             it("should drop until other sends a value") {
                 
-                let pub0 = PassthroughSubject<Int, CustomError>()
-                let pub1 = PassthroughSubject<Int, CustomError>()
+                let pub0 = PassthroughSubject<Int, TestError>()
+                let pub1 = PassthroughSubject<Int, TestError>()
                 
                 let pub = pub0.drop(untilOutputFrom: pub1)
-                let sub = makeCustomSubscriber(Int.self, CustomError.self, .unlimited)
+                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
                 pub.subscribe(sub)
                 
                 10.times {
@@ -35,18 +35,18 @@ class DropUntilOutputSpec: QuickSpec {
                     pub0.send(i)
                 }
                  
-                let expected = (10..<20).map { CustomEvent<Int, CustomError>.value($0) }
+                let expected = (10..<20).map { TestEvent<Int, TestError>.value($0) }
                 expect(sub.events).to(equal(expected))
             }
             
             // MARK: 1.2 should complete when other complete
             it("should complete when other complete") {
                 
-                let pub0 = PassthroughSubject<Int, CustomError>()
-                let pub1 = PassthroughSubject<Int, CustomError>()
+                let pub0 = PassthroughSubject<Int, TestError>()
+                let pub1 = PassthroughSubject<Int, TestError>()
                 
                 let pub = pub0.drop(untilOutputFrom: pub1)
-                let sub = makeCustomSubscriber(Int.self, CustomError.self, .unlimited)
+                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
                 pub.subscribe(sub)
                 
                 10.times {
@@ -63,11 +63,11 @@ class DropUntilOutputSpec: QuickSpec {
             // MARK: 1.3 should complete if self complete
             it("should complete if self complete") {
                 
-                let pub0 = PassthroughSubject<Int, CustomError>()
-                let pub1 = PassthroughSubject<Int, CustomError>()
+                let pub0 = PassthroughSubject<Int, TestError>()
+                let pub1 = PassthroughSubject<Int, TestError>()
                 
                 let pub = pub0.drop(untilOutputFrom: pub1)
-                let sub = makeCustomSubscriber(Int.self, CustomError.self, .unlimited)
+                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
                 pub.subscribe(sub)
                 
                 10.times {

@@ -20,7 +20,7 @@ class TryPrefixWhileSpec: QuickSpec {
             it("should relay until predicate return false") {
                 let subject = PassthroughSubject<Int, Never>()
                 let pub = subject.tryPrefix(while: { $0 < 50 })
-                let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
+                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
                 pub.subscribe(sub)
                 
                 100.times {
@@ -28,10 +28,10 @@ class TryPrefixWhileSpec: QuickSpec {
                 }
                 subject.send(completion: .finished)
                 
-                let got = sub.events.mapError { $0 as! CustomError }
+                let got = sub.events.mapError { $0 as! TestError }
                 
                 let valueEvents = (0..<50).map {
-                    CustomEvent<Int, CustomError>.value($0)
+                    TestEvent<Int, TestError>.value($0)
                 }
                 let expected = valueEvents + [.completion(.finished)]
                 
@@ -40,9 +40,9 @@ class TryPrefixWhileSpec: QuickSpec {
             
             // MARK: 1.2 should finish immediately if the first element predicate failure
             it("should finish immediately if the first element predicate failure") {
-                let subject = PassthroughSubject<Int, CustomError>()
+                let subject = PassthroughSubject<Int, TestError>()
                 let pub = subject.tryPrefix(while: { $0 > 50 })
-                let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
+                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
                 pub.subscribe(sub)
                 
                 100.times {
@@ -50,14 +50,14 @@ class TryPrefixWhileSpec: QuickSpec {
                 }
                 subject.send(completion: .failure(.e0))
                 
-                let got = sub.events.mapError { $0 as! CustomError }
+                let got = sub.events.mapError { $0 as! TestError }
                 expect(got).to(equal([.completion(.finished)]))
             }
             
             // MARK: 1.3 should send as many values as demand
             it("should send as many values as demand") {
                 let pub = PassthroughSubject<Int, Never>()
-                let sub = makeCustomSubscriber(Int.self, Error.self, .max(10))
+                let sub = makeTestSubscriber(Int.self, Error.self, .max(10))
                 pub.tryPrefix { $0 < 50 }.subscribe(sub)
                 
                 for i in 0..<100 {
@@ -69,10 +69,10 @@ class TryPrefixWhileSpec: QuickSpec {
             
             // MARK: 1.4 should fail if predicate throws error
             it("should fail if predicate throws error") {
-                let pub = PassthroughSubject<Int, CustomError>()
-                let sub = makeCustomSubscriber(Int.self, Error.self, .unlimited)
+                let pub = PassthroughSubject<Int, TestError>()
+                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
                 pub.tryPrefix { _ in
-                    throw CustomError.e0
+                    throw TestError.e0
                 }.subscribe(sub)
                 
                 for i in 0..<100 {
@@ -81,7 +81,7 @@ class TryPrefixWhileSpec: QuickSpec {
                 
                 pub.send(completion: .finished)
                 
-                let got = sub.events.mapError { $0 as! CustomError }
+                let got = sub.events.mapError { $0 as! TestError }
                 expect(got).to(equal([.completion(.failure(.e0))]))
             }
         }

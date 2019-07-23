@@ -6,7 +6,7 @@ import CombineX
 import Specs
 #endif
 
-class CustomSubscription: Subscription {
+class TestSubscription: Subscription {
     
     var requestBody: ((Subscribers.Demand) -> Void)?
     var cancelBody: (() -> Void)?

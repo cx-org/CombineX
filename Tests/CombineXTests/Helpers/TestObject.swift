@@ -1,4 +1,4 @@
-class CustomObject {
+class TestObject {
     
     var runBody: (() -> Void)?
     var deinitBody: (() -> Void)?

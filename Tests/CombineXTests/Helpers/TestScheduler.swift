@@ -12,7 +12,7 @@ private let counter = Atom<Int>(val: 0)
 
 final class TestScheduler: Scheduler {
 
-    typealias SchedulerTimeType = CustomSchedulerTime
+    typealias SchedulerTimeType = TestSchedulerTime
     enum SchedulerOptions {
         case x
     }
@@ -37,7 +37,6 @@ final class TestScheduler: Scheduler {
     }
     
     private let lock = Lock(recursive: true)
-    // TODO: Use a priority queue
     private var scheduledActions: [Action] = []
     
     private var _now: SchedulerTimeType
@@ -46,7 +45,7 @@ final class TestScheduler: Scheduler {
         return self.lock.withLockGet(self._now)
     }
     
-    let minimumTolerance: CustomSchedulerTime.Stride = .seconds(0)
+    let minimumTolerance: TestSchedulerTime.Stride = .seconds(0)
     
     init(time: SchedulerTimeType = SchedulerTimeType(time: Date(timeIntervalSinceReferenceDate: 0))) {
         self._now = time

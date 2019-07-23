@@ -18,11 +18,11 @@ class CombineLatestSpec: QuickSpec {
             
             // MARK: 1.1 should combine latest of 2
             it("should combine latest of 2") {
-                let subject0 = PassthroughSubject<String, CustomError>()
-                let subject1 = PassthroughSubject<String, CustomError>()
+                let subject0 = PassthroughSubject<String, TestError>()
+                let subject1 = PassthroughSubject<String, TestError>()
                 
                 let pub = subject0.combineLatest(subject1, +)
-                let sub = makeCustomSubscriber(String.self, CustomError.self, .unlimited)
+                let sub = makeTestSubscriber(String.self, TestError.self, .unlimited)
                 pub.subscribe(sub)
                 
                 subject0.send("0")
@@ -33,18 +33,18 @@ class CombineLatestSpec: QuickSpec {
                 subject1.send("b")
                 subject1.send("c")
                 
-                let expected = ["1a", "2a", "2b", "2c"].map { CustomEvent<String, CustomError>.value($0) }
+                let expected = ["1a", "2a", "2b", "2c"].map { TestEvent<String, TestError>.value($0) }
                 expect(sub.events).to(equal(expected))
             }
             
             // MARK: 1.2 should combine latest of 3
             it("should combine latest of 3") {
-                let subject0 = PassthroughSubject<String, CustomError>()
-                let subject1 = PassthroughSubject<String, CustomError>()
-                let subject2 = PassthroughSubject<String, CustomError>()
+                let subject0 = PassthroughSubject<String, TestError>()
+                let subject1 = PassthroughSubject<String, TestError>()
+                let subject2 = PassthroughSubject<String, TestError>()
                 
                 let pub = subject0.combineLatest(subject1, subject2, { $0 + $1 + $2 })
-                let sub = makeCustomSubscriber(String.self, CustomError.self, .unlimited)
+                let sub = makeTestSubscriber(String.self, TestError.self, .unlimited)
                 pub.subscribe(sub)
                 
                 subject0.send("0")
@@ -61,18 +61,18 @@ class CombineLatestSpec: QuickSpec {
                 subject2.send("C")
                 subject2.send("D")
                 
-                let expected = ["2bA", "3bA", "3cA", "3dA", "3dB", "3dC", "3dD"].map { CustomEvent<String, CustomError>.value($0) }
+                let expected = ["2bA", "3bA", "3cA", "3dA", "3dB", "3dC", "3dD"].map { TestEvent<String, TestError>.value($0) }
                 expect(sub.events).to(equal(expected))
             }
             
             // MARK: 1.3 should send as many as demands
             it("should send as many as demands") {
-                let subject0 = CustomSubject<String, CustomError>()
-                let subject1 = CustomSubject<String, CustomError>()
+                let subject0 = PassthroughSubject<String, TestError>()
+                let subject1 = PassthroughSubject<String, TestError>()
                 
                 var counter = 0
                 let pub = subject0.combineLatest(subject1, +)
-                let sub = CustomSubscriber<String, CustomError>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<String, TestError>(receiveSubscription: { (s) in
                     s.request(.max(10))
                 }, receiveValue: { v in
                     defer { counter += 1}

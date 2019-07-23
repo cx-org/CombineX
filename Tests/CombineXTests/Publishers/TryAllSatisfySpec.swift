@@ -20,7 +20,7 @@ class TryAllSatisfySpec: QuickSpec {
             it("should send true then send finished") {
                 let subject = PassthroughSubject<Int, Never>()
                 let pub = subject.tryAllSatisfy { $0 < 100 }
-                let sub = CustomSubscriber<Bool, Error>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Bool, Error>(receiveSubscription: { (s) in
                     s.request(.unlimited)
                 }, receiveValue: { v in
                     return .none
@@ -34,7 +34,7 @@ class TryAllSatisfySpec: QuickSpec {
                 }
                 subject.send(completion: .finished)
                 
-                let got = sub.events.mapError { $0 as! CustomError }
+                let got = sub.events.mapError { $0 as! TestError }
                 expect(got).to(equal([.value(true), .completion(.finished)]))
             }
             
@@ -42,7 +42,7 @@ class TryAllSatisfySpec: QuickSpec {
             it("should send false then send finished") {
                 let subject = PassthroughSubject<Int, Never>()
                 let pub = subject.tryAllSatisfy { $0 < 5 }
-                let sub = CustomSubscriber<Bool, Error>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Bool, Error>(receiveSubscription: { (s) in
                     s.request(.unlimited)
                 }, receiveValue: { v in
                     return .none
@@ -56,7 +56,7 @@ class TryAllSatisfySpec: QuickSpec {
                 }
                 subject.send(completion: .finished)
                 
-                let got = sub.events.mapError { $0 as! CustomError }
+                let got = sub.events.mapError { $0 as! TestError }
                 expect(got).to(equal([.value(false), .completion(.finished)]))
             }
             
@@ -65,11 +65,11 @@ class TryAllSatisfySpec: QuickSpec {
                 let subject = PassthroughSubject<Int, Never>()
                 let pub = subject.tryAllSatisfy {
                     if $0 == 5 {
-                        throw CustomError.e0
+                        throw TestError.e0
                     }
                     return true
                 }
-                let sub = CustomSubscriber<Bool, Error>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Bool, Error>(receiveSubscription: { (s) in
                     s.request(.unlimited)
                 }, receiveValue: { v in
                     return .none
@@ -83,7 +83,7 @@ class TryAllSatisfySpec: QuickSpec {
                 }
                 subject.send(completion: .finished)
                 
-                let got = sub.events.mapError { $0 as! CustomError }
+                let got = sub.events.mapError { $0 as! TestError }
                 expect(got).to(equal([.completion(.failure(.e0))]))
             }
         }

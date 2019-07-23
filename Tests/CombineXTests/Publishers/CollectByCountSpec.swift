@@ -18,8 +18,8 @@ class CollectByCountSpec: QuickSpec {
             
             // MARK: 1.1 should relay values by collection
             it("should relay values by collection") {
-                let pub = PassthroughSubject<Int, CustomError>()
-                let sub = makeCustomSubscriber([Int].self, CustomError.self, .unlimited)
+                let pub = PassthroughSubject<Int, TestError>()
+                let sub = makeTestSubscriber([Int].self, TestError.self, .unlimited)
                 pub.collect(2).subscribe(sub)
                 
                 5.times {
@@ -37,8 +37,8 @@ class CollectByCountSpec: QuickSpec {
             
             // MARK: 1.2 should relay as many values as demand
             it("should relay as many values as demand") {
-                let pub = PassthroughSubject<Int, CustomError>()
-                let sub = CustomSubscriber<[Int], CustomError>(receiveSubscription: { (s) in
+                let pub = PassthroughSubject<Int, TestError>()
+                let sub = TestSubscriber<[Int], TestError>(receiveSubscription: { (s) in
                     s.request(.max(1))
                 }, receiveValue: { v in
                     v == [0, 1] ? .max(1) : .none

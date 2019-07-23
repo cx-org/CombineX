@@ -24,7 +24,7 @@ class SwitchToLatestSpec: QuickSpec {
                 let subject = PassthroughSubject<PassthroughSubject<Int, Never>, Never>()
                 
                 let pub = subject.switchToLatest()
-                let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
                     s.request(.unlimited)
                 }, receiveValue: { v in
                     return .none
@@ -47,7 +47,7 @@ class SwitchToLatestSpec: QuickSpec {
                 subject2.send(8)
                 subject2.send(9)
 
-                let expected = [1, 2, 3, 7, 8, 9].map { CustomEvent<Int, Never>.value($0) }
+                let expected = [1, 2, 3, 7, 8, 9].map { TestEvent<Int, Never>.value($0) }
                 expect(sub.events).to(equal(expected))
             }
             
@@ -60,7 +60,7 @@ class SwitchToLatestSpec: QuickSpec {
                 let subject = PassthroughSubject<PassthroughSubject<Int, Never>, Never>()
                 
                 let pub = subject.switchToLatest()
-                let sub = CustomSubscriber<Int, Never>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
                     s.request(.max(10))
                 }, receiveValue: { v in
                     return [0, 10].contains(v) ? .max(1) : .none
@@ -77,7 +77,7 @@ class SwitchToLatestSpec: QuickSpec {
                 
                 (11..<20).forEach { subject2.send($0) }
                 
-                let expected = (0..<12).map { CustomEvent<Int, Never>.value($0) }
+                let expected = (0..<12).map { TestEvent<Int, Never>.value($0) }
                 expect(sub.events).to(equal(expected))
             }
             #endif
