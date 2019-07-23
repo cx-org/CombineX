@@ -18,7 +18,7 @@ class BufferSpec: QuickSpec {
             
             // MARK: 1.1 should relay values as expect when prefetch strategy is by request
             xit("should relay values as expect when prefetch strategy is by request") {
-                let pub = TestSubject<Int, TestError>()
+                let pub = PassthroughSubject<Int, TestError>()
                 
                 var subscription: Subscription?
                 let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
@@ -61,7 +61,7 @@ class BufferSpec: QuickSpec {
             
             // MARK: 1.2 should relay values as expect when prefetch strategy is keep full
             xit("should relay values as expect when prefetch strategy is keep full") {
-                let pub = TestSubject<Int, TestError>()
+                let pub = PassthroughSubject<Int, TestError>()
                 
                 var subscription: Subscription?
                 let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in

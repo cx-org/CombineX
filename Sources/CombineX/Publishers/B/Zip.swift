@@ -133,8 +133,6 @@ extension Publishers.Zip {
                 return
             }
             
-            self.demand += demand
-            
             let childA = self.childA
             let childB = self.childB
             self.lock.unlock()
@@ -178,25 +176,25 @@ extension Publishers.Zip {
                 self.bufferB.append(value as! B.Output)
             }
             
-            if self.demand == 0 {
-                self.lock.unlock()
-                return .none
-            }
-            
-            Swift.print("receive", value, self.bufferA, self.bufferB)
-            
             switch (self.bufferA.first, self.bufferB.first) {
             case (.some(let a), .some(let b)):
-                self.demand -= 1
                 _ = self.bufferA.popFirst()
                 _ = self.bufferB.popFirst()
                 self.lock.unlock()
                 let more = self.sub.receive((a, b))
-                // FIXME: Apple's Combine doesn't strictly support sync backpressure.
                 self.lock.lock()
-                self.demand += more
+                
+                let childA = self.childA
+                let childB = self.childB
                 self.lock.unlock()
-                return .none
+                
+                switch source {
+                case .a:
+                    childB?.request(more)
+                case .b:
+                    childA?.request(more)
+                }
+                return more
             default:
                 self.lock.unlock()
                 return .none

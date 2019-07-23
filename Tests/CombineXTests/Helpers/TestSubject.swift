@@ -12,7 +12,13 @@ class TestSubject<Output, Failure> : Subject where Failure : Error {
     private var subscriptions: [Inner] = []
     private var completion: Subscribers.Completion<Failure>?
     
-    init() { }
+    let name: String
+    let isLogEnabled: Bool
+    
+    init(name: String = "Anonym", isLogEnabled: Bool = false) {
+        self.name = name
+        self.isLogEnabled = isLogEnabled
+    }
     
     func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
         self.lock.lock()
@@ -104,7 +110,10 @@ extension TestSubject {
             
             self.demand -= 1
             let more = self.sub.receive(value)
-            Swift.print("subject sync more", more)
+            
+            if let pub = self.pub, pub.isLogEnabled {
+                Swift.print("TestSubject-\(pub.name) backpresure more:", demand)
+            }
             self.demand += more
         }
         
@@ -133,7 +142,10 @@ extension TestSubject {
             }
             
             self.demand += demand
-            Swift.print("subject more", demand)
+            
+            if let pub = self.pub, pub.isLogEnabled {
+                Swift.print("TestSubject-\(pub.name) request more:", demand)
+            }
         }
         
         func cancel() {
