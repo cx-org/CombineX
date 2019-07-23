@@ -17,7 +17,7 @@ extension Publisher {
     ///   - options: Options that customize the delivery of elements.
     /// - Returns: A publisher which performs upstream operations on the specified scheduler.
     public func subscribe<S>(on scheduler: S, options: S.SchedulerOptions? = nil) -> Publishers.SubscribeOn<Self, S> where S : Scheduler {
-        Global.RequiresImplementation()
+        return .init(upstream: self, scheduler: scheduler, options: options)
     }
 }
 
@@ -56,10 +56,98 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
-            self.scheduler.schedule(options: self.options) {
-                self.upstream
-                    .receive(subscriber: subscriber)
-            }
+            let s = Inner(pub: self, sub: subscriber)
+            self.upstream.subscribe(s)
         }
     }
+}
+
+extension Publishers.SubscribeOn {
+    
+    private final class Inner<S>:
+        Subscription,
+        Subscriber,
+        CustomStringConvertible,
+        CustomDebugStringConvertible
+    where
+        S: Subscriber,
+        S.Input == Output,
+        S.Failure == Failure
+    {
+        
+        typealias Input = Upstream.Output
+        typealias Failure = Upstream.Failure
+        
+        typealias Pub = Publishers.SubscribeOn<Upstream, Context>
+        typealias Sub = S
+        typealias Transform = (Upstream.Output) throws -> Output?
+        
+        let lock = Lock()
+        let scheduler: Context
+        let options: Context.SchedulerOptions?
+        let sub: Sub
+        
+        var state = RelayState.waiting
+        
+        init(pub: Pub, sub: Sub) {
+            self.scheduler = pub.scheduler
+            self.options = pub.options
+            self.sub = sub
+        }
+        
+        func request(_ demand: Subscribers.Demand) {
+            guard let subscription = self.lock.withLockGet(self.state.subscription) else {
+                return
+            }
+            self.scheduler.schedule(options: self.options) {
+                subscription.request(demand)
+            }
+        }
+        
+        func cancel() {
+            self.lock.withLockGet(self.state.complete())?.cancel()
+        }
+        
+        func receive(subscription: Subscription) {
+            guard self.lock.withLockGet(self.state.relay(subscription)) else {
+                subscription.cancel()
+                return
+            }
+            self.sub.receive(subscription: self)
+        }
+        
+        func receive(_ input: Input) -> Subscribers.Demand {
+            guard self.lock.withLockGet(self.state.isRelaying) else {
+                return .none
+            }
+            
+            let more = self.sub.receive(input)
+            guard more > 0, let subscription = self.lock.withLockGet(self.state.subscription) else {
+                return .none
+            }
+            
+            self.scheduler.schedule(options: self.options) {
+                subscription.request(more)
+            }
+            
+            return .none
+        }
+        
+        func receive(completion: Subscribers.Completion<Failure>) {
+            guard let subscription = self.lock.withLockGet(self.state.complete()) else {
+                return
+            }
+            subscription.cancel()
+            self.sub.receive(completion: completion)
+        }
+        
+        var description: String {
+            return "ReceiveOn"
+        }
+        
+        var debugDescription: String {
+            return "ReceiveOn"
+        }
+    }
+
 }

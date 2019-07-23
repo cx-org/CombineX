@@ -44,20 +44,3 @@ extension Publisher {
         self.receive(subscriber: subscriber)
     }
 }
-
-extension Publisher {
-    
-    public func eraseToAnyPublisher() -> AnyPublisher<Self.Output, Self.Failure> {
-        return AnyPublisher(self)
-    }
-}
-
-extension Publisher where Self.Failure == Never {
-    
-    /// Creates a connectable wrapper around the publisher.
-    ///
-    /// - Returns: A `ConnectablePublisher` wrapping this publisher.
-    public func makeConnectable() -> Publishers.MakeConnectable<Self> {
-        Global.RequiresImplementation()
-    }
-}

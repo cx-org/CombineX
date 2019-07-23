@@ -40,6 +40,11 @@ class ReceiveOnSpec: QuickSpec {
                 }
                 expect(sub.events.count).toEventually(equal(100))
             }
+            
+            // MARK: 1.2 should send values as many as demand
+            it("should send values as many as demand") {
+                
+            }
         }
     }
 }

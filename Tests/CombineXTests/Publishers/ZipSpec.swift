@@ -37,8 +37,8 @@ class ZipSpec: QuickSpec {
                 expect(sub.events).to(equal(expected))
             }
             
-            // MARK: 1.2 should combine latest of 3
-            it("should combine latest of 3") {
+            // MARK: 1.2 should zip of 3
+            it("should zip of 3") {
                 let subject0 = PassthroughSubject<String, TestError>()
                 let subject1 = PassthroughSubject<String, TestError>()
                 let subject2 = PassthroughSubject<String, TestError>()
@@ -65,10 +65,42 @@ class ZipSpec: QuickSpec {
                 expect(sub.events).to(equal(expected))
             }
             
-            // MARK: 1.3 should send as many as demands
+            // MARK: 1.3 should finish when one sends a finish
+            it("should finish when one sends a finish") {
+                let subjects = Array.make(count: 4, make: PassthroughSubject<Int, TestError>())
+                let pub = subjects[0].zip(subjects[1], subjects[2], subjects[3]) {
+                    $0 + $1 + $2 + $3
+                }
+                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
+                pub.subscribe(sub)
+                
+                10.times {
+                    subjects[$0 % 4].send($0)
+                }
+                subjects[3].send(completion: .finished)
+                expect(sub.events).to(equal([.value(6), .value(22), .completion(.finished)]))
+            }
+            
+            // MARK: 1.4 should fail when one sends an error
+            it("should fail when one sends an error") {
+                let subjects = Array.make(count: 4, make: PassthroughSubject<Int, TestError>())
+                let pub = subjects[0].zip(subjects[1], subjects[2], subjects[3]) {
+                    $0 + $1 + $2 + $3
+                }
+                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
+                pub.subscribe(sub)
+                
+                10.times {
+                    subjects[$0 % 4].send($0)
+                }
+                subjects[3].send(completion: .failure(.e0))
+                expect(sub.events).to(equal([.value(6), .value(22), .completion(.failure(.e0))]))
+            }
+            
+            // MARK: 1.5 should send as many as demands
             it("should send as many as demands") {
-                let subject0 = PassthroughSubject<String, TestError>(name: "0")
-                let subject1 = PassthroughSubject<String, TestError>(name: "1")
+                let subject0 = PassthroughSubject<String, TestError>()
+                let subject1 = PassthroughSubject<String, TestError>()
                 
                 var counter = 0
                 let pub = subject0.zip(subject1)

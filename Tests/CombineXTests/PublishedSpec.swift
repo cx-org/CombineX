@@ -16,7 +16,7 @@ class PublishedSpec: QuickSpec {
         
         describe("test") {
             
-            it("test") {
+            it("test") {   
             }
         }
     }

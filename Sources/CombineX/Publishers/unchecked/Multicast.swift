@@ -27,7 +27,8 @@ extension Publishers {
         
         private lazy var subject: SubjectType = self.createSubject()
         
-//        private let connection = Atomic<Connection?>(value: nil)
+        private let lock = Lock()
+        private var cancellable: Cancellable?
         
         init(upstream: Upstream, createSubject: @escaping () -> SubjectType) {
             self.upstream = upstream
@@ -48,7 +49,18 @@ extension Publishers {
         ///
         /// - Returns: A `Cancellable` instance that can be used to cancel publishing.
         final public func connect() -> Cancellable {
-            Global.RequiresImplementation()
+            self.lock.lock()
+            defer {
+                self.lock.unlock()
+            }
+            
+            if let cancel = self.cancellable {
+                return cancel
+            }
+            
+            let cancel = self.upstream.subscribe(self.subject)
+            self.cancellable = cancel
+            return cancel
         }
     }
 }

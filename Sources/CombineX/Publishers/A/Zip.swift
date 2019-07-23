@@ -100,11 +100,10 @@ extension Publishers.Zip {
         
         var childA: Child<A.Output>?
         var childB: Child<B.Output>?
-
+        
         var bufferA: Queue<A.Output>
         var bufferB: Queue<B.Output>
         
-        var demand: Subscribers.Demand = .none
         var isCompleted = false
         
         init(pub: Pub, sub: Sub) {
