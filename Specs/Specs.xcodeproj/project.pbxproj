@@ -627,9 +627,7 @@
 			isa = PBXGroup;
 			children = (
 				6240509922DDBAB000291766 /* Buffer.swift */,
-				66C363F722E4B991002236BF /* Debounce.swift */,
 				624050E122DDBAB000291766 /* Retry.swift */,
-				66C363F522E4B949002236BF /* Throttle.swift */,
 				624050AE22DDBAB000291766 /* A */,
 				66C363E422E4AC51002236BF /* B */,
 				66C363E722E4B043002236BF /* unchecked */,
@@ -841,6 +839,8 @@
 		66C363E722E4B043002236BF /* unchecked */ = {
 			isa = PBXGroup;
 			children = (
+				66C363F722E4B991002236BF /* Debounce.swift */,
+				66C363F522E4B949002236BF /* Throttle.swift */,
 				624050D522DDBAB000291766 /* Share.swift */,
 				6240509A22DDBAB000291766 /* SubscribeOn.swift */,
 				624050A922DDBAB000291766 /* Autoconnect.swift */,

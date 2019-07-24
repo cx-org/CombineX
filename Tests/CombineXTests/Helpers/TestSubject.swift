@@ -13,11 +13,10 @@ class TestSubject<Output, Failure> : Subject where Failure : Error {
     private var completion: Subscribers.Completion<Failure>?
     
     let name: String
-    let isLogEnabled: Bool
+    var isLogEnabled = false
     
-    init(name: String = "Anonym", isLogEnabled: Bool = false) {
+    init(name: String = "Anonym") {
         self.name = name
-        self.isLogEnabled = isLogEnabled
     }
     
     func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {

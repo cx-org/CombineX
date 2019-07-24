@@ -54,7 +54,104 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
-            
+//            let s = Inner(pub: self, sub: subscriber)
+//            self.upstream.subscribe(s)
         }
     }
 }
+
+/*
+ 
+
+extension Publishers.Debounce {
+    
+    private final class Inner<S>:
+        Subscription,
+        Subscriber,
+        CustomStringConvertible,
+        CustomDebugStringConvertible
+    where
+        S: Subscriber,
+        S.Input == Output,
+        S.Failure == Failure
+    {
+        
+        typealias Input = Upstream.Output
+        typealias Failure = Upstream.Failure
+        
+        typealias Pub = Publishers.Debounce<Upstream, Context>
+        typealias Sub = S
+        
+        let lock = Lock()
+        let scheduler: Context
+        let dueTime: Context.SchedulerTimeType.Stride
+        let options: Context.SchedulerOptions?
+        let sub: Sub
+
+        var state = RelayState.waiting
+        var lastSending: Context.SchedulerTimeType
+        
+        init(pub: Pub, sub: Sub) {
+            self.scheduler = pub.scheduler
+            self.dueTime = pub.dueTime
+            self.options = pub.options
+            self.sub = sub
+            self.lastSending = pub.scheduler.now.advanced(by: -pub.dueTime)
+        }
+        
+        func request(_ demand: Subscribers.Demand) {
+            self.lock.withLockGet(self.state.subscription)?.request(demand)
+        }
+        
+        func cancel() {
+            self.lock.withLockGet(self.state.complete())?.cancel()
+        }
+        
+        func receive(subscription: Subscription) {
+            guard self.lock.withLockGet(self.state.relay(subscription)) else {
+                subscription.cancel()
+                return
+            }
+            self.sub.receive(subscription: self)
+        }
+        
+        func receive(_ input: Input) -> Subscribers.Demand {
+            self.lock.lock()
+            guard self.state.isRelaying else {
+                self.lock.unlock()
+                return .none
+            }
+            
+            if self.lastSending.distance(to: self.scheduler.now) < self.dueTime {
+                self.lock.unlock()
+                return .max(1)
+            }
+            self.lock.unlock()
+            
+            let more = self.sub.receive(input)
+            
+            self.lock.lock()
+            self.lastSending = self.scheduler.now
+            self.lock.unlock()
+            
+            return more
+        }
+        
+        func receive(completion: Subscribers.Completion<Failure>) {
+            guard let subscription = self.lock.withLockGet(self.state.complete()) else {
+                return
+            }
+            subscription.cancel()
+            self.sub.receive(completion: completion)
+        }
+        
+        var description: String {
+            return "Debounce"
+        }
+        
+        var debugDescription: String {
+            return "Debounce"
+        }
+    }
+}
+ */

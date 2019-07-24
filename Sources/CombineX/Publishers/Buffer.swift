@@ -5,11 +5,9 @@ extension Publisher {
     }
 }
 
-extension Publishers.PrefetchStrategy : Equatable {
-}
+extension Publishers.PrefetchStrategy : Equatable { }
 
-extension Publishers.PrefetchStrategy : Hashable {
-}
+extension Publishers.PrefetchStrategy : Hashable { }
 
 extension Publishers {
     
@@ -113,9 +111,9 @@ extension Publishers {
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             switch self.prefetch {
             case .keepFull:
-                Global.RequiresImplementation()
 //                let subscription = KeepFullInner(pub: self, sub: subscriber)
 //                self.upstream.subscribe(subscription)
+                Global.RequiresImplementation()
             case .byRequest:
                 let s = ByRequestInner(pub: self, sub: subscriber)
                 self.upstream.subscribe(s)
@@ -124,14 +122,15 @@ extension Publishers {
     }
 }
 
+/*
 extension Publishers.Buffer {
     
-    private final class ByRequestInner<S>:
+    private final class KeepFullInner<S>:
         Subscriber,
         Subscription,
         CustomStringConvertible,
         CustomDebugStringConvertible
-        where
+    where
         S: Subscriber,
         S.Input == Output,
         S.Failure == Failure
@@ -149,12 +148,11 @@ extension Publishers.Buffer {
         let whenFull: Publishers.BufferingStrategy<Upstream.Failure>
         
         var demand: Subscribers.Demand = .none
-        var buffer = Queue<Output>()
+        var buffer: Queue<Output> = Queue()
         
         var state = RelayState.waiting
         
         init(pub: Pub, sub: Sub) {
-            precondition(pub.size > 0)
             self.size = pub.size
             self.whenFull = pub.whenFull
             self.sub = sub
@@ -172,34 +170,24 @@ extension Publishers.Buffer {
             self.demand = new
             
             var drain = Subscribers.Demand.none
+            let bufferIsNotFull = self.buffer.count < self.size
             if old == 0, new > 0, self.buffer.isNotEmpty {
                 drain = new
             }
+            
             self.lock.unlock()
             
+            var totalMore = Subscribers.Demand.none
             if drain > 0 {
-                self.drain(drain)
+                totalMore = self.drain(drain)
             }
             
-            subscription.request(demand)
-        }
-        
-        private func drain(_ demand: Subscribers.Demand) {
-            var now = demand
-            while now > 0 {
-                self.lock.lock()
-                guard let output = self.buffer.popFirst() else {
-                    self.lock.unlock()
-                    return
-                }
-                self.demand -= 1
-                self.lock.unlock()
-                
-                let more = self.sub.receive(output)
-                self.lock.withLock {
-                    self.demand += more
-                    now = self.demand
-                }
+            if demand < self.size {
+                subscription.request(demand * 2 + totalMore)
+            } else if bufferIsNotFull {
+                subscription.request(demand * 2)
+            } else {
+                subscription.request(demand)
             }
         }
         
@@ -208,13 +196,42 @@ extension Publishers.Buffer {
             self.buffer = Queue()
         }
         
+        private func drain(_ after: Subscribers.Demand) -> Subscribers.Demand {
+            var totalMore = Subscribers.Demand.none
+            var demand = after
+            while demand > 0 {
+                self.lock.lock()
+                guard self.state.isRelaying else {
+                    self.lock.unlock()
+                    return totalMore
+                }
+                
+                guard let output = self.buffer.popFirst() else {
+                    self.lock.unlock()
+                    return totalMore
+                }
+                
+                self.demand -= 1
+                self.lock.unlock()
+                
+                let more = self.sub.receive(output)
+                totalMore += more
+                self.lock.withLock {
+                    self.demand += more
+                    demand = self.demand
+                }
+            }
+            
+            return totalMore
+        }
+        
         func receive(subscription: Subscription) {
             guard self.lock.withLockGet(self.state.relay(subscription)) else {
                 subscription.cancel()
                 return
             }
             
-            subscription.request(.unlimited)
+            subscription.request(.max(self.size))
             self.sub.receive(subscription: self)
         }
         
@@ -231,14 +248,20 @@ extension Publishers.Buffer {
                 
                 let more = self.sub.receive(input)
                 
-                self.lock.withLock {
-                    self.demand += more
-                }
+                self.lock.lock()
+                self.demand += more
+                
+                let needMore = self.demand > 0
+                self.lock.unlock()
+                
+                return needMore ? .max(1) : .max(0)
             } else {
-                switch self.buffer.count {
+                let count = self.buffer.count
+                switch count {
                 case 0..<self.size:
                     self.buffer.append(input)
                     self.lock.unlock()
+                    return .max(self.size - count)
                 case self.size:
                     switch self.whenFull {
                     case .dropOldest:
@@ -287,16 +310,16 @@ extension Publishers.Buffer {
     }
 }
 
-/*
+ */
 
 extension Publishers.Buffer {
     
-    private final class KeepFullInner<S>:
+    private final class ByRequestInner<S>:
         Subscriber,
         Subscription,
         CustomStringConvertible,
         CustomDebugStringConvertible
-    where
+        where
         S: Subscriber,
         S.Input == Output,
         S.Failure == Failure
@@ -314,11 +337,12 @@ extension Publishers.Buffer {
         let whenFull: Publishers.BufferingStrategy<Upstream.Failure>
         
         var demand: Subscribers.Demand = .none
-        var buffer: [Output] = []
+        var buffer = Queue<Output>()
         
         var state = RelayState.waiting
         
         init(pub: Pub, sub: Sub) {
+            precondition(pub.size > 0)
             self.size = pub.size
             self.whenFull = pub.whenFull
             self.sub = sub
@@ -331,63 +355,44 @@ extension Publishers.Buffer {
                 return
             }
             
-            let before = self.demand
-            let after = before + demand
-            self.demand = after
+            let old = self.demand
+            let new = old + demand
+            self.demand = new
             
-            var drain = Subscribers.Demand.none
-            var bufferIsNotFull = self.buffer.count < self.size
-            if before == 0, after > 0, self.buffer.isNotEmpty {
-                drain = after
-            }
-            self.lock.unlock()
-            
-            var totalMore = Subscribers.Demand.none
-            if drain > 0 {
-                totalMore = self.drain(drain)
-            }
-            
-            if demand < self.size {
-                subscription.request(demand * 2 + totalMore)
-            } else if bufferIsNotFull {
-                subscription.request(demand * 2)
+            if old == 0, new > 0, self.buffer.isNotEmpty {
+                self.drain(new)
             } else {
-                subscription.request(demand)
+                self.lock.unlock()
             }
+            
+            subscription.request(demand)
         }
         
-        private func drain(_ after: Subscribers.Demand) -> Subscribers.Demand {
-            var totalMore = Subscribers.Demand.none
-            var demand = after
-            while demand > 0 {
-                self.lock.lock()
-                guard self.state.isRelaying else {
+        func cancel() {
+            self.lock.withLockGet(self.state.complete())?.cancel()
+            self.buffer = Queue()
+        }
+        
+        private func drain(_ demand: Subscribers.Demand) {
+            // in locking
+            var now = demand
+            while now > 0 {
+                guard let output = self.buffer.popFirst() else {
                     self.lock.unlock()
-                    return totalMore
+                    return
                 }
-                
-                guard let output = self.buffer.dequeue() else {
-                    self.lock.unlock()
-                    return totalMore
-                }
-                
                 self.demand -= 1
                 self.lock.unlock()
                 
                 let more = self.sub.receive(output)
-                totalMore += more
-                self.lock.withLock {
-                    self.demand += more
-                    demand = self.demand
-                }
+                
+                self.lock.lock()
+                
+                self.demand += more
+                now = self.demand
             }
             
-            return totalMore
-        }
-        
-        func cancel() {
-            self.lock.withLockGet(self.state.finish())?.cancel()
-            self.buffer = []
+            self.lock.unlock()
         }
         
         func receive(subscription: Subscription) {
@@ -396,7 +401,7 @@ extension Publishers.Buffer {
                 return
             }
             
-            subscription.request(.max(self.size))
+            subscription.request(.unlimited)
             self.sub.receive(subscription: self)
         }
         
@@ -413,13 +418,9 @@ extension Publishers.Buffer {
                 
                 let more = self.sub.receive(input)
                 
-                self.lock.lock()
-                self.demand += more
-                
-                let needMore = self.demand > 0
-                self.lock.unlock()
-                
-                return needMore ? .max(1) : .max(0)
+                self.lock.withLock {
+                    self.demand += more
+                }
             } else {
                 switch self.buffer.count {
                 case 0..<self.size:
@@ -428,20 +429,17 @@ extension Publishers.Buffer {
                 case self.size:
                     switch self.whenFull {
                     case .dropOldest:
-                        _ = self.buffer.removeFirst()
+                        _ = self.buffer.popFirst()
                         self.buffer.append(input)
                         self.lock.unlock()
                     case .dropNewest:
                         self.lock.unlock()
                     case .customError(let makeError):
-                        guard let subscription = self.state.finish() else {
-                            self.lock.unlock()
-                            return .none
-                        }
+                        let subscription = self.state.complete()!
                         self.lock.unlock()
                         
                         subscription.cancel()
-                        self.buffer = []
+                        self.buffer = Queue()
                         
                         self.sub.receive(completion: .failure(makeError()))
                     }
@@ -454,12 +452,12 @@ extension Publishers.Buffer {
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
-            guard let subscription = self.lock.withLockGet(self.state.finish()) else {
+            guard let subscription = self.lock.withLockGet(self.state.complete()) else {
                 return
             }
             subscription.cancel()
             
-            self.buffer = []
+            self.buffer = Queue()
             self.sub.receive(completion: completion)
         }
         
@@ -472,5 +470,3 @@ extension Publishers.Buffer {
         }
     }
 }
-
- */
