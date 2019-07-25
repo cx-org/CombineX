@@ -627,14 +627,14 @@
 			isa = PBXGroup;
 			children = (
 				624050E122DDBAB000291766 /* Retry.swift */,
-				624050AE22DDBAB000291766 /* A */,
-				66C363E422E4AC51002236BF /* B */,
+				624050AE22DDBAB000291766 /* B */,
+				66C363E422E4AC51002236BF /* C */,
 				66C363E722E4B043002236BF /* unchecked */,
 			);
 			path = Publishers;
 			sourceTree = "<group>";
 		};
-		624050AE22DDBAB000291766 /* A */ = {
+		624050AE22DDBAB000291766 /* B */ = {
 			isa = PBXGroup;
 			children = (
 				624050A122DDBAB000291766 /* ReceiveOn.swift */,
@@ -708,7 +708,7 @@
 				624050D622DDBAB000291766 /* Zip.swift */,
 				624050CF22DDBAB000291766 /* Zip+.swift */,
 			);
-			path = A;
+			path = B;
 			sourceTree = "<group>";
 		};
 		624050E422DDBAB000291766 /* Subscribers */ = {
@@ -825,13 +825,13 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		66C363E422E4AC51002236BF /* B */ = {
+		66C363E422E4AC51002236BF /* C */ = {
 			isa = PBXGroup;
 			children = (
 				6240509F22DDBAB000291766 /* CombineLatest.swift */,
 				624050DC22DDBAB000291766 /* SwitchToLatest.swift */,
 			);
-			path = B;
+			path = C;
 			sourceTree = "<group>";
 		};
 		66C363E722E4B043002236BF /* unchecked */ = {
