@@ -626,7 +626,6 @@
 		6240509422DDBAB000291766 /* Publishers */ = {
 			isa = PBXGroup;
 			children = (
-				6240509922DDBAB000291766 /* Buffer.swift */,
 				624050E122DDBAB000291766 /* Retry.swift */,
 				624050AE22DDBAB000291766 /* A */,
 				66C363E422E4AC51002236BF /* B */,
@@ -638,6 +637,9 @@
 		624050AE22DDBAB000291766 /* A */ = {
 			isa = PBXGroup;
 			children = (
+				624050D022DDBAB000291766 /* CombineLatest+.swift */,
+				6240509C22DDBAB000291766 /* TryCombineLatest.swift */,
+				6240509D22DDBAB000291766 /* TryCombineLatest+.swift */,
 				625EC7BD22E0201D00585377 /* __Publisher.swift */,
 				624050B522DDBAB000291766 /* AllSatisfy.swift */,
 				624050B322DDBAB000291766 /* AssertNoFailure.swift */,
@@ -826,12 +828,6 @@
 			isa = PBXGroup;
 			children = (
 				6240509F22DDBAB000291766 /* CombineLatest.swift */,
-				624050D022DDBAB000291766 /* CombineLatest+.swift */,
-				6240509E22DDBAB000291766 /* Future.swift */,
-				624050A122DDBAB000291766 /* ReceiveOn.swift */,
-				624050DC22DDBAB000291766 /* SwitchToLatest.swift */,
-				6240509C22DDBAB000291766 /* TryCombineLatest.swift */,
-				6240509D22DDBAB000291766 /* TryCombineLatest+.swift */,
 			);
 			path = B;
 			sourceTree = "<group>";
@@ -839,6 +835,10 @@
 		66C363E722E4B043002236BF /* unchecked */ = {
 			isa = PBXGroup;
 			children = (
+				6240509922DDBAB000291766 /* Buffer.swift */,
+				6240509E22DDBAB000291766 /* Future.swift */,
+				624050A122DDBAB000291766 /* ReceiveOn.swift */,
+				624050DC22DDBAB000291766 /* SwitchToLatest.swift */,
 				66C363F722E4B991002236BF /* Debounce.swift */,
 				66C363F522E4B949002236BF /* Throttle.swift */,
 				624050D522DDBAB000291766 /* Share.swift */,

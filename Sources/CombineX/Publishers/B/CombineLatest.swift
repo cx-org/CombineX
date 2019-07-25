@@ -28,6 +28,7 @@ extension Publisher {
 }
 
 extension Publishers.CombineLatest : Equatable where A : Equatable, B : Equatable {
+    
     /// Returns a Boolean value that indicates whether two publishers are equivalent.
     ///
     /// - Parameters:
@@ -74,12 +75,12 @@ extension Publishers {
     }
 }
 
-
 private struct CombineLatestState: OptionSet {
     let rawValue: Int
     
     static let aCompleted = CombineLatestState(rawValue: 1 << 0)
     static let bCompleted = CombineLatestState(rawValue: 1 << 1)
+    
     static let initial: CombineLatestState = []
     static let completed: CombineLatestState = [.aCompleted, .bCompleted]
     

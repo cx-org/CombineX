@@ -19,6 +19,10 @@ class TestSubject<Output, Failure> : Subject where Failure : Error {
         self.name = name
     }
     
+    var inners: [Inner] {
+        return self.lock.withLockGet(self.subscriptions)
+    }
+    
     func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
         self.lock.lock()
         
@@ -75,7 +79,7 @@ class TestSubject<Output, Failure> : Subject where Failure : Error {
 
 extension TestSubject {
     
-    private class Inner: Subscription, CustomStringConvertible, CustomDebugStringConvertible {
+    final class Inner: Subscription, CustomStringConvertible, CustomDebugStringConvertible {
         
         typealias Pub = TestSubject<Output, Failure>
         typealias Sub = AnySubscriber<Output, Failure>
@@ -85,8 +89,19 @@ extension TestSubject {
         
         let lock = Lock()
         var isCancelled = false
-        
         var demand: Subscribers.Demand = .none
+        
+        enum DemandType {
+            case request
+            case sync
+        }
+        let demandRecords = Atom<[(DemandType, Subscribers.Demand)]>(val: [])
+        
+        var syncDemandRecords: [Subscribers.Demand] {
+            return self.demandRecords.get().compactMap { (type, demand) in
+                type == .sync ? demand : nil
+            }
+        }
         
         init(pub: Pub, sub: Sub) {
             self.pub = pub
@@ -110,8 +125,9 @@ extension TestSubject {
             self.demand -= 1
             let more = self.sub.receive(value)
             
+            self.demandRecords.withLockMutating { $0.append((.sync, more))}
             if let pub = self.pub, pub.isLogEnabled {
-                Swift.print("TestSubject-\(pub.name) backpresure more:", demand)
+                Swift.print("TestSubject-\(pub.name) sync more:", more)
             }
             self.demand += more
         }
@@ -142,6 +158,7 @@ extension TestSubject {
             
             self.demand += demand
             
+            self.demandRecords.withLockMutating { $0.append((.request, demand))}
             if let pub = self.pub, pub.isLogEnabled {
                 Swift.print("TestSubject-\(pub.name) request more:", demand)
             }

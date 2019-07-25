@@ -16,29 +16,33 @@ class BufferSpec: QuickSpec {
         // MARK: - Relay
         describe("Relay") {
             
-            fit("buffer") {
+            xit("buffer") {
                 let subject = TestSubject<Int, TestError>(name: "buffer")
                 subject.isLogEnabled = true
-                let pub = subject.buffer(size: 9, prefetch: .keepFull, whenFull: .dropOldest)
+                let pub = subject.buffer(size: 5
+                    , prefetch: .keepFull, whenFull: .dropOldest)
                 
                 var subscription: Subscription?
                 let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
                     subscription = s
-                    s.request(.max(1))
+                    s.request(.max(2))
                 }, receiveValue: { v in
                     print("receive v", v)
-                    return .none
+//                    return .none
+                    return [5].contains(v) ? .max(5) : .max(0)
                 }, receiveCompletion: { c in
                     print("receive c", c)
                 })
                 
                 pub.subscribe(sub)
+//                subscription?.request(.max(1))
                 20.times {
                     print("send", $0)
                     subject.send($0)
                 }
-                subscription?.request(.max(5))
-                subscription?.request(.max(5))
+                subscription?.request(.max(2))
+                subscription?.request(.max(4))
+                subscription?.request(.max(3))
             }
             
             // MARK: 1.1 should relay values as expect when prefetch strategy is by request
