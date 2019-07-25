@@ -23,6 +23,10 @@ class TestSubject<Output, Failure> : Subject where Failure : Error {
         return self.lock.withLockGet(self.subscriptions)
     }
     
+    var inner: Inner {
+        return self.inners[0]
+    }
+    
     func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
         self.lock.lock()
         
@@ -87,7 +91,7 @@ extension TestSubject {
         var pub: Pub?
         var sub: Sub
         
-        let lock = Lock()
+        let lock = Lock(recursive: true)
         var isCancelled = false
         var demand: Subscribers.Demand = .none
         
@@ -96,6 +100,12 @@ extension TestSubject {
             case sync
         }
         let demandRecords = Atom<[(DemandType, Subscribers.Demand)]>(val: [])
+        
+        var requestDemandRecords: [Subscribers.Demand] {
+            return self.demandRecords.get().compactMap { (type, demand) in
+                type == .request ? demand : nil
+            }
+        }
         
         var syncDemandRecords: [Subscribers.Demand] {
             return self.demandRecords.get().compactMap { (type, demand) in
@@ -123,13 +133,15 @@ extension TestSubject {
             }
             
             self.demand -= 1
+            
             let more = self.sub.receive(value)
+            
+            self.demand += more
             
             self.demandRecords.withLockMutating { $0.append((.sync, more))}
             if let pub = self.pub, pub.isLogEnabled {
                 Swift.print("TestSubject-\(pub.name) sync more:", more)
             }
-            self.demand += more
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {

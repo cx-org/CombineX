@@ -104,12 +104,16 @@ extension Publishers.ReceiveOn {
             self.lock.withLockGet(self.state.complete())?.cancel()
         }
         
+        private func schedule(_ action: @escaping () -> Void) {
+            self.scheduler.schedule(options: self.options, action)
+        }
+        
         func receive(subscription: Subscription) {
             guard self.lock.withLockGet(self.state.relay(subscription)) else {
                 subscription.cancel()
                 return
             }
-            self.scheduler.schedule(options: self.options) {
+            self.schedule {
                 self.sub.receive(subscription: self)
             }
         }
@@ -119,13 +123,14 @@ extension Publishers.ReceiveOn {
                 return .none
             }
             
-            self.scheduler.schedule(options: self.options) {
+            self.schedule {
                 let more = self.sub.receive(input)
                 guard more > 0, let subscription = self.lock.withLockGet(self.state.subscription) else {
                     return
                 }
                 subscription.request(more)
             }
+            
             return .none
         }
         
@@ -135,7 +140,7 @@ extension Publishers.ReceiveOn {
             }
             subscription.cancel()
             
-            self.scheduler.schedule(options: self.options) {
+            self.schedule {
                 self.sub.receive(completion: completion)
             }
         }

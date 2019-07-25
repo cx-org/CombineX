@@ -74,6 +74,7 @@ extension Publishers.SwitchToLatest {
         // for downstream
         let downLock = Lock()
         let sub: Sub
+
         var downState: DemandState = .waiting
         var child: Child?
         
@@ -207,11 +208,9 @@ extension Publishers.SwitchToLatest {
             let more = self.sub.receive(input)
             
             self.downLock.lock()
-            guard let new = self.downState.add(more)?.new, new > 0 else {
-                self.downLock.unlock()
-                return .none
-            }
+            _ = self.downState.add(more)
             self.downLock.unlock()
+            
             return more
         }
         
@@ -222,10 +221,13 @@ extension Publishers.SwitchToLatest {
                 return
             }
             
+            if self.child === child {
+                self.child = nil
+            }
+            
             switch completion {
             case .finished:
                 if self.upLock.withLockGet(self.upState.isCompleted) {
-                    
                     self.downState = .completed
                     self.downLock.unlock()
                     
