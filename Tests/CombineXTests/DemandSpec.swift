@@ -1,3 +1,4 @@
+import Foundation
 import Quick
 import Nimble
 
@@ -104,6 +105,32 @@ class DemandSpec: QuickSpec {
             // MARK: 4.1 should hash as expected
             it("should hash as expected") {
                 expect(Demand.max(1).hashValue).to(equal(1.hashValue))
+            }
+        }
+        
+        // MARK: - Codable
+        describe("Codable") {
+            
+            // MARK: 5.1 should be codable
+            xit("should be codable") {
+                let a = Demand.unlimited
+                let b = Demand.max(10)
+                
+                expect {
+                    let encoder = JSONEncoder()
+                    let dataA = try encoder.encode(a)
+                    let dataB = try encoder.encode(b)
+                    
+                    print(try JSONSerialization.jsonObject(with: dataA, options: []))
+                    
+                    let decoder = JSONDecoder()
+                    let x = try decoder.decode(Demand.self, from: dataA)
+                    let y = try decoder.decode(Demand.self, from: dataB)
+                    
+                    expect(x).to(equal(a))
+                    expect(y).to(equal(b))
+                    return ()
+                }.toNot(throwError())
             }
         }
     }

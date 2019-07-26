@@ -120,7 +120,7 @@ private enum Signal {
         #elseif canImport(Glibc)
         Glibc.raise(self.code)
         #else
-        Global.RequiresImplementation()
+        Global.Unsupported()
         #endif
     }
 }

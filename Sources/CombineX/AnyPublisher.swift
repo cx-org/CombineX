@@ -50,12 +50,12 @@ public struct AnyPublisher<Output, Failure> : CustomStringConvertible, CustomPla
     /// The conversion of `p` to a string in the assignment to `s` uses the
     /// `Point` type's `description` property.
     public var description: String {
-        Global.RequiresImplementation()
+        return "AnyPublisher"
     }
 
     /// A custom playground description for this instance.
     public var playgroundDescription: Any {
-        Global.RequiresImplementation()
+        return self.description
     }
     
     /// Creates a type-erasing publisher to wrap the provided publisher.

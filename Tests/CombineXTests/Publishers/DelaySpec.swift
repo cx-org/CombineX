@@ -59,6 +59,7 @@ class DelaySpec: QuickSpec {
                 expect(cB.delayed(1).isCloseTo(to: cA)).toEventually(beTrue())
             }
             
+            // MARK: 1.2 should not send susbcription with scheduler
             it("should not send susbcription with scheduler") {
                 let subject = PassthroughSubject<Int, TestError>()
                 let scheduler = TestDispatchQueueScheduler.serial()

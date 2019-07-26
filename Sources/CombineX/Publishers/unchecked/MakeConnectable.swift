@@ -40,7 +40,7 @@ extension Publishers {
         ///
         /// - Returns: A `Cancellable` instance that can be used to cancel publishing.
         public func connect() -> Cancellable {
-            self.multicase.connect()
+            return self.multicase.connect()
         }
     }
 }
