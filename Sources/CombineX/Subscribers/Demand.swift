@@ -6,20 +6,21 @@ extension Subscribers {
     /// - max: A request for a maximum number of items.
     public struct Demand : Equatable, Comparable, Hashable, Codable, CustomStringConvertible {
         
-        enum Storage {
-            case unlimited
-            case max(Int)
-        }
+        private let rawValue: UInt
         
-        private let storage: Storage
+        private static let _unlimited = UInt(Int.max) + 1
         
-        private init(_ storage: Storage) {
-            self.storage = storage
+        private init(_ rawValue: UInt) {
+            if rawValue > Self._unlimited {
+                self.rawValue = Self._unlimited
+                return
+            }
+            self.rawValue = rawValue
         }
         
         /// Requests as many values as the `Publisher` can produce.
         public static var unlimited: Subscribers.Demand {
-            return Demand(.unlimited)
+            return Demand(self._unlimited)
         }
         
         /// Limits the maximum number of values.
@@ -27,7 +28,7 @@ extension Subscribers {
         /// Negative values will result in a `fatalError`.
         public static func max(_ value: Int) -> Subscribers.Demand {
             precondition(value >= 0)
-            return Demand(.max(value))
+            return Demand(UInt(value))
         }
         
         /// A demand for no items.
@@ -61,22 +62,12 @@ extension Subscribers {
         /// The conversion of `p` to a string in the assignment to `s` uses the
         /// `Point` type's `description` property.
         public var description: String {
-            switch self.storage {
-            case .unlimited:
-                return "unlimited"
-            case .max(let value):
-                return "max(\(value))"
-            }
+            return self == .unlimited ? "unlimited" : "max(\(self.rawValue))"
         }
 
         /// When adding any value to .unlimited, the result is .unlimited.
         public static func + (lhs: Subscribers.Demand, rhs: Subscribers.Demand) -> Subscribers.Demand {
-            switch (lhs.storage, rhs.storage) {
-            case (.max(let d0), .max(let d1)):
-                return .max(d0 + d1)
-            default:
-                return .unlimited
-            }
+            return Demand(lhs.rawValue + rhs.rawValue)
         }
         
         /// When adding any value to .unlimited, the result is .unlimited.
@@ -98,12 +89,9 @@ extension Subscribers {
         }
         
         public static func * (lhs: Subscribers.Demand, rhs: Int) -> Subscribers.Demand {
-            switch lhs.storage {
-            case .max(let d):
-                return .max(d * rhs)
-            case .unlimited:
-                return .unlimited
-            }
+            precondition(rhs >= 0)
+            let (v, overflow) = lhs.rawValue.multipliedReportingOverflow(by: UInt(rhs))
+            return overflow ? .unlimited : Demand(v)
         }
         
         public static func *= (lhs: inout Subscribers.Demand, rhs: Int) {
@@ -112,14 +100,15 @@ extension Subscribers {
         
         /// When subtracting any value (including .unlimited) from .unlimited, the result is still .unlimited. Subtracting unlimited from any value (except unlimited) results in .max(0). A negative demand is not possible; any operation that would result in a negative value is clamped to .max(0).
         public static func - (lhs: Subscribers.Demand, rhs: Subscribers.Demand) -> Subscribers.Demand {
-            switch (lhs.storage, rhs.storage) {
+            switch (lhs, rhs) {
             case (.unlimited, _):
                 return .unlimited
-            case (.max, .unlimited):
+            case (_, .unlimited):
                 return .max(0)
-            case (.max(let d0), .max(let d1)):
-                // FIXME: Docs say "any operation that would result in a negative value is clamped to .max(0)", but it will actually crash. See "DemandSpec.swift#2.3" for more information.
-                return .max(d0 - d1)
+            default:
+                // FIXME: Doc says "any operation that would result in a negative value is clamped to .max(0)", but in Apple's Combine, it will actually crash. See "DemandSpec.swift#2.2" for more information.
+                let (v, overflow) = lhs.rawValue.subtractingReportingOverflow(rhs.rawValue)
+                return overflow ? .none : Demand(v)
             }
         }
         
@@ -139,6 +128,9 @@ extension Subscribers {
         }
         
         public static func > (lhs: Subscribers.Demand, rhs: Int) -> Bool {
+            if rhs < 0 {
+                return true
+            }
             return lhs > .max(rhs)
         }
         
@@ -155,6 +147,9 @@ extension Subscribers {
         }
         
         public static func < (lhs: Subscribers.Demand, rhs: Int) -> Bool {
+            if rhs < 0 {
+                return false
+            }
             return lhs < .max(rhs)
         }
         
@@ -179,25 +174,18 @@ extension Subscribers {
         ///   - lhs: A value to compare.
         ///   - rhs: Another value to compare.
         public static func == (lhs: Subscribers.Demand, rhs: Subscribers.Demand) -> Bool {
-            switch (lhs.storage, rhs.storage) {
-            case (.unlimited, .unlimited):
-                return true
-            case (.max(let d0), .max(let d1)):
-                return d0 == d1
-            default:
-                return false
-            }
+            return lhs.rawValue == rhs.rawValue
         }
         
         /// If lhs is .unlimited, then the result is always false. If rhs is .unlimited then the result is always true. Otherwise, the two max values are compared.
         public static func < (lhs: Subscribers.Demand, rhs: Subscribers.Demand) -> Bool {
-            switch (lhs.storage, rhs.storage) {
+            switch (lhs, rhs) {
             case (.unlimited, _):
                 return false
             case (_, .unlimited):
                 return true
-            case (.max(let d0), .max(let d1)):
-                return d0 < d1
+            default:
+                return lhs.rawValue < rhs.rawValue
             }
         }
         
@@ -216,15 +204,16 @@ extension Subscribers {
             return (lhs > rhs) || (lhs == rhs)
         }
         
-        /// If rhs is .unlimited, then the result is always false. If lhs is .unlimited then the result is always false. Otherwise, the two max values are compared.
+        // FIXME: Combine's doc is wrong, it says "If lhs is .unlimited then the result is always false.".
+        /// If rhs is .unlimited, then the result is always false. If lhs is .unlimited then the result is always true. Otherwise, the two max values are compared.
         public static func > (lhs: Subscribers.Demand, rhs: Subscribers.Demand) -> Bool {
-            switch (lhs.storage, rhs.storage) {
+            switch (lhs, rhs) {
             case (_, .unlimited):
                 return false
             case (.unlimited, _):
                 return true
-            case (.max(let d0), .max(let d1)):
-                return d0 > d1
+            default:
+                return lhs.rawValue > rhs.rawValue
             }
         }
         
@@ -250,12 +239,7 @@ extension Subscribers {
         
         /// Returns the number of requested values, or nil if unlimited.
         public var max: Int? {
-            switch self.storage {
-            case .max(let d):
-                return d
-            case .unlimited:
-                return nil
-            }
+            return self == .unlimited ? nil : Int(rawValue)
         }
         
         /// The hash value.
@@ -280,14 +264,8 @@ extension Subscribers {
         ///
         /// - Parameter hasher: The hasher to use when combining the components
         ///   of this instance.
-        public func hash(into hasher: inout Hasher) {
-            switch self.storage {
-            case .max(let value):
-                hasher.combine(value)
-            default:
-                break
-            }
-        }
+//        public func hash(into hasher: inout Hasher) {
+//        }
         
         /// Creates a new instance by decoding from the given decoder.
         ///
@@ -295,9 +273,8 @@ extension Subscribers {
         /// if the data read is corrupted or otherwise invalid.
         ///
         /// - Parameter decoder: The decoder to read data from.
-        public init(from decoder: Decoder) throws {
-            Global.RequiresImplementation()
-        }
+//        public init(from decoder: Decoder) throws {
+//        }
         
         /// Encodes this value into the given encoder.
         ///
@@ -308,16 +285,8 @@ extension Subscribers {
         /// encoder's format.
         ///
         /// - Parameter encoder: The encoder to write data to.
-        public func encode(to encoder: Encoder) throws {
-            Global.RequiresImplementation()
-        }
+//        public func encode(to encoder: Encoder) throws {
+//        }
 
-    }
-}
-
-private extension Int {
-    
-    func clampedTo0() -> Int {
-        return self > 0 ? self : 0
     }
 }

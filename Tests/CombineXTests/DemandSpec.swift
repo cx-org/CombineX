@@ -34,8 +34,9 @@ class DemandSpec: QuickSpec {
             
             // MARK: 2.1 should add as expected
             it("should add as expected") {
-                expect(Demand.max(1) + Demand.max(2)).to(equal(.max(3)))
-                expect(Demand.max(1) + 2).to(equal(.max(3)))
+                expect(Demand.max(1) + Demand.max(1)).to(equal(.max(2)))
+                expect(Demand.max(1) + 1).to(equal(.max(2)))
+                expect(Demand.max(1) + Demand.max(.max)).to(equal(.unlimited))
                 expect(Demand.max(1) + Demand.unlimited).to(equal(.unlimited))
                 
                 var d = Demand.max(1)
@@ -50,34 +51,42 @@ class DemandSpec: QuickSpec {
                 expect(Demand.max(2) - Demand.max(1)).to(equal(.max(1)))
                 expect(Demand.max(2) - 1).to(equal(.max(1)))
                 expect(Demand.unlimited - Demand.max(1)).to(equal(.unlimited))
+                expect(Demand.max(1) - Demand.unlimited).to(equal(.max(0)))
                 
                 var d = Demand.max(2)
                 d -= .max(1)
                 expect(d).to(equal(.max(1)))
                 
                 expect(Demand.max(1) - 1).to(equal(.max(0)))
+                
+                #if !SWIFT_PACKAGE
+                
+                #if USE_COMBINE
+                // FIXME: In combine, This behaves differently than the doc, doc says "any operation that would result in a negative value is clamped to .max(0)", but it will actually crash.
+                expect {
+                    _ = Demand.max(1) - .max(2)
+                }.to(throwAssertion())
+                #else
+                expect(Demand.max(1) - .max(2)).to(equal(.max(0)))
+                #endif
+                
+                #endif
             }
             
             // MARK: 2.3 should multiply as expected
             it("should multiply as expected") {
                 expect(Demand.max(1) * 7).to(equal(.max(7)))
-            }
-            
-            #if !SWIFT_PACKAGE
-            // MARK: 2.4 should crash when the result of sub is a negative value
-            it("should crash when the result of sub is a negative value") {
-                expect {
-                    _ = Demand.max(1) - .max(2)
-                }.to(throwAssertion())
-            }
-            
-            // MARK: 2.5 should crash when multiplying by a negative value
-            it("should crash when multiplying by a negative value") {
+                expect(Demand.max(.max) * 2).to(equal(.unlimited))
+                
+                expect(Demand.unlimited * 2).to(equal(.unlimited))
+                expect(Demand.unlimited * Int.max).to(equal(.unlimited))
+                
+                #if !SWIFT_PACKAGE
                 expect {
                     _ = Demand.max(1) * -1
                 }.to(throwAssertion())
+                #endif
             }
-            #endif
         }
         
         // MARK: - Compare
@@ -92,27 +101,22 @@ class DemandSpec: QuickSpec {
                 expect(Demand.max(1) <= 1).to(beTrue())
                 
                 expect(Demand.unlimited).to(beGreaterThan(.max(Int.max)))
+                expect(Demand.max(Int.max)).to(beLessThan(.unlimited))
                 expect(Demand.unlimited).to(equal(.unlimited))
                 
                 expect(Demand.unlimited).toNot(beLessThan(.unlimited))
                 expect(Demand.unlimited).toNot(beGreaterThan(.unlimited))
-            }
-        }
-        
-        // MARK: - Hash
-        describe("Hash") {
-            
-            // MARK: 4.1 should hash as expected
-            it("should hash as expected") {
-                expect(Demand.max(1).hashValue).to(equal(1.hashValue))
+                
+                expect(Demand.max(1) > -1).to(beTrue())
+                expect(Demand.max(1) < -1).to(beFalse())
             }
         }
         
         // MARK: - Codable
         describe("Codable") {
             
-            // MARK: 5.1 should be codable
-            xit("should be codable") {
+            // MARK: 4.1 should be codable
+            it("should be codable") {
                 let a = Demand.unlimited
                 let b = Demand.max(10)
                 
@@ -121,7 +125,7 @@ class DemandSpec: QuickSpec {
                     let dataA = try encoder.encode(a)
                     let dataB = try encoder.encode(b)
                     
-                    print(try JSONSerialization.jsonObject(with: dataA, options: []))
+                    expect(String(data: dataA, encoding: .utf8)).to(equal("{\"rawValue\":9223372036854775808}"))
                     
                     let decoder = JSONDecoder()
                     let x = try decoder.decode(Demand.self, from: dataA)
