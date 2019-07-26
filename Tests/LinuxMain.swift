@@ -13,6 +13,7 @@ QCKMain([
     BufferSpec.self,
     CollectByCountSpec.self,
     ConcatenateSpec.self,
+    DelaySpec.self,
     DropUntilOutputSpec.self,
     EmptySpec.self,
     FlatMapSpec.self,

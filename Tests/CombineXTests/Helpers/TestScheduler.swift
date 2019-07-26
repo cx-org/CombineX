@@ -47,8 +47,8 @@ final class TestScheduler: Scheduler {
     
     let minimumTolerance: TestSchedulerTime.Stride = .seconds(0)
     
-    init(time: SchedulerTimeType = SchedulerTimeType(time: Date(timeIntervalSinceReferenceDate: 0))) {
-        self._now = time
+    init() {
+        self._now = SchedulerTimeType(time: Date())
     }
     
     func schedule(options: TestScheduler.SchedulerOptions?, _ action: @escaping () -> Void) {
@@ -87,6 +87,8 @@ final class TestScheduler: Scheduler {
     func advance(to time: SchedulerTimeType) {
         self.lock.lock()
         
+        Swift.print("before advanced: there is \(self.scheduledActions.count)")
+        
         while let first = self.scheduledActions.first {
             if time < first.time {
                 break
@@ -99,6 +101,8 @@ final class TestScheduler: Scheduler {
         }
         
         self._now = time
+        
+        Swift.print("after advanced: there is \(self.scheduledActions.count)")
         self.lock.unlock()
     }
     

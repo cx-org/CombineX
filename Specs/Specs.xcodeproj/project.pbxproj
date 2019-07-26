@@ -11,6 +11,10 @@
 		6209323422E6B989006A0ABC /* LinkedList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6209323322E6B989006A0ABC /* LinkedList.swift */; };
 		620F66CB22EAD26E008194E9 /* TimeoutSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 620F66CA22EAD26E008194E9 /* TimeoutSpec.swift */; };
 		620F66CC22EAD26E008194E9 /* TimeoutSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 620F66CA22EAD26E008194E9 /* TimeoutSpec.swift */; };
+		620F66CF22EAEAFF008194E9 /* DelaySpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 620F66CE22EAEAFF008194E9 /* DelaySpec.swift */; };
+		620F66D022EAEAFF008194E9 /* DelaySpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 620F66CE22EAEAFF008194E9 /* DelaySpec.swift */; };
+		620F66D222EAED72008194E9 /* Timeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 620F66D122EAED72008194E9 /* Timeline.swift */; };
+		620F66D322EAED72008194E9 /* Timeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 620F66D122EAED72008194E9 /* Timeline.swift */; };
 		6235D6CA22E00A760069D59F /* Optional.Publisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6235D6C922E00A760069D59F /* Optional.Publisher.swift */; };
 		6235D6CC22E00DF30069D59F /* Result.Publisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6235D6CB22E00DF30069D59F /* Result.Publisher.swift */; };
 		624050ED22DDBAB000291766 /* Publisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240507622DDBAB000291766 /* Publisher.swift */; };
@@ -298,6 +302,8 @@
 		62078E7E22D47DA200E7DA71 /* Nimble.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Nimble.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6209323322E6B989006A0ABC /* LinkedList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkedList.swift; sourceTree = "<group>"; };
 		620F66CA22EAD26E008194E9 /* TimeoutSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeoutSpec.swift; sourceTree = "<group>"; };
+		620F66CE22EAEAFF008194E9 /* DelaySpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DelaySpec.swift; sourceTree = "<group>"; };
+		620F66D122EAED72008194E9 /* Timeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timeline.swift; sourceTree = "<group>"; };
 		6235D6C822E007D70069D59F /* Combine-4.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Combine-4.swift"; sourceTree = "<group>"; };
 		6235D6C922E00A760069D59F /* Optional.Publisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Optional.Publisher.swift; sourceTree = "<group>"; };
 		6235D6CB22E00DF30069D59F /* Result.Publisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Result.Publisher.swift; sourceTree = "<group>"; };
@@ -902,6 +908,7 @@
 				66C3642522E4C0D8002236BF /* CollectByCountSpec.swift */,
 				6279F1F522E57F590005840F /* CombineLatestSpec.swift */,
 				66C3641D22E4C0D8002236BF /* ConcatenateSpec.swift */,
+				620F66CE22EAEAFF008194E9 /* DelaySpec.swift */,
 				66C3640E22E4C0D8002236BF /* DropUntilOutputSpec.swift */,
 				66C3642222E4C0D8002236BF /* EmptySpec.swift */,
 				66C3640F22E4C0D8002236BF /* FlatMapSpec.swift */,
@@ -964,6 +971,7 @@
 				66C3643D22E4C0D8002236BF /* Const.swift */,
 				66C3643E22E4C0D8002236BF /* TestDispatchQueueScheduler.swift */,
 				6279F0D622E555050005840F /* TestScheduler.swift */,
+				620F66D122EAED72008194E9 /* Timeline.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -1444,6 +1452,7 @@
 				66C3645922E4C0D8002236BF /* TryRemoveDuplicatesSpec.swift in Sources */,
 				66C3646322E4C0D8002236BF /* TryReduceSpec.swift in Sources */,
 				66C3644722E4C0D8002236BF /* ImmediateSchedulerSpec.swift in Sources */,
+				620F66CF22EAEAFF008194E9 /* DelaySpec.swift in Sources */,
 				66C3647D22E4C0D8002236BF /* PrefixUntilOutputSpec.swift in Sources */,
 				66C3649522E4C0D8002236BF /* TestPublisher.swift in Sources */,
 				66C364A322E4C0D8002236BF /* DeinitObserver.swift in Sources */,
@@ -1459,6 +1468,7 @@
 				66C3647122E4C0D8002236BF /* JustSpec.swift in Sources */,
 				66C364A522E4C0D8002236BF /* Atom.swift in Sources */,
 				66FF340122E604CF00C4BA70 /* ZipSpec.swift in Sources */,
+				620F66D222EAED72008194E9 /* Timeline.swift in Sources */,
 				66C3649322E4C0D8002236BF /* SinkSpec.swift in Sources */,
 				66C3645522E4C0D8002236BF /* SequenceSpec.swift in Sources */,
 				66C3644522E4C0D8002236BF /* CombineIdentifierSpec.swift in Sources */,
@@ -1522,6 +1532,7 @@
 				66C3645A22E4C0D8002236BF /* TryRemoveDuplicatesSpec.swift in Sources */,
 				66C3646422E4C0D8002236BF /* TryReduceSpec.swift in Sources */,
 				66C3644822E4C0D8002236BF /* ImmediateSchedulerSpec.swift in Sources */,
+				620F66D022EAEAFF008194E9 /* DelaySpec.swift in Sources */,
 				66C3647E22E4C0D8002236BF /* PrefixUntilOutputSpec.swift in Sources */,
 				66C3649622E4C0D8002236BF /* TestPublisher.swift in Sources */,
 				66C364A422E4C0D8002236BF /* DeinitObserver.swift in Sources */,
@@ -1537,6 +1548,7 @@
 				66C3647222E4C0D8002236BF /* JustSpec.swift in Sources */,
 				66C364A622E4C0D8002236BF /* Atom.swift in Sources */,
 				66FF340222E604CF00C4BA70 /* ZipSpec.swift in Sources */,
+				620F66D322EAED72008194E9 /* Timeline.swift in Sources */,
 				66C3649422E4C0D8002236BF /* SinkSpec.swift in Sources */,
 				66C3645622E4C0D8002236BF /* SequenceSpec.swift in Sources */,
 				66C3644622E4C0D8002236BF /* CombineIdentifierSpec.swift in Sources */,
