@@ -25,6 +25,10 @@ extension Publishers {
         
         final public let upstream: Upstream
         
+        private lazy var pub = self.upstream
+            .multicast(subject: PassthroughSubject<Output, Failure>())
+            .autoconnect()
+        
         public init(upstream: Upstream) {
             self.upstream = upstream
         }
@@ -36,7 +40,7 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         final public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
-            self.upstream.receive(subscriber: subscriber)
+            self.pub.receive(subscriber: subscriber)
         }
         
         /// Returns a Boolean value indicating whether two values are equal.

@@ -1,3 +1,20 @@
+extension ConnectablePublisher {
+    
+    /// Automates the process of connecting or disconnecting from this connectable publisher.
+    ///
+    /// Use `autoconnect()` to simplify working with `ConnectablePublisher` instances, such as those created with `makeConnectable()`.
+    ///
+    ///     let autoconnectedPublisher = somePublisher
+    ///         .makeConnectable()
+    ///         .autoconnect()
+    ///         .subscribe(someSubscriber)
+    ///
+    /// - Returns: A publisher which automatically connects to its upstream connectable publisher.
+    public func autoconnect() -> Publishers.Autoconnect<Self> {
+        return .init(upstream: self)
+    }
+}
+
 extension Publishers {
     
     /// A publisher that automatically connects and disconnects from this connectable publisher.

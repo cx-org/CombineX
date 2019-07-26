@@ -137,7 +137,7 @@ final class TestDispatchQueueScheduler: Scheduler {
     }
     
     func schedule(after date: SchedulerTimeType, tolerance: SchedulerTimeType.Stride, options: SchedulerOptions?, _ action: @escaping () -> Void) {
-        let timer = DispatchSource.makeTimerSource()
+        let timer = DispatchSource.makeTimerSource(queue: self.dispatchQueue)
         
         var hold: DispatchSourceTimer? = timer
         
@@ -148,21 +148,21 @@ final class TestDispatchQueueScheduler: Scheduler {
             hold = nil
         }
         
-        let leeway = Int(Swift.max(tolerance, self.minimumTolerance).seconds * Double(Const.nsec_per_sec))
+        let leeway = (Swift.max(tolerance, self.minimumTolerance).seconds * Double(Const.nsec_per_sec)).clampedToInt
         timer.schedule(deadline: DispatchTime.now() + date.time.timeIntervalSinceNow, leeway: .nanoseconds(leeway))
         timer.resume()
     }
     
     func schedule(after date: SchedulerTimeType, interval: SchedulerTimeType.Stride, tolerance: SchedulerTimeType.Stride, options: SchedulerOptions?, _ action: @escaping () -> Void) -> Cancellable {
         
-        let timer = DispatchSource.makeTimerSource()
+        let timer = DispatchSource.makeTimerSource(queue: self.dispatchQueue)
         
         timer.setEventHandler() {
             action()
         }
         
-        let repeating = Int(interval.seconds * Double(Const.nsec_per_sec))
-        let leeway = Int(Swift.max(tolerance, self.minimumTolerance).seconds * Double(Const.nsec_per_sec))
+        let repeating = (interval.seconds * Double(Const.nsec_per_sec)).clampedToInt
+        let leeway = (Swift.max(tolerance, self.minimumTolerance).seconds * Double(Const.nsec_per_sec)).clampedToInt
         timer.schedule(deadline: DispatchTime.now() + date.time.timeIntervalSinceNow, repeating: .nanoseconds(repeating), leeway: .nanoseconds(leeway))
         timer.resume()
         

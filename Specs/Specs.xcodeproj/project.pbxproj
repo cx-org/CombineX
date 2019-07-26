@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		36D602381D6D0E4BB802C0A1 /* Pods_SpecsTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DCB044E242447A73457C8E7 /* Pods_SpecsTests.framework */; };
 		6209323422E6B989006A0ABC /* LinkedList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6209323322E6B989006A0ABC /* LinkedList.swift */; };
+		620F66CB22EAD26E008194E9 /* TimeoutSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 620F66CA22EAD26E008194E9 /* TimeoutSpec.swift */; };
+		620F66CC22EAD26E008194E9 /* TimeoutSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 620F66CA22EAD26E008194E9 /* TimeoutSpec.swift */; };
 		6235D6CA22E00A760069D59F /* Optional.Publisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6235D6C922E00A760069D59F /* Optional.Publisher.swift */; };
 		6235D6CC22E00DF30069D59F /* Result.Publisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6235D6CB22E00DF30069D59F /* Result.Publisher.swift */; };
 		624050ED22DDBAB000291766 /* Publisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6240507622DDBAB000291766 /* Publisher.swift */; };
@@ -126,6 +128,8 @@
 		6279F0D822E555050005840F /* TestScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6279F0D622E555050005840F /* TestScheduler.swift */; };
 		6279F1F622E57F590005840F /* CombineLatestSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6279F1F522E57F590005840F /* CombineLatestSpec.swift */; };
 		6279F1F722E57F590005840F /* CombineLatestSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6279F1F522E57F590005840F /* CombineLatestSpec.swift */; };
+		62B9F0D322EA9C7F00763484 /* ShareSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62B9F0D222EA9C7F00763484 /* ShareSpec.swift */; };
+		62B9F0D422EA9C7F00763484 /* ShareSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62B9F0D222EA9C7F00763484 /* ShareSpec.swift */; };
 		62CF80EB754FFB67640691E1 /* Pods_Specs.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5722AE0CD18E68E312686A37 /* Pods_Specs.framework */; };
 		66312FAE22B665620081D8F1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66312FAD22B665620081D8F1 /* AppDelegate.swift */; };
 		66312FB022B665620081D8F1 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66312FAF22B665620081D8F1 /* SceneDelegate.swift */; };
@@ -293,6 +297,7 @@
 		5722AE0CD18E68E312686A37 /* Pods_Specs.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Specs.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		62078E7E22D47DA200E7DA71 /* Nimble.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Nimble.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6209323322E6B989006A0ABC /* LinkedList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkedList.swift; sourceTree = "<group>"; };
+		620F66CA22EAD26E008194E9 /* TimeoutSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeoutSpec.swift; sourceTree = "<group>"; };
 		6235D6C822E007D70069D59F /* Combine-4.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Combine-4.swift"; sourceTree = "<group>"; };
 		6235D6C922E00A760069D59F /* Optional.Publisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Optional.Publisher.swift; sourceTree = "<group>"; };
 		6235D6CB22E00DF30069D59F /* Result.Publisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Result.Publisher.swift; sourceTree = "<group>"; };
@@ -410,6 +415,7 @@
 		6279F0D622E555050005840F /* TestScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestScheduler.swift; sourceTree = "<group>"; };
 		6279F1F522E57F590005840F /* CombineLatestSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineLatestSpec.swift; sourceTree = "<group>"; };
 		628BC8BE22D332CB000EF5DB /* Nimble.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Nimble.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		62B9F0D222EA9C7F00763484 /* ShareSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSpec.swift; sourceTree = "<group>"; };
 		66312FAA22B665620081D8F1 /* Specs.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Specs.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		66312FAD22B665620081D8F1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		66312FAF22B665620081D8F1 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -637,6 +643,7 @@
 		624050AE22DDBAB000291766 /* B */ = {
 			isa = PBXGroup;
 			children = (
+				66C363F322E4B8E5002236BF /* Timeout.swift */,
 				624050A122DDBAB000291766 /* ReceiveOn.swift */,
 				624050D022DDBAB000291766 /* CombineLatest+.swift */,
 				6240509C22DDBAB000291766 /* TryCombineLatest.swift */,
@@ -644,7 +651,6 @@
 				625EC7BD22E0201D00585377 /* __Publisher.swift */,
 				624050B522DDBAB000291766 /* AllSatisfy.swift */,
 				624050B322DDBAB000291766 /* AssertNoFailure.swift */,
-				624050A722DDBAB000291766 /* BreakPoint.swift */,
 				624050CE22DDBAB000291766 /* Catch.swift */,
 				624050C822DDBAB000291766 /* Collect.swift */,
 				6240509B22DDBAB000291766 /* CollectByCount.swift */,
@@ -666,7 +672,6 @@
 				624050B622DDBAB000291766 /* First.swift */,
 				624050BC22DDBAB000291766 /* FirstWhere.swift */,
 				624050A222DDBAB000291766 /* FlatMap.swift */,
-				6240509622DDBAB000291766 /* HandleEvents.swift */,
 				624050A822DDBAB000291766 /* IgnoreOutput.swift */,
 				624050CA22DDBAB000291766 /* Just.swift */,
 				624050BF22DDBAB000291766 /* Last.swift */,
@@ -837,6 +842,8 @@
 		66C363E722E4B043002236BF /* unchecked */ = {
 			isa = PBXGroup;
 			children = (
+				624050A722DDBAB000291766 /* BreakPoint.swift */,
+				6240509622DDBAB000291766 /* HandleEvents.swift */,
 				6240509922DDBAB000291766 /* Buffer.swift */,
 				6240509E22DDBAB000291766 /* Future.swift */,
 				66C363F722E4B991002236BF /* Debounce.swift */,
@@ -847,7 +854,6 @@
 				624050AB22DDBAB000291766 /* MakeConnectable.swift */,
 				624050AA22DDBAB000291766 /* Multicast.swift */,
 				66C363E822E4B0CD002236BF /* CollectByTime.swift */,
-				66C363F322E4B8E5002236BF /* Timeout.swift */,
 				66C363E522E4AE66002236BF /* Delay.swift */,
 			);
 			path = unchecked;
@@ -916,7 +922,9 @@
 				66C3642922E4C0D8002236BF /* ResultSpec.swift */,
 				66C3642322E4C0D8002236BF /* RetrySpec.swift */,
 				66C3641022E4C0D8002236BF /* SequenceSpec.swift */,
+				62B9F0D222EA9C7F00763484 /* ShareSpec.swift */,
 				66C3642822E4C0D8002236BF /* SwitchToLatestSpec.swift */,
+				620F66CA22EAD26E008194E9 /* TimeoutSpec.swift */,
 				66C3641422E4C0D8002236BF /* TryAllSatisfySpec.swift */,
 				66C3642C22E4C0D8002236BF /* TryCatchSpec.swift */,
 				66C3641122E4C0D8002236BF /* TryCompactMapSpec.swift */,
@@ -1416,6 +1424,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				620F66CB22EAD26E008194E9 /* TimeoutSpec.swift in Sources */,
 				66C3648722E4C0D8002236BF /* ResultSpec.swift in Sources */,
 				66C3647722E4C0D8002236BF /* ReplaceEmptySpec.swift in Sources */,
 				66C364AD22E4C0D8002236BF /* TestDispatchQueueScheduler.swift in Sources */,
@@ -1444,6 +1453,7 @@
 				66C3649722E4C0D8002236BF /* TestSubsciber.swift in Sources */,
 				66C3645722E4C0D8002236BF /* TryCompactMapSpec.swift in Sources */,
 				66C3646F22E4C0D8002236BF /* ConcatenateSpec.swift in Sources */,
+				62B9F0D322EA9C7F00763484 /* ShareSpec.swift in Sources */,
 				66C3648B22E4C0D8002236BF /* RemoveDuplicatesSpec.swift in Sources */,
 				66C3645D22E4C0D8002236BF /* TryAllSatisfySpec.swift in Sources */,
 				66C3647122E4C0D8002236BF /* JustSpec.swift in Sources */,
@@ -1492,6 +1502,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				620F66CC22EAD26E008194E9 /* TimeoutSpec.swift in Sources */,
 				66C3648822E4C0D8002236BF /* ResultSpec.swift in Sources */,
 				66C3647822E4C0D8002236BF /* ReplaceEmptySpec.swift in Sources */,
 				66C364AE22E4C0D8002236BF /* TestDispatchQueueScheduler.swift in Sources */,
@@ -1520,6 +1531,7 @@
 				66C3649822E4C0D8002236BF /* TestSubsciber.swift in Sources */,
 				66C3645822E4C0D8002236BF /* TryCompactMapSpec.swift in Sources */,
 				66C3647022E4C0D8002236BF /* ConcatenateSpec.swift in Sources */,
+				62B9F0D422EA9C7F00763484 /* ShareSpec.swift in Sources */,
 				66C3648C22E4C0D8002236BF /* RemoveDuplicatesSpec.swift in Sources */,
 				66C3645E22E4C0D8002236BF /* TryAllSatisfySpec.swift in Sources */,
 				66C3647222E4C0D8002236BF /* JustSpec.swift in Sources */,

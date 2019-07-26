@@ -83,7 +83,7 @@ extension Publishers.Timeout {
         let sub: Sub
         
         var state = RelayState.waiting
-        var timeoutCancellable: Cancellable?
+        var timeoutTask: Cancellable?
         
         init(pub: Pub, sub: Sub) {
             self.interval = pub.interval
@@ -92,31 +92,38 @@ extension Publishers.Timeout {
             self.customError = pub.customError
             self.sub = sub
             
-            rescheduleTimeout()
+            rescheduleTimeoutTask()
         }
         
-        func rescheduleTimeout() {
-            self.lock.lock()
-            self.timeoutCancellable?.cancel()
-            self.timeoutCancellable = self.scheduler.schedule(
-                after: self.scheduler.now.advanced(by: self.interval),
-                interval: .seconds(.greatestFiniteMagnitude),
+        private func schedule(after interval: Context.SchedulerTimeType.Stride, action: @escaping () -> Void) -> Cancellable {
+            return self.scheduler.schedule(
+                after: self.scheduler.now.advanced(by: interval),
+                interval: .seconds(Int.max),
                 tolerance: self.scheduler.minimumTolerance,
-                options: self.options
-            ) {
+                options: self.options,
+                action
+            )
+        }
+        
+        func rescheduleTimeoutTask() {
+            self.lock.lock()
+            self.timeoutTask?.cancel()
+            self.timeoutTask = self.schedule(after: self.interval) {
                 self.lock.lock()
                 guard self.state.isRelaying else {
                     self.lock.unlock()
                     return
                 }
                 
-                self.state = .completed
+                let subscription = self.state.complete()
                 self.lock.unlock()
                 
+                subscription?.cancel()
+                
                 if let error = self.customError?() {
-                    self.receive(completion: .failure(error))
+                    self.sub.receive(completion: .failure(error))
                 } else {
-                    self.receive(completion: .finished)
+                    self.sub.receive(completion: .finished)
                 }
             }
             self.lock.unlock()
@@ -144,7 +151,7 @@ extension Publishers.Timeout {
             }
             
             let more = self.sub.receive(input)
-            self.rescheduleTimeout()
+            self.rescheduleTimeoutTask()
             return more
         }
         

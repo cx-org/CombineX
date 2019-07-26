@@ -50,7 +50,6 @@ class SwitchToLatestSpec: QuickSpec {
             // MARK: 1.2 should not crash even if the child sends more events than initial demand.
             it("should not crash even if the child sends more events than initial demand.") {
                 let subject1 = PassthroughSubject<Int, Never>()
-                let subject2 = PassthroughSubject<Int, Never>()
                 
                 let subject = PassthroughSubject<PassthroughSubject<Int, Never>, Never>()
                 
