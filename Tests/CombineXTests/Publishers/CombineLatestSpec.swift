@@ -113,8 +113,8 @@ class CombineLatestSpec: QuickSpec {
             
             // MARK: 2.1
             it("should always return none from sync backpressure") {
-                let subject0 = TestSubject<Int, TestError>(name: "0")
-                let subject1 = TestSubject<Int, TestError>(name: "1")
+                let subject0 = TestSubject<Int, TestError>()
+                let subject1 = TestSubject<Int, TestError>()
                 
                 let pub = subject0.combineLatest(subject1, +)
                 let sub = makeTestSubscriber(Int.self, TestError.self, .max(10))

@@ -91,7 +91,7 @@ class CollectByTimeSpec: QuickSpec {
             
             // MARK: 1.4 should send as many as demand when strategy is by time
             it("should send as many as demand when strategy is by time") {
-                let subject = TestSubject<Int, TestError>(name: "Subject")
+                let subject = TestSubject<Int, TestError>()
                 let scheduler = TestScheduler()
                 let pub = subject.collect(.byTime(scheduler, .seconds(1)))
                 
@@ -120,8 +120,7 @@ class CollectByTimeSpec: QuickSpec {
             
             // MARK: 1.5 should always request 1 when strategy is by time
             it("should always request 1 when strategy is by time") {
-                let subject = TestSubject<Int, TestError>(name: "Subject")
-                subject.isLogEnabled = true
+                let subject = TestSubject<Int, TestError>()
                 let scheduler = TestScheduler()
                 let pub = subject.collect(.byTime(scheduler, .seconds(1)))
                 
@@ -158,8 +157,7 @@ class CollectByTimeSpec: QuickSpec {
             
             // MARK: 1.6 should ignore sync backpresure from scheduling sending when strategy is byTimeOrCount
             it("should ignore sync backpresure from scheduling sending when strategy is byTimeOrCount") {
-                let subject = TestSubject<Int, TestError>(name: "Subject")
-                subject.isLogEnabled = true
+                let subject = TestSubject<Int, TestError>()
                 let scheduler = TestScheduler()
                 let pub = subject.collect(.byTimeOrCount(scheduler, .seconds(1), 2))
                 
