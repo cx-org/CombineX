@@ -22,41 +22,41 @@ class DelaySpec: QuickSpec {
                 let scheduler = TestScheduler()
                 let pub = subject.delay(for: .seconds(1), scheduler: scheduler)
 
-                let sA = Timeline(context: scheduler)
-                let vA = Timeline(context: scheduler)
-                let cA = Timeline(context: scheduler)
+                let receiveS = Timeline(context: scheduler)
+                let receiveV = Timeline(context: scheduler)
+                let receiveC = Timeline(context: scheduler)
                 
                 let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
                     s.request(.unlimited)
-                    sA.record()
+                    receiveS.record()
                 }, receiveValue: { v in
-                    vA.record()
+                    receiveV.record()
                     return .none
                 }, receiveCompletion: { c in
-                    cA.record()
+                    receiveC.record()
                 })
                 
-                let sB = Timeline(context: scheduler)
-                let vB = Timeline(context: scheduler)
-                let cB = Timeline(context: scheduler)
+                let sendS = Timeline(context: scheduler)
+                let sendV = Timeline(context: scheduler)
+                let sendB = Timeline(context: scheduler)
                 
                 pub.subscribe(sub)
-                sB.record()
+                sendS.record()
 
                 subject.send(1)
-                vB.record()
+                sendV.record()
                 subject.send(2)
-                vB.record()
+                sendV.record()
                 
                 subject.send(completion: .failure(.e0))
-                cB.record()
+                sendB.record()
                 
                 scheduler.advance(by: .seconds(5))
                 
-                expect(sB.isCloseTo(to: sA)).to(beTrue())
+                expect(sendS.isCloseTo(to: receiveS)).to(beTrue())
 
-                expect(vB.delayed(1).isCloseTo(to: vA)).toEventually(beTrue())
-                expect(cB.delayed(1).isCloseTo(to: cA)).toEventually(beTrue())
+                expect(sendV.delayed(1).isCloseTo(to: receiveV)).toEventually(beTrue())
+                expect(sendB.delayed(1).isCloseTo(to: receiveC)).toEventually(beTrue())
             }
             
             // MARK: 1.2 should not send susbcription with scheduler

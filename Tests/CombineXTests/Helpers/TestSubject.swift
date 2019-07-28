@@ -99,16 +99,20 @@ extension TestSubject {
             case request
             case sync
         }
-        let demandRecords = Atom<[(DemandType, Subscribers.Demand)]>(val: [])
+        let _demandRecords = Atom<[(DemandType, Subscribers.Demand)]>(val: [])
+        
+        var demandRecords: [Subscribers.Demand] {
+            return self._demandRecords.get().map { $0.1 }
+        }
         
         var requestDemandRecords: [Subscribers.Demand] {
-            return self.demandRecords.get().compactMap { (type, demand) in
+            return self._demandRecords.get().compactMap { (type, demand) in
                 type == .request ? demand : nil
             }
         }
         
         var syncDemandRecords: [Subscribers.Demand] {
-            return self.demandRecords.get().compactMap { (type, demand) in
+            return self._demandRecords.get().compactMap { (type, demand) in
                 type == .sync ? demand : nil
             }
         }
@@ -138,7 +142,7 @@ extension TestSubject {
             
             self.demand += more
             
-            self.demandRecords.withLockMutating { $0.append((.sync, more))}
+            self._demandRecords.withLockMutating { $0.append((.sync, more))}
             if let pub = self.pub, pub.isLogEnabled {
                 Swift.print("TestSubject-\(pub.name) sync more:", more)
             }
@@ -170,7 +174,7 @@ extension TestSubject {
             
             self.demand += demand
             
-            self.demandRecords.withLockMutating { $0.append((.request, demand))}
+            self._demandRecords.withLockMutating { $0.append((.request, demand))}
             if let pub = self.pub, pub.isLogEnabled {
                 Swift.print("TestSubject-\(pub.name) request more:", demand)
             }

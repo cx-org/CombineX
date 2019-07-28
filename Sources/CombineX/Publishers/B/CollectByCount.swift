@@ -143,12 +143,18 @@ extension Publishers.CollectByCount {
             }
             subscription.cancel()
             
-            if self.buffer.isNotEmpty {
+            switch completion {
+            case .finished:
                 let output = self.buffer
                 self.buffer = []
-                _ = self.sub.receive(output)
+                if output.isNotEmpty {
+                    _ = self.sub.receive(output)
+                }
+                self.sub.receive(completion: completion)
+            case .failure:
+                self.buffer = []
+                self.sub.receive(completion: completion)
             }
-            self.sub.receive(completion: completion)
         }
         
         var description: String {

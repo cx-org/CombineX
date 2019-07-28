@@ -121,16 +121,7 @@ extension Publishers.SubscribeOn {
                 return .none
             }
             
-            let more = self.sub.receive(input)
-            guard more > 0, let subscription = self.lock.withLockGet(self.state.subscription) else {
-                return .none
-            }
-            
-            self.scheduler.schedule(options: self.options) {
-                subscription.request(more)
-            }
-            
-            return .none
+            return self.sub.receive(input)
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {

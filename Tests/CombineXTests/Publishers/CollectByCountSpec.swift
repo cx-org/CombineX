@@ -25,6 +25,24 @@ class CollectByCountSpec: QuickSpec {
                 5.times {
                     pub.send($0)
                 }
+                pub.send(completion: .failure(.e0))
+                
+                expect(sub.events).to(equal([
+                    .value([0, 1]),
+                    .value([2, 3]),
+                    .completion(.failure(.e0))
+                ]))
+            }
+            
+            // MARK: 1.2 should send unsent values if upstream finishes
+            it("should send unsent values if upstream finishes") {
+                let pub = PassthroughSubject<Int, TestError>()
+                let sub = makeTestSubscriber([Int].self, TestError.self, .unlimited)
+                pub.collect(2).subscribe(sub)
+                
+                5.times {
+                    pub.send($0)
+                }
                 pub.send(completion: .finished)
                 
                 expect(sub.events).to(equal([
@@ -35,7 +53,7 @@ class CollectByCountSpec: QuickSpec {
                 ]))
             }
             
-            // MARK: 1.2 should relay as many values as demand
+            // MARK: 1.3 should relay as many values as demand
             it("should relay as many values as demand") {
                 let pub = PassthroughSubject<Int, TestError>()
                 let sub = TestSubscriber<[Int], TestError>(receiveSubscription: { (s) in

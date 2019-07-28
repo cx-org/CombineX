@@ -111,19 +111,20 @@ extension Publishers {
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             switch self.prefetch {
             case .keepFull:
-                let subscription = KeepFullInner(pub: self, sub: subscriber)
+                let subscription = KeepFull(pub: self, sub: subscriber)
                 self.upstream.subscribe(subscription)
             case .byRequest:
-                let s = ByRequestInner(pub: self, sub: subscriber)
+                let s = ByRequest(pub: self, sub: subscriber)
                 self.upstream.subscribe(s)
             }
         }
     }
 }
 
+// MARK: - KeepFull
 extension Publishers.Buffer {
     
-    private final class KeepFullInner<S>:
+    private final class KeepFull<S>:
         Subscriber,
         Subscription,
         CustomStringConvertible,
@@ -287,9 +288,10 @@ extension Publishers.Buffer {
     }
 }
 
+// MARK: - ByRequest
 extension Publishers.Buffer {
     
-    private final class ByRequestInner<S>:
+    private final class ByRequest<S>:
         Subscriber,
         Subscription,
         CustomStringConvertible,
