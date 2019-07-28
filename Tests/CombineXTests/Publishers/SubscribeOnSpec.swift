@@ -14,6 +14,10 @@ class SubscribeOnSpec: QuickSpec {
     
     override func spec() {
         
+        afterEach {
+            Resources.release()
+        }
+        
         // MARK: - Relay
         describe("Relay") {
             
@@ -92,7 +96,7 @@ class SubscribeOnSpec: QuickSpec {
                 
                 expect(sub.subscription).toEventuallyNot(beNil())
                 sub.subscription?.request(.max(1))
-                expect(executedCount.get()).to(equal(2))
+                expect(executedCount.get()).toEventually(equal(2))
             }
         }
     }

@@ -16,6 +16,10 @@ class ImmediateSchedulerSpec: QuickSpec {
     
     override func spec() {
         
+        afterEach {
+            Resources.release()
+        }
+        
         // MARK: It should have a zero magnitude stride
         it("should have a zero magnitude stride") {
             

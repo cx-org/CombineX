@@ -14,6 +14,10 @@ class AssignSpec: QuickSpec {
     
     override func spec() {
         
+        afterEach {
+            Resources.release()
+        }
+        
         class Obj {
             var value = 0 {
                 didSet {

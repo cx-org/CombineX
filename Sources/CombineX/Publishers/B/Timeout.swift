@@ -150,9 +150,10 @@ extension Publishers.Timeout {
                 return .none
             }
             
-            let more = self.sub.receive(input)
-            self.rescheduleTimeoutTask()
-            return more
+            defer {
+                self.rescheduleTimeoutTask()
+            }
+            return self.sub.receive(input)
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {

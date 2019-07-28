@@ -13,6 +13,10 @@ class SinkSpec: QuickSpec {
     
     override func spec() {
         
+        afterEach {
+            Resources.release()
+        }
+        
         // MARK: - Receive Values
         describe("Receive Values") {
             

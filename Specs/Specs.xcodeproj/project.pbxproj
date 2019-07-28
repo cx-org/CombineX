@@ -148,6 +148,8 @@
 		6631303C22B6937D0081D8F1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6631303B22B6937D0081D8F1 /* Assets.xcassets */; };
 		6631303F22B6937D0081D8F1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6631303D22B6937D0081D8F1 /* LaunchScreen.storyboard */; };
 		6654AACD6B33E04BC39FE5A9 /* Pods_CombineSpecs.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54AD7C3D26D0754D23E1ECC4 /* Pods_CombineSpecs.framework */; };
+		66577DAC22ED7B69007FB222 /* Resources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66577DAB22ED7B69007FB222 /* Resources.swift */; };
+		66577DAD22ED7B69007FB222 /* Resources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66577DAB22ED7B69007FB222 /* Resources.swift */; };
 		6680BA9822EB556100ACAA33 /* SubscribeOnSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6680BA9722EB556100ACAA33 /* SubscribeOnSpec.swift */; };
 		6680BA9922EB556100ACAA33 /* SubscribeOnSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6680BA9722EB556100ACAA33 /* SubscribeOnSpec.swift */; };
 		66C363E622E4AE66002236BF /* Delay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C363E522E4AE66002236BF /* Delay.swift */; };
@@ -448,6 +450,7 @@
 		6631304022B6937D0081D8F1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6631304522B6937D0081D8F1 /* CombineSpecsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CombineSpecsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6631304B22B6937E0081D8F1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		66577DAB22ED7B69007FB222 /* Resources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resources.swift; sourceTree = "<group>"; };
 		666DE2D122D1C27B0081EE60 /* Quick.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Quick.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		666DE2D322D1C2EE0081EE60 /* CombineX.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CombineX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		666DE2D622D1C35C0081EE60 /* QuickSpecBase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = QuickSpecBase.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -850,6 +853,7 @@
 		66C363E422E4AC51002236BF /* C */ = {
 			isa = PBXGroup;
 			children = (
+				6240509E22DDBAB000291766 /* Future.swift */,
 				6240509F22DDBAB000291766 /* CombineLatest.swift */,
 				624050DC22DDBAB000291766 /* SwitchToLatest.swift */,
 				66C363E822E4B0CD002236BF /* CollectByTime.swift */,
@@ -863,7 +867,6 @@
 			children = (
 				624050A722DDBAB000291766 /* BreakPoint.swift */,
 				6240509622DDBAB000291766 /* HandleEvents.swift */,
-				6240509E22DDBAB000291766 /* Future.swift */,
 				66C363F722E4B991002236BF /* Debounce.swift */,
 				66C363F522E4B949002236BF /* Throttle.swift */,
 				624050D522DDBAB000291766 /* Share.swift */,
@@ -984,6 +987,7 @@
 				6279F0D622E555050005840F /* TestScheduler.swift */,
 				620F66D122EAED72008194E9 /* Timeline.swift */,
 				66DBC38022EC9E09001AFCD7 /* TestSchedulerTime.swift */,
+				66577DAB22ED7B69007FB222 /* Resources.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -1458,6 +1462,7 @@
 				66C3644B22E4C0D8002236BF /* PassthroughSubjectSpec.swift in Sources */,
 				66C3648922E4C0D8002236BF /* HandleEventsSpec.swift in Sources */,
 				66C3645322E4C0D8002236BF /* FlatMapSpec.swift in Sources */,
+				66577DAC22ED7B69007FB222 /* Resources.swift in Sources */,
 				66C3649922E4C0D8002236BF /* TestSubscription.swift in Sources */,
 				66C3648F22E4C0D8002236BF /* MergeSpec.swift in Sources */,
 				66C3647B22E4C0D8002236BF /* RetrySpec.swift in Sources */,
@@ -1541,6 +1546,7 @@
 				66C3644C22E4C0D8002236BF /* PassthroughSubjectSpec.swift in Sources */,
 				66C3648A22E4C0D8002236BF /* HandleEventsSpec.swift in Sources */,
 				66C3645422E4C0D8002236BF /* FlatMapSpec.swift in Sources */,
+				66577DAD22ED7B69007FB222 /* Resources.swift in Sources */,
 				66C3649A22E4C0D8002236BF /* TestSubscription.swift in Sources */,
 				66C3649022E4C0D8002236BF /* MergeSpec.swift in Sources */,
 				66C3647C22E4C0D8002236BF /* RetrySpec.swift in Sources */,

@@ -16,6 +16,10 @@ class DemandSpec: QuickSpec {
     
     override func spec() {
         
+        afterEach {
+            Resources.release()
+        }
+        
         // MARK: - Create
         describe("Create") {
             

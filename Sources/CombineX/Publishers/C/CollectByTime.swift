@@ -281,22 +281,24 @@ extension Publishers.CollectByTime {
                     return
                 }
                 
+                defer {
+                    self.rescheduleTimeoutTask()
+                }
+                
                 guard self.demand > 0 else {
                     self.lock.unlock()
                     return
                 }
                 
-                self.demand -= 1
-                
                 let buffer = self.buffer
                 self.buffer.removeAll(keepingCapacity: true)
-                self.lock.unlock()
                 
                 guard buffer.isNotEmpty else {
+                    self.lock.unlock()
                     return
                 }
-            
-                self.rescheduleTimeoutTask()
+                self.demand -= 1
+                self.lock.unlock()
                 
                 let more = self.sub.receive(buffer)
                 

@@ -14,6 +14,10 @@ class FutureSpec: QuickSpec {
     
     override func spec() {
         
+        afterEach {
+            Resources.release()
+        }
+        
         // MARK: - Future
         describe("Future") {
             

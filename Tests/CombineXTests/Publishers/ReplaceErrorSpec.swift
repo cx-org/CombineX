@@ -13,6 +13,10 @@ class ReplaceErrorSpec: QuickSpec {
     
     override func spec() {
         
+        afterEach {
+            Resources.release()
+        }
+        
         // MARK: - Relay
         describe("Relay") {
             

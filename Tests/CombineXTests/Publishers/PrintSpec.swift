@@ -13,6 +13,10 @@ class PrintSpec: QuickSpec {
     
     override func spec() {
         
+        afterEach {
+            Resources.release()
+        }
+        
         // MARK: - Print
         describe("Print") {
             

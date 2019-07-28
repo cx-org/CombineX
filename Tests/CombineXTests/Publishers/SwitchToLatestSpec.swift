@@ -12,6 +12,10 @@ import Specs
 class SwitchToLatestSpec: QuickSpec {
     
     override func spec() {
+        
+        afterEach {
+            Resources.release()
+        }
 
         // MARK: - Relay
         describe("Relay") {

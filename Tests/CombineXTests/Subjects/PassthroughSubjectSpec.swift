@@ -14,6 +14,10 @@ class PassthroughSubjectSpec: QuickSpec {
     
     override func spec() {
         
+        afterEach {
+            Resources.release()
+        }
+        
         // MARK: - Send Values
         describe("Send Values") {
 

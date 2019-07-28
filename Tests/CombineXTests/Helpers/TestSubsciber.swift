@@ -22,7 +22,6 @@ enum TestEvent<Input, Failure: Error> {
 
 class TestSubscriber<Input, Failure>: Subscriber where Failure : Error {
     
-    
     typealias Event = TestEvent<Input, Failure>
     
     private let receiveSubscriptionBody: ((Subscription) -> Void)?
@@ -45,6 +44,8 @@ class TestSubscriber<Input, Failure>: Subscriber where Failure : Error {
         self.receiveSubscriptionBody = receiveSubscription
         self.receiveValueBody = receiveValue
         self.receiveCompletionBody = receiveCompletion
+        
+        Resources.resgiter(self)
     }
     
     func receive(subscription: Subscription) {
@@ -73,6 +74,13 @@ class TestSubscriber<Input, Failure>: Subscriber where Failure : Error {
         self.lock.withLock {
             self._subscription = nil
         }
+    }
+}
+
+extension TestSubscriber: ResourceProtocol {
+    
+    func release() {
+        self.releaseSubscription()
     }
 }
 

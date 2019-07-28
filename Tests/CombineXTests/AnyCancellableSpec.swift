@@ -13,6 +13,10 @@ class AnyCancellableSpec: QuickSpec {
     
     override func spec() {
         
+        afterEach {
+            Resources.release()
+        }
+        
         // MARK: - Cancel
         describe("Cancel") {
             

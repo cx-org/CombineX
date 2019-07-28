@@ -13,6 +13,10 @@ class CollectByTimeSpec: QuickSpec {
     
     override func spec() {
         
+        afterEach {
+            Resources.release()
+        }
+        
         // MARK: - Relay
         describe("Relay") {
             
@@ -92,6 +96,7 @@ class CollectByTimeSpec: QuickSpec {
             // MARK: 1.4 should send as many as demand when strategy is by time
             it("should send as many as demand when strategy is by time") {
                 let subject = TestSubject<Int, TestError>()
+                subject.isLogEnabled = true
                 let scheduler = TestScheduler()
                 let pub = subject.collect(.byTime(scheduler, .seconds(1)))
                 

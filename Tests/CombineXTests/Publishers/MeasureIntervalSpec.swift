@@ -13,6 +13,10 @@ import Specs
 class MeasureIntervalSpec: QuickSpec {
     
     override func spec() {
+        
+        afterEach {
+            Resources.release()
+        }
     
         // MARK: Measure Interval
         describe("Measure Interval") {

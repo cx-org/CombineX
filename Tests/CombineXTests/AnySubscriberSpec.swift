@@ -13,6 +13,10 @@ class AnySubscriberSpec: QuickSpec {
     
     override func spec() {
         
+        afterEach {
+            Resources.release()
+        }
+        
         // MARK: - Wrap
         describe("Wrap") {
             

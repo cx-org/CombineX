@@ -14,18 +14,20 @@ class CurrentValueSubjectSpec: QuickSpec {
     
     override func spec() {
         
+        afterEach {
+            Resources.release()
+        }
+        
         // MARK: - Send Values
         describe("Send Values") {
             
             // MARK: 1.1 should send as many values as the subscriber's demand
             it("should send as many values as the subscriber's demand") {
-                typealias Sub = TestSubscriber<Int, TestError>
-                
                 let subject = CurrentValueSubject<Int, TestError>(-1)
                 
                 var subscription: Subscription?
    
-                let sub = Sub(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
                     subscription = s
                     s.request(.max(1))
                 }, receiveValue: { v in

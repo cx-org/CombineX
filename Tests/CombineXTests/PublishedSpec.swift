@@ -14,6 +14,10 @@ class PublishedSpec: QuickSpec {
     
     override func spec() {
         
+        afterEach {
+            Resources.release()
+        }
+        
         describe("test") {
             
             it("test") {   

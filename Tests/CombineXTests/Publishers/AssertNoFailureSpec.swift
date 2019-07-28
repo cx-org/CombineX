@@ -13,6 +13,10 @@ class AssertNoFailureSpec: QuickSpec {
     
     override func spec() {
         
+        afterEach {
+            Resources.release()
+        }
+        
         // MARK: - No Failure
         describe("No Failure") {
             

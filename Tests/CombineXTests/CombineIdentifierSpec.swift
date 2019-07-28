@@ -14,6 +14,10 @@ class CombineIdentifierSpec: QuickSpec {
     
     override func spec() {
         
+        afterEach {
+            Resources.release()
+        }
+        
         // MARK: - Unique
         describe("Unique") {
             

@@ -14,6 +14,10 @@ class SequenceSpec: QuickSpec {
     
     override func spec() {
         
+        afterEach {
+            Resources.release()
+        }
+        
         // MARK: - Send Values
         describe("Send Values") {
             typealias Sub = TestSubscriber<Int, TestError>
