@@ -125,8 +125,8 @@ class CombineLatestSpec: QuickSpec {
                     [subject0, subject1].randomElement()!.send($0)
                 }
                 
-                let records0 = subject0.inner.syncDemandRecords
-                let records1 = subject1.inner.syncDemandRecords
+                let records0 = subject0.subscription.syncDemandRecords
+                let records1 = subject1.subscription.syncDemandRecords
                 
                 expect(records0.allSatisfy({ $0 == .none })).to(beTrue())
                 expect(records1.allSatisfy({ $0 == .none })).to(beTrue())

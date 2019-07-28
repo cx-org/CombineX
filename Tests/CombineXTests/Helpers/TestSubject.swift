@@ -9,7 +9,7 @@ import Specs
 class TestSubject<Output, Failure> : Subject where Failure : Error {
     
     private let lock = Lock()
-    private var subscriptions: [Inner] = []
+    private var _subscriptions: [Inner] = []
     private var completion: Subscribers.Completion<Failure>?
     
     let name: String
@@ -19,12 +19,12 @@ class TestSubject<Output, Failure> : Subject where Failure : Error {
         self.name = name
     }
     
-    var inners: [Inner] {
-        return self.lock.withLockGet(self.subscriptions)
+    var subscriptions: [Inner] {
+        return self.lock.withLockGet(self._subscriptions)
     }
     
-    var inner: Inner {
-        return self.inners[0]
+    var subscription: Inner {
+        return self.subscriptions[0]
     }
     
     func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
@@ -38,7 +38,7 @@ class TestSubject<Output, Failure> : Subject where Failure : Error {
         }
         
         let subscription = Inner(pub: self, sub: AnySubscriber(subscriber))
-        self.subscriptions.append(subscription)
+        self._subscriptions.append(subscription)
         self.lock.unlock()
         
         subscriber.receive(subscription: subscription)
@@ -50,7 +50,7 @@ class TestSubject<Output, Failure> : Subject where Failure : Error {
             self.lock.unlock()
             return
         }
-        let subscriptions = self.subscriptions
+        let subscriptions = self._subscriptions
         self.lock.unlock()
         
         for subscription in subscriptions {
@@ -65,8 +65,8 @@ class TestSubject<Output, Failure> : Subject where Failure : Error {
             return
         }
         self.completion = completion
-        let subscriptions = self.subscriptions
-        self.subscriptions = []
+        let subscriptions = self._subscriptions
+        self._subscriptions = []
         self.lock.unlock()
         
         for subscription in subscriptions {
@@ -76,7 +76,7 @@ class TestSubject<Output, Failure> : Subject where Failure : Error {
     
     private func removeSubscription(_ subscription: Inner) {
         self.lock.lock()
-        self.subscriptions.removeAll(where: { $0 === subscription })
+        self._subscriptions.removeAll(where: { $0 === subscription })
         self.lock.unlock()
     }
 }
@@ -99,7 +99,7 @@ extension TestSubject {
             case request
             case sync
         }
-        let _demandRecords = Atom<[(DemandType, Subscribers.Demand)]>(val: [])
+        private let _demandRecords = Atom<[(DemandType, Subscribers.Demand)]>(val: [])
         
         var demandRecords: [Subscribers.Demand] {
             return self._demandRecords.get().map { $0.1 }

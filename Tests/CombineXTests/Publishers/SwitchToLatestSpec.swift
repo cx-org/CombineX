@@ -191,8 +191,8 @@ class SwitchToLatestSpec: QuickSpec {
                 pub.send(Just(1))
                 pub.send(Just(1))
                 
-                expect(pub.inner.requestDemandRecords).to(equal([.unlimited]))
-                expect(pub.inner.syncDemandRecords).to(equal([.max(0), .max(0)]))
+                expect(pub.subscription.requestDemandRecords).to(equal([.unlimited]))
+                expect(pub.subscription.syncDemandRecords).to(equal([.max(0), .max(0)]))
             }
         }
     }

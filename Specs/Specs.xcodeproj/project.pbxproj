@@ -853,6 +853,7 @@
 				6240509F22DDBAB000291766 /* CombineLatest.swift */,
 				624050DC22DDBAB000291766 /* SwitchToLatest.swift */,
 				66C363E822E4B0CD002236BF /* CollectByTime.swift */,
+				6240509922DDBAB000291766 /* Buffer.swift */,
 			);
 			path = C;
 			sourceTree = "<group>";
@@ -862,7 +863,6 @@
 			children = (
 				624050A722DDBAB000291766 /* BreakPoint.swift */,
 				6240509622DDBAB000291766 /* HandleEvents.swift */,
-				6240509922DDBAB000291766 /* Buffer.swift */,
 				6240509E22DDBAB000291766 /* Future.swift */,
 				66C363F722E4B991002236BF /* Debounce.swift */,
 				66C363F522E4B949002236BF /* Throttle.swift */,

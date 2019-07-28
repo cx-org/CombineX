@@ -147,12 +147,12 @@ class CollectByTimeSpec: QuickSpec {
                 expect(sub.subscription).toEventuallyNot(beNil())
                 
                 let expected0 = Array(repeating: Subscribers.Demand.max(1), count: 101)
-                expect(subject.inner.demandRecords).toEventually(equal(expected0))
+                expect(subject.subscription.demandRecords).toEventually(equal(expected0))
                 
                 sub.subscription?.request(.max(2))
                 
                 let expected1 = Array(repeating: Subscribers.Demand.max(1), count: 102)
-                expect(subject.inner.demandRecords).toEventually(equal(expected1))
+                expect(subject.subscription.demandRecords).toEventually(equal(expected1))
             }
             
             // MARK: 1.6 should ignore sync backpresure from scheduling sending when strategy is byTimeOrCount
@@ -179,7 +179,7 @@ class CollectByTimeSpec: QuickSpec {
                     subject.send($0)
                 }
                 
-                expect(subject.inner.syncDemandRecords).toEventually(equal([
+                expect(subject.subscription.syncDemandRecords).toEventually(equal([
                     .max(0),
                     .max(2),
                     .max(0),
@@ -187,7 +187,7 @@ class CollectByTimeSpec: QuickSpec {
                     .max(0),
                     .max(0),
                 ]))
-                expect(subject.inner.requestDemandRecords).toEventually(equal([
+                expect(subject.subscription.requestDemandRecords).toEventually(equal([
                     .max(4)
                 ]))
                 

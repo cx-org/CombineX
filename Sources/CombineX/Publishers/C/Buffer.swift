@@ -226,6 +226,7 @@ extension Publishers.Buffer {
             }
             
             if self.demand > 0 {
+                self.demand -= 1
                 self.lock.unlock()
                 
                 let more = self.sub.receive(input)
@@ -296,7 +297,7 @@ extension Publishers.Buffer {
         Subscription,
         CustomStringConvertible,
         CustomDebugStringConvertible
-        where
+    where
         S: Subscriber,
         S.Input == Output,
         S.Failure == Failure

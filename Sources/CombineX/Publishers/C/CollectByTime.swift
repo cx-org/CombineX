@@ -68,7 +68,6 @@ extension Publishers {
                 let s = ByTimeOrCount(pub: self, sub: subscriber)
                 self.upstream.subscribe(s)
             }
-            
         }
     }
 }

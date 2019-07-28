@@ -13,120 +13,115 @@ class BufferSpec: QuickSpec {
     
     override func spec() {
         
-        // MARK: - Relay
-        describe("Relay") {
+        // MARK: - Relay-ByRequest
+        describe("Relay-ByRequest") {
             
-            xit("buffer") {
-                let subject = TestSubject<Int, TestError>(name: "buffer")
-                subject.isLogEnabled = true
-                let pub = subject.buffer(size: 5
-                    , prefetch: .keepFull, whenFull: .dropOldest)
+            // MARK: 1.1 should request unlimit at beginning if strategy is by request
+            it("should request unlimit at beginning if strategy is by request") {
+                let subject = TestSubject<Int, TestError>()
+                let pub = subject.buffer(size: 5, prefetch: .byRequest, whenFull: .dropOldest)
                 
-                var subscription: Subscription?
                 let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
-                    subscription = s
                     s.request(.max(2))
                 }, receiveValue: { v in
-                    print("receive v", v)
-//                    return .none
                     return [5].contains(v) ? .max(5) : .max(0)
                 }, receiveCompletion: { c in
-                    print("receive c", c)
                 })
                 
                 pub.subscribe(sub)
-//                subscription?.request(.max(1))
-                20.times {
-                    print("send", $0)
+                
+                100.times {
                     subject.send($0)
                 }
-                subscription?.request(.max(2))
-                subscription?.request(.max(4))
-                subscription?.request(.max(3))
+                
+                sub.subscription?.request(.max(2))
+                
+                expect(subject.subscription.requestDemandRecords).to(equal([.unlimited, .max(2), .max(2)]))
+                expect(subject.subscription.syncDemandRecords).to(equal(Array(repeating: .max(0), count: 100)))
             }
             
-            // MARK: 1.1 should relay values as expect when prefetch strategy is by request
-            xit("should relay values as expect when prefetch strategy is by request") {
-                let pub = PassthroughSubject<Int, TestError>()
+            // MARK: 1.2 should drop oldest
+            it("should drop oldest") {
+                let subject = PassthroughSubject<Int, TestError>()
+                let pub = subject.buffer(size: 5, prefetch: .byRequest, whenFull: .dropOldest)
+                let sub = makeTestSubscriber(Int.self, TestError.self, .max(5))
+                pub.subscribe(sub)
                 
-                var subscription: Subscription?
+                11.times {
+                    subject.send($0)
+                }
+                
+                sub.subscription?.request(.max(5))
+                
+                let expected = (Array(0..<5) + Array(6..<11)).map { TestEvent<Int, TestError>.value($0) }
+                expect(sub.events).to(equal(expected))
+            }
+            
+            // MARK: 1.3 should drop newest
+            it("should drop newest") {
+                let subject = PassthroughSubject<Int, TestError>()
+                let pub = subject.buffer(size: 5, prefetch: .byRequest, whenFull: .dropNewest)
+                let sub = makeTestSubscriber(Int.self, TestError.self, .max(5))
+                pub.subscribe(sub)
+                
+                11.times {
+                    subject.send($0)
+                }
+                
+                sub.subscription?.request(.max(5))
+                
+                let expected = Array(0..<10).map { TestEvent<Int, TestError>.value($0) }
+                expect(sub.events).to(equal(expected))
+            }
+            
+            // MARK: 1.4 should throw an error
+            xit("should drop newest") {
+                let subject = PassthroughSubject<Int, TestError>()
+                let pub = subject.buffer(size: 5, prefetch: .byRequest, whenFull: .customError({ TestError.e1 }))
+                let sub = makeTestSubscriber(Int.self, TestError.self, .max(5))
+                pub.subscribe(sub)
+                
+                100.times {
+                    subject.send($0)
+                }
+                
+                // FIXME: Apple's combine doesn't receive error.
+                let valueEvents = Array(0..<5).map { TestEvent<Int, TestError>.value($0) }
+                let expected = valueEvents + [.completion(.failure(.e1))]
+                expect(sub.events).to(equal(expected))
+            }
+        }
+         
+        // MARK: - Realy-KeepFull
+        describe("KeepFull") {
+            
+            // MARK: 1.1 should request buffer count at beginning if strategy is keep full
+            it("should request buffer count at beginning if strategy is keep full") {
+                let subject = TestSubject<Int, TestError>()
+                subject.isLogEnabled = true
+                let pub = subject.buffer(size: 10, prefetch: .keepFull, whenFull: .dropOldest)
+                
                 let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
-                    subscription = s
-                    s.request(.max(1))
+                    s.request(.max(5))
                 }, receiveValue: { v in
-                    print("sub receive", v)
-                    switch v {
-                    case 0:     return .max(1)
-                    case 5:     return .max(1)
-                    default:    return .none
-                    }
+                    return [5, 10].contains(v) ? .max(5) : .max(0)
                 }, receiveCompletion: { c in
                 })
                 
-                pub.buffer(size: 5, prefetch: .byRequest, whenFull: .dropOldest)
-                    .subscribe(sub)
+                pub.subscribe(sub)
                 
-                for i in 0..<10 {
-                    print("pub send", i)
-                    pub.send(i)
+                100.times {
+                    subject.send($0)
                 }
                 
-                print(sub.events)
-//                expect(sub.events).to(equal([.value(0), .value(1)]))
+                sub.subscription?.request(.max(9))
+                sub.subscription?.request(.max(5))
                 
-                print("subscription want more", 1)
-                subscription?.request(.max(1))
-                print("subscription want more", 1)
-                subscription?.request(.max(1))
+                expect(subject.subscription.requestDemandRecords).to(equal([.max(10), .max(5), .max(19), .max(5)]))
                 
-                for i in 10..<20 {
-                    print("pub send", i)
-                    pub.send(i)
-                }
-                
-                print(sub.events)
-//                expect(sub.events).to(equal([.value(0), .value(1), .value(3), .value(4)]))
-            }
-            
-            // MARK: 1.2 should relay values as expect when prefetch strategy is keep full
-            xit("should relay values as expect when prefetch strategy is keep full") {
-                let pub = PassthroughSubject<Int, TestError>()
-                
-                var subscription: Subscription?
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
-                    subscription = s
-                    s.request(.max(1))
-                }, receiveValue: { v in
-                    print("sub receive", v)
-                    switch v {
-                    case 0:     return .max(1)
-                    case 5:     return .max(1)
-                    default:    return .none
-                    }
-                }, receiveCompletion: { c in
-                })
-                
-                pub.buffer(size: 10, prefetch: .keepFull, whenFull: .dropOldest)
-                    .subscribe(sub)
-                
-                for i in 0..<10 {
-                    print("pub send", i)
-                    pub.send(i)
-                }
-                
-                print(sub.events)
-//                expect(sub.events).to(equal([.value(0), .value(1)]))
-                print("subscription request more", 5)
-                subscription?.request(.max(5))
-                print("subscription request more", 3)
-                subscription?.request(.max(3))
-                
-                for i in 10..<30 {
-                    pub.send(i)
-                }
-                
-                print(sub.events)
-//                expect(sub.events).to(equal([.value(0), .value(1), .value(3), .value(4)]))
+                let max1 = Array(repeating: Demand.max(1), count: 5)
+                let max0 = Array(repeating: Demand.max(0), count: 15)
+                expect(subject.subscription.syncDemandRecords).to(equal(max1 + max0))
             }
         }
     }
