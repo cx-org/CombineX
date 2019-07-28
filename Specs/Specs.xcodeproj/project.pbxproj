@@ -282,6 +282,8 @@
 		66DBC37F22EC13C0001AFCD7 /* CollectByTimeSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66DBC37D22EC13C0001AFCD7 /* CollectByTimeSpec.swift */; };
 		66DBC38122EC9E09001AFCD7 /* TestSchedulerTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66DBC38022EC9E09001AFCD7 /* TestSchedulerTime.swift */; };
 		66DBC38222EC9E09001AFCD7 /* TestSchedulerTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66DBC38022EC9E09001AFCD7 /* TestSchedulerTime.swift */; };
+		66E16E7522EDD7FF001B3803 /* MulticastSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66E16E7422EDD7FF001B3803 /* MulticastSpec.swift */; };
+		66E16E7622EDD7FF001B3803 /* MulticastSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66E16E7422EDD7FF001B3803 /* MulticastSpec.swift */; };
 		66FF340122E604CF00C4BA70 /* ZipSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FF340022E604CF00C4BA70 /* ZipSpec.swift */; };
 		66FF340222E604CF00C4BA70 /* ZipSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FF340022E604CF00C4BA70 /* ZipSpec.swift */; };
 		7F9942FD698289992DD81303 /* Pods_CombineSpecsTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AD6E92871F844C3BEA668A8D /* Pods_CombineSpecsTests.framework */; };
@@ -543,6 +545,7 @@
 		66DD4C9922D4DB2E008A1F60 /* Combine-3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Combine-3.swift"; sourceTree = "<group>"; };
 		66DD4C9A22D4DB2E008A1F60 /* Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Combine.swift; sourceTree = "<group>"; };
 		66DD4C9B22D4DB2E008A1F60 /* Combine-1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Combine-1.swift"; sourceTree = "<group>"; };
+		66E16E7422EDD7FF001B3803 /* MulticastSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MulticastSpec.swift; sourceTree = "<group>"; };
 		66FF340022E604CF00C4BA70 /* ZipSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZipSpec.swift; sourceTree = "<group>"; };
 		7B6EF3BDA1443688A3AA9E81 /* Pods-CombineSpecsTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CombineSpecsTests.debug.xcconfig"; path = "Target Support Files/Pods-CombineSpecsTests/Pods-CombineSpecsTests.debug.xcconfig"; sourceTree = "<group>"; };
 		7B7B29DCD1CF4F3B86F1F1FA /* Pods-Specs.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Specs.debug.xcconfig"; path = "Target Support Files/Pods-Specs/Pods-Specs.debug.xcconfig"; sourceTree = "<group>"; };
@@ -872,6 +875,8 @@
 		66C363E422E4AC51002236BF /* C */ = {
 			isa = PBXGroup;
 			children = (
+				624050AA22DDBAB000291766 /* Multicast.swift */,
+				66C363F522E4B949002236BF /* Throttle.swift */,
 				624050A722DDBAB000291766 /* BreakPoint.swift */,
 				6240509922DDBAB000291766 /* Buffer.swift */,
 				66C363E822E4B0CD002236BF /* CollectByTime.swift */,
@@ -888,11 +893,9 @@
 		66C363E722E4B043002236BF /* unchecked */ = {
 			isa = PBXGroup;
 			children = (
-				66C363F522E4B949002236BF /* Throttle.swift */,
 				624050D522DDBAB000291766 /* Share.swift */,
 				624050A922DDBAB000291766 /* Autoconnect.swift */,
 				624050AB22DDBAB000291766 /* MakeConnectable.swift */,
-				624050AA22DDBAB000291766 /* Multicast.swift */,
 			);
 			path = unchecked;
 			sourceTree = "<group>";
@@ -952,6 +955,7 @@
 				66C3642622E4C0D8002236BF /* MapErrorSpec.swift */,
 				66C3642722E4C0D8002236BF /* MeasureIntervalSpec.swift */,
 				66C3642D22E4C0D8002236BF /* MergeSpec.swift */,
+				66E16E7422EDD7FF001B3803 /* MulticastSpec.swift */,
 				66C3641922E4C0D8002236BF /* OptionalSpec.swift */,
 				66C3641F22E4C0D8002236BF /* OutputSpec.swift */,
 				66C3642422E4C0D8002236BF /* PrefixUntilOutputSpec.swift */,
@@ -1513,6 +1517,7 @@
 				66C3647122E4C0D8002236BF /* JustSpec.swift in Sources */,
 				66C364A522E4C0D8002236BF /* Atom.swift in Sources */,
 				66FF340122E604CF00C4BA70 /* ZipSpec.swift in Sources */,
+				66E16E7522EDD7FF001B3803 /* MulticastSpec.swift in Sources */,
 				620F66D222EAED72008194E9 /* Timeline.swift in Sources */,
 				66C3649322E4C0D8002236BF /* SinkSpec.swift in Sources */,
 				66C3645522E4C0D8002236BF /* SequenceSpec.swift in Sources */,
@@ -1599,6 +1604,7 @@
 				66C3647222E4C0D8002236BF /* JustSpec.swift in Sources */,
 				66C364A622E4C0D8002236BF /* Atom.swift in Sources */,
 				66FF340222E604CF00C4BA70 /* ZipSpec.swift in Sources */,
+				66E16E7622EDD7FF001B3803 /* MulticastSpec.swift in Sources */,
 				620F66D322EAED72008194E9 /* Timeline.swift in Sources */,
 				66C3649422E4C0D8002236BF /* SinkSpec.swift in Sources */,
 				66C3645622E4C0D8002236BF /* SequenceSpec.swift in Sources */,

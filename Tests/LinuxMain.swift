@@ -25,6 +25,7 @@ QCKMain([
     MapErrorSpec.self,
     MeasureIntervalSpec.self,
     MergeSpec.self,
+    MulticastSpec.self,
     OptionalSpec.self,
     OutputSpec.self,
     PrefixUntilOutputSpec.self,
