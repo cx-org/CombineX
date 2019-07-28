@@ -86,6 +86,7 @@ extension Publishers.Debounce {
         let sub: Sub
 
         var state = RelayState.waiting
+        var demand: Subscribers.Demand = .none
         var last: Input?
         var timeoutTask: Cancellable?
         
@@ -110,19 +111,21 @@ extension Publishers.Debounce {
             self.timeoutTask?.cancel()
             self.timeoutTask = self.schedule {
                 self.lock.lock()
-                guard let last = self.last else {
+                guard let last = self.last, self.demand > 0 else {
                     self.lock.unlock()
                     return
                 }
+                self.demand -= 1
                 self.lock.unlock()
                 
-                _ =  self.sub.receive(last)
+                let more =  self.sub.receive(last)
                 
                 self.lock.lock()
                 guard self.state.isRelaying else {
                     self.lock.unlock()
                     return
                 }
+                self.demand += more
                 self.lock.unlock()
                 self.rescheduleTimeoutTasks()
             }
@@ -130,11 +133,22 @@ extension Publishers.Debounce {
         }
         
         func request(_ demand: Subscribers.Demand) {
-            self.lock.withLockGet(self.state.subscription)?.request(.unlimited)
+            self.lock.lock()
+            guard let subscription = self.state.subscription else {
+                self.lock.unlock()
+                return
+            }
+            self.demand += demand
+            self.lock.unlock()
+            
+            subscription.request(.unlimited)
         }
         
         func cancel() {
             self.lock.withLockGet(self.state.complete())?.cancel()
+            
+            self.timeoutTask?.cancel()
+            self.timeoutTask = nil
         }
         
         func receive(subscription: Subscription) {
@@ -165,6 +179,10 @@ extension Publishers.Debounce {
                 return
             }
             subscription.cancel()
+            
+            self.timeoutTask?.cancel()
+            self.timeoutTask = nil
+            
             self.sub.receive(completion: completion)
         }
         

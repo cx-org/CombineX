@@ -53,18 +53,17 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
-//            if latest {
-//                let s = Latest(pub: self, sub: subscriber)
-//                self.upstream.subscribe(s)
-//            } else {
-//                let s = First(pub: self, sub: subscriber)
-//                self.upstream.subscribe(s)
-//            }
+            if self.latest {
+                let s = Latest(pub: self, sub: subscriber)
+                self.upstream.subscribe(s)
+            } else {
+                let s = First(pub: self, sub: subscriber)
+                self.upstream.subscribe(s)
+            }
         }
     }
 }
 
-/*
  
 extension Publishers.Throttle {
     
@@ -91,26 +90,41 @@ extension Publishers.Throttle {
         let sub: Sub
 
         var state = RelayState.waiting
-        
-        var cancellabel: Cancellable?
+        var demand: Subscribers.Demand = .none
+        var timeoutTask: Cancellable?
         var latest: Input?
         
         init(pub: Pub, sub: Sub) {
             self.scheduler = pub.scheduler
             self.interval = pub.interval
             self.sub = sub
+            
+            self.timeoutTask = self.schedule {
+                self.sendValueIfPossible()
+            }
         }
         
-        private func schedule(after interval: Context.SchedulerTimeType.Stride, action: @escaping () -> Void) -> Cancellable {
-            return self.scheduler.schedule(after: self.scheduler.now.advanced(by: interval), interval: .seconds(.greatestFiniteMagnitude), action)
+        private func schedule(_ action: @escaping () -> Void) -> Cancellable {
+            return self.scheduler.schedule(after: self.scheduler.now.advanced(by: self.interval), interval: self.interval, action)
         }
         
         func request(_ demand: Subscribers.Demand) {
-            self.lock.withLockGet(self.state.subscription)?.request(demand)
+            self.lock.lock()
+            guard let subscription = self.state.subscription else {
+                self.lock.unlock()
+                return
+            }
+            self.demand += demand
+            self.lock.unlock()
+            
+            subscription.request(.unlimited)
         }
         
         func cancel() {
             self.lock.withLockGet(self.state.complete())?.cancel()
+            self.latest = nil
+            self.timeoutTask?.cancel()
+            self.timeoutTask = nil
         }
         
         func receive(subscription: Subscription) {
@@ -127,36 +141,31 @@ extension Publishers.Throttle {
                 self.lock.unlock()
                 return .none
             }
+            self.latest = input
+            self.lock.unlock()
             
-            if self.cancellabel == nil {
-                self.cancellabel = self.schedule(after: self.interval) {
-                    self.sendValueIfExists()
-                }
-                self.lock.unlock()
-                
-                return self.sub.receive(input)
-            } else {
-                self.latest = input
-                self.lock.unlock()
-                
-                return .none
-            }
+            return .none
         }
         
-        private func sendValueIfExists() {
+        private func sendValueIfPossible() {
             self.lock.lock()
-            self.cancellabel = nil
-            guard let subscription = self.state.subscription else {
+            guard self.state.isRelaying else {
+                self.lock.unlock()
+                return
+            }
+            guard self.demand > 0 else {
                 self.lock.unlock()
                 return
             }
             if let latest = self.latest {
-                self.cancellabel = self.schedule(after: self.interval) {
-                    self.sendValueIfExists()
-                }
+                self.latest = nil
+                self.demand -= 1
                 self.lock.unlock()
                 let more = self.sub.receive(latest)
-                subscription.request(more)
+
+                self.lock.withLock {
+                    self.demand += more
+                }
             } else {
                 self.lock.unlock()
             }
@@ -167,6 +176,9 @@ extension Publishers.Throttle {
                 return
             }
             subscription.cancel()
+            self.latest = nil
+            self.timeoutTask?.cancel()
+            self.timeoutTask = nil
             self.sub.receive(completion: completion)
         }
         
@@ -206,26 +218,41 @@ extension Publishers.Throttle {
         let sub: Sub
 
         var state = RelayState.waiting
-        
-        var cancellabel: Cancellable?
+        var demand: Subscribers.Demand = .none
+        var timeoutTask: Cancellable?
         var first: Input?
         
         init(pub: Pub, sub: Sub) {
             self.scheduler = pub.scheduler
             self.interval = pub.interval
             self.sub = sub
+            
+            self.timeoutTask = self.schedule {
+                self.sendValueIfPossible()
+            }
         }
         
-        private func schedule(after interval: Context.SchedulerTimeType.Stride, action: @escaping () -> Void) -> Cancellable {
-            return self.scheduler.schedule(after: self.scheduler.now.advanced(by: interval), interval: .seconds(.greatestFiniteMagnitude), action)
+        private func schedule(_ action: @escaping () -> Void) -> Cancellable {
+            return self.scheduler.schedule(after: self.scheduler.now.advanced(by: self.interval), interval: self.interval, action)
         }
         
         func request(_ demand: Subscribers.Demand) {
-            self.lock.withLockGet(self.state.subscription)?.request(demand)
+            self.lock.lock()
+            guard let subscription = self.state.subscription else {
+                self.lock.unlock()
+                return
+            }
+            self.demand += demand
+            self.lock.unlock()
+            
+            subscription.request(.unlimited)
         }
         
         func cancel() {
             self.lock.withLockGet(self.state.complete())?.cancel()
+            self.first = nil
+            self.timeoutTask?.cancel()
+            self.timeoutTask = nil
         }
         
         func receive(subscription: Subscription) {
@@ -242,38 +269,33 @@ extension Publishers.Throttle {
                 self.lock.unlock()
                 return .none
             }
-            
-            if self.cancellabel == nil {
-                self.cancellabel = self.schedule(after: self.interval) {
-                    self.sendValueIfExists()
-                }
-                self.lock.unlock()
-                
-                return self.sub.receive(input)
-            } else {
-                if self.first == nil {
-                    self.first = input
-                }
-                self.lock.unlock()
-                
-                return .none
+            if self.first == nil {
+                self.first = input
             }
+            self.lock.unlock()
+            
+            return .none
         }
         
-        private func sendValueIfExists() {
+        private func sendValueIfPossible() {
             self.lock.lock()
-            self.cancellabel = nil
-            guard let subscription = self.state.subscription else {
+            guard self.state.isRelaying else {
+                self.lock.unlock()
+                return
+            }
+            guard self.demand > 0 else {
                 self.lock.unlock()
                 return
             }
             if let first = self.first {
-                self.cancellabel = self.schedule(after: self.interval) {
-                    self.sendValueIfExists()
-                }
+                self.first = nil
+                self.demand -= 1
                 self.lock.unlock()
                 let more = self.sub.receive(first)
-                subscription.request(more)
+                
+                self.lock.withLock {
+                    self.demand += more
+                }
             } else {
                 self.lock.unlock()
             }
@@ -284,6 +306,9 @@ extension Publishers.Throttle {
                 return
             }
             subscription.cancel()
+            self.first = nil
+            self.timeoutTask?.cancel()
+            self.timeoutTask = nil
             self.sub.receive(completion: completion)
         }
         
@@ -296,4 +321,3 @@ extension Publishers.Throttle {
         }
     }
 }
- */

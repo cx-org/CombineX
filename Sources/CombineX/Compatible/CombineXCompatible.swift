@@ -10,7 +10,7 @@ public protocol CombineXCompatible { }
 
 extension CombineXCompatible {
     
-    public var cx: CombineXBox<Self> {       
+    public var cx: CombineXBox<Self> {
         return CombineXBox(self)
     }
 }

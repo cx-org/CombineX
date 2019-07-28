@@ -68,6 +68,27 @@ class DebounceSpec: QuickSpec {
                 let expected = Array(repeating: TestEvent<Int, TestError>.value(1), count: 10)
                 expect(sub.events).to(equal(expected))
             }
+            
+            // MARK: 1.3 should send as many values as demand
+            it("should send as many values as demand") {
+                let subject = PassthroughSubject<Int, TestError>()
+                let scheduler = TestScheduler()
+                let pub = subject.debounce(for: .seconds(1), scheduler: scheduler)
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
+                    s.request(.max(10))
+                }, receiveValue: { v in
+                    return [0, 5].contains(v) ? .max(1) : .none
+                }, receiveCompletion: { c in
+                })
+                pub.subscribe(sub)
+                
+                100.times {
+                    subject.send($0)
+                    scheduler.advance(by: .seconds(1))
+                }
+                
+                expect(sub.events.count).toEventually(equal(12))
+            }
         }
         
         
