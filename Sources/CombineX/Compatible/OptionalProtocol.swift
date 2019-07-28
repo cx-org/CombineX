@@ -1,4 +1,4 @@
-protocol OptionalProtocol {
+public protocol OptionalProtocol {
     
     associatedtype Wrapped
     
@@ -9,7 +9,7 @@ protocol OptionalProtocol {
 
 extension Optional: OptionalProtocol {
 
-    var optional: Wrapped? {
+    public var optional: Wrapped? {
         get { return self }
         set { self = newValue }
     }
@@ -37,15 +37,15 @@ extension OptionalProtocol {
 }
 
 extension Atom where Val: OptionalProtocol {
-    
+
     var isNil: Bool {
         return self.get().optional == nil
     }
-    
+
     var isNotNil: Bool {
         return !self.isNil
     }
-    
+
     func setIfNil(_ value: Val.Wrapped) -> Bool {
         return self.withLockMutating {
             $0.setIfNil(value)

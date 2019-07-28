@@ -1,13 +1,19 @@
 extension Result {
     
-    #if !canImport(Combine)
-    typealias Publisher = _Publisher
-    #endif
-    
-    // FIXME: `var publisher: Result<Success, Failure>.Publisher { get }` can not be compiled event if `Combine` is not imported,  the error message is "Ambiguous type name 'Publisher' in 'Result<Success, Failure>'".
-    public var publisher: Result<Success, Failure>._Publisher {
-        return .init(self)
+    public enum CombineX {
     }
+}
+
+extension Result: CombineXCompatible { }
+
+extension CombineXBox where Base: ResultProtocol {
+    
+    public var publisher: Result<Base.Success, Base.Failure>.CombineX.Publisher {
+        return .init(self.base.result)
+    }
+}
+
+extension Result.CombineX {
 
     /// A publisher that publishes an output to each subscriber exactly once then finishes, or fails immediately without producing any elements.
     ///
@@ -15,7 +21,7 @@ extension Result {
     ///
     /// In contrast with `Just`, a `Once` publisher can terminate with an error instead of sending a value.
     /// In contrast with `Optional`, a `Once` publisher always sends one value (unless it terminates with an error).
-    public struct _Publisher: __Publisher {
+    public struct Publisher: __Publisher {
 
         /// The kind of values published by this publisher.
         public typealias Output = Success
@@ -64,7 +70,7 @@ extension Result {
     }
 }
 
-extension Result._Publisher {
+extension Result.CombineX.Publisher {
     
     private final class Inner<S>:
         Subscription,

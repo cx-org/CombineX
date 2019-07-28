@@ -13,7 +13,7 @@ import Specs
 #if USE_COMBINE
 typealias ResultPublisher<Success, Failure: Error> = Result<Success, Failure>.Publisher
 #else
-typealias ResultPublisher<Success, Failure: Error> = Result<Success, Failure>._Publisher
+typealias ResultPublisher<Success, Failure: Error> = Result<Success, Failure>.CombineX.Publisher
 #endif
 
 class ResultSpec: QuickSpec {

@@ -45,6 +45,7 @@ public struct Fail<Output, Failure> : Publisher where Failure : Error {
     public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
         Result<Output, Failure>
             .failure(self.error)
+            .cx
             .publisher
             .receive(subscriber: subscriber)
     }

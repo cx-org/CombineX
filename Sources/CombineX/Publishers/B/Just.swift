@@ -4,7 +4,7 @@ extension Just {
         return .init(predicate(self.output))
     }
     
-    public func tryAllSatisfy(_ predicate: (Output) throws -> Bool) -> Result<Bool, Error>._Publisher {
+    public func tryAllSatisfy(_ predicate: (Output) throws -> Bool) -> Result<Bool, Error>.CombineX.Publisher {
         return .init(Result {
             try predicate(self.output)
         })
@@ -14,7 +14,7 @@ extension Just {
         return .init([self.output])
     }
     
-    public func compactMap<T>(_ transform: (Output) -> T?) -> Optional<T>._Publisher {
+    public func compactMap<T>(_ transform: (Output) -> T?) -> Optional<T>.CombineX.Publisher {
         return .init(transform(self.output))
     }
     
@@ -46,7 +46,7 @@ extension Just {
         return self.allSatisfy(predicate)
     }
     
-    public func tryContains(where predicate: (Output) throws -> Bool) -> Result<Bool, Error>._Publisher {
+    public func tryContains(where predicate: (Output) throws -> Bool) -> Result<Bool, Error>.CombineX.Publisher {
         return self.tryAllSatisfy(predicate)
     }
     
@@ -54,12 +54,12 @@ extension Just {
         return .init(1)
     }
     
-    public func dropFirst(_ count: Int = 1) -> Optional<Output>._Publisher {
+    public func dropFirst(_ count: Int = 1) -> Optional<Output>.CombineX.Publisher {
         precondition(count >= 0)
         return count == 0 ? self.compactMap { $0 } : .init(nil)
     }
     
-    public func drop(while predicate: (Output) -> Bool) -> Optional<Output>._Publisher {
+    public func drop(while predicate: (Output) -> Bool) -> Optional<Output>.CombineX.Publisher {
         return self.compactMap {
             predicate($0) ? nil : $0
         }
@@ -69,7 +69,7 @@ extension Just {
         return self
     }
     
-    public func first(where predicate: (Output) -> Bool) -> Optional<Output>._Publisher {
+    public func first(where predicate: (Output) -> Bool) -> Optional<Output>.CombineX.Publisher {
         return self.compactMap {
             predicate($0) ? $0 : nil
         }
@@ -79,11 +79,11 @@ extension Just {
         return self.first()
     }
     
-    public func last(where predicate: (Output) -> Bool) -> Optional<Output>._Publisher {
+    public func last(where predicate: (Output) -> Bool) -> Optional<Output>.CombineX.Publisher {
         return self.first(where: predicate)
     }
     
-    public func filter(_ isIncluded: (Output) -> Bool) -> Optional<Output>._Publisher {
+    public func filter(_ isIncluded: (Output) -> Bool) -> Optional<Output>.CombineX.Publisher {
         return self.first(where: isIncluded)
     }
     
@@ -95,38 +95,38 @@ extension Just {
         return .init(transform(self.output))
     }
     
-    public func tryMap<T>(_ transform: (Output) throws -> T) -> Result<T, Error>._Publisher {
+    public func tryMap<T>(_ transform: (Output) throws -> T) -> Result<T, Error>.CombineX.Publisher {
         return .init(Result {
             try transform(self.output)
         })
     }
     
-    public func mapError<E>(_ transform: (Just<Output>.Failure) -> E) -> Result<Output, E>._Publisher where E : Error {
+    public func mapError<E>(_ transform: (Just<Output>.Failure) -> E) -> Result<Output, E>.CombineX.Publisher where E : Error {
         return .init(self.output)
     }
     
-    public func output(at index: Int) -> Optional<Output>._Publisher {
+    public func output(at index: Int) -> Optional<Output>.CombineX.Publisher {
         return index == 0 ? .init(self.output) : .init(nil)
     }
     
-    public func output<R>(in range: R) -> Optional<Output>._Publisher where R : RangeExpression, R.Bound == Int {
+    public func output<R>(in range: R) -> Optional<Output>.CombineX.Publisher where R : RangeExpression, R.Bound == Int {
         return range.contains(0) ? .init(self.output) : .init(nil)
     }
     
-    public func prefix(_ maxLength: Int) -> Optional<Output>._Publisher {
+    public func prefix(_ maxLength: Int) -> Optional<Output>.CombineX.Publisher {
         precondition(maxLength > 0)
         return .init(self.output)
     }
     
-    public func prefix(while predicate: (Output) -> Bool) -> Optional<Output>._Publisher {
+    public func prefix(while predicate: (Output) -> Bool) -> Optional<Output>.CombineX.Publisher {
         return predicate(self.output) ? .init(self.output) : .init(nil)
     }
     
-    public func reduce<T>(_ initialResult: T, _ nextPartialResult: (T, Output) -> T) -> Result<T, Failure>._Publisher {
+    public func reduce<T>(_ initialResult: T, _ nextPartialResult: (T, Output) -> T) -> Result<T, Failure>.CombineX.Publisher {
         return .init(nextPartialResult(initialResult, self.output))
     }
     
-    public func tryReduce<T>(_ initialResult: T, _ nextPartialResult: (T, Output) throws -> T) -> Result<T, Error>._Publisher {
+    public func tryReduce<T>(_ initialResult: T, _ nextPartialResult: (T, Output) throws -> T) -> Result<T, Error>.CombineX.Publisher {
         return .init(Result {
             try nextPartialResult(initialResult, self.output)
         })
@@ -136,7 +136,7 @@ extension Just {
         return self
     }
     
-    public func tryRemoveDuplicates(by predicate: (Output, Output) throws -> Bool) -> Result<Output, Error>._Publisher {
+    public func tryRemoveDuplicates(by predicate: (Output, Output) throws -> Bool) -> Result<Output, Error>.CombineX.Publisher {
         return .init(self.output)
     }
     
@@ -152,17 +152,17 @@ extension Just {
         return self
     }
     
-    public func scan<T>(_ initialResult: T, _ nextPartialResult: (T, Output) -> T) -> Result<T, Just<Output>.Failure>._Publisher {
+    public func scan<T>(_ initialResult: T, _ nextPartialResult: (T, Output) -> T) -> Result<T, Just<Output>.Failure>.CombineX.Publisher {
         return .init(nextPartialResult(initialResult, self.output))
     }
     
-    public func tryScan<T>(_ initialResult: T, _ nextPartialResult: (T, Output) throws -> T) -> Result<T, Error>._Publisher {
+    public func tryScan<T>(_ initialResult: T, _ nextPartialResult: (T, Output) throws -> T) -> Result<T, Error>.CombineX.Publisher {
         return .init(Result {
             try nextPartialResult(initialResult, self.output)
         })
     }
     
-    public func setFailureType<E>(to failureType: E.Type) -> Result<Output, E>._Publisher where E : Error {
+    public func setFailureType<E>(to failureType: E.Type) -> Result<Output, E>.CombineX.Publisher where E : Error {
         return .init(self.output)
     }
 }

@@ -22,7 +22,7 @@ final public class Future<Output, Failure> : Publisher where Failure : Error {
         self.lock.lock()
         if let result = self.result {
             self.lock.unlock()
-            result.publisher.receive(subscriber: subscriber)
+            result.cx.publisher.receive(subscriber: subscriber)
             return
         }
         

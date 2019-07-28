@@ -13,7 +13,7 @@ import Specs
 #if USE_COMBINE
 typealias OptionalPublisher<Wrapped> = Optional<Wrapped>.Publisher
 #else
-typealias OptionalPublisher<Wrapped> = Optional<Wrapped>._Publisher
+typealias OptionalPublisher<Wrapped> = Optional<Wrapped>.CombineX.Publisher
 #endif
 
 class OptionalSpec: QuickSpec {
