@@ -21,7 +21,9 @@ class RetrySpec: QuickSpec {
         describe("Relay") {
             
             it("should retry specified times") {
+                // TODO: test
             }
         }
     }
 }
+ 

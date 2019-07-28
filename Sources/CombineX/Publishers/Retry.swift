@@ -63,8 +63,163 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
-//            let s = Inner(pub: self, sub: subscriber)
+            Global.RequiresImplementation()
+//            let s = Inner(pub: self, sub: subscriber, retries: self.retries)
 //            self.upstream.subscribe(s)
         }
     }
 }
+
+/*
+ 
+
+extension Publishers.Retry {
+    
+    private final class Inner<S>:
+        Subscription,
+        Subscriber,
+        CustomStringConvertible,
+        CustomDebugStringConvertible
+    where
+        S: Subscriber,
+        S.Input == Upstream.Output,
+        S.Failure == Failure
+    {
+        
+        typealias Input = Upstream.Output
+        typealias Failure = Upstream.Failure
+        
+        typealias Pub = Publishers.Retry<Upstream>
+        typealias Sub = S
+        
+        let lock = Lock()
+        let sub: Sub
+        
+        var state = RelayState.waiting
+        var pub: Pub?
+        var retries: Int?
+        
+        var demand: Subscribers.Demand = .none
+        
+        init(pub: Pub, sub: Sub, retries: Int?, initialDemand: Subscribers.Demand = .none) {
+            self.pub = pub
+            self.retries = retries
+            self.sub = sub
+            
+            self.demand = initialDemand
+        }
+        
+        func request(_ demand: Subscribers.Demand) {
+            self.lock.lock()
+            guard let subscription = self.state.subscription else {
+                self.lock.unlock()
+                return
+            }
+            self.demand += demand
+            self.lock.unlock()
+            
+            subscription.request(demand)
+        }
+        
+        func cancel() {
+            self.lock.lock()
+            guard let subscription = self.state.complete() else {
+                self.lock.unlock()
+                return
+            }
+            
+            self.pub = nil
+            self.lock.unlock()
+            
+            subscription.cancel()
+        }
+        
+        func receive(subscription: Subscription) {
+            self.lock.lock()
+            guard self.state.relay(subscription) else {
+                self.lock.unlock()
+                subscription.cancel()
+                return
+            }
+            let demand = self.demand
+            self.lock.unlock()
+            
+            self.sub.receive(subscription: self)
+            
+            if demand != 0 {
+                subscription.request(demand)
+            }
+        }
+        
+        func receive(_ input: Input) -> Subscribers.Demand {
+            self.lock.lock()
+            guard self.state.isRelaying else {
+                self.lock.unlock()
+                return .none
+            }
+            
+            self.demand -= 1
+            self.lock.unlock()
+            
+            return self.sub.receive(input)
+        }
+        
+        func receive(completion: Subscribers.Completion<Failure>) {
+            self.lock.lock()
+            guard let subscription = self.lock.withLockGet(self.state.complete()) else {
+                self.lock.unlock()
+                return
+            }
+                
+            switch completion {
+            case .finished:
+                self.pub = nil
+                self.lock.unlock()
+                subscription.cancel()
+                self.sub.receive(completion: completion)
+            case .failure:
+                if let retries = self.retries {
+                    if retries == 0 {
+                        self.pub = nil
+                        self.lock.unlock()
+                        subscription.cancel()
+                        self.sub.receive(completion: completion)
+                    } else {
+                        let pub = self.pub!
+                        self.pub = nil
+                        
+                        let demand = self.demand
+                        self.lock.lock()
+                        subscription.cancel()
+                        
+                        let s = Inner(pub: pub, sub: self.sub, retries: retries - 1, initialDemand: demand)
+                        pub.upstream.subscribe(s)
+                    }
+                } else {
+                    let pub = self.pub!
+                    self.pub = nil
+                    
+                    let demand = self.demand
+                    self.lock.lock()
+                    subscription.cancel()
+                    
+                    let s = Inner(pub: pub, sub: self.sub, retries: nil, initialDemand: demand)
+                    pub.upstream.subscribe(s)
+                    
+                }
+            }
+            
+            
+        }
+        
+        var description: String {
+            return "Retry"
+        }
+        
+        var debugDescription: String {
+            return "Retry"
+        }
+    }
+}
+
+ */

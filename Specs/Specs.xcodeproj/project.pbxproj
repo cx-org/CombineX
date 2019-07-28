@@ -666,7 +666,6 @@
 				624050E122DDBAB000291766 /* Retry.swift */,
 				624050AE22DDBAB000291766 /* B */,
 				66C363E422E4AC51002236BF /* C */,
-				66C363E722E4B043002236BF /* unchecked */,
 			);
 			path = Publishers;
 			sourceTree = "<group>";
@@ -875,6 +874,9 @@
 		66C363E422E4AC51002236BF /* C */ = {
 			isa = PBXGroup;
 			children = (
+				624050D522DDBAB000291766 /* Share.swift */,
+				624050A922DDBAB000291766 /* Autoconnect.swift */,
+				624050AB22DDBAB000291766 /* MakeConnectable.swift */,
 				624050AA22DDBAB000291766 /* Multicast.swift */,
 				66C363F522E4B949002236BF /* Throttle.swift */,
 				624050A722DDBAB000291766 /* BreakPoint.swift */,
@@ -888,16 +890,6 @@
 				66C363F322E4B8E5002236BF /* Timeout.swift */,
 			);
 			path = C;
-			sourceTree = "<group>";
-		};
-		66C363E722E4B043002236BF /* unchecked */ = {
-			isa = PBXGroup;
-			children = (
-				624050D522DDBAB000291766 /* Share.swift */,
-				624050A922DDBAB000291766 /* Autoconnect.swift */,
-				624050AB22DDBAB000291766 /* MakeConnectable.swift */,
-			);
-			path = unchecked;
 			sourceTree = "<group>";
 		};
 		66C3640122E4C0D8002236BF /* CombineXTests */ = {

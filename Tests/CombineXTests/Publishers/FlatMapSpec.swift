@@ -23,8 +23,6 @@ class FlatMapSpec: QuickSpec {
             
             // MARK: 1.1 should send sub-subscriber's value
             it("should send sub-subscriber's value") {
-                typealias Sub = TestSubscriber<Int, Never>
-                
                 let sequence = Publishers.Sequence<[Int], Never>(sequence: [1, 2, 3])
                 
                 let pub = sequence
@@ -32,7 +30,7 @@ class FlatMapSpec: QuickSpec {
                         Publishers.Sequence<[Int], Never>(sequence: [$0, $0, $0])
                     }
                 
-                let sub = Sub(receiveSubscription: { s in
+                let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
                     s.request(.unlimited)
                 }, receiveValue: { v in
                     return .none
@@ -41,7 +39,7 @@ class FlatMapSpec: QuickSpec {
                 
                 pub.subscribe(sub)
                 
-                let events = [1, 2, 3].flatMap { [$0, $0, $0] }.map { Sub.Event.value($0) }
+                let events = [1, 2, 3].flatMap { [$0, $0, $0] }.map { TestEvent<Int, Never>.value($0) }
                 let expected = events + [.completion(.finished)]
                 expect(sub.events).to(equal(expected))
             }
