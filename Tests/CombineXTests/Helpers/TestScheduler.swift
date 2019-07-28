@@ -142,22 +142,4 @@ final class TestScheduler: Scheduler {
         }
         self.advance(to: self._now.advanced(by: interval))
     }
-
-//    func advanceGradually(by interval: SchedulerTimeType.Stride, step: SchedulerTimeType.Stride) {
-//        self.lock.lock()
-//        defer {
-//            self.lock.unlock()
-//        }
-//        guard step < interval else {
-//            self.advance(by: interval)
-//            return
-//        }
-//
-//        var start = step
-//        while (start + step) < interval {
-//            self.advance(by: step)
-//            start += step
-//        }
-//        self.advance(by: interval - start)
-//    }
 }

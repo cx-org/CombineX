@@ -92,7 +92,7 @@ extension Publishers.Timeout {
             self.customError = pub.customError
             self.sub = sub
             
-            rescheduleTimeoutTask()
+            self.rescheduleTimeoutTask()
         }
         
         private func schedule(after interval: Context.SchedulerTimeType.Stride, action: @escaping () -> Void) -> Cancellable {

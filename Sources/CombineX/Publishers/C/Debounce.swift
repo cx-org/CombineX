@@ -54,14 +54,11 @@ extension Publishers {
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
-//            let s = Inner(pub: self, sub: subscriber)
-//            self.upstream.subscribe(s)
+            let s = Inner(pub: self, sub: subscriber)
+            self.upstream.subscribe(s)
         }
     }
 }
-
-/*
- 
 
 extension Publishers.Debounce {
     
@@ -82,25 +79,58 @@ extension Publishers.Debounce {
         typealias Pub = Publishers.Debounce<Upstream, Context>
         typealias Sub = S
         
-        let lock = Lock()
+        let lock = Lock(recursive: true)
         let scheduler: Context
         let dueTime: Context.SchedulerTimeType.Stride
         let options: Context.SchedulerOptions?
         let sub: Sub
 
         var state = RelayState.waiting
-        var lastSending: Context.SchedulerTimeType
+        var last: Input?
+        var timeoutTask: Cancellable?
         
         init(pub: Pub, sub: Sub) {
             self.scheduler = pub.scheduler
             self.dueTime = pub.dueTime
             self.options = pub.options
             self.sub = sub
-            self.lastSending = pub.scheduler.now.advanced(by: -pub.dueTime)
+        }
+        
+        private func schedule(_ action: @escaping () -> Void) -> Cancellable {
+            return self.scheduler.schedule(
+                after: self.scheduler.now.advanced(by: self.dueTime),
+                interval: .seconds(Int.max),
+                tolerance: self.scheduler.minimumTolerance,
+                options: self.options, action
+            )
+        }
+        
+        func rescheduleTimeoutTasks() {
+            self.lock.lock()
+            self.timeoutTask?.cancel()
+            self.timeoutTask = self.schedule {
+                self.lock.lock()
+                guard let last = self.last else {
+                    self.lock.unlock()
+                    return
+                }
+                self.lock.unlock()
+                
+                _ =  self.sub.receive(last)
+                
+                self.lock.lock()
+                guard self.state.isRelaying else {
+                    self.lock.unlock()
+                    return
+                }
+                self.lock.unlock()
+                self.rescheduleTimeoutTasks()
+            }
+            self.lock.unlock()
         }
         
         func request(_ demand: Subscribers.Demand) {
-            self.lock.withLockGet(self.state.subscription)?.request(demand)
+            self.lock.withLockGet(self.state.subscription)?.request(.unlimited)
         }
         
         func cancel() {
@@ -122,19 +152,12 @@ extension Publishers.Debounce {
                 return .none
             }
             
-            if self.lastSending.distance(to: self.scheduler.now) < self.dueTime {
-                self.lock.unlock()
-                return .max(1)
-            }
+            self.last = input
             self.lock.unlock()
             
-            let more = self.sub.receive(input)
+            self.rescheduleTimeoutTasks()
             
-            self.lock.lock()
-            self.lastSending = self.scheduler.now
-            self.lock.unlock()
-            
-            return more
+            return .none
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
@@ -154,4 +177,3 @@ extension Publishers.Debounce {
         }
     }
 }
- */
