@@ -6,25 +6,77 @@ CombineX is an open source implementation for Apple's [Combine](https://develope
 
 ## Notice
 
-This is an experimental project and currently under heavy development , so **DO NOT use it in production!**
+This library is still in the experimental stage, so, **DO NOT use it in production!**
 
-## Why
+In fact, Apple's Combine is also in beta, take it easy, 🐱.
 
-1. Combine is closed source.
-2. Combine is apple platform only.
-3. Combine needs macOS 10.15, iOS 13.
+## Try it out
+
+### Swift Package Manager
+
+In your `Package.swift`:
+
+```swift
+dependencies.append(
+    .package(url: "https://github.com/luoxiu/CombineX", ._branchItem("master")
+)
+```
+
+### Cocoapods
+
+In your `Podfile`:
+
+```ruby
+target 'App' do 
+    pod 'CombineX'
+end
+```
+
+## Related
+
+- [CombineX.Foundation](https://github.com/CombineXCommunity/CombineX.Foundation)
+- [CombineX.Compatible](https://github.com/CombineXCommunity/CombineX.Compatible)
+
+## Contribute
+
+Welcome! CombineX is always looking for collaborators! 
+
+Now, what `CombineX` need most are:
+
+1. Add more functional tests.
+2. Make sure `Combine` can pass them.
+3. Check how `CombineX` is going.
+4. If `CombineX` can not pass them, open an issue, or fix it!!!
+
+### Bugs in Combine
+
+Since `Combine` is still in beta, it is inevitable that it has bugs. If you find something strange, you can open an issue to discuss with us! or leave a `// FIXME:` annotation.
+
+### Flow
+
+Since some people may not have macOS 10.15 beta installed, the recommended contributing way is: 
+
+1. Fork the project.
+2. Open `Specs/Specs.xcworkspace`, make your changes under `Specs/CombineX` folder. 
+3. All tests go `SpecsTests/CombineXTests` folder. Make sure both scheme `Specs` and scheme `CombineSpecs` pass the tests you wrote.
+
+
+## Other
+
+### Why write this?
+
+1. `Combine` has a strict system version limit: macOS 10.15+, iOS 13+. This means that even if your app only needs to support two forward versions, you still need to wait for three years before you can use it.
+2. `Combine` is closed source. It is the same as `UIKit`, `MapKit`, updating with the update of xcode. When you encounter a bug--you should have encountered a bug in the system library before--it's hard to debug. What's more annoying is the slow official response, usually you have to wait for the next regular update of xcode.
+3. `Combine` is Apple platform only and doesn't support Linux.
 
 ## Goal
 
-Making it no longer have the limitations of the platform and os version. 
-
-CombineX will try to provide:
+`CombineX` will try to provide:
 
 1. ~100% identical behavior to the Apple Combine.
-2. Clear code and complete comments.
-3. More useful extensions(in a separate target maybe).
+2. More `Combine` doesn't have but useful extensions. You can find them at [here] (https://github.com/CombineXCommunity).
 
-When CombineX is officially released, all you need to do is:
+When `CombineX` is officially released, all you need to do is:
 
 ```swift
 #if USE_COMBINE
@@ -34,154 +86,3 @@ import CombineX
 #endif
 ```
 
-## Contribute
-
-CombineX is always looking for collaborators! 
-
-You can:
-
-1. Implement new operators.
-2. Add more compatibility tests to find behavior different from Apple Combine.
-3. Fix bugs.
-4. ...Anything you think can make CombineX better!
-
-Since some people may not have macOS 10.15 beta installed, the recommended contributing way is: 
-
-1. Fork the project.
-2. Open `Specs/Specs.xcworkspace`, make your changes under `Specs/CombineX` folder. 
-3. All tests go `SpecsTests/CombineXTests` folder. Make sure both scheme `Specs` and scheme `CombineSpecs` pass the tests you wrote.
-
-## State
-
-### General
-
-| API | Status | Test | Notes |
-|:--|:--|:--|:--|
-|`AnyCancellable`| done | done |   |
-|`AnyPublisher`| done |   |   |
-|`AnySubject`| done |   |   |
-|`AnySubscriber`| done | done |   |
-|`Cancellable`| done | no need |   |
-|`CombineIdentifier`| done | done |   |
-|`ConnectablePublisher`|   |   |   |
-|`CustomCombineIdentifierConvertible`| done | no need |   |
-|`Published`|   |   |   |
-|`Publisher`| done | no need |   |
-|`Scheduler`| done | no need |   |
-|`SchedulerTimeIntervalConvertible`| done | no need |   |
-|`Subject`| done | no need |   |
-|`Subscriber`| done | no need |   |
-|`Subscription`| done | no need |   |
-
-### Publishers
-
-| API | Status | Test | Notes |
-|:--|:--|:--|:--|
-|`AllSatisfy`| done |   |   |
-|`AssertNoFailure`| done | done |   |
-|`Autoconnect`|   |   |   |
-|`Breakpoint`| done |   |   |
-|`Buffer`|   |   |   |
-|`Catch`| done |   |   |
-|`Collect`| done |   |   |
-|`CollectByCount`| done | done |   |
-|`CollectByTime`|   |   |   |
-|`CombineLatest`| done | basic | b |
-|`CompactMap`| done |   |   |
-|`Comparison`| done |   |   |
-|`Concatenate`| done | done |   |
-|`Contains`| done |   |   |
-|`ContainsWhere`| done |   |   |
-|`Count`| done | basic |   |
-|`Debounce`|   |   |   |
-|`Delay`|   |   |   |
-|`Drop`| done |   |   |
-|`Decode`| done |   |   |
-|`DropUntilOutput`| done | done |   |
-|`DropWhile`| done |   |   |
-|`Empty`| done | done |   |
-|`Encode`| done |   |   |
-|`Fail`| done |   |   |
-|`Filter`| done |   |   |
-|`First`| done |   |   |
-|`FirstWhere`| done |   |   |
-|`FlatMap`| done | done |   |
-|`Future`| done | basic | b |
-|`HandleEvents`| done |   | wip |
-|`IgnoreOutput`| done |   |   |
-|`Just`| done | done |   |
-|`Last`| done |   |   |
-|`LastWhere`| done |   |   |
-|`MakeConnectable`|   |   |   |
-|`Map`| done |   |   |
-|`MapError`| done | done |   |
-|`MapKeyPath`| done |   |   |
-|`MeasureInterval`| done | done |   |
-|`Merge`| done | done |   |
-|`Multicast`|   |   |   |
-|`Optional`| done | done |   |
-|`Output`| done | done |   |
-|`PrefixUntilOutput`| done | done |   |
-|`PrefixWhile`| done |   |   |
-|`Print`| done | done |   |
-|`Publishers`| done | no need |   |
-|`ReceiveOn`| done | basic | b |
-|`Reduce`| done |   |   |
-|`RemoveDuplicates`| done | done |   |
-|`ReplaceEmpty`| done | done |   |
-|`ReplaceError`| done | done |   |
-|`Result`| done | done |   |
-|`Retry`|   |   |   |
-|`Scan`| done |   |   |
-|`Sequence`| done | done |   |
-|`SetFailureType`| done |   |   |
-|`Share`|   |   |   |
-|`SubscribeOn`| done | basic | b |
-|`SwitchToLatest`| done | basic | b |
-|`Throttle`|   |   |   |
-|`Timeout`|   |   |   |
-|`TryAllSatisfy`| done | done |   |
-|`TryCatch`| done | done |   |
-|`TryCombineLatest`| done |   | b |
-|`TryCompactMap`| done | done |   |
-|`TryComparison`| done |   |   |
-|`TryContainsWhere`| done |   |   |
-|`TryDropWhere`| done | done |   |
-|`TryFilter`| done |   |   |
-|`TryFirstWhere`| done |   |   |
-|`TryLastWhere`| done |   |   |
-|`TryMap`| done |   |   |
-|`TryPrefixWhile`| done | done |   |
-|`TryReduce`| done | done |   |
-|`TryRemoveDuplicates`| done | done |   |
-|`TryScan`| done | done |   |
-|`Zip`| done | basic | b |
-
-### Schedulers
-
-| API | Status | Test | Notes |
-|:--|:--|:--|:--|
-|`ImmediateScheduler`| done |   |   |
-
-### Subjects
-
-| API | Status | Test | Notes |
-|:--|:--|:--|:--|
-|`CurrentValueSubject`| done | done |   |
-|`PassthroughSubject`| done | done |   |
-
-### Subscribers
-
-| API | Status | Test | Notes |
-|:--|:--|:--|:--|
-|`Assign`| done | done  |   |
-|`Demand`| done | done |   |
-|`Sink`| done | done |   |
-|`Subscribers`| done | no need |   |
-
-### Subscriptions
-
-| API | Status | Test | Notes |
-|:--|:--|:--|:--|
-|`empty`| done |   |   |
-|`Subscriptions`| done  | no need |   |

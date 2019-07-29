@@ -12,7 +12,6 @@ let package = Package(
     ],
     products: [
         .library(name: "CombineX", targets: ["CombineX"]),
-        .library(name: "CombineXFoundation", targets: ["CombineXFoundation"]),
     ],
     dependencies: [
         .package(url: "https://github.com/Quick/Quick.git", from: "2.0.0"),
@@ -20,9 +19,7 @@ let package = Package(
     ],
     targets: [
         .target(name: "CombineX", dependencies: []),
-        .target(name: "CombineXFoundation", dependencies: ["CombineX"]),
         .testTarget(name: "CombineXTests", dependencies: ["CombineX", "Quick", "Nimble"]),
-        .testTarget(name: "CombineXFoundationTests", dependencies: ["CombineX", "Quick", "Nimble"]),
     ],
     swiftLanguageVersions: [
         .v5
