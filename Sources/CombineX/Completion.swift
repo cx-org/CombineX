@@ -70,6 +70,11 @@ extension Subscribers.Completion : Hashable where Failure : Hashable {
 
 extension Subscribers.Completion : Codable where Failure : Decodable, Failure : Encodable {
     
+    private enum CodingKeys: CodingKey {
+        case success
+        case error
+    }
+    
     /// Creates a new instance by decoding from the given decoder.
     ///
     /// This initializer throws an error if reading from the decoder fails, or
@@ -77,7 +82,13 @@ extension Subscribers.Completion : Codable where Failure : Decodable, Failure : 
     ///
     /// - Parameter decoder: The decoder to read data from.
     public init(from decoder: Decoder) throws {
-        Global.RequiresImplementation()
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        if try container.decode(Bool.self, forKey: .success) {
+            self = .finished
+        } else {
+            self = .failure(try container.decode(Failure.self, forKey: .error))
+        }
     }
     
     /// Encodes this value into the given encoder.
@@ -90,6 +101,13 @@ extension Subscribers.Completion : Codable where Failure : Decodable, Failure : 
     ///
     /// - Parameter encoder: The encoder to write data to.
     public func encode(to encoder: Encoder) throws {
-        Global.RequiresImplementation()
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        switch self {
+        case .finished:
+            try container.encode(true, forKey: .success)
+        case .failure(let e):
+            try container.encode(false, forKey: .success)
+            try container.encode(e, forKey: .error)
+        }
     }
 }

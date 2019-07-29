@@ -1,4 +1,4 @@
-enum TestError: Int, Error, CustomStringConvertible {
+enum TestError: Int, Error, CustomStringConvertible, Codable {
     case e0
     case e1
     case e2

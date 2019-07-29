@@ -8,6 +8,15 @@ import CombineX
 import Specs
 #endif
 
+// MARK: - Collection
+extension Collection {
+    
+    var isNotEmpty: Bool {
+        return !self.isEmpty
+    }
+}
+
+
 // MARK: - Subscribers.Completion
 
 extension Subscribers.Completion {
@@ -113,6 +122,7 @@ extension DispatchQueue {
     }
 }
 
+// MARK: Double
 extension Double {
     
     var clampedToInt: Int {

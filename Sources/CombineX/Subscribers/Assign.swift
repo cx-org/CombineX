@@ -58,7 +58,11 @@ extension Subscribers {
         /// If this type has value semantics, the mirror should be unaffected by
         /// subsequent mutations of the instance.
         final public var customMirror: Mirror {
-            Global.RequiresImplementation()
+            return Mirror(self, children: [
+                "object": self.object as Any,
+                "keyPath": self.keyPath,
+                "upstreamSubscription": self.subscription as Any
+            ])
         }
         
         /// A custom playground description for this instance.

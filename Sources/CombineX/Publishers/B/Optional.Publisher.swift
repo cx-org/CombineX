@@ -11,8 +11,6 @@ extension CombineXBox where Base: OptionalProtocol {
 
 extension Optional.CombineX {
     
-    // FIXME: See "Result+Publisher.swift"
-
     /// A publisher that publishes an optional value to each subscriber exactly once, if the optional has a value.
     ///
     /// In contrast with `Just`, an `Optional` publisher may send no value before completion.

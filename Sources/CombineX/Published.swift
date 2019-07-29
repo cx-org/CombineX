@@ -6,21 +6,26 @@
 
     /// Initialize the storage of the Published property as well as the corresponding `Publisher`.
     public init(initialValue: Value) {
-        Global.RequiresImplementation()
+        self.value = initialValue
     }
 
     /// The current value of the property.
-    public var wrappedValue: Value
+    public var wrappedValue: Value {
+        get { return self.value }
+        set {
+            self.value = newValue
+        }
+    }
 
-    public var value: Value
+    public var value: Value {
+        willSet {
+            self.publisher.subject.send(newValue)
+        }
+    }
     
-    #if !canImport(Combine)
-    typealias Publisher = _Publisher
-    #endif
+    private lazy var publisher = Publisher(value: self.value)
     
-    // FIXME: See "Result+Publisher.swift"
-
-    public class _Publisher : __Publisher {
+    public class Publisher : __Publisher {
 
         /// The kind of values published by this publisher.
         public typealias Output = Value
@@ -42,20 +47,20 @@
         /// - Parameters:
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where Value == S.Input, S : Subscriber, S.Failure == Published<Value>._Publisher.Failure {
+        public func receive<S>(subscriber: S) where Value == S.Input, S : Subscriber, S.Failure == Published<Value>.Publisher.Failure {
             self.subject.receive(subscriber: subscriber)
         }
     }
 
-    public var projectedValue: Published<Value>._Publisher {
+    public var projectedValue: Published<Value>.Publisher {
         mutating get {
-            Global.RequiresImplementation()
+            self.publisher
         }
     }
 
-    public var delegateValue: Published<Value>._Publisher {
+    public var delegateValue: Published<Value>.Publisher {
         mutating get {
-            Global.RequiresImplementation()
+            return self.projectedValue
         }
     }
 }

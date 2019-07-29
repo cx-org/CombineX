@@ -69,7 +69,7 @@ extension Subscribers {
         /// If this type has value semantics, the mirror should be unaffected by
         /// subsequent mutations of the instance.
         final public var customMirror: Mirror {
-            Global.RequiresImplementation()
+            return Mirror(self, children: EmptyCollection())
         }
         
         /// A custom playground description for this instance.

@@ -36,7 +36,7 @@ public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertibl
     /// The conversion of `p` to a string in the assignment to `s` uses the
     /// `Point` type's `description` property.
     public var description: String {
-        return  "AnySubscriber"
+        return "AnySubscriber"
     }
     
     /// The custom mirror for this instance.
@@ -44,7 +44,7 @@ public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertibl
     /// If this type has value semantics, the mirror should be unaffected by
     /// subsequent mutations of the instance.
     public var customMirror: Mirror {
-        Global.RequiresImplementation()
+        return Mirror(self, children: EmptyCollection())
     }
     
     /// A custom playground description for this instance.
