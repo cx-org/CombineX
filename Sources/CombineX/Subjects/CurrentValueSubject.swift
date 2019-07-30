@@ -9,7 +9,7 @@ final public class CurrentValueSubject<Output, Failure> : Subject where Failure 
             }
         }
         set {
-            self.send(newValue)
+            self.update(newValue)
         }
     }
     
@@ -51,6 +51,23 @@ final public class CurrentValueSubject<Output, Failure> : Subject where Failure 
         self.lock.unlock()
         
         subscriber.receive(subscription: subscription)
+    }
+    
+    private func update(_ new: Output) {
+        self.lock.lock()
+        self.current = new
+        
+        guard self.completion == nil else {
+            self.lock.unlock()
+            return
+        }
+        
+        let subscriptions = self.subscriptions
+        self.lock.unlock()
+        
+        for subscription in subscriptions {
+            subscription.receive(new)
+        }
     }
     
     /// Sends a value to the subscriber.
@@ -109,32 +126,22 @@ extension CurrentValueSubject {
         var pub: Pub?
         var sub: Sub?
         
-        var current: Output
-        var isCompleted = false
-        
-        var demand: Subscribers.Demand = .none
+        var state: DemandState = .waiting
         
         init(pub: Pub, sub: Sub) {
             self.pub = pub
             self.sub = sub
-            self.current = pub.current
         }
         
         func receive(_ value: Output) {
             self.lock.lock()
-            if self.isCompleted {
+            
+            guard let demand = self.state.demand, demand > 0 else {
                 self.lock.unlock()
                 return
             }
             
-            self.current = value
-            
-            guard self.demand > 0 else {
-                self.lock.unlock()
-                return
-            }
-            
-            self.demand -= 1
+            _ = self.state.sub(.max(1))
             
             let sub = self.sub!
             self.lock.unlock()
@@ -143,18 +150,16 @@ extension CurrentValueSubject {
             let more = sub.receive(value)
             
             self.lock.withLock {
-                self.demand += more
+                _ = self.state.add(more)
             }
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
             self.lock.lock()
-            if self.isCompleted {
+            guard self.state.complete() else {
                 self.lock.unlock()
                 return
             }
-            
-            self.isCompleted = true
             
             self.pub = nil
             let sub = self.sub!
@@ -168,39 +173,35 @@ extension CurrentValueSubject {
             precondition(demand > 0)
             
             self.lock.lock()
-            
-            if self.isCompleted {
+            switch self.state {
+            case .waiting:
+                self.state = .demanding(demand - 1)
+                let sub = self.sub!
+                let current = self.pub!.value
+                self.lock.unlock()
+                
+                let more = sub.receive(current)
+                
+                self.lock.withLock {
+                    _ = self.state.add(more)
+                }
+            case .demanding:
+                _ = self.state.add(demand)
                 self.lock.unlock()
                 return
-            }
-            self.demand += demand
-            
-            if self.demand == 0 {
+            case .completed:
                 self.lock.unlock()
                 return
-            }
-            
-            self.demand -= 1
-            let sub = self.sub!
-            self.lock.unlock()
-            
-            // TODO: Check here
-            let more = sub.receive(self.current)
-            
-            self.lock.withLock {
-                self.demand += more
             }
         }
         
         func cancel() {
             self.lock.lock()
             
-            if self.isCompleted {
+            guard self.state.complete() else {
                 self.lock.unlock()
                 return
             }
-            
-            self.isCompleted = true
             
             let pub = self.pub
             self.pub = nil
