@@ -9,6 +9,14 @@ import CombineX
 import Specs
 #endif
 
+#if USE_COMBINE
+typealias Published = Combine.Published
+#elseif SWIFT_PACKAGE
+typealias Published = CombineX.Published
+#else
+typealias Published = Specs.Published
+#endif
+
 #if swift(>=5.1)
 class PublishedSpec: QuickSpec {
     

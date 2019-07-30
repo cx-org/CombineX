@@ -44,6 +44,9 @@ class TestSubject<Output, Failure> : Subject where Failure : Error {
         subscriber.receive(subscription: subscription)
     }
     
+    func send(subscription: Subscription) {
+    }
+    
     func send(_ input: Output) {
         self.lock.lock()
         guard self.completion == nil else {

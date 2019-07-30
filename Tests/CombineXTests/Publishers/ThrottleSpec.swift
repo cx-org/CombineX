@@ -135,7 +135,6 @@ class ThrottleSpec: QuickSpec {
                 // MARK: 2.1 should request unlimited at the beginning
                 it("should request unlimited at the beginning") {
                     let subject = TestSubject<Int, TestError>()
-                    subject.isLogEnabled = true
                     let scheduler = TestScheduler()
                     let pub = subject.throttle(for: .seconds(1), scheduler: scheduler, latest: true)
                     let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
@@ -161,7 +160,6 @@ class ThrottleSpec: QuickSpec {
                 // MARK: 2.2 should request unlimited at the beginning
                 it("should request unlimited at the beginning") {
                     let subject = TestSubject<Int, TestError>()
-                    subject.isLogEnabled = true
                     let scheduler = TestScheduler()
                     let pub = subject.throttle(for: .seconds(1), scheduler: scheduler, latest: false)
                     let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in

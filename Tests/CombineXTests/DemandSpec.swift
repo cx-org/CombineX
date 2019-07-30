@@ -10,6 +10,14 @@ import CombineX
 import Specs
 #endif
 
+#if USE_COMBINE
+typealias ObservableObject = Combine.ObservableObject
+#elseif SWIFT_PACKAGE
+typealias ObservableObject = CombineX.ObservableObject
+#else
+typealias ObservableObject = Specs.ObservableObject
+#endif
+
 class DemandSpec: QuickSpec {
     
     typealias Demand = Subscribers.Demand

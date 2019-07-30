@@ -5,8 +5,8 @@
 @propertyWrapper public struct Published<Value> {
 
     /// Initialize the storage of the Published property as well as the corresponding `Publisher`.
-    public init(wrappedValue initialValue: Value) {
-        self.value = initialValue
+    public init(wrappedValue: Value) {
+        self.value = wrappedValue
     }
     
     public init(initialValue: Value) {
@@ -17,15 +17,12 @@
     public var wrappedValue: Value {
         get { return self.value }
         set {
+            self.publisher.subject.send(newValue)
             self.value = newValue
         }
     }
 
-    public var value: Value {
-        willSet {
-            self.publisher.subject.send(newValue)
-        }
-    }
+    public var value: Value
     
     private lazy var publisher = Publisher(value: self.value)
     
@@ -65,3 +62,4 @@
 
 }
 #endif
+

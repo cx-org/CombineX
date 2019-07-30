@@ -36,6 +36,13 @@ extension ObservableObject where Self.ObjectWillChangePublisher == ObservableObj
 
     /// A publisher that emits before the object has changed.
     public var objectWillChange: ObservableObjectPublisher {
+        /*
+         TODO: Default publisher.
+         1. All @Published properties hold this object and relay changes.
+         2. This object gets all @Published properties and subscribes to them.
+         
+         https://github.com/apple/swift-evolution/blob/master/proposals/0258-property-wrappers.md#referencing-the-enclosing-self-in-a-wrapper-type
+         */
         Global.RequiresImplementation()
     }
 }
@@ -50,6 +57,8 @@ final public class ObservableObjectPublisher : Publisher {
     ///
     /// Use `Never` if this `Publisher` does not publish errors.
     public typealias Failure = Never
+    
+    private let subject = PassthroughSubject<Output, Failure>()
 
     public init() {
         Global.RequiresImplementation()
@@ -62,11 +71,11 @@ final public class ObservableObjectPublisher : Publisher {
     ///     - subscriber: The subscriber to attach to this `Publisher`.
     ///                   once attached it can begin to receive values.
     final public func receive<S>(subscriber: S) where S : Subscriber, S.Failure == ObservableObjectPublisher.Failure, S.Input == ObservableObjectPublisher.Output {
-        Global.RequiresImplementation()
+        self.subject.receive(subscriber: subscriber)
     }
 
     final public func send() {
-        Global.RequiresImplementation()
+        self.subject.send()
     }
 }
 

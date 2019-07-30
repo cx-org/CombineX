@@ -17,13 +17,6 @@ public protocol Subject : AnyObject, Publisher {
     func send(subscription: Subscription)
 }
 
-//extension Subject {
-//
-//    public func eraseToAnySubject() -> AnySubject<Self.Output, Self.Failure> {
-//        return AnySubject(self)
-//    }
-//}
-
 extension Subject where Self.Output == Void {
     
     /// Signals subscribers.

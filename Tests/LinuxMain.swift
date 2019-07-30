@@ -32,6 +32,7 @@ QCKMain([
     PrintSpec.self,
     ReceiveOnSpec.self,
     PublishedSpec.self,
+    RecordSpec.self,
     RemoveDuplicatesSpec.self,
     ReplaceErrorSpec.self,
     ReplaceEmptySpec.self,

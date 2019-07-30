@@ -68,59 +68,16 @@ extension Subscribers.Completion : Hashable where Failure : Hashable {
     }
 }
 
-extension Subscribers.Completion : Encodable where Failure : Encodable {
-
-    /// Encodes this value into the given encoder.
-    ///
-    /// If the value fails to encode anything, `encoder` will encode an empty
-    /// keyed container in its place.
-    ///
-    /// This function throws an error if any values are invalid for the given
-    /// encoder's format.
-    ///
-    /// - Parameter encoder: The encoder to write data to.
-    public func encode(to encoder: Encoder) throws {
-        Global.RequiresImplementation()
-    }
-}
-
-extension Subscribers.Completion : Decodable where Failure : Decodable {
-
-    /// Creates a new instance by decoding from the given decoder.
-    ///
-    /// This initializer throws an error if reading from the decoder fails, or
-    /// if the data read is corrupted or otherwise invalid.
-    ///
-    /// - Parameter decoder: The decoder to read data from.
-    public init(from decoder: Decoder) throws {
-        Global.RequiresImplementation()
-    }
-}
-
-/*
-extension Subscribers.Completion : Codable where Failure : Decodable, Failure : Encodable {
+extension Subscribers.Completion {
     
     private enum CodingKeys: CodingKey {
         case success
         case error
     }
-    
-    /// Creates a new instance by decoding from the given decoder.
-    ///
-    /// This initializer throws an error if reading from the decoder fails, or
-    /// if the data read is corrupted or otherwise invalid.
-    ///
-    /// - Parameter decoder: The decoder to read data from.
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        
-        if try container.decode(Bool.self, forKey: .success) {
-            self = .finished
-        } else {
-            self = .failure(try container.decode(Failure.self, forKey: .error))
-        }
-    }
-    
+}
+
+extension Subscribers.Completion : Encodable where Failure : Encodable {
+
     /// Encodes this value into the given encoder.
     ///
     /// If the value fails to encode anything, `encoder` will encode an empty
@@ -141,4 +98,22 @@ extension Subscribers.Completion : Codable where Failure : Decodable, Failure : 
         }
     }
 }
-*/
+
+extension Subscribers.Completion : Decodable where Failure : Decodable {
+
+    /// Creates a new instance by decoding from the given decoder.
+    ///
+    /// This initializer throws an error if reading from the decoder fails, or
+    /// if the data read is corrupted or otherwise invalid.
+    ///
+    /// - Parameter decoder: The decoder to read data from.
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        if try container.decode(Bool.self, forKey: .success) {
+            self = .finished
+        } else {
+            self = .failure(try container.decode(Failure.self, forKey: .error))
+        }
+    }
+}

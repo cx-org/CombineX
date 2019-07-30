@@ -16,6 +16,8 @@
 		620F66D322EAED72008194E9 /* Timeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 620F66D122EAED72008194E9 /* Timeline.swift */; };
 		623D4E7322EFF8030046B28A /* Record.swift in Sources */ = {isa = PBXBuildFile; fileRef = 623D4E7222EFF8030046B28A /* Record.swift */; };
 		623D4E7522EFFA150046B28A /* ObserableObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 623D4E7422EFFA150046B28A /* ObserableObject.swift */; };
+		624D73BC22F0267E0062B01E /* RecordSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D73BB22F0267E0062B01E /* RecordSpec.swift */; };
+		624D73BD22F0267E0062B01E /* RecordSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D73BB22F0267E0062B01E /* RecordSpec.swift */; };
 		6279F0D722E555050005840F /* TestScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6279F0D622E555050005840F /* TestScheduler.swift */; };
 		6279F0D822E555050005840F /* TestScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6279F0D622E555050005840F /* TestScheduler.swift */; };
 		6279F1F622E57F590005840F /* CombineLatestSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6279F1F522E57F590005840F /* CombineLatestSpec.swift */; };
@@ -322,6 +324,7 @@
 		620F66D122EAED72008194E9 /* Timeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timeline.swift; sourceTree = "<group>"; };
 		623D4E7222EFF8030046B28A /* Record.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Record.swift; sourceTree = "<group>"; };
 		623D4E7422EFFA150046B28A /* ObserableObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObserableObject.swift; sourceTree = "<group>"; };
+		624D73BB22F0267E0062B01E /* RecordSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordSpec.swift; sourceTree = "<group>"; };
 		6279F0D622E555050005840F /* TestScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestScheduler.swift; sourceTree = "<group>"; };
 		6279F1F522E57F590005840F /* CombineLatestSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineLatestSpec.swift; sourceTree = "<group>"; };
 		628BC8BE22D332CB000EF5DB /* Nimble.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Nimble.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -745,6 +748,7 @@
 				66C3642422E4C0D8002236BF /* PrefixUntilOutputSpec.swift */,
 				66C3641A22E4C0D8002236BF /* PrintSpec.swift */,
 				66C3641622E4C0D8002236BF /* ReceiveOnSpec.swift */,
+				624D73BB22F0267E0062B01E /* RecordSpec.swift */,
 				66C3642B22E4C0D8002236BF /* RemoveDuplicatesSpec.swift */,
 				66C3642122E4C0D8002236BF /* ReplaceEmptySpec.swift */,
 				66C3641C22E4C0D8002236BF /* ReplaceErrorSpec.swift */,
@@ -1517,6 +1521,7 @@
 				66BC01A222ED8259003C0814 /* ThrottleSpec.swift in Sources */,
 				66C3649B22E4C0D8002236BF /* TestObject.swift in Sources */,
 				66C3648522E4C0D8002236BF /* SwitchToLatestSpec.swift in Sources */,
+				624D73BC22F0267E0062B01E /* RecordSpec.swift in Sources */,
 				66C3647522E4C0D8002236BF /* AssertNoFailureSpec.swift in Sources */,
 				66C3647922E4C0D8002236BF /* EmptySpec.swift in Sources */,
 				66C3649D22E4C0D8002236BF /* Lock.swift in Sources */,
@@ -1604,6 +1609,7 @@
 				66BC01A322ED8259003C0814 /* ThrottleSpec.swift in Sources */,
 				66C3649C22E4C0D8002236BF /* TestObject.swift in Sources */,
 				66C3648622E4C0D8002236BF /* SwitchToLatestSpec.swift in Sources */,
+				624D73BD22F0267E0062B01E /* RecordSpec.swift in Sources */,
 				66C3647622E4C0D8002236BF /* AssertNoFailureSpec.swift in Sources */,
 				66C3647A22E4C0D8002236BF /* EmptySpec.swift in Sources */,
 				66C3649E22E4C0D8002236BF /* Lock.swift in Sources */,
