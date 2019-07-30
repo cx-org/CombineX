@@ -68,6 +68,11 @@ final public class PassthroughSubject<Output, Failure> : Subject where Failure :
         }
     }
     
+    /// Provides this Subject an opportunity to establish demand for any new upstream subscriptions (say via, ```Publisher.subscribe<S: Subject>(_: Subject)`
+    final public func send(subscription: Subscription) {
+        Global.RequiresImplementation()
+    }
+    
     private func removeSubscription(_ subscription: Inner) {
         self.lock.lock()
         self.subscriptions.removeAll(where: { $0 === subscription })

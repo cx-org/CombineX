@@ -1,9 +1,14 @@
 # CombineX
 
 <img src="https://img.shields.io/travis/luoxiu/CombineX.svg">
-<img src="https://img.shields.io/cocoapods/v/CombineX.svg">
 
 CombineX 是 Apple's [Combine](https://developer.apple.com/documentation/combine) 的开源实现。
+
+## 状态
+
+正在忙于迁移到 Combine beta 5。。。有希望在这周日发布第一个测试版本！
+
+<small>但愿如此。</small>
 
 ## 注意
 
@@ -13,7 +18,7 @@ CombineX 是 Apple's [Combine](https://developer.apple.com/documentation/combine
 
 ## 体验
 
-### Swift Package Manager
+#### Swift Package Manager
 
 在你的 `Package.swift` 里：
 
@@ -21,16 +26,6 @@ CombineX 是 Apple's [Combine](https://developer.apple.com/documentation/combine
 dependencies.append(
     .package(url: "https://github.com/luoxiu/CombineX", ._branchItem("master")
 )
-```
-
-### Cocoapods
-
-在你的 `Podfile` 里：
-
-```ruby
-target 'App' do 
-    pod 'CombineX'
-end
 ```
 
 ## 周边
@@ -50,11 +45,11 @@ end
 3. 看看 `CombineX` 怎么样。
 4. 如果 `CombineX` 不能通过，修复它！
 
-### Combine 的 bug
+#### Combine 的 bug
 
 因为 `Combine` 都还在 beta，难免它自己都有 bug。如果遇到不合你理解的现象，请发 issue 一起讨论！或者留下一个 `// FIXME:` 标记。
 
-### 流程
+#### 流程
 
 因为很多人还没有安装 macOS 10.15 beta，比如我，所以现在推荐的贡献流程是：
 
@@ -65,7 +60,7 @@ end
 
 ## 其它
 
-### 为什么要写这个库？
+#### 为什么要写这个库？
 
 动机比重从高到低依次是：
 
@@ -74,7 +69,7 @@ end
 3. `Combine` 是闭源的，它与 `UIKit`，`MapKit` 等一样，随 xcode 的更新而更新。当你遇到 bug，你应该遇到过系统库的 bug 吧，难调试是一方面，更烦人的是缓慢的官方反应，通常你只能等待下一次 xcode 的常规更新。
 3. `Combine` 是 Apple 平台独占的，不能在 Linux 上运行。
 
-### 目标
+#### 目标
 
 `CombineX` 会尽力提供：
 

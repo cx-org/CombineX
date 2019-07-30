@@ -6,11 +6,14 @@ extension Subscribers {
     /// - max: A request for a maximum number of items.
     public struct Demand : Equatable, Comparable, Hashable, Codable, CustomStringConvertible {
         
-        private let rawValue: UInt
+        @usableFromInline
+        let rawValue: UInt
         
-        private static let _unlimited = UInt(Int.max) + 1
+        @usableFromInline
+        static let _unlimited = UInt(Int.max) + 1
         
-        private init(_ rawValue: UInt) {
+        @inlinable
+        init(_ rawValue: UInt) {
             if rawValue > Demand._unlimited {
                 self.rawValue = Demand._unlimited
                 return
@@ -19,23 +22,19 @@ extension Subscribers {
         }
         
         /// Requests as many values as the `Publisher` can produce.
-        public static var unlimited: Subscribers.Demand {
-            return Demand(self._unlimited)
-        }
-        
-        /// Limits the maximum number of values.
-        /// The `Publisher` may send fewer than the requested number.
-        /// Negative values will result in a `fatalError`.
-        public static func max(_ value: Int) -> Subscribers.Demand {
-            precondition(value >= 0)
-            return Demand(UInt(value))
-        }
+        public static let unlimited = Demand(Demand._unlimited)
         
         /// A demand for no items.
         ///
         /// This is equivalent to `Demand.max(0)`.
-        public static var none: Subscribers.Demand {
-            return .max(0)
+        public static let none = Demand(0)
+        
+        /// Limits the maximum number of values.
+        /// The `Publisher` may send fewer than the requested number.
+        /// Negative values will result in a `fatalError`.
+        @inlinable public static func max(_ value: Int) -> Subscribers.Demand {
+            precondition(value >= 0)
+            return Demand(UInt(value))
         }
         
         /// A textual representation of this instance.
@@ -66,17 +65,17 @@ extension Subscribers {
         }
 
         /// When adding any value to .unlimited, the result is .unlimited.
-        public static func + (lhs: Subscribers.Demand, rhs: Subscribers.Demand) -> Subscribers.Demand {
+        @inlinable public static func + (lhs: Subscribers.Demand, rhs: Subscribers.Demand) -> Subscribers.Demand {
             return Demand(lhs.rawValue + rhs.rawValue)
         }
         
         /// When adding any value to .unlimited, the result is .unlimited.
-        public static func += (lhs: inout Subscribers.Demand, rhs: Subscribers.Demand) {
+        @inlinable public static func += (lhs: inout Subscribers.Demand, rhs: Subscribers.Demand) {
             lhs = lhs + rhs
         }
         
         /// When adding any value to .unlimited, the result is .unlimited.
-        public static func + (lhs: Subscribers.Demand, rhs: Int) -> Subscribers.Demand {
+        @inlinable public static func + (lhs: Subscribers.Demand, rhs: Int) -> Subscribers.Demand {
             if rhs < 0 {
                 return lhs - .max(-rhs)
             }
@@ -84,22 +83,22 @@ extension Subscribers {
         }
         
         /// When adding any value to .unlimited, the result is .unlimited.
-        public static func += (lhs: inout Subscribers.Demand, rhs: Int) {
+        @inlinable public static func += (lhs: inout Subscribers.Demand, rhs: Int) {
             lhs = lhs + rhs
         }
         
-        public static func * (lhs: Subscribers.Demand, rhs: Int) -> Subscribers.Demand {
+        @inlinable public static func * (lhs: Subscribers.Demand, rhs: Int) -> Subscribers.Demand {
             precondition(rhs >= 0)
             let (v, overflow) = lhs.rawValue.multipliedReportingOverflow(by: UInt(rhs))
             return overflow ? .unlimited : Demand(v)
         }
         
-        public static func *= (lhs: inout Subscribers.Demand, rhs: Int) {
+        @inlinable public static func *= (lhs: inout Subscribers.Demand, rhs: Int) {
             lhs = lhs * rhs
         }
         
         /// When subtracting any value (including .unlimited) from .unlimited, the result is still .unlimited. Subtracting unlimited from any value (except unlimited) results in .max(0). A negative demand is not possible; any operation that would result in a negative value is clamped to .max(0).
-        public static func - (lhs: Subscribers.Demand, rhs: Subscribers.Demand) -> Subscribers.Demand {
+        @inlinable public static func - (lhs: Subscribers.Demand, rhs: Subscribers.Demand) -> Subscribers.Demand {
             switch (lhs, rhs) {
             case (.unlimited, _):
                 return .unlimited
@@ -113,55 +112,55 @@ extension Subscribers {
         }
         
         /// When subtracting any value (including .unlimited) from .unlimited, the result is still .unlimited. Subtracting unlimited from any value (except unlimited) results in .max(0). A negative demand is not possible; any operation that would result in a negative value is clamped to .max(0).
-        public static func -= (lhs: inout Subscribers.Demand, rhs: Subscribers.Demand) {
+        @inlinable public static func -= (lhs: inout Subscribers.Demand, rhs: Subscribers.Demand) {
             lhs = lhs - rhs
         }
         
         /// When subtracting any value from .unlimited, the result is still .unlimited. A negative demand is not possible; any operation that would result in a negative value is clamped to .max(0)
-        public static func - (lhs: Subscribers.Demand, rhs: Int) -> Subscribers.Demand {
+        @inlinable public static func - (lhs: Subscribers.Demand, rhs: Int) -> Subscribers.Demand {
             return lhs + (-rhs)
         }
         
         /// When subtracting any value from .unlimited, the result is still .unlimited. A negative demand is possible, but be aware that it is not usable when requesting values in a subscription.
-        public static func -= (lhs: inout Subscribers.Demand, rhs: Int) {
+        @inlinable public static func -= (lhs: inout Subscribers.Demand, rhs: Int) {
             lhs = lhs - rhs
         }
         
-        public static func > (lhs: Subscribers.Demand, rhs: Int) -> Bool {
+        @inlinable public static func > (lhs: Subscribers.Demand, rhs: Int) -> Bool {
             if rhs < 0 {
                 return true
             }
             return lhs > .max(rhs)
         }
         
-        public static func >= (lhs: Subscribers.Demand, rhs: Int) -> Bool {
+        @inlinable public static func >= (lhs: Subscribers.Demand, rhs: Int) -> Bool {
             return (lhs > rhs) || (lhs == rhs)
         }
         
-        public static func > (lhs: Int, rhs: Subscribers.Demand) -> Bool {
+        @inlinable public static func > (lhs: Int, rhs: Subscribers.Demand) -> Bool {
             return rhs <= lhs
         }
         
-        public static func >= (lhs: Int, rhs: Subscribers.Demand) -> Bool {
+        @inlinable public static func >= (lhs: Int, rhs: Subscribers.Demand) -> Bool {
             return (lhs > rhs) || (lhs == rhs)
         }
         
-        public static func < (lhs: Subscribers.Demand, rhs: Int) -> Bool {
+        @inlinable public static func < (lhs: Subscribers.Demand, rhs: Int) -> Bool {
             if rhs < 0 {
                 return false
             }
             return lhs < .max(rhs)
         }
         
-        public static func < (lhs: Int, rhs: Subscribers.Demand) -> Bool {
+        @inlinable public static func < (lhs: Int, rhs: Subscribers.Demand) -> Bool {
             return rhs >= lhs
         }
         
-        public static func <= (lhs: Subscribers.Demand, rhs: Int) -> Bool {
+        @inlinable public static func <= (lhs: Subscribers.Demand, rhs: Int) -> Bool {
             return (lhs < rhs) || (lhs == rhs)
         }
         
-        public static func <= (lhs: Int, rhs: Subscribers.Demand) -> Bool {
+        @inlinable public static func <= (lhs: Int, rhs: Subscribers.Demand) -> Bool {
             return (lhs < rhs) || (lhs == rhs)
         }
         
@@ -173,12 +172,12 @@ extension Subscribers {
         /// - Parameters:
         ///   - lhs: A value to compare.
         ///   - rhs: Another value to compare.
-        public static func == (lhs: Subscribers.Demand, rhs: Subscribers.Demand) -> Bool {
+        @inlinable public static func == (lhs: Subscribers.Demand, rhs: Subscribers.Demand) -> Bool {
             return lhs.rawValue == rhs.rawValue
         }
         
         /// If lhs is .unlimited, then the result is always false. If rhs is .unlimited then the result is always true. Otherwise, the two max values are compared.
-        public static func < (lhs: Subscribers.Demand, rhs: Subscribers.Demand) -> Bool {
+        @inlinable public static func < (lhs: Subscribers.Demand, rhs: Subscribers.Demand) -> Bool {
             switch (lhs, rhs) {
             case (.unlimited, _):
                 return false
@@ -190,7 +189,7 @@ extension Subscribers {
         }
         
         /// If lhs is .unlimited and rhs is .unlimited then the result is true. Otherwise, the rules for < are followed.
-        public static func <= (lhs: Subscribers.Demand, rhs: Subscribers.Demand) -> Bool {
+        @inlinable public static func <= (lhs: Subscribers.Demand, rhs: Subscribers.Demand) -> Bool {
             return (lhs < rhs) || (lhs == rhs)
         }
         
@@ -200,13 +199,13 @@ extension Subscribers {
         /// - Parameters:
         ///   - lhs: A value to compare.
         ///   - rhs: Another value to compare.
-        public static func >= (lhs: Subscribers.Demand, rhs: Subscribers.Demand) -> Bool {
+        @inlinable public static func >= (lhs: Subscribers.Demand, rhs: Subscribers.Demand) -> Bool {
             return (lhs > rhs) || (lhs == rhs)
         }
         
         // FIXME: Combine's doc is wrong, it says "If lhs is .unlimited then the result is always false.".
         /// If rhs is .unlimited, then the result is always false. If lhs is .unlimited then the result is always true. Otherwise, the two max values are compared.
-        public static func > (lhs: Subscribers.Demand, rhs: Subscribers.Demand) -> Bool {
+        @inlinable public static func > (lhs: Subscribers.Demand, rhs: Subscribers.Demand) -> Bool {
             switch (lhs, rhs) {
             case (_, .unlimited):
                 return false
@@ -218,29 +217,50 @@ extension Subscribers {
         }
         
         /// Returns `true` if `lhs` and `rhs` are equal. `.unlimited` is not equal to any integer.
-        public static func == (lhs: Subscribers.Demand, rhs: Int) -> Bool {
+        @inlinable public static func == (lhs: Subscribers.Demand, rhs: Int) -> Bool {
             return lhs == .max(rhs)
         }
         
         /// Returns `true` if `lhs` and `rhs` are not equal. `.unlimited` is not equal to any integer.
-        public static func != (lhs: Subscribers.Demand, rhs: Int) -> Bool {
+        @inlinable public static func != (lhs: Subscribers.Demand, rhs: Int) -> Bool {
             return !(lhs == rhs)
         }
         
         /// Returns `true` if `lhs` and `rhs` are equal. `.unlimited` is not equal to any integer.
-        public static func == (lhs: Int, rhs: Subscribers.Demand) -> Bool {
+        @inlinable public static func == (lhs: Int, rhs: Subscribers.Demand) -> Bool {
             return rhs == lhs
         }
         
         /// Returns `true` if `lhs` and `rhs` are not equal. `.unlimited` is not equal to any integer.
-        public static func != (lhs: Int, rhs: Subscribers.Demand) -> Bool {
+        @inlinable public static func != (lhs: Int, rhs: Subscribers.Demand) -> Bool {
             return rhs != lhs
         }
         
         /// Returns the number of requested values, or nil if unlimited.
-        public var max: Int? {
+         @inlinable public var max: Int? {
             return self == .unlimited ? nil : Int(rawValue)
         }
+        
+        /// Creates a new instance by decoding from the given decoder.
+        ///
+        /// This initializer throws an error if reading from the decoder fails, or
+        /// if the data read is corrupted or otherwise invalid.
+        ///
+        /// - Parameter decoder: The decoder to read data from.
+//        public init(from decoder: Decoder) throws {
+//        }
+        
+        /// Encodes this value into the given encoder.
+        ///
+        /// If the value fails to encode anything, `encoder` will encode an empty
+        /// keyed container in its place.
+        ///
+        /// This function throws an error if any values are invalid for the given
+        /// encoder's format.
+        ///
+        /// - Parameter encoder: The encoder to write data to.
+//        public func encode(to encoder: Encoder) throws {
+//        }
         
         /// The hash value.
         ///
@@ -265,27 +285,6 @@ extension Subscribers {
         /// - Parameter hasher: The hasher to use when combining the components
         ///   of this instance.
 //        public func hash(into hasher: inout Hasher) {
-//        }
-        
-        /// Creates a new instance by decoding from the given decoder.
-        ///
-        /// This initializer throws an error if reading from the decoder fails, or
-        /// if the data read is corrupted or otherwise invalid.
-        ///
-        /// - Parameter decoder: The decoder to read data from.
-//        public init(from decoder: Decoder) throws {
-//        }
-        
-        /// Encodes this value into the given encoder.
-        ///
-        /// If the value fails to encode anything, `encoder` will encode an empty
-        /// keyed container in its place.
-        ///
-        /// This function throws an error if any values are invalid for the given
-        /// encoder's format.
-        ///
-        /// - Parameter encoder: The encoder to write data to.
-//        public func encode(to encoder: Encoder) throws {
 //        }
 
     }

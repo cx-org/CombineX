@@ -14,6 +14,8 @@
 		620F66D022EAEAFF008194E9 /* DelaySpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 620F66CE22EAEAFF008194E9 /* DelaySpec.swift */; };
 		620F66D222EAED72008194E9 /* Timeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 620F66D122EAED72008194E9 /* Timeline.swift */; };
 		620F66D322EAED72008194E9 /* Timeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 620F66D122EAED72008194E9 /* Timeline.swift */; };
+		623D4E7322EFF8030046B28A /* Record.swift in Sources */ = {isa = PBXBuildFile; fileRef = 623D4E7222EFF8030046B28A /* Record.swift */; };
+		623D4E7522EFFA150046B28A /* ObserableObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 623D4E7422EFFA150046B28A /* ObserableObject.swift */; };
 		6279F0D722E555050005840F /* TestScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6279F0D622E555050005840F /* TestScheduler.swift */; };
 		6279F0D822E555050005840F /* TestScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6279F0D622E555050005840F /* TestScheduler.swift */; };
 		6279F1F622E57F590005840F /* CombineLatestSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6279F1F522E57F590005840F /* CombineLatestSpec.swift */; };
@@ -282,7 +284,6 @@
 		66EF083E22EF3AAF00EE5FC4 /* Demand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66EF07C122EF3AAF00EE5FC4 /* Demand.swift */; };
 		66EF083F22EF3AAF00EE5FC4 /* Subscribers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66EF07C222EF3AAF00EE5FC4 /* Subscribers.swift */; };
 		66EF084022EF3AAF00EE5FC4 /* Completion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66EF07C322EF3AAF00EE5FC4 /* Completion.swift */; };
-		66EF084122EF3AAF00EE5FC4 /* AnySubject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66EF07C422EF3AAF00EE5FC4 /* AnySubject.swift */; };
 		66EF084222EF3AAF00EE5FC4 /* ImmediateScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66EF07C622EF3AAF00EE5FC4 /* ImmediateScheduler.swift */; };
 		66FF340122E604CF00C4BA70 /* ZipSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FF340022E604CF00C4BA70 /* ZipSpec.swift */; };
 		66FF340222E604CF00C4BA70 /* ZipSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FF340022E604CF00C4BA70 /* ZipSpec.swift */; };
@@ -319,6 +320,8 @@
 		620F66CA22EAD26E008194E9 /* TimeoutSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeoutSpec.swift; sourceTree = "<group>"; };
 		620F66CE22EAEAFF008194E9 /* DelaySpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DelaySpec.swift; sourceTree = "<group>"; };
 		620F66D122EAED72008194E9 /* Timeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timeline.swift; sourceTree = "<group>"; };
+		623D4E7222EFF8030046B28A /* Record.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Record.swift; sourceTree = "<group>"; };
+		623D4E7422EFFA150046B28A /* ObserableObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObserableObject.swift; sourceTree = "<group>"; };
 		6279F0D622E555050005840F /* TestScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestScheduler.swift; sourceTree = "<group>"; };
 		6279F1F522E57F590005840F /* CombineLatestSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineLatestSpec.swift; sourceTree = "<group>"; };
 		628BC8BE22D332CB000EF5DB /* Nimble.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Nimble.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -539,7 +542,6 @@
 		66EF07C122EF3AAF00EE5FC4 /* Demand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Demand.swift; sourceTree = "<group>"; };
 		66EF07C222EF3AAF00EE5FC4 /* Subscribers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Subscribers.swift; sourceTree = "<group>"; };
 		66EF07C322EF3AAF00EE5FC4 /* Completion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Completion.swift; sourceTree = "<group>"; };
-		66EF07C422EF3AAF00EE5FC4 /* AnySubject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnySubject.swift; sourceTree = "<group>"; };
 		66EF07C622EF3AAF00EE5FC4 /* ImmediateScheduler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImmediateScheduler.swift; sourceTree = "<group>"; };
 		66FF340022E604CF00C4BA70 /* ZipSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZipSpec.swift; sourceTree = "<group>"; };
 		7B6EF3BDA1443688A3AA9E81 /* Pods-CombineSpecsTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CombineSpecsTests.debug.xcconfig"; path = "Target Support Files/Pods-CombineSpecsTests/Pods-CombineSpecsTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -803,30 +805,30 @@
 		66EF074022EF3AAF00EE5FC4 /* CombineX */ = {
 			isa = PBXGroup;
 			children = (
-				66EF074122EF3AAF00EE5FC4 /* Publisher.swift */,
-				66EF074222EF3AAF00EE5FC4 /* Coding.swift */,
-				66EF074322EF3AAF00EE5FC4 /* Compatible */,
-				66EF074722EF3AAF00EE5FC4 /* Subscriber.swift */,
-				66EF074822EF3AAF00EE5FC4 /* CustomCombineIdentifierConvertible.swift */,
-				66EF074922EF3AAF00EE5FC4 /* ConnectablePublisher.swift */,
-				66EF074A22EF3AAF00EE5FC4 /* Internal */,
-				66EF075522EF3AAF00EE5FC4 /* AnyPublisher.swift */,
-				66EF075622EF3AAF00EE5FC4 /* Subscriptions */,
-				66EF075922EF3AAF00EE5FC4 /* Subscription.swift */,
-				66EF075A22EF3AAF00EE5FC4 /* Subject.swift */,
-				66EF075B22EF3AAF00EE5FC4 /* CombineIdentifier.swift */,
-				66EF075C22EF3AAF00EE5FC4 /* Cancellable.swift */,
-				66EF075D22EF3AAF00EE5FC4 /* Subjects */,
-				66EF076022EF3AAF00EE5FC4 /* AnySubscriber.swift */,
-				66EF076122EF3AAF00EE5FC4 /* Published.swift */,
-				66EF076222EF3AAF00EE5FC4 /* SchedulerTimeIntervalConvertible.swift */,
-				66EF076322EF3AAF00EE5FC4 /* Publishers */,
-				66EF07BC22EF3AAF00EE5FC4 /* Scheduler.swift */,
 				66EF07BD22EF3AAF00EE5FC4 /* AnyCancellable.swift */,
-				66EF07BE22EF3AAF00EE5FC4 /* Subscribers */,
+				66EF075522EF3AAF00EE5FC4 /* AnyPublisher.swift */,
+				66EF076022EF3AAF00EE5FC4 /* AnySubscriber.swift */,
+				66EF075C22EF3AAF00EE5FC4 /* Cancellable.swift */,
+				66EF074222EF3AAF00EE5FC4 /* Coding.swift */,
+				66EF075B22EF3AAF00EE5FC4 /* CombineIdentifier.swift */,
 				66EF07C322EF3AAF00EE5FC4 /* Completion.swift */,
-				66EF07C422EF3AAF00EE5FC4 /* AnySubject.swift */,
+				66EF074922EF3AAF00EE5FC4 /* ConnectablePublisher.swift */,
+				66EF074822EF3AAF00EE5FC4 /* CustomCombineIdentifierConvertible.swift */,
+				66EF076122EF3AAF00EE5FC4 /* Published.swift */,
+				66EF074122EF3AAF00EE5FC4 /* Publisher.swift */,
+				66EF07BC22EF3AAF00EE5FC4 /* Scheduler.swift */,
+				66EF076222EF3AAF00EE5FC4 /* SchedulerTimeIntervalConvertible.swift */,
+				66EF075A22EF3AAF00EE5FC4 /* Subject.swift */,
+				66EF074722EF3AAF00EE5FC4 /* Subscriber.swift */,
+				66EF075922EF3AAF00EE5FC4 /* Subscription.swift */,
+				66EF074322EF3AAF00EE5FC4 /* Compatible */,
+				66EF074A22EF3AAF00EE5FC4 /* Internal */,
+				66EF076322EF3AAF00EE5FC4 /* Publishers */,
 				66EF07C522EF3AAF00EE5FC4 /* Schedulers */,
+				66EF075D22EF3AAF00EE5FC4 /* Subjects */,
+				66EF07BE22EF3AAF00EE5FC4 /* Subscribers */,
+				66EF075622EF3AAF00EE5FC4 /* Subscriptions */,
+				623D4E7422EFFA150046B28A /* ObserableObject.swift */,
 			);
 			name = CombineX;
 			path = ../../Sources/CombineX;
@@ -880,19 +882,11 @@
 		66EF076322EF3AAF00EE5FC4 /* Publishers */ = {
 			isa = PBXGroup;
 			children = (
-				66EF076422EF3AAF00EE5FC4 /* unchecked */,
 				66EF076522EF3AAF00EE5FC4 /* C */,
 				66EF077422EF3AAF00EE5FC4 /* B */,
-				66EF07BB22EF3AAF00EE5FC4 /* Retry.swift */,
+				623D4E7222EFF8030046B28A /* Record.swift */,
 			);
 			path = Publishers;
-			sourceTree = "<group>";
-		};
-		66EF076422EF3AAF00EE5FC4 /* unchecked */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = unchecked;
 			sourceTree = "<group>";
 		};
 		66EF076522EF3AAF00EE5FC4 /* C */ = {
@@ -919,6 +913,7 @@
 		66EF077422EF3AAF00EE5FC4 /* B */ = {
 			isa = PBXGroup;
 			children = (
+				66EF07BB22EF3AAF00EE5FC4 /* Retry.swift */,
 				66EF077522EF3AAF00EE5FC4 /* Print.swift */,
 				66EF077622EF3AAF00EE5FC4 /* TryLastWhere.swift */,
 				66EF077722EF3AAF00EE5FC4 /* Deferred.swift */,
@@ -1325,7 +1320,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				66EF07CB22EF3AAF00EE5FC4 /* CombineXCompatible.swift in Sources */,
-				66EF084122EF3AAF00EE5FC4 /* AnySubject.swift in Sources */,
 				66EF07F222EF3AAF00EE5FC4 /* SwitchToLatest.swift in Sources */,
 				66EF082B22EF3AAF00EE5FC4 /* Map.swift in Sources */,
 				66EF07FC22EF3AAF00EE5FC4 /* CollectByCount.swift in Sources */,
@@ -1393,6 +1387,7 @@
 				66EF083122EF3AAF00EE5FC4 /* Drop.swift in Sources */,
 				66EF081322EF3AAF00EE5FC4 /* TryAllSatisfy.swift in Sources */,
 				66EF080422EF3AAF00EE5FC4 /* FlatMap.swift in Sources */,
+				623D4E7322EFF8030046B28A /* Record.swift in Sources */,
 				66EF07D522EF3AAF00EE5FC4 /* DemandState.swift in Sources */,
 				66EF07F722EF3AAF00EE5FC4 /* PrefixWhile.swift in Sources */,
 				66EF07DE22EF3AAF00EE5FC4 /* CombineIdentifier.swift in Sources */,
@@ -1410,6 +1405,7 @@
 				66EF082F22EF3AAF00EE5FC4 /* TryContainsWhere.swift in Sources */,
 				66EF07E822EF3AAF00EE5FC4 /* Future.swift in Sources */,
 				66EF080D22EF3AAF00EE5FC4 /* CompactMap.swift in Sources */,
+				623D4E7522EFFA150046B28A /* ObserableObject.swift in Sources */,
 				66EF07E622EF3AAF00EE5FC4 /* HandleEvents.swift in Sources */,
 				66EF07FD22EF3AAF00EE5FC4 /* Publishers.swift in Sources */,
 				66EF07D222EF3AAF00EE5FC4 /* Queue.swift in Sources */,

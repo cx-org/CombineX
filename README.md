@@ -1,8 +1,14 @@
-# CombineX
+# CombineX([中文](README.zh_cn.md))
 
 <img src="https://img.shields.io/travis/luoxiu/CombineX.svg">
 
 CombineX is an open source implementation for Apple's [Combine](https://developer.apple.com/documentation/combine) specs.
+
+## Status
+
+Working on compatibility with Combine beta 5... Hopefully the first beta will be released this Sunday!
+
+<small>I hope so...</small>
 
 ## Notice
 
@@ -12,7 +18,7 @@ In fact, Apple's Combine is also in beta, take it easy, 🐱.
 
 ## Try it out
 
-### Swift Package Manager
+#### Swift Package Manager
 
 In your `Package.swift`:
 
@@ -20,16 +26,6 @@ In your `Package.swift`:
 dependencies.append(
     .package(url: "https://github.com/luoxiu/CombineX", ._branchItem("master")
 )
-```
-
-### Cocoapods
-
-In your `Podfile`:
-
-```ruby
-target 'App' do 
-    pod 'CombineX'
-end
 ```
 
 ## Related
@@ -48,11 +44,11 @@ Now, what `CombineX` need most are:
 3. Check how `CombineX` is going.
 4. If `CombineX` can not pass them, open an issue, or fix it!!!
 
-### Bugs in Combine
+#### Bugs in Combine
 
-Since `Combine` is still in beta, it is inevitable that it has bugs. If you find something strange, you can open an issue to discuss with us! or leave a `// FIXME:` annotation.
+Since `Combine` is still in beta, it is inevitable that it has bugs. If you find something strange, open an issue to discuss with us or leave a `// FIXME:` annotation!
 
-### Flow
+#### Flow
 
 Since some people may not have macOS 10.15 beta installed, the recommended contributing way is: 
 
@@ -63,13 +59,13 @@ Since some people may not have macOS 10.15 beta installed, the recommended contr
 
 ## Other
 
-### Why write this?
+#### Why write this?
 
 1. `Combine` has a strict system version limit: macOS 10.15+, iOS 13+. This means that even if your app only needs to support two forward versions, you still need to wait for three years before you can use it.
 2. `Combine` is closed source. It is the same as `UIKit`, `MapKit`, updating with the update of xcode. When you encounter a bug--you should have encountered a bug in the system library before--it's hard to debug. What's more annoying is the slow official response, usually you have to wait for the next regular update of xcode.
 3. `Combine` is Apple platform only and doesn't support Linux.
 
-## Goal
+#### Goal
 
 `CombineX` will try to provide:
 

@@ -6,9 +6,12 @@ public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertibl
     
     public let combineIdentifier = CombineIdentifier()
     
-    private let receiveSubscriptionBody: ((Subscription) -> Void)?
-    private let receiveValueBody: ((Input) -> Subscribers.Demand)?
-    private let receiveCompletionBody: ((Subscribers.Completion<Failure>) -> Void)?
+    @usableFromInline
+    let receiveSubscriptionBody: ((Subscription) -> Void)?
+    @usableFromInline
+    let receiveValueBody: ((Input) -> Subscribers.Demand)?
+    @usableFromInline
+    let receiveCompletionBody: ((Subscribers.Completion<Failure>) -> Void)?
     
     private var subscription: Atom<Subscription?>?
     
@@ -55,7 +58,7 @@ public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertibl
     /// Creates a type-erasing subscriber to wrap an existing subscriber.
     ///
     /// - Parameter s: The subscriber to type-erase.
-    public init<S>(_ s: S) where Input == S.Input, Failure == S.Failure, S : Subscriber {
+    @inlinable public init<S>(_ s: S) where Input == S.Input, Failure == S.Failure, S : Subscriber {
         self.receiveSubscriptionBody = s.receive(subscription:)
         self.receiveValueBody = s.receive(_:)
         self.receiveCompletionBody = s.receive(completion:)
@@ -94,7 +97,7 @@ public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertibl
     ///   - receiveSubscription: A closure to execute when the subscriber receives the initial subscription from the publisher.
     ///   - receiveValue: A closure to execute when the subscriber receives a value from the publisher.
     ///   - receiveCompletion: A closure to execute when the subscriber receives a completion callback from the publisher.
-    public init(receiveSubscription: ((Subscription) -> Void)? = nil, receiveValue: ((Input) -> Subscribers.Demand)? = nil, receiveCompletion: ((Subscribers.Completion<Failure>) -> Void)? = nil) {
+    @inlinable public init(receiveSubscription: ((Subscription) -> Void)? = nil, receiveValue: ((Input) -> Subscribers.Demand)? = nil, receiveCompletion: ((Subscribers.Completion<Failure>) -> Void)? = nil) {
         self.receiveSubscriptionBody = receiveSubscription
         self.receiveValueBody = receiveValue
         self.receiveCompletionBody = receiveCompletion
@@ -104,7 +107,7 @@ public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertibl
     ///
     /// Use the received `Subscription` to request items from the publisher.
     /// - Parameter subscription: A subscription that represents the connection between publisher and subscriber.
-    public func receive(subscription: Subscription) {
+    @inlinable public func receive(subscription: Subscription) {
         self.receiveSubscriptionBody?(subscription)
     }
     
@@ -112,14 +115,14 @@ public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertibl
     ///
     /// - Parameter input: The published element.
     /// - Returns: A `Demand` instance indicating how many more elements the subcriber expects to receive.
-    public func receive(_ value: Input) -> Subscribers.Demand {
+    @inlinable public func receive(_ value: Input) -> Subscribers.Demand {
         return self.receiveValueBody?(value) ?? .none
     }
     
     /// Tells the subscriber that the publisher has completed publishing, either normally or with an error.
     ///
     /// - Parameter completion: A `Completion` case indicating whether publishing completed normally or with an error.
-    public func receive(completion: Subscribers.Completion<Failure>) {
+    @inlinable public func receive(completion: Subscribers.Completion<Failure>) {
         self.receiveCompletionBody?(completion)
     }
 }

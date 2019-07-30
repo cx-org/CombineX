@@ -25,6 +25,11 @@ final public class CurrentValueSubject<Output, Failure> : Subject where Failure 
         self.current = value
     }
     
+    /// Provides this Subject an opportunity to establish demand for any new upstream subscriptions (say via, ```Publisher.subscribe<S: Subject>(_: Subject)`
+    final public func send(subscription: Subscription) {
+        Global.RequiresImplementation()
+    }
+    
     /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
     ///
     /// - SeeAlso: `subscribe(_:)`

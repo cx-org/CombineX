@@ -5,8 +5,12 @@
 @propertyWrapper public struct Published<Value> {
 
     /// Initialize the storage of the Published property as well as the corresponding `Publisher`.
-    public init(initialValue: Value) {
+    public init(wrappedValue initialValue: Value) {
         self.value = initialValue
+    }
+    
+    public init(initialValue: Value) {
+        self.init(wrappedValue: initialValue)
     }
 
     /// The current value of the property.
@@ -52,16 +56,12 @@
         }
     }
 
+    /// The property that can be accessed with the `$` syntax and allows access to the `Publisher`
     public var projectedValue: Published<Value>.Publisher {
         mutating get {
             self.publisher
         }
     }
 
-    public var delegateValue: Published<Value>.Publisher {
-        mutating get {
-            return self.projectedValue
-        }
-    }
 }
 #endif
