@@ -168,47 +168,6 @@ class CurrentValueSubjectSpec: QuickSpec {
             }
         }
         
-        // MARK: - Current
-        describe("Current") {
-            
-            // MARK: 3.1 should not change current value after complete
-            it("should not change current value after complete") {
-                let subject = CurrentValueSubject<Int, TestError>(0)
-                expect(subject.value).to(equal(0))
-                subject.value = 1
-                expect(subject.value).to(equal(1))
-                subject.send(2)
-                expect(subject.value).to(equal(2))
-                
-                subject.send(completion: .finished)
-                
-                subject.send(3)
-                expect(subject.value).to(equal(2))
-                
-                subject.value = 4
-                expect(subject.value).to(equal(4))
-            }
-            
-            // MARK: 3.2 should not send current value if the subscription requests again
-            it("should not send current value if the subscription requests again") {
-                let subject = CurrentValueSubject<Int, TestError>(0)
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
-                }, receiveValue: { v in
-                    return .none
-                }, receiveCompletion: { c in
-                })
-                subject.subscribe(sub)
-                expect(sub.events).to(equal([]))
-                
-                subject.send(1)
-                
-                sub.subscription?.request(.max(1))
-                expect(sub.events).to(equal([.value(1)]))
-                
-                sub.subscription?.request(.max(1))
-                expect(sub.events).to(equal([.value(1)]))
-            }
-        }
         
         // MARK: - Release Resources
         describe("Release Resources") {
@@ -305,7 +264,7 @@ class CurrentValueSubjectSpec: QuickSpec {
                 _ = subscription
             }
             
-            // MARK: 3.6 subscription should retain pub and sub then them pub after cancelling
+            // MARK: 3.6 subscription should retain pub and sub then release them after cancelling
             it("subscription should retain pub and sub then release them after cancelling") {
                 var subscription: Subscription?
                 weak var pubObj: CurrentValueSubject<Int, Never>?
@@ -446,5 +405,48 @@ class CurrentValueSubjectSpec: QuickSpec {
             }
         }
         #endif
+        
+        // MARK: - Current
+        describe("Current") {
+            
+            // MARK: 6.1 should not change current value after complete
+            it("should not change current value after complete") {
+                let subject = CurrentValueSubject<Int, TestError>(0)
+                expect(subject.value).to(equal(0))
+                subject.value = 1
+                expect(subject.value).to(equal(1))
+                subject.send(2)
+                expect(subject.value).to(equal(2))
+                
+                subject.send(completion: .finished)
+                
+                subject.send(3)
+                expect(subject.value).to(equal(2))
+                
+                subject.value = 4
+                expect(subject.value).to(equal(4))
+            }
+            
+            // MARK: 6.2 should not send current value if the subscription requests again
+            it("should not send current value if the subscription requests again") {
+                let subject = CurrentValueSubject<Int, TestError>(0)
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
+                }, receiveValue: { v in
+                    return .none
+                }, receiveCompletion: { c in
+                })
+                subject.subscribe(sub)
+                expect(sub.events).to(equal([]))
+                
+                subject.send(1)
+                
+                sub.subscription?.request(.max(1))
+                expect(sub.events).to(equal([.value(1)]))
+                
+                sub.subscription?.request(.max(1))
+                expect(sub.events).to(equal([.value(1)]))
+            }
+        }
+        
     }
 }

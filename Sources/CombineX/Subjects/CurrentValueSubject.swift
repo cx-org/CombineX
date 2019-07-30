@@ -40,9 +40,9 @@ final public class CurrentValueSubject<Output, Failure> : Subject where Failure 
         self.lock.lock()
         
         if let completion = self.completion {
+            self.lock.unlock()
             subscriber.receive(subscription: Subscriptions.empty)
             subscriber.receive(completion: completion)
-            self.lock.unlock()
             return
         }
         
@@ -146,7 +146,7 @@ extension CurrentValueSubject {
             let sub = self.sub!
             self.lock.unlock()
             
-            // FIXME: Yes, no guarantee of synchronous backpressure. See CurrentValueSubjectSpec#3.3 for more information.
+            // FIXME: Yes, no guarantee of synchronous backpressure. See CurrentValueSubjectSpec#4.3 for more information.
             let more = sub.receive(value)
             
             self.lock.withLock {

@@ -87,13 +87,12 @@ extension PassthroughSubject {
         typealias Pub = PassthroughSubject<Output, Failure>
         typealias Sub = AnySubscriber<Output, Failure>
         
+        let lock = Lock()
+        
         var pub: Pub?
         var sub: Sub?
-        
-        let lock = Lock()
-        var isCompleted = false
-        
-        var demand: Subscribers.Demand = .none
+
+        var state: DemandState = .waiting
         
         init(pub: Pub, sub: Sub) {
             self.pub = pub
@@ -102,17 +101,13 @@ extension PassthroughSubject {
         
         func receive(_ value: Output) {
             self.lock.lock()
-            if self.isCompleted {
-                self.lock.unlock()
-                return
-            }
-
-            guard self.demand > 0 else {
+            
+            guard let demand = self.state.demand, demand > 0 else {
                 self.lock.unlock()
                 return
             }
             
-            self.demand -= 1
+            _ = self.state.sub(.max(1))
             
             let sub = self.sub!
             self.lock.unlock()
@@ -121,18 +116,16 @@ extension PassthroughSubject {
             let more = sub.receive(value)
             
             self.lock.withLock {
-                self.demand += more
+                _ = self.state.add(more)
             }
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
             self.lock.lock()
-            if self.isCompleted {
+            guard self.state.complete() else {
                 self.lock.unlock()
                 return
             }
-            
-            self.isCompleted = true
             
             self.pub = nil
             let sub = self.sub!
@@ -144,22 +137,25 @@ extension PassthroughSubject {
         
         func request(_ demand: Subscribers.Demand) {
             self.lock.withLock {
-                if self.isCompleted {
-                    return
+                switch self.state {
+                case .waiting:
+                    self.state = .demanding(demand)
+                case .demanding:
+                    _ = self.state.add(demand)
+                case .completed:
+                    break
                 }
-                self.demand += demand
             }
         }
         
         func cancel() {
             self.lock.lock()
             
-            if self.isCompleted {
+            guard self.state.complete() else {
                 self.lock.unlock()
                 return
             }
             
-            self.isCompleted = true
             let pub = self.pub
             self.pub = nil
             self.sub = nil
