@@ -293,8 +293,8 @@ class CurrentValueSubjectSpec: QuickSpec {
                 expect(subObj).to(beNil())
             }
             
-            // MARK: 2.5 subscription should retain pub and sub then release pub after sending completion
-            it("subscription should retain pub and sub then release pub after sending completion") {
+            // MARK: 2.5 subscription should retain pub and sub then release them after sending completion
+            it("subscription should retain pub and sub then release them after sending completion") {
                 var subscription: Subscription?
                 weak var pubObj: CurrentValueSubject<Int, Never>?
                 weak var subObj: AnyObject?
@@ -321,13 +321,13 @@ class CurrentValueSubjectSpec: QuickSpec {
                 pubObj?.send(completion: .finished)
                 
                 expect(pubObj).to(beNil())
-                expect(subObj).toNot(beNil())
+                expect(subObj).to(beNil())
                 
                 _ = subscription
             }
             
-            // MARK: 2.6 subscription should retain pub and sub then release pub after cancelling
-            it("subscription should retain pub and sub then release pub after cancelling") {
+            // MARK: 2.6 subscription should retain pub and sub then them pub after cancelling
+            it("subscription should retain pub and sub then release them after cancelling") {
                 var subscription: Subscription?
                 weak var pubObj: CurrentValueSubject<Int, Never>?
                 weak var subObj: AnyObject?
@@ -354,7 +354,7 @@ class CurrentValueSubjectSpec: QuickSpec {
                 subscription?.cancel()
                 
                 expect(pubObj).to(beNil())
-                expect(subObj).toNot(beNil())
+                expect(subObj).to(beNil())
             }
         }
         

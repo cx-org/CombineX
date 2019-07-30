@@ -241,14 +241,20 @@ extension Subscribers {
             return self == .unlimited ? nil : Int(rawValue)
         }
         
+        private enum CodingKeys: CodingKey {
+            case rawValue
+        }
+        
         /// Creates a new instance by decoding from the given decoder.
         ///
         /// This initializer throws an error if reading from the decoder fails, or
         /// if the data read is corrupted or otherwise invalid.
         ///
         /// - Parameter decoder: The decoder to read data from.
-//        public init(from decoder: Decoder) throws {
-//        }
+        public init(from decoder: Decoder) throws {
+            let container = try decoder.singleValueContainer()
+            self.rawValue = try container.decode(UInt.self)
+        }
         
         /// Encodes this value into the given encoder.
         ///
@@ -259,8 +265,10 @@ extension Subscribers {
         /// encoder's format.
         ///
         /// - Parameter encoder: The encoder to write data to.
-//        public func encode(to encoder: Encoder) throws {
-//        }
+        public func encode(to encoder: Encoder) throws {
+            var container = encoder.singleValueContainer()
+            try container.encode(self.rawValue)
+        }
         
         /// The hash value.
         ///

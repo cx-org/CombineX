@@ -88,10 +88,10 @@ extension PassthroughSubject {
         typealias Sub = AnySubscriber<Output, Failure>
         
         var pub: Pub?
-        let sub: Sub
+        var sub: Sub?
         
         let lock = Lock()
-        var isCancelled = false
+        var isCompleted = false
         
         var demand: Subscribers.Demand = .none
         
@@ -102,7 +102,7 @@ extension PassthroughSubject {
         
         func receive(_ value: Output) {
             self.lock.lock()
-            if self.isCancelled {
+            if self.isCompleted {
                 self.lock.unlock()
                 return
             }
@@ -113,10 +113,12 @@ extension PassthroughSubject {
             }
             
             self.demand -= 1
+            
+            let sub = self.sub!
             self.lock.unlock()
             
             // FIXME: Yes, no guarantee of synchronous backpressure. See PassthroughSubjectSpec#3.3 for more information.
-            let more = self.sub.receive(value)
+            let more = sub.receive(value)
             
             self.lock.withLock {
                 self.demand += more
@@ -125,42 +127,42 @@ extension PassthroughSubject {
         
         func receive(completion: Subscribers.Completion<Failure>) {
             self.lock.lock()
-            if self.isCancelled {
+            if self.isCompleted {
                 self.lock.unlock()
                 return
             }
             
+            self.isCompleted = true
+            
             self.pub = nil
+            let sub = self.sub!
+            self.sub = nil
             self.lock.unlock()
             
-            self.sub.receive(completion: completion)
+            sub.receive(completion: completion)
         }
         
         func request(_ demand: Subscribers.Demand) {
-            self.lock.lock()
-            defer {
-                self.lock.unlock()
+            self.lock.withLock {
+                if self.isCompleted {
+                    return
+                }
+                self.demand += demand
             }
-            
-            if self.isCancelled {
-                return
-            }
-            
-            self.demand += demand
         }
         
         func cancel() {
             self.lock.lock()
             
-            if self.isCancelled {
+            if self.isCompleted {
                 self.lock.unlock()
                 return
             }
             
-            self.isCancelled = true
-            
+            self.isCompleted = true
             let pub = self.pub
             self.pub = nil
+            self.sub = nil
             self.lock.unlock()
             
             pub?.removeSubscription(self)

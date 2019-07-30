@@ -137,7 +137,8 @@ class DemandSpec: QuickSpec {
                     let dataA = try encoder.encode(a)
                     let dataB = try encoder.encode(b)
                     
-                    expect(String(data: dataA, encoding: .utf8)).to(equal("{\"rawValue\":9223372036854775808}"))
+                    expect(String(data: dataA, encoding: .utf8)).to(equal("9223372036854775808"))
+                    expect(String(data: dataB, encoding: .utf8)).to(equal("10"))
                     
                     let decoder = JSONDecoder()
                     let x = try decoder.decode(Demand.self, from: dataA)

@@ -107,9 +107,10 @@ extension CurrentValueSubject {
         let lock = Lock()
         
         var pub: Pub?
-        let sub: Sub
+        var sub: Sub?
+        
         var current: Output
-        var isCancelled = false
+        var isCompleted = false
         
         var demand: Subscribers.Demand = .none
         
@@ -121,10 +122,12 @@ extension CurrentValueSubject {
         
         func receive(_ value: Output) {
             self.lock.lock()
-            if self.isCancelled {
+            if self.isCompleted {
                 self.lock.unlock()
                 return
             }
+            
+            self.current = value
             
             guard self.demand > 0 else {
                 self.lock.unlock()
@@ -132,10 +135,12 @@ extension CurrentValueSubject {
             }
             
             self.demand -= 1
-            self.current = value
+            
+            let sub = self.sub!
             self.lock.unlock()
             
-            let more = self.sub.receive(value)
+            // FIXME: Yes, no guarantee of synchronous backpressure. See CurrentValueSubjectSpec#3.3 for more information.
+            let more = sub.receive(value)
             
             self.lock.withLock {
                 self.demand += more
@@ -144,15 +149,19 @@ extension CurrentValueSubject {
         
         func receive(completion: Subscribers.Completion<Failure>) {
             self.lock.lock()
-            if self.isCancelled {
+            if self.isCompleted {
                 self.lock.unlock()
                 return
             }
             
+            self.isCompleted = true
+            
             self.pub = nil
+            let sub = self.sub!
+            self.sub = nil
             self.lock.unlock()
             
-            self.sub.receive(completion: completion)
+            sub.receive(completion: completion)
         }
         
         func request(_ demand: Subscribers.Demand) {
@@ -160,23 +169,23 @@ extension CurrentValueSubject {
             
             self.lock.lock()
             
-            if self.isCancelled {
+            if self.isCompleted {
                 self.lock.unlock()
                 return
             }
-            
             self.demand += demand
             
-            guard self.demand > 0 else {
+            if self.demand == 0 {
                 self.lock.unlock()
                 return
             }
             
             self.demand -= 1
+            let sub = self.sub!
             self.lock.unlock()
             
-            // FIXME: Yes, no guarantee of synchronous backpressure. See CurrentValueSubjectSpec#3.3 for more information.
-            let more = self.sub.receive(self.current)
+            // TODO: Check here
+            let more = sub.receive(self.current)
             
             self.lock.withLock {
                 self.demand += more
@@ -186,15 +195,16 @@ extension CurrentValueSubject {
         func cancel() {
             self.lock.lock()
             
-            if self.isCancelled {
+            if self.isCompleted {
                 self.lock.unlock()
                 return
             }
             
-            self.isCancelled = true
+            self.isCompleted = true
             
             let pub = self.pub
             self.pub = nil
+            self.sub = nil
             self.lock.unlock()
             
             pub?.removeSubscription(self)

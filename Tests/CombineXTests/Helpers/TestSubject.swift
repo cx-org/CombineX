@@ -92,10 +92,11 @@ extension TestSubject {
         typealias Sub = AnySubscriber<Output, Failure>
         
         var pub: Pub?
-        var sub: Sub
+        var sub: Sub?
         
         let lock = Lock(recursive: true)
-        var isCancelled = false
+        var isCompleted = false
+        
         var demand: Subscribers.Demand = .none
         
         enum DemandType {
@@ -131,7 +132,7 @@ extension TestSubject {
                 self.lock.unlock()
             }
             
-            if self.isCancelled {
+            if self.isCompleted {
                 return
             }
             
@@ -141,7 +142,7 @@ extension TestSubject {
             
             self.demand -= 1
             
-            let more = self.sub.receive(value)
+            let more = self.sub?.receive(value) ?? .none
             
             self.demand += more
             
@@ -157,12 +158,15 @@ extension TestSubject {
                 self.lock.unlock()
             }
             
-            if self.isCancelled {
+            if self.isCompleted {
                 return
             }
             
             self.pub = nil
-            self.sub.receive(completion: completion)
+            let sub = self.sub
+            self.sub = nil
+            
+            sub?.receive(completion: completion)
         }
         
         func request(_ demand: Subscribers.Demand) {
@@ -171,7 +175,7 @@ extension TestSubject {
                 self.lock.unlock()
             }
             
-            if self.isCancelled {
+            if self.isCompleted {
                 return
             }
             
@@ -189,14 +193,15 @@ extension TestSubject {
                 self.lock.unlock()
             }
             
-            if self.isCancelled {
+            if self.isCompleted {
                 return
             }
             
-            self.isCancelled = true
+            self.isCompleted = true
             
             let pub = self.pub
             self.pub = nil
+            self.sub = nil
             
             pub?.removeSubscription(self)
         }
