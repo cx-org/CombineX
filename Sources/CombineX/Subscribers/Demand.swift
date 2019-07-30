@@ -11,8 +11,8 @@ extension Subscribers {
         private static let _unlimited = UInt(Int.max) + 1
         
         private init(_ rawValue: UInt) {
-            if rawValue > Self._unlimited {
-                self.rawValue = Self._unlimited
+            if rawValue > Demand._unlimited {
+                self.rawValue = Demand._unlimited
                 return
             }
             self.rawValue = rawValue
