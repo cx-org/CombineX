@@ -1,3 +1,4 @@
+@usableFromInline
 enum RelayState {
     
     case waiting
@@ -9,6 +10,7 @@ enum RelayState {
 
 extension RelayState {
     
+    @inlinable
     var isWaiting: Bool {
         switch self {
         case .waiting:      return true
@@ -16,6 +18,7 @@ extension RelayState {
         }
     }
     
+    @inlinable
     var isRelaying: Bool {
         switch self {
         case .relaying:     return true
@@ -23,6 +26,7 @@ extension RelayState {
         }
     }
     
+    @inlinable
     var isCompleted: Bool {
         switch self {
         case .completed:         return true
@@ -30,6 +34,7 @@ extension RelayState {
         }
     }
     
+    @inlinable
     var subscription: Subscription? {
         switch self {
         case .relaying(let s):  return s
@@ -57,12 +62,14 @@ extension RelayState {
 
 extension RelayState {
     
+    @inlinable
     mutating func relay(_ subscription: Subscription) -> Bool {
         guard self.isWaiting else { return false }
         self = .relaying(subscription)
         return true
     }
     
+    @inlinable
     mutating func complete() -> Subscription? {
         defer {
             self = .completed

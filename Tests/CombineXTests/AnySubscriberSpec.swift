@@ -20,7 +20,8 @@ class AnySubscriberSpec: QuickSpec {
         // MARK: - Wrap
         describe("Wrap") {
             
-            // MARK: 1 Wrap a subject
+            // MARK:
+            // MARK: Wrap a subject
             context("Wrap a subject") {
                 
                 // MARK: 1.1 should not request demand when receive subscription
@@ -74,9 +75,30 @@ class AnySubscriberSpec: QuickSpec {
                     
                     expect(sub.events).to(equal([.value(1), .value(2), .value(3), .completion(.finished)]))
                 }
+                
+                #if !SWIFT_PACKAGE
+                // MARK: 1.4 should fatal error when wrapping a subject and receiving values before receiving a subscription
+                it("should fatal error when wrapping a subject and receiving values before receiving a subscription") {
+                    let subject = PassthroughSubject<Int, Error>()
+                    let sub = AnySubscriber(subject)
+                    expect {
+                        _ = sub.receive(1)
+                    }.to(throwAssertion())
+                }
+                
+                // MARK: 1.5 should fatal error when wrapping a subject and receiving completion before receiving a subscription
+                it("should fatal error when wrapping a subject and receiving completion before receiving a subscription") {
+                    let subject = PassthroughSubject<Int, Error>()
+                    let sub = AnySubscriber(subject)
+                    expect {
+                        sub.receive(completion: .finished)
+                    }.to(throwAssertion())
+                }
+                #endif
             }
             
-            // MARK: 2 Wrap closures
+            // MARK:
+            // MARK: Wrap closures
             context("Wrap closures") {
                 
                 // MARK: 2.1 should do nothing when closures are nil
@@ -99,29 +121,5 @@ class AnySubscriberSpec: QuickSpec {
                 }
             }
         }
-        
-        // MARK: Exception
-        #if !SWIFT_PACKAGE
-        describe("Exception") {
-            
-            // MARK: 3.1 should fatal error when wrapping a subject and receiving values before receiving a subscription
-            it("should fatal error when wrapping a subject and receiving values before receiving a subscription") {
-                let subject = PassthroughSubject<Int, Error>()
-                let sub = AnySubscriber(subject)
-                expect {
-                    _ = sub.receive(1)
-                }.to(throwAssertion())
-            }
-            
-            // MARK: 3.2 should fatal error when wrapping a subject and receiving completion before receiving a subscription
-            it("should fatal error when wrapping a subject and receiving completion before receiving a subscription") {
-                let subject = PassthroughSubject<Int, Error>()
-                let sub = AnySubscriber(subject)
-                expect {
-                    sub.receive(completion: .finished)
-                }.to(throwAssertion())
-            }
-        }
-        #endif
     }
 }

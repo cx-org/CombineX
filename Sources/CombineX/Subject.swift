@@ -31,7 +31,7 @@ extension Publisher {
         let sub = AnySubscriber(subject)
         self.subscribe(sub)
         return AnyCancellable {
-            sub.cancel()
+            sub.box.cancel()
         }
     }
 }
