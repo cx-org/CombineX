@@ -17,13 +17,6 @@ class TestSubject<Output, Failure>: Subject, Logging where Failure : Error {
     private var upstreamSubscriptions: [Subscription] = []
     
     let name: String?
-    var isLogEnabled = false {
-        didSet {
-            self.downstreamSubscriptions.forEach {
-                $0.isLogEnabled = true
-            }
-        }
-    }
     
     init(name: String? = nil) {
         self.name = name
@@ -126,10 +119,7 @@ extension TestSubject {
         typealias Sub = AnySubscriber<Output, Failure>
         
         let lock = Lock(recursive: true)
-        let name: String?
-        
-        var isLogEnabled = false
-        
+       
         var pub: Pub?
         var sub: Sub?
         
@@ -160,7 +150,6 @@ extension TestSubject {
         init(pub: Pub, sub: Sub) {
             self.pub = pub
             self.sub = sub
-            self.name = pub.name
         }
         
         func receive(_ value: Output) {
@@ -179,12 +168,12 @@ extension TestSubject {
             // FIXME: Yes, no guarantee of synchronous backpressure. See PassthroughSubjectSpec#3.3 for more information.
             let more = sub.receive(value)
             
+            self._demandRecords.withLockMutating { $0.append((.sync, more))}
+            self.trace("sync more", more)
+            
             self.lock.withLock {
                 _ = self.state.add(more)
             }
-            
-            self._demandRecords.withLockMutating { $0.append((.sync, more))}
-            self.log("TestSubject-\(self.name ?? ""): sync more", more)
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
@@ -205,7 +194,7 @@ extension TestSubject {
         func request(_ demand: Subscribers.Demand) {
             precondition(demand > 0)
             self._demandRecords.withLockMutating { $0.append((.request, demand))}
-            self.log("TestSubject-\(self.name ?? ""): request more", demand)
+            self.trace("request more", demand)
             
             self.lock.lock()
             var pub: Pub?

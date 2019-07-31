@@ -19,8 +19,6 @@ class TestSubscription: Subscription, Logging {
     let requestBody: ((Subscribers.Demand) -> Void)?
     let cancelBody: (() -> Void)?
     
-    var isLogEnabled = false
-    
     private let lock = Lock()
     private var _events: [Event] = []
     
@@ -35,7 +33,7 @@ class TestSubscription: Subscription, Logging {
     }
     
     func request(_ demand: Subscribers.Demand) {
-        self.log("TestSubscription-\(self.name ?? ""): request demand", demand)
+        self.trace("request demand", demand)
         self.lock.withLock {
             self._events.append(.request(demand: demand))
         }
@@ -43,7 +41,7 @@ class TestSubscription: Subscription, Logging {
     }
     
     func cancel() {
-        self.log("TestSubscription-\(self.name ?? ""): cancel")
+        self.trace("cancel")
         self.lock.withLock {
             self._events.append(.cancel)
         }
@@ -51,7 +49,7 @@ class TestSubscription: Subscription, Logging {
     }
     
     deinit {
-        self.log("TestSubscription-\(self.name ?? ""): deinit")
+        self.trace("deinit")
     }
 }
 

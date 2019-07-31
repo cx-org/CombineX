@@ -45,18 +45,12 @@ final class TestScheduler: Scheduler {
     
     let minimumTolerance: TestSchedulerTime.Stride = .seconds(0)
     
-    var isLogEnabled = false
-    
     init() {
         self._now = SchedulerTimeType(time: Date())
     }
     
     func schedule(options: TestScheduler.SchedulerOptions?, _ action: @escaping () -> Void) {
         self.lock.lock()
-        if self.isLogEnabled {
-            print("TestScheduler: schedule")
-        }
-        
         let scheduledAction = ScheduledAction(time: self._now, action: action)
         self.scheduledActions.append(scheduledAction)
         self.scheduledActions.sort(by: <)
@@ -65,9 +59,6 @@ final class TestScheduler: Scheduler {
     
     func schedule(after date: SchedulerTimeType, tolerance: SchedulerTimeType.Stride, options: SchedulerOptions?, _ action: @escaping () -> Void) {
         self.lock.lock()
-        if self.isLogEnabled {
-            print("TestScheduler: schedule after \(date)")
-        }
         let scheduledAction = ScheduledAction(time: date, action: action)
         self.scheduledActions.append(scheduledAction)
         self.scheduledActions.sort(by: <)
@@ -76,18 +67,13 @@ final class TestScheduler: Scheduler {
     
     func schedule(after date: SchedulerTimeType, interval: SchedulerTimeType.Stride, tolerance: SchedulerTimeType.Stride, options: SchedulerOptions?, _ action: @escaping () -> Void) -> Cancellable {
         self.lock.lock()
-        if self.isLogEnabled {
-            print("TestScheduler: schedule after \(date), interval \(interval)")
-        }
-
+        
         class Box: Cancellable {
-            
             var body: (() -> Void)? {
                 willSet {
                     self.body?()
                 }
             }
-            
             func cancel() {
                 self.body?()
             }
