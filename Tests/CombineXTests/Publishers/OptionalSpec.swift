@@ -41,7 +41,7 @@ class OptionalSpec: QuickSpec {
             it("should send finished") {
                 let pub = OptionalPublisher<Int>(nil)
              
-                let sub = makeTestSubscriber(Int.self, Never.self, .none)
+                let sub = makeTestSubscriber(Int.self, Never.self, .max(0))
                 pub.subscribe(sub)
                 
                 expect(sub.events).to(equal([.completion(.finished)]))
@@ -51,7 +51,7 @@ class OptionalSpec: QuickSpec {
             // MARK: 1.3 should throw assertion when none demand is requested
             it("should throw assertion when less than one demand is requested") {
                 let pub = OptionalPublisher<Int>(1)
-                let sub = makeTestSubscriber(Int.self, Never.self, .none)
+                let sub = makeTestSubscriber(Int.self, Never.self, .max(0))
                 expect {
                     pub.subscribe(sub)
                 }.to(throwAssertion())
@@ -60,7 +60,7 @@ class OptionalSpec: QuickSpec {
             // MARK: 1.4 should not throw assertion when none demand is requested if is nil
             it("should not throw assertion when none demand is requested if is nil") {
                 let pub = OptionalPublisher<Int>(nil)
-                let sub = makeTestSubscriber(Int.self, Never.self, .none)
+                let sub = makeTestSubscriber(Int.self, Never.self, .max(0))
                 expect {
                     pub.subscribe(sub)
                 }.toNot(throwAssertion())

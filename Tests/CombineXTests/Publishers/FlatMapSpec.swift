@@ -39,7 +39,7 @@ class FlatMapSpec: QuickSpec {
                 
                 pub.subscribe(sub)
                 
-                let events = [1, 2, 3].flatMap { [$0, $0, $0] }.map { TestEvent<Int, Never>.value($0) }
+                let events = [1, 2, 3].flatMap { [$0, $0, $0] }.map { TestSubscriberEvent<Int, Never>.value($0) }
                 let expected = events + [.completion(.finished)]
                 expect(sub.events).to(equal(expected))
             }

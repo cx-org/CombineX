@@ -21,7 +21,7 @@ class SequenceSpec: QuickSpec {
         // MARK: - Send Values
         describe("Send Values") {
             typealias Sub = TestSubscriber<Int, TestError>
-            typealias Event = TestEvent<Int, TestError>
+            typealias Event = TestSubscriberEvent<Int, TestError>
             
             // MARK: 1.1 should send values then send finished
             it("should send values then send finished") {

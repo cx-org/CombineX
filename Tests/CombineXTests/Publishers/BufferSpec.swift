@@ -57,7 +57,7 @@ class BufferSpec: QuickSpec {
                 
                 sub.subscription?.request(.max(5))
                 
-                let expected = (Array(0..<5) + Array(6..<11)).map { TestEvent<Int, TestError>.value($0) }
+                let expected = (Array(0..<5) + Array(6..<11)).map { TestSubscriberEvent<Int, TestError>.value($0) }
                 expect(sub.events).to(equal(expected))
             }
             
@@ -74,7 +74,7 @@ class BufferSpec: QuickSpec {
                 
                 sub.subscription?.request(.max(5))
                 
-                let expected = Array(0..<10).map { TestEvent<Int, TestError>.value($0) }
+                let expected = Array(0..<10).map { TestSubscriberEvent<Int, TestError>.value($0) }
                 expect(sub.events).to(equal(expected))
             }
             
@@ -90,7 +90,7 @@ class BufferSpec: QuickSpec {
                 }
                 
                 // FIXME: Apple's combine doesn't receive error.
-                let valueEvents = Array(0..<5).map { TestEvent<Int, TestError>.value($0) }
+                let valueEvents = Array(0..<5).map { TestSubscriberEvent<Int, TestError>.value($0) }
                 let expected = valueEvents + [.completion(.failure(.e1))]
                 expect(sub.events).to(equal(expected))
             }

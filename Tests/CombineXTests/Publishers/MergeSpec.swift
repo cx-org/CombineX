@@ -42,7 +42,7 @@ class MergeSpec: QuickSpec {
                 }
 
                 let events = (0..<100).map {
-                    TestEvent<Int, TestError>.value($0)
+                    TestSubscriberEvent<Int, TestError>.value($0)
                 }
                 expect(sub.events).to(equal(events))
             }
@@ -67,7 +67,7 @@ class MergeSpec: QuickSpec {
                 }
 
                 let events = (0..<100).map {
-                    TestEvent<Int, TestError>.value($0)
+                    TestSubscriberEvent<Int, TestError>.value($0)
                 }
                 expect(sub.events).to(equal(events))
             }

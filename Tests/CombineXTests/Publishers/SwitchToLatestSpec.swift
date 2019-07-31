@@ -46,7 +46,7 @@ class SwitchToLatestSpec: QuickSpec {
                 subject2.send(8)
                 subject2.send(9)
 
-                let expected = [1, 2, 3, 7, 8, 9].map { TestEvent<Int, Never>.value($0) }
+                let expected = [1, 2, 3, 7, 8, 9].map { TestSubscriberEvent<Int, Never>.value($0) }
                 expect(sub.events).to(equal(expected))
             }
             
@@ -176,7 +176,7 @@ class SwitchToLatestSpec: QuickSpec {
                 (10..<20).forEach { subject2.send($0) }
                 
                 // FIXME: Combine can't pass this, will get "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]". Is it a feature or bug? 🤔
-                let expected = (0..<12).map { TestEvent<Int, Never>.value($0) }
+                let expected = (0..<12).map { TestSubscriberEvent<Int, Never>.value($0) }
                 expect(sub.events).to(equal(expected))
             }
             #endif

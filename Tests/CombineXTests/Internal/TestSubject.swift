@@ -1,7 +1,12 @@
-/// A subject that passes along values and completion.
-///
-/// Use a `PassthroughSubject` in unit tests when you want a publisher than can publish specific values on-demand during tests.
-final public class PassthroughSubject<Output, Failure> : Subject where Failure : Error {
+#if USE_COMBINE
+import Combine
+#elseif SWIFT_PACKAGE
+import CombineX
+#else
+import Specs
+#endif
+
+class TestSubject<Output, Failure>: Subject, Logging where Failure : Error {
     
     private let downstreamLock = Lock()
     private var completion: Subscribers.Completion<Failure>?
@@ -11,15 +16,28 @@ final public class PassthroughSubject<Output, Failure> : Subject where Failure :
     private var isRequested = false
     private var upstreamSubscriptions: [Subscription] = []
     
-    public init() { }
+    let name: String?
+    var isLogEnabled = false {
+        didSet {
+            self.downstreamSubscriptions.forEach {
+                $0.isLogEnabled = true
+            }
+        }
+    }
     
-    /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-    ///
-    /// - SeeAlso: `subscribe(_:)`
-    /// - Parameters:
-    ///     - subscriber: The subscriber to attach to this `Publisher`.
-    ///                   once attached it can begin to receive values.
-    final public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
+    init(name: String? = nil) {
+        self.name = name
+    }
+    
+    var subscriptions: [Inner] {
+        return self.downstreamLock.withLockGet(self.downstreamSubscriptions)
+    }
+    
+    var subscription: Inner {
+        return self.subscriptions[0]
+    }
+    
+    func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
         self.downstreamLock.lock()
         
         if let completion = self.completion {
@@ -36,10 +54,7 @@ final public class PassthroughSubject<Output, Failure> : Subject where Failure :
         subscriber.receive(subscription: subscription)
     }
     
-    /// Sends a value to the subscriber.
-    ///
-    /// - Parameter value: The value to send.
-    final public func send(_ input: Output) {
+    func send(_ input: Output) {
         self.downstreamLock.lock()
         guard self.completion == nil else {
             self.downstreamLock.unlock()
@@ -53,10 +68,7 @@ final public class PassthroughSubject<Output, Failure> : Subject where Failure :
         }
     }
     
-    /// Sends a completion signal to the subscriber.
-    ///
-    /// - Parameter completion: A `Completion` instance which indicates whether publishing has finished normally or failed with an error.
-    final public func send(completion: Subscribers.Completion<Failure>) {
+    func send(completion: Subscribers.Completion<Failure>) {
         self.downstreamLock.lock()
         guard self.completion == nil else {
             self.downstreamLock.unlock()
@@ -78,8 +90,7 @@ final public class PassthroughSubject<Output, Failure> : Subject where Failure :
         self.downstreamLock.unlock()
     }
     
-    /// Provides this Subject an opportunity to establish demand for any new upstream subscriptions (say via, ```Publisher.subscribe<S: Subject>(_: Subject)`
-    final public func send(subscription: Subscription) {
+    func send(subscription: Subscription) {
         self.upstreamLock.lock()
         self.upstreamSubscriptions.append(subscription)
         let isRequested = self.isRequested
@@ -107,23 +118,49 @@ final public class PassthroughSubject<Output, Failure> : Subject where Failure :
     }
 }
 
-extension PassthroughSubject {
+extension TestSubject {
     
-    private class Inner: Subscription, CustomStringConvertible, CustomDebugStringConvertible {
+    final class Inner: Subscription, CustomStringConvertible, CustomDebugStringConvertible, Logging {
         
-        typealias Pub = PassthroughSubject<Output, Failure>
+        typealias Pub = TestSubject<Output, Failure>
         typealias Sub = AnySubscriber<Output, Failure>
         
-        let lock = Lock()
+        let lock = Lock(recursive: true)
+        let name: String?
+        
+        var isLogEnabled = false
         
         var pub: Pub?
         var sub: Sub?
-
+        
         var state: DemandState = .waiting
+        
+        enum DemandType {
+            case request
+            case sync
+        }
+        private let _demandRecords = Atom<[(DemandType, Subscribers.Demand)]>(val: [])
+        
+        var demandRecords: [Subscribers.Demand] {
+            return self._demandRecords.get().map { $0.1 }
+        }
+        
+        var requestDemandRecords: [Subscribers.Demand] {
+            return self._demandRecords.get().compactMap { (type, demand) in
+                type == .request ? demand : nil
+            }
+        }
+        
+        var syncDemandRecords: [Subscribers.Demand] {
+            return self._demandRecords.get().compactMap { (type, demand) in
+                type == .sync ? demand : nil
+            }
+        }
         
         init(pub: Pub, sub: Sub) {
             self.pub = pub
             self.sub = sub
+            self.name = pub.name
         }
         
         func receive(_ value: Output) {
@@ -145,6 +182,9 @@ extension PassthroughSubject {
             self.lock.withLock {
                 _ = self.state.add(more)
             }
+            
+            self._demandRecords.withLockMutating { $0.append((.sync, more))}
+            self.log("TestSubject-\(self.name ?? ""): sync more", more)
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
@@ -164,6 +204,8 @@ extension PassthroughSubject {
         
         func request(_ demand: Subscribers.Demand) {
             precondition(demand > 0)
+            self._demandRecords.withLockMutating { $0.append((.request, demand))}
+            self.log("TestSubject-\(self.name ?? ""): request more", demand)
             
             self.lock.lock()
             var pub: Pub?
@@ -199,11 +241,11 @@ extension PassthroughSubject {
         }
         
         var description: String {
-            return "PassthroughSubject"
+            return "TestSubject"
         }
         
         var debugDescription: String {
-            return "PassthroughSubject"
+            return "TestSubject"
         }
     }
 }

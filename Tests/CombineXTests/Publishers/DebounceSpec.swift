@@ -65,7 +65,7 @@ class DebounceSpec: QuickSpec {
                 scheduler.advance(by: .seconds(10))
                 
                 // FIXME: Strange
-                let expected = Array(repeating: TestEvent<Int, TestError>.value(1), count: 10)
+                let expected = Array(repeating: TestSubscriberEvent<Int, TestError>.value(1), count: 10)
                 expect(sub.events).to(equal(expected))
             }
             

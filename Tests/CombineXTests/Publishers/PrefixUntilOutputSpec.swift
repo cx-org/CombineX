@@ -39,7 +39,7 @@ class PrefixUntilOutputSpec: QuickSpec {
                     pub0.send(i)
                 }
                  
-                let valueEvents = (0..<10).map { TestEvent<Int, TestError>.value($0) }
+                let valueEvents = (0..<10).map { TestSubscriberEvent<Int, TestError>.value($0) }
                 let expected = valueEvents + [.completion(.finished)]
                 expect(sub.events).to(equal(expected))
             }
@@ -63,7 +63,7 @@ class PrefixUntilOutputSpec: QuickSpec {
                 }
                 
                 let expected = (0..<20).map {
-                    TestEvent<Int, TestError>.value($0)
+                    TestSubscriberEvent<Int, TestError>.value($0)
                 }
                 expect(sub.events).to(equal(expected))
             }

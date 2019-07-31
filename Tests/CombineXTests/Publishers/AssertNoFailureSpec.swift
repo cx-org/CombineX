@@ -25,7 +25,7 @@ class AssertNoFailureSpec: QuickSpec {
                 
                 let pub = Fail<Int, TestError>(error: .e0)
                     .assertNoFailure()
-                let sub = makeTestSubscriber(Int.self, Never.self, .none)
+                let sub = makeTestSubscriber(Int.self, Never.self, .max(0))
                 
                 expect {
                     pub.subscribe(sub)

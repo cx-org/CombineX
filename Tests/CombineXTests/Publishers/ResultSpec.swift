@@ -41,7 +41,7 @@ class ResultSpec: QuickSpec {
             it("should send failure") {
                 let pub = ResultPublisher<Int, TestError>(.e0)
                 
-                let sub = makeTestSubscriber(Int.self, TestError.self, .none)
+                let sub = makeTestSubscriber(Int.self, TestError.self, .max(0))
                 pub.subscribe(sub)
                 
                 expect(sub.events).to(equal([.completion(.failure(.e0))]))
@@ -51,7 +51,7 @@ class ResultSpec: QuickSpec {
             // MARK: 1.3 should throw assertion when none demand is requested
             it("should throw assertion when less than one demand is requested") {
                 let pub = ResultPublisher<Int, TestError>(1)
-                let sub = makeTestSubscriber(Int.self, TestError.self, .none)
+                let sub = makeTestSubscriber(Int.self, TestError.self, .max(0))
                 expect {
                     pub.subscribe(sub)
                 }.to(throwAssertion())
@@ -60,7 +60,7 @@ class ResultSpec: QuickSpec {
             // MARK: 1.4 should not throw assertion when none demand is requested if is nil
             it("should not throw assertion when none demand is requested if is failure") {
                 let pub = ResultPublisher<Int, TestError>(.e0)
-                let sub = makeTestSubscriber(Int.self, TestError.self, .none)
+                let sub = makeTestSubscriber(Int.self, TestError.self, .max(0))
                 expect {
                     pub.subscribe(sub)
                 }.toNot(throwAssertion())

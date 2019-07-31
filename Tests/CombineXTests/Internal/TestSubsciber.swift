@@ -8,21 +8,29 @@ import Specs
 
 func makeTestSubscriber<Input, Failure: Error>(_ input: Input.Type, _ failure: Failure.Type, _ demand: Subscribers.Demand) -> TestSubscriber<Input, Failure> {
     return TestSubscriber<Input, Failure>(receiveSubscription: { (s) in
-        s.request(demand)
+         s.request(demand)
     }, receiveValue: { v in
         return .none
     }, receiveCompletion: { c in
     })
 }
 
-enum TestEvent<Input, Failure: Error> {
+func makeTestSubscriber<Input, Failure: Error>(_ input: Input.Type, _ failure: Failure.Type) -> TestSubscriber<Input, Failure> {
+    return TestSubscriber<Input, Failure>(receiveSubscription: { (s) in
+    }, receiveValue: { v in
+        return .none
+    }, receiveCompletion: { c in
+    })
+}
+
+enum TestSubscriberEvent<Input, Failure: Error> {
     case value(Input)
     case completion(Subscribers.Completion<Failure>)
 }
 
 class TestSubscriber<Input, Failure>: Subscriber where Failure : Error {
     
-    typealias Event = TestEvent<Input, Failure>
+    typealias Event = TestSubscriberEvent<Input, Failure>
     
     private let receiveSubscriptionBody: ((Subscription) -> Void)?
     private let receiveValueBody: ((Input) -> Subscribers.Demand)?
@@ -84,7 +92,7 @@ extension TestSubscriber: ResourceProtocol {
     }
 }
 
-extension TestEvent {
+extension TestSubscriberEvent {
     
     func isFinished() -> Bool {
         switch self {
@@ -100,7 +108,7 @@ extension TestEvent {
         return e
     }
     
-    func mapError<NewFailure: Error>(_ transform: (Failure) -> NewFailure) -> TestEvent<Input, NewFailure> {
+    func mapError<NewFailure: Error>(_ transform: (Failure) -> NewFailure) -> TestSubscriberEvent<Input, NewFailure> {
         switch self {
         case .value(let i):         return .value(i)
         case .completion(let c):    return .completion(c.mapError(transform))
@@ -108,7 +116,7 @@ extension TestEvent {
     }
 }
 
-extension TestEvent where Input: Equatable {
+extension TestSubscriberEvent where Input: Equatable {
     
     func isValue(_ value: Input) -> Bool {
         switch self {
@@ -118,9 +126,9 @@ extension TestEvent where Input: Equatable {
     }
 }
 
-extension TestEvent: Equatable where Input: Equatable, Failure: Equatable {
+extension TestSubscriberEvent: Equatable where Input: Equatable, Failure: Equatable {
     
-    static func == (lhs: TestEvent, rhs: TestEvent) -> Bool {
+    static func == (lhs: TestSubscriberEvent, rhs: TestSubscriberEvent) -> Bool {
         switch (lhs, rhs) {
         case (.value(let a), .value(let b)):            return a == b
         case (.completion(let a), .completion(let b)):
@@ -134,7 +142,7 @@ extension TestEvent: Equatable where Input: Equatable, Failure: Equatable {
     }
 }
 
-extension TestEvent: CustomStringConvertible {
+extension TestSubscriberEvent: CustomStringConvertible {
     
     var description: String {
         switch self {
@@ -150,14 +158,14 @@ protocol TestEventProtocol {
     associatedtype Input
     associatedtype Failure: Error
     
-    var testEvent: TestEvent<Input, Failure> {
+    var testEvent: TestSubscriberEvent<Input, Failure> {
         get set
     }
 }
 
-extension TestEvent: TestEventProtocol {
+extension TestSubscriberEvent: TestEventProtocol {
     
-    var testEvent: TestEvent<Input, Failure> {
+    var testEvent: TestSubscriberEvent<Input, Failure> {
         get {
             return self
         }
@@ -169,7 +177,7 @@ extension TestEvent: TestEventProtocol {
 
 extension Collection where Element: TestEventProtocol {
     
-    func mapError<NewFailure: Error>(_ transform: (Element.Failure) -> NewFailure) -> [TestEvent<Element.Input, NewFailure>] {
+    func mapError<NewFailure: Error>(_ transform: (Element.Failure) -> NewFailure) -> [TestSubscriberEvent<Element.Input, NewFailure>] {
         return self.map {
             $0.testEvent.mapError(transform)
         }

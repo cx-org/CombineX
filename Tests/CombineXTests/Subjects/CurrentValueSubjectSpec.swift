@@ -166,6 +166,16 @@ class CurrentValueSubjectSpec: QuickSpec {
                     expect(sub.events.count).to(equal(i))
                 }
             }
+            
+            // MARK: 2.3 should fatal error when less than one demand is requested
+            it("should fatal error when less than one demand is requested") {
+                let subject = CurrentValueSubject<Int, Never>(-1)
+                let sub = makeTestSubscriber(Int.self, Never.self, .max(0))
+                
+                expect {
+                    subject.subscribe(sub)
+                }.to(throwAssertion())
+            }
         }
         
         
@@ -389,27 +399,11 @@ class CurrentValueSubjectSpec: QuickSpec {
                 expect(sub.events.count).to(equal(10))
             }
         }
-
-        // MARK: - Exception
-        #if !SWIFT_PACKAGE
-        describe("Exception", flags: [:]) {
-            
-            // MARK: 5.1 should fatal error when less than one demand is requested
-            it("should fatal error when less than one demand is requested") {
-                let subject = CurrentValueSubject<Int, Never>(-1)
-                let sub = makeTestSubscriber(Int.self, Never.self, .max(0))
-                
-                expect {
-                    subject.subscribe(sub)
-                }.to(throwAssertion())
-            }
-        }
-        #endif
         
         // MARK: - Current
         describe("Current") {
             
-            // MARK: 6.1 should not change current value after complete
+            // MARK: 5.1 should not change current value after complete
             it("should not change current value after complete") {
                 let subject = CurrentValueSubject<Int, TestError>(0)
                 expect(subject.value).to(equal(0))
@@ -427,7 +421,7 @@ class CurrentValueSubjectSpec: QuickSpec {
                 expect(subject.value).to(equal(4))
             }
             
-            // MARK: 6.2 should not send current value if the subscription requests again
+            // MARK: 5.2 should not send current value if the subscription requests again
             it("should not send current value if the subscription requests again") {
                 let subject = CurrentValueSubject<Int, TestError>(0)
                 let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in

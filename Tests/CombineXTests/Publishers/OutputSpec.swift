@@ -38,7 +38,7 @@ class OutputSpec: QuickSpec {
                 }
                 
                 let valueEvents = (10..<20).map {
-                    TestEvent<Int, Never>.value($0)
+                    TestSubscriberEvent<Int, Never>.value($0)
                 }
                 let expected = valueEvents + [.completion(.finished)]
                 expect(sub.events).to(equal(expected))
@@ -62,7 +62,7 @@ class OutputSpec: QuickSpec {
                 }
                 
                 let expected = (10..<17).map {
-                    TestEvent<Int, Never>.value($0)
+                    TestSubscriberEvent<Int, Never>.value($0)
                 }
                 expect(sub.events).to(equal(expected))
             }

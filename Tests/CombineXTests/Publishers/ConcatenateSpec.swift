@@ -30,7 +30,7 @@ class ConcatenateSpec: QuickSpec {
                 
                 pub.subscribe(sub)
                 
-                let valueEvents = (1...5).map { TestEvent<Int, Never>.value($0) }
+                let valueEvents = (1...5).map { TestSubscriberEvent<Int, Never>.value($0) }
                 let expected = valueEvents + [.completion(.finished)]
                 expect(sub.events).to(equal(expected))
             }
@@ -50,7 +50,7 @@ class ConcatenateSpec: QuickSpec {
                 
                 pub.subscribe(sub)
                 
-                let events = (0..<12).map { TestEvent<Int, Never>.value($0) }
+                let events = (0..<12).map { TestSubscriberEvent<Int, Never>.value($0) }
                 expect(sub.events).to(equal(events))
             }
             

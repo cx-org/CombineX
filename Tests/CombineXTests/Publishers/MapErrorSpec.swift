@@ -32,7 +32,7 @@ class MapErrorSpec: QuickSpec {
                 
                 pub.send(completion: .failure(.e0))
                 
-                let valueEvents = (0..<100).map { TestEvent<Int, TestError>.value($0) }
+                let valueEvents = (0..<100).map { TestSubscriberEvent<Int, TestError>.value($0) }
                 let expected = valueEvents + [.completion(.failure(.e2))]
                 expect(sub.events).to(equal(expected))
             }

@@ -11,9 +11,7 @@ import Foundation
 final class TestDispatchQueueScheduler: Scheduler {
     
     typealias SchedulerTimeType = TestSchedulerTime
-    enum SchedulerOptions {
-        case x
-    }
+    typealias SchedulerOptions = Never
     
     let dispatchQueue: DispatchQueue
     

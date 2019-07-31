@@ -13,9 +13,7 @@ private let counter = Atom<Int>(val: 0)
 final class TestScheduler: Scheduler {
 
     typealias SchedulerTimeType = TestSchedulerTime
-    enum SchedulerOptions {
-        case x
-    }
+    typealias SchedulerOptions = Never
     
     private final class ScheduledAction {
         let time: SchedulerTimeType

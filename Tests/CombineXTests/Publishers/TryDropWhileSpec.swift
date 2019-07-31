@@ -35,7 +35,7 @@ class TryDropWhileSpec: QuickSpec {
                 let got = sub.events.mapError { $0 as! TestError }
                 
                 let valueEvents = (50..<100).map {
-                    TestEvent<Int, TestError>.value($0)
+                    TestSubscriberEvent<Int, TestError>.value($0)
                 }
                 let expected = valueEvents + [.completion(.finished)]
                 

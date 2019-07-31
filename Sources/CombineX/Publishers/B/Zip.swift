@@ -187,11 +187,13 @@ extension Publishers.Zip {
                 let childB = self.childB
                 self.lock.unlock()
                 
-                switch source {
-                case .a:
-                    childB?.request(more)
-                case .b:
-                    childA?.request(more)
+                if more > 0 {
+                    switch source {
+                    case .a:
+                        childB?.request(more)
+                    case .b:
+                        childA?.request(more)
+                    }                    
                 }
                 return more
             default:

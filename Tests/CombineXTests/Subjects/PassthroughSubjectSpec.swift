@@ -18,6 +18,83 @@ class PassthroughSubjectSpec: QuickSpec {
             Resources.release()
         }
         
+        describe("Send Subscription") {
+               
+            // MARK: 5.1 should retain all upstream subscriptions
+            it("should retain all upstream subscriptions") {
+                let subject = PassthroughSubject<Int, TestError>()
+                
+                weak var subscriptionA: AnyObject?
+                weak var subscriptionB: AnyObject?
+                
+                do {
+                    let sA = TestSubscription(name: "A")
+                    let sB = TestSubscription(name: "B")
+                    subject.send(subscription: sA)
+                    subject.send(subscription: sB)
+                    subscriptionA = sA
+                    subscriptionB = sB
+                }
+                
+                expect(subscriptionA).toNot(beNil())
+                expect(subscriptionB).toNot(beNil())
+            }
+            
+            // MARK: 5.2 should not release all upstream subscriptions after send completion
+            it("should not release all upstream subscriptions after send completion") {
+                let subject = PassthroughSubject<Int, TestError>()
+                
+                weak var subscriptionA: AnyObject?
+                weak var subscriptionB: AnyObject?
+                
+                do {
+                    let sA = TestSubscription(name: "A")
+                    let sB = TestSubscription(name: "B")
+                    subject.send(subscription: sA)
+                    subject.send(subscription: sB)
+                    subscriptionA = sA
+                    subscriptionB = sB
+                }
+                
+                expect(subscriptionA).toNot(beNil())
+                expect(subscriptionB).toNot(beNil())
+                
+                subject.send(completion: .finished)
+                
+                expect(subscriptionA).toNot(beNil())
+                expect(subscriptionB).toNot(beNil())
+            }
+            
+            // MARK: 5.3 should request unlimited to upstream when a subscriber request
+            it("should request unlimited to upstream when a subscriber request") {
+                let subject = PassthroughSubject<Int, TestError>()
+                
+                let sA = TestSubscription(name: "A")
+                subject.send(subscription: sA)
+                expect(sA.events).to(equal([]))
+                
+                let sub = makeTestSubscriber(Int.self, TestError.self)
+                subject.subscribe(sub)
+                expect(sA.events).to(equal([]))
+                
+                sub.subscription?.request(.max(1))
+                expect(sA.events).to(equal([.request(demand: .unlimited)]))
+                
+                sub.subscription?.cancel()
+                
+                let sB = TestSubscription(name: "B")
+                
+                subject.send(subscription: sB)
+                expect(sB.events).to(equal([.request(demand: .unlimited)]))
+                
+                let newSub = makeTestSubscriber(Int.self, TestError.self, .max(1))
+                subject.subscribe(newSub)
+                
+                expect(sA.events).to(equal([.request(demand: .unlimited)]))
+                expect(sB.events).to(equal([.request(demand: .unlimited)]))
+            }
+        }
+        
         // MARK: - Send Events
         describe("Send Events") {
             
@@ -68,7 +145,6 @@ class PassthroughSubjectSpec: QuickSpec {
                 expect(sub.events).to(beEmpty())
             }
 
-            // MARK:
             // MARK: 1.4 should not send values before the subscriber requests
             it("should not send values before the subscriber requests") {
                 let subject = PassthroughSubject<Int, TestError>()
@@ -90,11 +166,7 @@ class PassthroughSubjectSpec: QuickSpec {
             it("should send completion even if the subscriber does not request") {
                 let subject = PassthroughSubject<Int, TestError>()
                 
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
-                }, receiveValue: { v in
-                    return .none
-                }, receiveCompletion: { s in
-                })
+                let sub = makeTestSubscriber(Int.self, TestError.self)
                 
                 subject.subscribe(sub)
                 subject.send(completion: .failure(.e0))
@@ -102,7 +174,6 @@ class PassthroughSubjectSpec: QuickSpec {
                 expect(sub.events).to(equal([.completion(.failure(.e0))]))
             }
             
-            // MARK:
             // MARK: 1.6 should resend completion if the subscription happens after sending completion
             it("should resend completion if the subscription happens after sending completion") {
                 let subject = PassthroughSubject<Int, TestError>()
@@ -121,10 +192,8 @@ class PassthroughSubjectSpec: QuickSpec {
             
             // MARK: 2.1 should send as many values as the subscriber's demand
             it("should send as many values as the subscriber's demand") {
-                typealias Sub = TestSubscriber<Int, TestError>
-                
                 let subject = PassthroughSubject<Int, TestError>()
-                let sub = Sub(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
                     s.request(.max(1))
                 }, receiveValue: { v in
                     return v == 0 ? .max(1) : .none
@@ -151,7 +220,7 @@ class PassthroughSubjectSpec: QuickSpec {
                 let subject = PassthroughSubject<Int, Error>()
                 
                 var subs: [TestSubscriber<Int, Error>] = []
-                let nums = (0..<10).map { _ in Int.random(in: 0..<10) }
+                let nums = (0..<10).map { _ in Int.random(in: 1..<10) }
                 
                 for i in nums {
                     let sub = makeTestSubscriber(Int.self, Error.self, .max(i))
@@ -167,6 +236,18 @@ class PassthroughSubjectSpec: QuickSpec {
                     expect(sub.events.count).to(equal(i))
                 }
             }
+            
+            #if !SWIFT_PACKAGE
+            // MARK: 2.3 should fatal error when less than one demand is requested
+            it("should fatal error when less than one demand is requested") {
+                let subject = PassthroughSubject<Int, Never>()
+                let sub = makeTestSubscriber(Int.self, Never.self, .max(0))
+                
+                expect {
+                    subject.subscribe(sub)
+                }.to(throwAssertion())
+            }
+            #endif
         }
         
         // MARK: - Release Resources

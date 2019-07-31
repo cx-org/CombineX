@@ -52,7 +52,8 @@ public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertibl
     /// Creates a type-erasing subscriber to wrap an existing subscriber.
     ///
     /// - Parameter s: The subscriber to type-erase.
-    @inlinable public init<S>(_ s: S) where Input == S.Input, Failure == S.Failure, S : Subscriber {
+    @inlinable
+    public init<S>(_ s: S) where Input == S.Input, Failure == S.Failure, S : Subscriber {
         self.box = ClosureSubscriberBox<Input, Failure>(receiveSubscription: s.receive(subscription:), receiveValue: s.receive(_:), receiveCompletion: s.receive(completion:))
         self.combineIdentifier = s.combineIdentifier
     }
@@ -68,7 +69,8 @@ public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertibl
     ///   - receiveSubscription: A closure to execute when the subscriber receives the initial subscription from the publisher.
     ///   - receiveValue: A closure to execute when the subscriber receives a value from the publisher.
     ///   - receiveCompletion: A closure to execute when the subscriber receives a completion callback from the publisher.
-    @inlinable public init(receiveSubscription: ((Subscription) -> Void)? = nil, receiveValue: ((Input) -> Subscribers.Demand)? = nil, receiveCompletion: ((Subscribers.Completion<Failure>) -> Void)? = nil) {
+    @inlinable
+    public init(receiveSubscription: ((Subscription) -> Void)? = nil, receiveValue: ((Input) -> Subscribers.Demand)? = nil, receiveCompletion: ((Subscribers.Completion<Failure>) -> Void)? = nil) {
         self.box = ClosureSubscriberBox<Input, Failure>(receiveSubscription: receiveSubscription, receiveValue: receiveValue, receiveCompletion: receiveCompletion)
         self.combineIdentifier = CombineIdentifier()
     }
@@ -77,7 +79,8 @@ public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertibl
     ///
     /// Use the received `Subscription` to request items from the publisher.
     /// - Parameter subscription: A subscription that represents the connection between publisher and subscriber.
-    @inlinable public func receive(subscription: Subscription) {
+    @inlinable
+    public func receive(subscription: Subscription) {
         self.box.receive(subscription: subscription)
     }
     
@@ -85,14 +88,16 @@ public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertibl
     ///
     /// - Parameter input: The published element.
     /// - Returns: A `Demand` instance indicating how many more elements the subcriber expects to receive.
-    @inlinable public func receive(_ value: Input) -> Subscribers.Demand {
+    @inlinable
+    public func receive(_ value: Input) -> Subscribers.Demand {
         self.box.receive(value)
     }
     
     /// Tells the subscriber that the publisher has completed publishing, either normally or with an error.
     ///
     /// - Parameter completion: A `Completion` case indicating whether publishing completed normally or with an error.
-    @inlinable public func receive(completion: Subscribers.Completion<Failure>) {
+    @inlinable
+    public func receive(completion: Subscribers.Completion<Failure>) {
         self.box.receive(completion: completion)
     }
 }
@@ -180,11 +185,16 @@ class SubjectSubscriberBox<S: Subject>: SubscriberBox<S.Output, S.Failure> {
     
     @inlinable
     override func receive(subscription: Subscription) {
-        guard self.lock.withLockGet(self.state.relay(subscription)) else {
+        self.lock.lock()
+        guard self.state.relay(subscription) else {
+            self.lock.unlock()
             subscription.cancel()
             return
         }
-        subscription.request(.unlimited)
+        let subject = self.subject
+        self.lock.unlock()
+        
+        subject?.send(subscription: subscription)
     }
     
     @inlinable
@@ -212,12 +222,11 @@ class SubjectSubscriberBox<S: Subject>: SubscriberBox<S.Output, S.Failure> {
         case .waiting:
             self.lock.unlock()
             fatalError()
-        case .relaying(let subscription):
+        case .relaying:
             self.state = .completed
             let subject = self.subject!
             self.lock.unlock()
             subject.send(completion: completion)
-            subscription.cancel()
         case .completed:
             self.lock.unlock()
         }

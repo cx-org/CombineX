@@ -14,6 +14,10 @@
 		620F66D022EAEAFF008194E9 /* DelaySpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 620F66CE22EAEAFF008194E9 /* DelaySpec.swift */; };
 		620F66D222EAED72008194E9 /* Timeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 620F66D122EAED72008194E9 /* Timeline.swift */; };
 		620F66D322EAED72008194E9 /* Timeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 620F66D122EAED72008194E9 /* Timeline.swift */; };
+		621DDC3F22F1949000F4B450 /* DemandState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621DDC3E22F1949000F4B450 /* DemandState.swift */; };
+		621DDC4022F1949000F4B450 /* DemandState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621DDC3E22F1949000F4B450 /* DemandState.swift */; };
+		623B8EEF22F13D230032ADAA /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 623B8EEE22F13D230032ADAA /* Logging.swift */; };
+		623B8EF022F13D230032ADAA /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 623B8EEE22F13D230032ADAA /* Logging.swift */; };
 		623D4E7322EFF8030046B28A /* Record.swift in Sources */ = {isa = PBXBuildFile; fileRef = 623D4E7222EFF8030046B28A /* Record.swift */; };
 		623D4E7522EFFA150046B28A /* ObserableObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 623D4E7422EFFA150046B28A /* ObserableObject.swift */; };
 		624D73BC22F0267E0062B01E /* RecordSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D73BB22F0267E0062B01E /* RecordSpec.swift */; };
@@ -322,6 +326,8 @@
 		620F66CA22EAD26E008194E9 /* TimeoutSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeoutSpec.swift; sourceTree = "<group>"; };
 		620F66CE22EAEAFF008194E9 /* DelaySpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DelaySpec.swift; sourceTree = "<group>"; };
 		620F66D122EAED72008194E9 /* Timeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timeline.swift; sourceTree = "<group>"; };
+		621DDC3E22F1949000F4B450 /* DemandState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemandState.swift; sourceTree = "<group>"; };
+		623B8EEE22F13D230032ADAA /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
 		623D4E7222EFF8030046B28A /* Record.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Record.swift; sourceTree = "<group>"; };
 		623D4E7422EFFA150046B28A /* ObserableObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObserableObject.swift; sourceTree = "<group>"; };
 		624D73BB22F0267E0062B01E /* RecordSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordSpec.swift; sourceTree = "<group>"; };
@@ -699,7 +705,7 @@
 				66C3640822E4C0D8002236BF /* Subjects */,
 				66C3640B22E4C0D8002236BF /* Publishers */,
 				66C3642E22E4C0D8002236BF /* Subscribers */,
-				66C3643122E4C0D8002236BF /* Helpers */,
+				66C3643122E4C0D8002236BF /* Internal */,
 			);
 			name = CombineXTests;
 			path = ../../Tests/CombineXTests;
@@ -782,7 +788,7 @@
 			path = Subscribers;
 			sourceTree = "<group>";
 		};
-		66C3643122E4C0D8002236BF /* Helpers */ = {
+		66C3643122E4C0D8002236BF /* Internal */ = {
 			isa = PBXGroup;
 			children = (
 				66C3643222E4C0D8002236BF /* TestPublisher.swift */,
@@ -802,8 +808,10 @@
 				620F66D122EAED72008194E9 /* Timeline.swift */,
 				66DBC38022EC9E09001AFCD7 /* TestSchedulerTime.swift */,
 				66577DAB22ED7B69007FB222 /* Resources.swift */,
+				623B8EEE22F13D230032ADAA /* Logging.swift */,
+				621DDC3E22F1949000F4B450 /* DemandState.swift */,
 			);
-			path = Helpers;
+			path = Internal;
 			sourceTree = "<group>";
 		};
 		66EF074022EF3AAF00EE5FC4 /* CombineX */ = {
@@ -1465,6 +1473,7 @@
 				66C364AD22E4C0D8002236BF /* TestDispatchQueueScheduler.swift in Sources */,
 				66C3646522E4C0D8002236BF /* BufferSpec.swift in Sources */,
 				66C3648322E4C0D8002236BF /* MeasureIntervalSpec.swift in Sources */,
+				623B8EEF22F13D230032ADAA /* Logging.swift in Sources */,
 				66C3645B22E4C0D8002236BF /* TryScanSpec.swift in Sources */,
 				66C3646D22E4C0D8002236BF /* ReplaceErrorSpec.swift in Sources */,
 				66C3644F22E4C0D8002236BF /* PublishedSpec.swift in Sources */,
@@ -1508,6 +1517,7 @@
 				66C3644922E4C0D8002236BF /* CurrentValueSubjectSpec.swift in Sources */,
 				66C3646B22E4C0D8002236BF /* TryDropWhileSpec.swift in Sources */,
 				66C3645122E4C0D8002236BF /* DropUntilOutputSpec.swift in Sources */,
+				621DDC3F22F1949000F4B450 /* DemandState.swift in Sources */,
 				66C3645F22E4C0D8002236BF /* FutureSpec.swift in Sources */,
 				66C3647F22E4C0D8002236BF /* CollectByCountSpec.swift in Sources */,
 				66C3646922E4C0D8002236BF /* PrintSpec.swift in Sources */,
@@ -1553,6 +1563,7 @@
 				66C364AE22E4C0D8002236BF /* TestDispatchQueueScheduler.swift in Sources */,
 				66C3646622E4C0D8002236BF /* BufferSpec.swift in Sources */,
 				66C3648422E4C0D8002236BF /* MeasureIntervalSpec.swift in Sources */,
+				623B8EF022F13D230032ADAA /* Logging.swift in Sources */,
 				66C3645C22E4C0D8002236BF /* TryScanSpec.swift in Sources */,
 				66C3646E22E4C0D8002236BF /* ReplaceErrorSpec.swift in Sources */,
 				66C3645022E4C0D8002236BF /* PublishedSpec.swift in Sources */,
@@ -1596,6 +1607,7 @@
 				66C3644A22E4C0D8002236BF /* CurrentValueSubjectSpec.swift in Sources */,
 				66C3646C22E4C0D8002236BF /* TryDropWhileSpec.swift in Sources */,
 				66C3645222E4C0D8002236BF /* DropUntilOutputSpec.swift in Sources */,
+				621DDC4022F1949000F4B450 /* DemandState.swift in Sources */,
 				66C3646022E4C0D8002236BF /* FutureSpec.swift in Sources */,
 				66C3648022E4C0D8002236BF /* CollectByCountSpec.swift in Sources */,
 				66C3646A22E4C0D8002236BF /* PrintSpec.swift in Sources */,

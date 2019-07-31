@@ -35,7 +35,7 @@ class JustSpec: QuickSpec {
             // MARK: 1.2 should throw assertion when none demand is requested
             it("should throw assertion when less than one demand is requested") {
                 let pub = Just<Int>(1)
-                let sub = makeTestSubscriber(Int.self, Never.self, .none)
+                let sub = makeTestSubscriber(Int.self, Never.self, .max(0))
                 expect {
                     pub.subscribe(sub)
                 }.to(throwAssertion())
@@ -56,7 +56,7 @@ class JustSpec: QuickSpec {
                 pub.subscribe(sub)
                 
                 expect {
-                    subscription?.request(.none)
+                    subscription?.request(.max(0))
                 }.to(throwAssertion())
             }
             #endif
