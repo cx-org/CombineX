@@ -626,14 +626,8 @@
 		66312FAC22B665620081D8F1 /* Specs */ = {
 			isa = PBXGroup;
 			children = (
+				66BB4A8022F1D19C00FEAB35 /* tmp */,
 				66EF074022EF3AAF00EE5FC4 /* CombineX */,
-				66312FAD22B665620081D8F1 /* AppDelegate.swift */,
-				66312FAF22B665620081D8F1 /* SceneDelegate.swift */,
-				66312FB122B665620081D8F1 /* ViewController.swift */,
-				66312FB322B665620081D8F1 /* Main.storyboard */,
-				66312FB622B665630081D8F1 /* Assets.xcassets */,
-				66312FB822B665630081D8F1 /* LaunchScreen.storyboard */,
-				66312FBB22B665630081D8F1 /* Info.plist */,
 			);
 			path = Specs;
 			sourceTree = "<group>";
@@ -641,8 +635,8 @@
 		66312FC322B665630081D8F1 /* SpecsTests */ = {
 			isa = PBXGroup;
 			children = (
+				66BB4A8122F1D1BF00FEAB35 /* tmp */,
 				66C3640122E4C0D8002236BF /* CombineXTests */,
-				66312FC622B665630081D8F1 /* Info.plist */,
 			);
 			path = SpecsTests;
 			sourceTree = "<group>";
@@ -691,6 +685,28 @@
 				8DCB044E242447A73457C8E7 /* Pods_SpecsTests.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		66BB4A8022F1D19C00FEAB35 /* tmp */ = {
+			isa = PBXGroup;
+			children = (
+				66312FAD22B665620081D8F1 /* AppDelegate.swift */,
+				66312FAF22B665620081D8F1 /* SceneDelegate.swift */,
+				66312FB122B665620081D8F1 /* ViewController.swift */,
+				66312FB322B665620081D8F1 /* Main.storyboard */,
+				66312FB622B665630081D8F1 /* Assets.xcassets */,
+				66312FB822B665630081D8F1 /* LaunchScreen.storyboard */,
+				66312FBB22B665630081D8F1 /* Info.plist */,
+			);
+			name = tmp;
+			sourceTree = "<group>";
+		};
+		66BB4A8122F1D1BF00FEAB35 /* tmp */ = {
+			isa = PBXGroup;
+			children = (
+				66312FC622B665630081D8F1 /* Info.plist */,
+			);
+			name = tmp;
 			sourceTree = "<group>";
 		};
 		66C3640122E4C0D8002236BF /* CombineXTests */ = {

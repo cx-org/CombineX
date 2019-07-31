@@ -17,13 +17,11 @@ class DelaySpec: QuickSpec {
             Resources.release()
         }
         
-        // TODO: under investigation
-        
         // MARK: - Relay
         describe("Relay") {
             
             // 1.1 should delay events
-            xit("should delay events") {
+            it("should delay events") {
                 let subject = PassthroughSubject<Int, TestError>()
                 let scheduler = TestScheduler()
                 let pub = subject.delay(for: .seconds(1), scheduler: scheduler)
@@ -33,8 +31,8 @@ class DelaySpec: QuickSpec {
                 let receiveC = Timeline(context: scheduler)
                 
                 let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
-                    s.request(.unlimited)
                     receiveS.record()
+                    s.request(.unlimited)
                 }, receiveValue: { v in
                     receiveV.record()
                     return .none
@@ -46,16 +44,22 @@ class DelaySpec: QuickSpec {
                 let sendV = Timeline(context: scheduler)
                 let sendB = Timeline(context: scheduler)
                 
-                pub.subscribe(sub)
+                
                 sendS.record()
-
+                pub.subscribe(sub)
+                
+                scheduler.advance(by: .seconds(5))
+                
+                // wait until receiving subscription
+                expect(sub.subscription).toEventuallyNot(beNil())
+                
+                sendV.record()
                 subject.send(1)
                 sendV.record()
                 subject.send(2)
-                sendV.record()
                 
-                subject.send(completion: .failure(.e0))
                 sendB.record()
+                subject.send(completion: .failure(.e0))
                 
                 scheduler.advance(by: .seconds(5))
                 
@@ -65,25 +69,37 @@ class DelaySpec: QuickSpec {
                 expect(sendB.delayed(1).isCloseTo(to: receiveC)).toEventually(beTrue())
             }
             
-            // MARK: 1.2 should not send susbcription with scheduler
-            xit("should not send susbcription with scheduler") {
+            // MARK: 1.2 should send events with scheduler
+            it("should send events with scheduler") {
                 let subject = PassthroughSubject<Int, TestError>()
                 let scheduler = TestDispatchQueueScheduler.serial()
-                let pub = subject.delay(for: .seconds(1), scheduler: scheduler)
+                let pub = subject.delay(for: .seconds(0.1), scheduler: scheduler)
                 
-                var executed = false
+                var executed = (subscription: false, value: false, completion: false)
                 let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
                     s.request(.unlimited)
-                    expect(scheduler.isCurrent).to(beFalse())
-                    executed = true
+                    expect(scheduler.isCurrent).to(beTrue())
+                    executed.subscription = true
                 }, receiveValue: { v in
+                    expect(scheduler.isCurrent).to(beTrue())
+                    executed.value = true
                     return .none
                 }, receiveCompletion: { c in
+                    expect(scheduler.isCurrent).to(beTrue())
+                    executed.completion = true
                 })
                 
                 pub.subscribe(sub)
                 
-                expect(executed).toEventually(beTrue())
+                // wait until receiving subscription
+                expect(sub.subscription).toEventuallyNot(beNil())
+                
+                subject.send(1)
+                subject.send(completion: .finished)
+                
+                expect(executed.subscription).toEventually(beTrue())
+                expect(executed.value).toEventually(beTrue())
+                expect(executed.completion).toEventually(beTrue())
             }
         }
     }
