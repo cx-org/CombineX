@@ -48,6 +48,8 @@
 		6680BA9922EB556100ACAA33 /* SubscribeOnSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6680BA9722EB556100ACAA33 /* SubscribeOnSpec.swift */; };
 		6693571222F3250B0006AAE0 /* TestExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6693571122F3250B0006AAE0 /* TestExtensions.swift */; };
 		6693571322F3250B0006AAE0 /* TestExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6693571122F3250B0006AAE0 /* TestExtensions.swift */; };
+		6693571622F32EF30006AAE0 /* TestEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6693571522F32EF30006AAE0 /* TestEvent.swift */; };
+		6693571722F32EF30006AAE0 /* TestEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6693571522F32EF30006AAE0 /* TestEvent.swift */; };
 		66BB4A8922F1F15E00FEAB35 /* CollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66BB4A8822F1F15E00FEAB35 /* CollectionExtensions.swift */; };
 		66BB4A9B22F1F23100FEAB35 /* CompletionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66BB4A9A22F1F23100FEAB35 /* CompletionExtensions.swift */; };
 		66BB4A9C22F1F23100FEAB35 /* CompletionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66BB4A9A22F1F23100FEAB35 /* CompletionExtensions.swift */; };
@@ -143,8 +145,8 @@
 		66C3649422E4C0D8002236BF /* SinkSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C3643022E4C0D8002236BF /* SinkSpec.swift */; };
 		66C3649522E4C0D8002236BF /* TestPublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C3643222E4C0D8002236BF /* TestPublisher.swift */; };
 		66C3649622E4C0D8002236BF /* TestPublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C3643222E4C0D8002236BF /* TestPublisher.swift */; };
-		66C3649722E4C0D8002236BF /* TestSubsciber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C3643322E4C0D8002236BF /* TestSubsciber.swift */; };
-		66C3649822E4C0D8002236BF /* TestSubsciber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C3643322E4C0D8002236BF /* TestSubsciber.swift */; };
+		66C3649722E4C0D8002236BF /* TestSubscriberEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C3643322E4C0D8002236BF /* TestSubscriberEvent.swift */; };
+		66C3649822E4C0D8002236BF /* TestSubscriberEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C3643322E4C0D8002236BF /* TestSubscriberEvent.swift */; };
 		66C3649922E4C0D8002236BF /* TestSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C3643422E4C0D8002236BF /* TestSubscription.swift */; };
 		66C3649A22E4C0D8002236BF /* TestSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C3643422E4C0D8002236BF /* TestSubscription.swift */; };
 		66C3649B22E4C0D8002236BF /* TestObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C3643522E4C0D8002236BF /* TestObject.swift */; };
@@ -372,6 +374,7 @@
 		666DE31622D1D8800081EE60 /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Nimble.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6680BA9722EB556100ACAA33 /* SubscribeOnSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscribeOnSpec.swift; sourceTree = "<group>"; };
 		6693571122F3250B0006AAE0 /* TestExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestExtensions.swift; sourceTree = "<group>"; };
+		6693571522F32EF30006AAE0 /* TestEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestEvent.swift; sourceTree = "<group>"; };
 		66BB4A8822F1F15E00FEAB35 /* CollectionExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionExtensions.swift; sourceTree = "<group>"; };
 		66BB4A9A22F1F23100FEAB35 /* CompletionExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionExtensions.swift; sourceTree = "<group>"; };
 		66BC019E22ED824C003C0814 /* DebounceSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebounceSpec.swift; sourceTree = "<group>"; };
@@ -420,7 +423,7 @@
 		66C3642F22E4C0D8002236BF /* AssignSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssignSpec.swift; sourceTree = "<group>"; };
 		66C3643022E4C0D8002236BF /* SinkSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SinkSpec.swift; sourceTree = "<group>"; };
 		66C3643222E4C0D8002236BF /* TestPublisher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestPublisher.swift; sourceTree = "<group>"; };
-		66C3643322E4C0D8002236BF /* TestSubsciber.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestSubsciber.swift; sourceTree = "<group>"; };
+		66C3643322E4C0D8002236BF /* TestSubscriberEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestSubscriberEvent.swift; sourceTree = "<group>"; };
 		66C3643422E4C0D8002236BF /* TestSubscription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestSubscription.swift; sourceTree = "<group>"; };
 		66C3643522E4C0D8002236BF /* TestObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestObject.swift; sourceTree = "<group>"; };
 		66C3643622E4C0D8002236BF /* Lock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Lock.swift; sourceTree = "<group>"; };
@@ -853,10 +856,11 @@
 				6279F0D622E555050005840F /* TestScheduler.swift */,
 				66DBC38022EC9E09001AFCD7 /* TestSchedulerTime.swift */,
 				66C3643B22E4C0D8002236BF /* TestSubject.swift */,
-				66C3643322E4C0D8002236BF /* TestSubsciber.swift */,
+				66C3643322E4C0D8002236BF /* TestSubscriberEvent.swift */,
 				66C3643422E4C0D8002236BF /* TestSubscription.swift */,
 				620F66D122EAED72008194E9 /* Timeline.swift */,
 				66C3643822E4C0D8002236BF /* Typealias.swift */,
+				6693571522F32EF30006AAE0 /* TestEvent.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -1524,6 +1528,7 @@
 				623B8EEF22F13D230032ADAA /* Logging.swift in Sources */,
 				66C3645B22E4C0D8002236BF /* TryScanSpec.swift in Sources */,
 				66C3646D22E4C0D8002236BF /* ReplaceErrorSpec.swift in Sources */,
+				6693571622F32EF30006AAE0 /* TestEvent.swift in Sources */,
 				66C3644F22E4C0D8002236BF /* PublishedSpec.swift in Sources */,
 				66C3643F22E4C0D8002236BF /* AnySubscriberSpec.swift in Sources */,
 				66C3644B22E4C0D8002236BF /* PassthroughSubjectSpec.swift in Sources */,
@@ -1546,7 +1551,7 @@
 				66C3647322E4C0D8002236BF /* OutputSpec.swift in Sources */,
 				6680BA9822EB556100ACAA33 /* SubscribeOnSpec.swift in Sources */,
 				66C3648D22E4C0D8002236BF /* TryCatchSpec.swift in Sources */,
-				66C3649722E4C0D8002236BF /* TestSubsciber.swift in Sources */,
+				66C3649722E4C0D8002236BF /* TestSubscriberEvent.swift in Sources */,
 				66C3645722E4C0D8002236BF /* TryCompactMapSpec.swift in Sources */,
 				66C3646F22E4C0D8002236BF /* ConcatenateSpec.swift in Sources */,
 				66BC019F22ED824C003C0814 /* DebounceSpec.swift in Sources */,
@@ -1615,6 +1620,7 @@
 				623B8EF022F13D230032ADAA /* Logging.swift in Sources */,
 				66C3645C22E4C0D8002236BF /* TryScanSpec.swift in Sources */,
 				66C3646E22E4C0D8002236BF /* ReplaceErrorSpec.swift in Sources */,
+				6693571722F32EF30006AAE0 /* TestEvent.swift in Sources */,
 				66C3645022E4C0D8002236BF /* PublishedSpec.swift in Sources */,
 				66C3644022E4C0D8002236BF /* AnySubscriberSpec.swift in Sources */,
 				66C3644C22E4C0D8002236BF /* PassthroughSubjectSpec.swift in Sources */,
@@ -1637,7 +1643,7 @@
 				66C3647422E4C0D8002236BF /* OutputSpec.swift in Sources */,
 				6680BA9922EB556100ACAA33 /* SubscribeOnSpec.swift in Sources */,
 				66C3648E22E4C0D8002236BF /* TryCatchSpec.swift in Sources */,
-				66C3649822E4C0D8002236BF /* TestSubsciber.swift in Sources */,
+				66C3649822E4C0D8002236BF /* TestSubscriberEvent.swift in Sources */,
 				66C3645822E4C0D8002236BF /* TryCompactMapSpec.swift in Sources */,
 				66C3647022E4C0D8002236BF /* ConcatenateSpec.swift in Sources */,
 				66BC01A022ED824C003C0814 /* DebounceSpec.swift in Sources */,

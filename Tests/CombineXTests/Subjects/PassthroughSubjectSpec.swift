@@ -261,7 +261,7 @@ class PassthroughSubjectSpec: QuickSpec {
 
                 weak var subscription = sub.subscription as AnyObject
                 
-                sub.releaseSubscription()
+                sub.release()
 
                 expect(subscription).toNot(beNil())
                 pub.send(completion: .finished)
@@ -293,7 +293,7 @@ class PassthroughSubjectSpec: QuickSpec {
 
                 weak var subscription = sub.subscription as AnyObject
                 
-                sub.releaseSubscription()
+                sub.release()
 
                 expect(subscription).toNot(beNil())
                 (subscription as? Subscription)?.cancel()

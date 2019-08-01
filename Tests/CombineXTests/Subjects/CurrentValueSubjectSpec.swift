@@ -167,6 +167,7 @@ class CurrentValueSubjectSpec: QuickSpec {
                 }
             }
             
+            #if !SWIFT_PACKAGE
             // MARK: 2.3 should fatal error when less than one demand is requested
             it("should fatal error when less than one demand is requested") {
                 let subject = CurrentValueSubject<Int, Never>(-1)
@@ -176,6 +177,7 @@ class CurrentValueSubjectSpec: QuickSpec {
                     subject.subscribe(sub)
                 }.to(throwAssertion())
             }
+            #endif
         }
         
         
@@ -190,7 +192,7 @@ class CurrentValueSubjectSpec: QuickSpec {
 
                 weak var subscription = sub.subscription as AnyObject
                 
-                sub.releaseSubscription()
+                sub.release()
 
                 expect(subscription).toNot(beNil())
                 pub.send(completion: .finished)
@@ -222,7 +224,7 @@ class CurrentValueSubjectSpec: QuickSpec {
 
                 weak var subscription = sub.subscription as AnyObject
                 
-                sub.releaseSubscription()
+                sub.release()
 
                 expect(subscription).toNot(beNil())
                 (subscription as? Subscription)?.cancel()
