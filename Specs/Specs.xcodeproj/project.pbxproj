@@ -46,17 +46,9 @@
 		66577DAD22ED7B69007FB222 /* Resources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66577DAB22ED7B69007FB222 /* Resources.swift */; };
 		6680BA9822EB556100ACAA33 /* SubscribeOnSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6680BA9722EB556100ACAA33 /* SubscribeOnSpec.swift */; };
 		6680BA9922EB556100ACAA33 /* SubscribeOnSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6680BA9722EB556100ACAA33 /* SubscribeOnSpec.swift */; };
+		6693571222F3250B0006AAE0 /* TestExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6693571122F3250B0006AAE0 /* TestExtensions.swift */; };
+		6693571322F3250B0006AAE0 /* TestExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6693571122F3250B0006AAE0 /* TestExtensions.swift */; };
 		66BB4A8922F1F15E00FEAB35 /* CollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66BB4A8822F1F15E00FEAB35 /* CollectionExtensions.swift */; };
-		66BB4A8C22F1F1C000FEAB35 /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66BB4A8B22F1F1C000FEAB35 /* DoubleExtensions.swift */; };
-		66BB4A8D22F1F1C000FEAB35 /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66BB4A8B22F1F1C000FEAB35 /* DoubleExtensions.swift */; };
-		66BB4A8F22F1F1D300FEAB35 /* DispatchQueueExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66BB4A8E22F1F1D300FEAB35 /* DispatchQueueExtensions.swift */; };
-		66BB4A9022F1F1D300FEAB35 /* DispatchQueueExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66BB4A8E22F1F1D300FEAB35 /* DispatchQueueExtensions.swift */; };
-		66BB4A9222F1F1ED00FEAB35 /* ArrayExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66BB4A9122F1F1ED00FEAB35 /* ArrayExtensions.swift */; };
-		66BB4A9322F1F1ED00FEAB35 /* ArrayExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66BB4A9122F1F1ED00FEAB35 /* ArrayExtensions.swift */; };
-		66BB4A9522F1F20600FEAB35 /* OptionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66BB4A9422F1F20600FEAB35 /* OptionExtensions.swift */; };
-		66BB4A9622F1F20600FEAB35 /* OptionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66BB4A9422F1F20600FEAB35 /* OptionExtensions.swift */; };
-		66BB4A9822F1F21A00FEAB35 /* IntExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66BB4A9722F1F21A00FEAB35 /* IntExtensions.swift */; };
-		66BB4A9922F1F21A00FEAB35 /* IntExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66BB4A9722F1F21A00FEAB35 /* IntExtensions.swift */; };
 		66BB4A9B22F1F23100FEAB35 /* CompletionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66BB4A9A22F1F23100FEAB35 /* CompletionExtensions.swift */; };
 		66BB4A9C22F1F23100FEAB35 /* CompletionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66BB4A9A22F1F23100FEAB35 /* CompletionExtensions.swift */; };
 		66BC019F22ED824C003C0814 /* DebounceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66BC019E22ED824C003C0814 /* DebounceSpec.swift */; };
@@ -379,12 +371,8 @@
 		666DE31422D1D8790081EE60 /* QuickSpecBase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = QuickSpecBase.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		666DE31622D1D8800081EE60 /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Nimble.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6680BA9722EB556100ACAA33 /* SubscribeOnSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscribeOnSpec.swift; sourceTree = "<group>"; };
+		6693571122F3250B0006AAE0 /* TestExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestExtensions.swift; sourceTree = "<group>"; };
 		66BB4A8822F1F15E00FEAB35 /* CollectionExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionExtensions.swift; sourceTree = "<group>"; };
-		66BB4A8B22F1F1C000FEAB35 /* DoubleExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoubleExtensions.swift; sourceTree = "<group>"; };
-		66BB4A8E22F1F1D300FEAB35 /* DispatchQueueExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchQueueExtensions.swift; sourceTree = "<group>"; };
-		66BB4A9122F1F1ED00FEAB35 /* ArrayExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayExtensions.swift; sourceTree = "<group>"; };
-		66BB4A9422F1F20600FEAB35 /* OptionExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionExtensions.swift; sourceTree = "<group>"; };
-		66BB4A9722F1F21A00FEAB35 /* IntExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntExtensions.swift; sourceTree = "<group>"; };
 		66BB4A9A22F1F23100FEAB35 /* CompletionExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionExtensions.swift; sourceTree = "<group>"; };
 		66BC019E22ED824C003C0814 /* DebounceSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebounceSpec.swift; sourceTree = "<group>"; };
 		66BC01A122ED8259003C0814 /* ThrottleSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThrottleSpec.swift; sourceTree = "<group>"; };
@@ -704,6 +692,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		6693571422F3265E0006AAE0 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				66BB4A9A22F1F23100FEAB35 /* CompletionExtensions.swift */,
+				66C3643722E4C0D8002236BF /* CollectionExtensions.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		66BB4A8022F1D19C00FEAB35 /* tmp */ = {
 			isa = PBXGroup;
 			children = (
@@ -735,18 +732,16 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
-		66BB4A8A22F1F1B300FEAB35 /* Extensions */ = {
+		66BB4A8A22F1F1B300FEAB35 /* Internal */ = {
 			isa = PBXGroup;
 			children = (
-				66BB4A8B22F1F1C000FEAB35 /* DoubleExtensions.swift */,
-				66BB4A8E22F1F1D300FEAB35 /* DispatchQueueExtensions.swift */,
-				66BB4A9122F1F1ED00FEAB35 /* ArrayExtensions.swift */,
-				66BB4A9422F1F20600FEAB35 /* OptionExtensions.swift */,
-				66BB4A9722F1F21A00FEAB35 /* IntExtensions.swift */,
-				66BB4A9A22F1F23100FEAB35 /* CompletionExtensions.swift */,
-				66C3643722E4C0D8002236BF /* CollectionExtensions.swift */,
+				6693571422F3265E0006AAE0 /* Extensions */,
+				66C3643622E4C0D8002236BF /* Lock.swift */,
+				66C3643A22E4C0D8002236BF /* Atom.swift */,
+				66C3643D22E4C0D8002236BF /* Const.swift */,
+				621DDC3E22F1949000F4B450 /* DemandState.swift */,
 			);
-			path = Extensions;
+			path = Internal;
 			sourceTree = "<group>";
 		};
 		66C3640122E4C0D8002236BF /* CombineXTests */ = {
@@ -761,7 +756,8 @@
 				66C3640822E4C0D8002236BF /* Subjects */,
 				66C3640B22E4C0D8002236BF /* Publishers */,
 				66C3642E22E4C0D8002236BF /* Subscribers */,
-				66C3643122E4C0D8002236BF /* Internal */,
+				66BB4A8A22F1F1B300FEAB35 /* Internal */,
+				66C3643122E4C0D8002236BF /* Helpers */,
 			);
 			name = CombineXTests;
 			path = ../../Tests/CombineXTests;
@@ -844,29 +840,25 @@
 			path = Subscribers;
 			sourceTree = "<group>";
 		};
-		66C3643122E4C0D8002236BF /* Internal */ = {
+		66C3643122E4C0D8002236BF /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				66BB4A8A22F1F1B300FEAB35 /* Extensions */,
+				623B8EEE22F13D230032ADAA /* Logging.swift */,
+				66577DAB22ED7B69007FB222 /* Resources.swift */,
+				66C3643E22E4C0D8002236BF /* TestDispatchQueueScheduler.swift */,
+				66C3643C22E4C0D8002236BF /* TestError.swift */,
+				6693571122F3250B0006AAE0 /* TestExtensions.swift */,
+				66C3643522E4C0D8002236BF /* TestObject.swift */,
 				66C3643222E4C0D8002236BF /* TestPublisher.swift */,
+				6279F0D622E555050005840F /* TestScheduler.swift */,
+				66DBC38022EC9E09001AFCD7 /* TestSchedulerTime.swift */,
+				66C3643B22E4C0D8002236BF /* TestSubject.swift */,
 				66C3643322E4C0D8002236BF /* TestSubsciber.swift */,
 				66C3643422E4C0D8002236BF /* TestSubscription.swift */,
-				66C3643522E4C0D8002236BF /* TestObject.swift */,
-				66C3643622E4C0D8002236BF /* Lock.swift */,
-				66C3643822E4C0D8002236BF /* Typealias.swift */,
-				66C3643A22E4C0D8002236BF /* Atom.swift */,
-				66C3643B22E4C0D8002236BF /* TestSubject.swift */,
-				66C3643C22E4C0D8002236BF /* TestError.swift */,
-				66C3643D22E4C0D8002236BF /* Const.swift */,
-				66C3643E22E4C0D8002236BF /* TestDispatchQueueScheduler.swift */,
-				6279F0D622E555050005840F /* TestScheduler.swift */,
 				620F66D122EAED72008194E9 /* Timeline.swift */,
-				66DBC38022EC9E09001AFCD7 /* TestSchedulerTime.swift */,
-				66577DAB22ED7B69007FB222 /* Resources.swift */,
-				623B8EEE22F13D230032ADAA /* Logging.swift */,
-				621DDC3E22F1949000F4B450 /* DemandState.swift */,
+				66C3643822E4C0D8002236BF /* Typealias.swift */,
 			);
-			path = Internal;
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 		66EF074022EF3AAF00EE5FC4 /* CombineX */ = {
@@ -1531,8 +1523,6 @@
 				66C3648322E4C0D8002236BF /* MeasureIntervalSpec.swift in Sources */,
 				623B8EEF22F13D230032ADAA /* Logging.swift in Sources */,
 				66C3645B22E4C0D8002236BF /* TryScanSpec.swift in Sources */,
-				66BB4A9222F1F1ED00FEAB35 /* ArrayExtensions.swift in Sources */,
-				66BB4A8F22F1F1D300FEAB35 /* DispatchQueueExtensions.swift in Sources */,
 				66C3646D22E4C0D8002236BF /* ReplaceErrorSpec.swift in Sources */,
 				66C3644F22E4C0D8002236BF /* PublishedSpec.swift in Sources */,
 				66C3643F22E4C0D8002236BF /* AnySubscriberSpec.swift in Sources */,
@@ -1543,6 +1533,7 @@
 				66C3649922E4C0D8002236BF /* TestSubscription.swift in Sources */,
 				66C3648F22E4C0D8002236BF /* MergeSpec.swift in Sources */,
 				66C3647B22E4C0D8002236BF /* RetrySpec.swift in Sources */,
+				6693571222F3250B0006AAE0 /* TestExtensions.swift in Sources */,
 				66C364A122E4C0D8002236BF /* Typealias.swift in Sources */,
 				66C3645922E4C0D8002236BF /* TryRemoveDuplicatesSpec.swift in Sources */,
 				66C3646322E4C0D8002236BF /* TryReduceSpec.swift in Sources */,
@@ -1551,11 +1542,9 @@
 				66C3647D22E4C0D8002236BF /* PrefixUntilOutputSpec.swift in Sources */,
 				66C3649522E4C0D8002236BF /* TestPublisher.swift in Sources */,
 				66C3646122E4C0D8002236BF /* ReceiveOnSpec.swift in Sources */,
-				66BB4A8C22F1F1C000FEAB35 /* DoubleExtensions.swift in Sources */,
 				66BB4A9B22F1F23100FEAB35 /* CompletionExtensions.swift in Sources */,
 				66C3647322E4C0D8002236BF /* OutputSpec.swift in Sources */,
 				6680BA9822EB556100ACAA33 /* SubscribeOnSpec.swift in Sources */,
-				66BB4A9822F1F21A00FEAB35 /* IntExtensions.swift in Sources */,
 				66C3648D22E4C0D8002236BF /* TryCatchSpec.swift in Sources */,
 				66C3649722E4C0D8002236BF /* TestSubsciber.swift in Sources */,
 				66C3645722E4C0D8002236BF /* TryCompactMapSpec.swift in Sources */,
@@ -1567,7 +1556,6 @@
 				66C3645D22E4C0D8002236BF /* TryAllSatisfySpec.swift in Sources */,
 				66C3647122E4C0D8002236BF /* JustSpec.swift in Sources */,
 				66C364A522E4C0D8002236BF /* Atom.swift in Sources */,
-				66BB4A9522F1F20600FEAB35 /* OptionExtensions.swift in Sources */,
 				66FF340122E604CF00C4BA70 /* ZipSpec.swift in Sources */,
 				66E16E7522EDD7FF001B3803 /* MulticastSpec.swift in Sources */,
 				620F66D222EAED72008194E9 /* Timeline.swift in Sources */,
@@ -1626,8 +1614,6 @@
 				66C3648422E4C0D8002236BF /* MeasureIntervalSpec.swift in Sources */,
 				623B8EF022F13D230032ADAA /* Logging.swift in Sources */,
 				66C3645C22E4C0D8002236BF /* TryScanSpec.swift in Sources */,
-				66BB4A9322F1F1ED00FEAB35 /* ArrayExtensions.swift in Sources */,
-				66BB4A9022F1F1D300FEAB35 /* DispatchQueueExtensions.swift in Sources */,
 				66C3646E22E4C0D8002236BF /* ReplaceErrorSpec.swift in Sources */,
 				66C3645022E4C0D8002236BF /* PublishedSpec.swift in Sources */,
 				66C3644022E4C0D8002236BF /* AnySubscriberSpec.swift in Sources */,
@@ -1638,6 +1624,7 @@
 				66C3649A22E4C0D8002236BF /* TestSubscription.swift in Sources */,
 				66C3649022E4C0D8002236BF /* MergeSpec.swift in Sources */,
 				66C3647C22E4C0D8002236BF /* RetrySpec.swift in Sources */,
+				6693571322F3250B0006AAE0 /* TestExtensions.swift in Sources */,
 				66C364A222E4C0D8002236BF /* Typealias.swift in Sources */,
 				66C3645A22E4C0D8002236BF /* TryRemoveDuplicatesSpec.swift in Sources */,
 				66C3646422E4C0D8002236BF /* TryReduceSpec.swift in Sources */,
@@ -1646,11 +1633,9 @@
 				66C3647E22E4C0D8002236BF /* PrefixUntilOutputSpec.swift in Sources */,
 				66C3649622E4C0D8002236BF /* TestPublisher.swift in Sources */,
 				66C3646222E4C0D8002236BF /* ReceiveOnSpec.swift in Sources */,
-				66BB4A8D22F1F1C000FEAB35 /* DoubleExtensions.swift in Sources */,
 				66BB4A9C22F1F23100FEAB35 /* CompletionExtensions.swift in Sources */,
 				66C3647422E4C0D8002236BF /* OutputSpec.swift in Sources */,
 				6680BA9922EB556100ACAA33 /* SubscribeOnSpec.swift in Sources */,
-				66BB4A9922F1F21A00FEAB35 /* IntExtensions.swift in Sources */,
 				66C3648E22E4C0D8002236BF /* TryCatchSpec.swift in Sources */,
 				66C3649822E4C0D8002236BF /* TestSubsciber.swift in Sources */,
 				66C3645822E4C0D8002236BF /* TryCompactMapSpec.swift in Sources */,
@@ -1662,7 +1647,6 @@
 				66C3645E22E4C0D8002236BF /* TryAllSatisfySpec.swift in Sources */,
 				66C3647222E4C0D8002236BF /* JustSpec.swift in Sources */,
 				66C364A622E4C0D8002236BF /* Atom.swift in Sources */,
-				66BB4A9622F1F20600FEAB35 /* OptionExtensions.swift in Sources */,
 				66FF340222E604CF00C4BA70 /* ZipSpec.swift in Sources */,
 				66E16E7622EDD7FF001B3803 /* MulticastSpec.swift in Sources */,
 				620F66D322EAED72008194E9 /* Timeline.swift in Sources */,
