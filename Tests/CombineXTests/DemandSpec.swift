@@ -26,6 +26,8 @@ class DemandSpec: QuickSpec {
         
         afterEach {
             Resources.release()
+            
+            print(USEC_PER_SEC)
         }
         
         // MARK: - Create

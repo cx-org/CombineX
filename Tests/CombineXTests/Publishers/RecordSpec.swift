@@ -17,9 +17,10 @@ class RecordSpec: QuickSpec {
             Resources.release()
         }
         
-        describe("Record") {
+        // MARK: - Recording
+        describe("Recording") {
             
-            it("should") {
+            it("should replay its events") {
                 var recoding = Record<Int, TestError>.Recording()
                 recoding.receive(1)
                 print(recoding, recoding.output, recoding.completion)

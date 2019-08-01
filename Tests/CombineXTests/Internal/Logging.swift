@@ -1,4 +1,6 @@
-import Foundation
+/*
+ Simple log util, use only for test!
+ */
 
 protocol Logging: AnyObject {
     
@@ -17,48 +19,55 @@ extension Logging {
 extension Logging {
     
     func trace(_ items: Any..., separator: String = " ", terminator: String = "\n") {
-        Logger._output(.trace, items, separator: separator, terminator: terminator, object: self)
+        logger._output(.trace, items, separator: separator, terminator: terminator, object: self)
     }
 
     func debug(_ items: Any..., separator: String = " ", terminator: String = "\n") {
-        Logger._output(.debug, items, separator: separator, terminator: terminator, object: self)
+        logger._output(.debug, items, separator: separator, terminator: terminator, object: self)
     }
     
     func info(_ items: Any..., separator: String = " ", terminator: String = "\n") {
-        Logger._output(.info, items, separator: separator, terminator: terminator, object: self)
+        logger._output(.info, items, separator: separator, terminator: terminator, object: self)
     }
     
     func notice(_ items: Any..., separator: String = " ", terminator: String = "\n") {
-        Logger._output(.notice, items, separator: separator, terminator: terminator, object: self)
+        logger._output(.notice, items, separator: separator, terminator: terminator, object: self)
     }
     
     func warning(_ items: Any..., separator: String = " ", terminator: String = "\n") {
-        Logger._output(.warning, items, separator: separator, terminator: terminator, object: self)
+        logger._output(.warning, items, separator: separator, terminator: terminator, object: self)
     }
     
     func error(_ items: Any..., separator: String = " ", terminator: String = "\n") {
-        Logger._output(.error, items, separator: separator, terminator: terminator, object: self)
+        logger._output(.error, items, separator: separator, terminator: terminator, object: self)
     }
     
     func critical(_ items: Any..., separator: String = " ", terminator: String = "\n") {
-        Logger._output(.critical, items, separator: separator, terminator: terminator, object: self)
+        logger._output(.critical, items, separator: separator, terminator: terminator, object: self)
     }
 
 }
 
+let logger = Logger.shared
+
 class Logger {
     
     static let shared = Logger()
+    
+    private let enabledList = Atom<Set<ObjectIdentifier>>(val: [])
+    
+    private init() {
+    }
 
     enum Level: Int {
         case trace, debug, info, notice, warning, error, critical
     }
     
-    static func output(_ level: Level, _ items: Any..., separator: String = " ", terminator: String = "\n", object: Logging? = nil) {
+    func output(_ level: Level, _ items: Any..., separator: String = " ", terminator: String = "\n", object: Logging? = nil) {
         self._output(level, items, separator: separator, terminator: terminator, object: object)
     }
     
-    static func _output(_ level: Level, _ items: [Any], separator: String = " ", terminator: String = "\n", object: Logging? = nil) {
+    fileprivate func _output(_ level: Level, _ items: [Any], separator: String = " ", terminator: String = "\n", object: Logging? = nil) {
         if let object = object {
             guard self.enabledList.get().contains(ObjectIdentifier(object)) else {
                 return
@@ -77,18 +86,24 @@ class Logger {
         }
         
         let str = items.map { "\($0)" }.joined(separator: separator)
-        print(symbol, id, str, terminator: terminator)
+        print(symbol, "[\(id)]:", str, terminator: terminator)
     }
-}
-
-// MARK: Enable
-extension Logger {
     
-    private static let enabledList = Atom<[ObjectIdentifier]>(val: [])
-    
-    static func enableLogging(_ object: AnyObject) {
+    func enableLogging(_ object: AnyObject) {
         self.enabledList.withLockMutating {
-            $0.append(ObjectIdentifier(object))
+            let id = ObjectIdentifier(object)
+            $0.insert(id)
         }
+    }
+    
+    func disableLogging(_ object: AnyObject) {
+        self.enabledList.withLockMutating {
+            let id = ObjectIdentifier(object)
+            $0.remove(id)
+        }
+    }
+    
+    func reset() {
+        _ = self.enabledList.exchange(with: [])
     }
 }

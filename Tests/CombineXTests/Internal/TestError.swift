@@ -5,9 +5,9 @@ enum TestError: Int, Error, CustomStringConvertible, Codable {
     
     var description: String {
         switch self {
-        case .e0:       return ".e0"
-        case .e1:       return ".e1"
-        case .e2:       return ".e2"
+        case .e0:       return "TestError.e0"
+        case .e1:       return "TestError.e1"
+        case .e2:       return "TestError.e2"
         }
     }
 }

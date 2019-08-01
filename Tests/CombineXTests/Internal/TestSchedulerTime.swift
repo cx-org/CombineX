@@ -96,11 +96,11 @@ struct TestSchedulerTime: Strideable {
         }
         
         static func milliseconds(_ ms: Int) -> Stride {
-            return Stride(floatLiteral: Double(ms) / Double(Const.msec_per_sec))
+            return Stride(floatLiteral: Double(ms) / Double(Const.usec_per_sec))
         }
         
         static func microseconds(_ us: Int) -> Stride {
-            return Stride(floatLiteral: Double(us) / Double(Const.usec_per_sec))
+            return Stride(floatLiteral: Double(us) / Double(Const.msec_per_sec))
         }
         
         static func nanoseconds(_ ns: Int) -> Stride {
