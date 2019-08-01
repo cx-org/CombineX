@@ -13,7 +13,8 @@ extension AnyPublisher: Publisher {
     /// - Parameters:
     ///     - subscriber: The subscriber to attach to this `Publisher`.
     ///                   once attached it can begin to receive values.
-    @inlinable public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
+    @inlinable
+    public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
         self.subscribeBody(subscriber.eraseToAnySubscriber())
     }
 }
@@ -62,7 +63,8 @@ public struct AnyPublisher<Output, Failure> : CustomStringConvertible, CustomPla
     ///
     /// - Parameters:
     ///   - publisher: A publisher to wrap with a type-eraser.
-    @inlinable public init<P>(_ publisher: P) where Output == P.Output, Failure == P.Failure, P : Publisher {
+    @inlinable
+    public init<P>(_ publisher: P) where Output == P.Output, Failure == P.Failure, P : Publisher {
         self.subscribeBody = publisher.subscribe(_:)
     }
 }

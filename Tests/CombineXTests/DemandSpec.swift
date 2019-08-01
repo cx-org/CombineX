@@ -26,8 +26,6 @@ class DemandSpec: QuickSpec {
         
         afterEach {
             Resources.release()
-            
-            print(USEC_PER_SEC)
         }
         
         // MARK: - Create
@@ -131,23 +129,25 @@ class DemandSpec: QuickSpec {
             
             // MARK: 4.1 should be codable
             it("should be codable") {
-                let a = Demand.unlimited
-                let b = Demand.max(10)
+                
+                struct Q: Codable {
+                    let a = Demand.unlimited
+                    let b = Demand.max(10)
+                }
+                
+                let q = Q()
                 
                 expect {
                     let encoder = JSONEncoder()
-                    let dataA = try encoder.encode(a)
-                    let dataB = try encoder.encode(b)
+                    let data = try encoder.encode(q)
                     
-                    expect(String(data: dataA, encoding: .utf8)).to(equal("9223372036854775808"))
-                    expect(String(data: dataB, encoding: .utf8)).to(equal("10"))
+                    expect(String(data: data, encoding: .utf8)).to(equal(#"{"a":9223372036854775808,"b":10}"#))
                     
                     let decoder = JSONDecoder()
-                    let x = try decoder.decode(Demand.self, from: dataA)
-                    let y = try decoder.decode(Demand.self, from: dataB)
+                    let x = try decoder.decode(Q.self, from: data)
                     
-                    expect(x).to(equal(a))
-                    expect(y).to(equal(b))
+                    expect(x.a).to(equal(q.a))
+                    expect(x.b).to(equal(q.b))
                     return ()
                 }.toNot(throwError())
             }

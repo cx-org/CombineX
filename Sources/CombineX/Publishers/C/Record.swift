@@ -60,15 +60,14 @@ public struct Record<Output, Failure> : Publisher where Failure : Error {
         public init(output: [Output], completion: Subscribers.Completion<Failure> = .finished) {
             self.output = output
             self.completion = completion
+            self.isCompleted = true
         }
 
         /// Add an output to the recording.
         ///
         /// A `fatalError` will be raised if output is added after adding completion.
         public mutating func receive(_ input: Record<Output, Failure>.Recording.Input) {
-            if self.isCompleted {
-                fatalError()
-            }
+            precondition(!self.isCompleted)
             self.output.append(input)
         }
 
@@ -76,9 +75,7 @@ public struct Record<Output, Failure> : Publisher where Failure : Error {
         ///
         /// A `fatalError` will be raised if more than one completion is added.
         public mutating func receive(completion: Subscribers.Completion<Failure>) {
-            if self.isCompleted {
-                fatalError()
-            }
+            precondition(!self.isCompleted)
             self.completion = completion
             self.isCompleted = true
         }
