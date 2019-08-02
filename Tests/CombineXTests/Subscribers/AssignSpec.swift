@@ -18,176 +18,161 @@ class AssignSpec: QuickSpec {
             Resources.release()
         }
         
-        class Obj {
+        class Object {
+            
             var value = 0 {
                 didSet {
-                    self.histories.append(self.value)
+                    self.records.append(self.value)
                 }
             }
             
-            var histories: [Int] = []
+            var records: [Int] = []
         }
         
         // MARK: - Receive Values
         describe("Receive Values") {
             
-            // MARK: 1.1 should receive values that upstream send
-            it("should receive values that upstream send") {
+            // MARK: 1.1 should receive values that upstream sends
+            it("should receive values that upstream sends") {
                 let pub = PassthroughSubject<Int, Never>()
                 
-                let obj = Obj()
-                let assign = pub.assign(to: \Obj.value, on: obj)
+                let obj = Object()
+                let assign = pub.assign(to: \Object.value, on: obj)
 
                 pub.send(1)
                 pub.send(2)
                 pub.send(3)
                 
-                expect(obj.histories).to(equal([1, 2, 3]))
+                expect(obj.records).to(equal([1, 2, 3]))
                 
                 _ = assign
             }
-            
-            // MARK: 1.2 should not receive values after completion
-            it("should not receive values after completion") {
-                let pub = PassthroughSubject<Int, Never>()
+             
+            // MARK: 1.2 should not receive values if it haven't received subscription
+            it("should not receive values if it hasn't received subscription") {
+                let pub = TestPublisher<Int, Never> { (s) in
+                    _ = s.receive(1)
+                    _ = s.receive(2)
+                    s.receive(completion: .finished)
+                }
                 
-                let obj = Obj()
-                let assign = pub.assign(to: \Obj.value, on: obj)
+                let obj = Object()
+                let assign = Subscribers.Assign<Object, Int>(object: obj, keyPath: \Object.value)
                 
-                pub.send(completion: .finished)
-                pub.send(1)
-                pub.send(2)
-                pub.send(3)
-                
-                expect(obj.histories).to(equal([]))
-                
-                _ = assign
-            }
-            
-            // MARK: 1.3 should not receive event after cancel
-            it("should not receive event after cancel") {
-                let pub = PassthroughSubject<Int, Never>()
-                
-                let obj = Obj()
-                let assign = pub.assign(to: \Obj.value, on: obj)
-                
-                assign.cancel()
-                
-                pub.send(1)
-                pub.send(2)
-                pub.send(3)
-                
-                expect(obj.histories).to(equal([]))
-            }
-            
-            // MARK: 1.4 should not receive events after complete then re-subscribe
-            it("should not receive events after complete then re-subscribe") {
-                let pub1 = PassthroughSubject<Int, Never>()
-                let obj = Obj()
-                let assign = Subscribers.Assign<Obj, Int>(object: obj, keyPath: \Obj.value)
-                pub1.subscribe(assign)
-                
-                pub1.send(completion: .finished)
-                
-                let pub2 = PassthroughSubject<Int, Never>()
-                pub2.subscribe(assign)
-                
-                pub2.send(1)
-                
-                expect(obj.histories).to(equal([]))
-            }
-            
-            // MARK: 1.5 should receive events after cancel then re-subscribe
-            it("should receive events after cancel then re-subscribe") {
-                let obj = Obj()
-                let assign = Subscribers.Assign<Obj, Int>(object: obj, keyPath: \Obj.value)
-                assign.cancel()
-                
-                let pub = PassthroughSubject<Int, Never>()
                 pub.subscribe(assign)
                 
-                pub.send(1)
+                expect(obj.records).to(equal([]))
+            }
+            
+            // MARK: 1.3 should not receive values if it has received completion
+            it("should not receive values if it has received completion") {
+                let pub = TestPublisher<Int, Never> { (s) in
+                    s.receive(subscription: Subscriptions.empty)
+                    _ = s.receive(1)
+                    s.receive(completion: .finished)
+                    _ = s.receive(2)
+                }
                 
-                expect(obj.histories).to(equal([1]))
+                let obj = Object()
+                let assign = Subscribers.Assign<Object, Int>(object: obj, keyPath: \Object.value)
+                
+                pub.subscribe(assign)
+                
+                expect(obj.records).to(equal([1]))
             }
         }
         
         // MARK: - Release Resources
         describe("Release Resources") {
             
-            // MARK: 2.1 should retain subscription then release it after completion
-            it("should retain subscription then release it after completion") {
-                let obj = Obj()
-                let assign = Subscribers.Assign<Obj, Int>(object: obj, keyPath: \Obj.value)
+            // MARK: 2.1 should retain subscription and object then release them after completion
+            it("should retain subscription and object then release them after completion") {
                 
+                weak var object: AnyObject?
                 weak var subscription: TestSubscription?
+                var cancelled = false
+                
+                let assign: Subscribers.Assign<Object, Int>
                 
                 do {
-                    let s = TestSubscription(request: { (demand) in
-                    }, cancel: {
-                    })
+                    let obj = Object()
+                    object = obj
                     
+                    assign = Subscribers.Assign<Object, Int>(object: obj, keyPath: \Object.value)
+                    
+                    let s = TestSubscription(cancel: {
+                        cancelled = true
+                    })
                     assign.receive(subscription: s)
                     subscription = s
                 }
                 
                 expect(subscription).toNot(beNil())
+                expect(object).toNot(beNil())
+                expect(cancelled).to(beFalse())
                 assign.receive(completion: .finished)
                 expect(subscription).to(beNil())
+                expect(object).to(beNil())
+                expect(cancelled).to(beTrue())
             }
             
-            // MARK: 2.2 should retain subscription then release it after cancel
-            it("should retain subscription then release it after cancel") {
-                let obj = Obj()
-                let assign = Subscribers.Assign<Obj, Int>(object: obj, keyPath: \Obj.value)
-                
+            // MARK: 2.2 should retain subscription and object then release them after cancel
+            it("should retain subscription and object then release them after cancel") {
+                weak var object: AnyObject?
                 weak var subscription: TestSubscription?
+                var cancelled = false
+                
+                let assign: Subscribers.Assign<Object, Int>
                 
                 do {
-                    let s = TestSubscription(request: { (demand) in
-                    }, cancel: {
-                    })
+                    let obj = Object()
+                    object = obj
                     
+                    assign = Subscribers.Assign<Object, Int>(object: obj, keyPath: \Object.value)
+                    
+                    let s = TestSubscription(cancel: {
+                        cancelled = true
+                    })
                     assign.receive(subscription: s)
                     subscription = s
                 }
                 
                 expect(subscription).toNot(beNil())
+                expect(object).toNot(beNil())
+                expect(cancelled).to(beFalse())
                 assign.cancel()
                 expect(subscription).to(beNil())
+                expect(object).to(beNil())
+                expect(cancelled).to(beTrue())
             }
             
-            // MARK: 2.3 should release root when complete
-            it("should release root when complete") {
-                let subject = PassthroughSubject<Int, Never>()
-                
-                var cancel: AnyCancellable?
-                weak var obj: Obj?
+            // MARK: 2.3 should not release root when complete if there is no subscription
+            it("should not release root when complete if there is no subscription") {
+                let assign: Subscribers.Assign<Object, Int>
+                weak var obj: Object?
                 do {
-                    let o = Obj()
-                    cancel = subject.assign(to: \Obj.value, on: o)
+                    let o = Object()
+                    assign = Subscribers.Assign<Object, Int>(object: o, keyPath: \Object.value)
                     obj = o
                 }
                 
                 expect(obj).toNot(beNil())
-                subject.send(completion: .finished)
-                expect(obj).to(beNil())
-                
-                _ = cancel
+                assign.receive(completion: .finished)
+                expect(obj).toNot(beNil())
             }
             
-            // MARK: 2.4 should not release root when cancel
+            // MARK: 2.4 should not release root when cancel if there is no subscription
             it("should not release root when cancel") {
-                var assign: Subscribers.Assign<Obj, Int>?
-                weak var obj: Obj?
+                let assign: Subscribers.Assign<Object, Int>
+                weak var obj: Object?
                 do {
-                    let o = Obj()
-                    assign = Subscribers.Assign<Obj, Int>(object: o, keyPath: \Obj.value)
+                    let o = Object()
+                    assign = Subscribers.Assign<Object, Int>(object: o, keyPath: \Object.value)
                     obj = o
                 }
                 
                 expect(obj).toNot(beNil())
-                assign?.cancel()
+                assign.cancel()
                 expect(obj).toNot(beNil())
             }
         }

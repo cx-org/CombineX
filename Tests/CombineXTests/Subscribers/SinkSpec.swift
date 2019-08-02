@@ -48,6 +48,26 @@ class SinkSpec: QuickSpec {
             it("should receive values whether received subscription or not") {
                 let pub = TestPublisher<Int, Never> { s in
                     _ = s.receive(1)
+                    _ = s.receive(2)
+                    s.receive(completion: .finished)
+                }
+                
+                var events: [TestSubscriberEvent<Int, Never>] = []
+                let sink = pub.sink(receiveCompletion: { (c) in
+                    events.append(.completion(c))
+                }, receiveValue: { v in
+                    events.append(.value(v))
+                })
+                
+                expect(events).to(equal([.value(1), .value(2), .completion(.finished)]))
+                
+                _ = sink
+            }
+            
+            // MARK: 1.3 should receive values even if it has received completion
+            it("should receive values even if it has received completion") {
+                let pub = TestPublisher<Int, Never> { s in
+                    _ = s.receive(1)
                     s.receive(completion: .finished)
                     _ = s.receive(2)
                 }
@@ -112,6 +132,29 @@ class SinkSpec: QuickSpec {
                 expect(subscription).toNot(beNil())
                 expect(cancelled).to(beFalse())
                 sink.cancel()
+                expect(subscription).to(beNil())
+                expect(cancelled).to(beTrue())
+            }
+            
+            // MARK: 2.3 should not retain subscription if it is already subscribing
+            it("should not retain subscription if it is already subscribing") {
+                let sink = Subscribers.Sink<Int, Never>(receiveCompletion: { c in
+                }, receiveValue: { v in
+                })
+                
+                sink.receive(subscription: Subscriptions.empty)
+                
+                weak var subscription: TestSubscription?
+                var cancelled = false
+                
+                do {
+                    let s = TestSubscription(cancel: {
+                        cancelled = true
+                    })
+                    sink.receive(subscription: s)
+                    subscription = s
+                }
+                
                 expect(subscription).to(beNil())
                 expect(cancelled).to(beTrue())
             }
