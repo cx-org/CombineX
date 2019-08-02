@@ -634,7 +634,7 @@
 		66312FAC22B665620081D8F1 /* Specs */ = {
 			isa = PBXGroup;
 			children = (
-				66BB4A8022F1D19C00FEAB35 /* tmp */,
+				66BB4A8022F1D19C00FEAB35 /* related */,
 				66EF074022EF3AAF00EE5FC4 /* CombineX */,
 			);
 			path = Specs;
@@ -643,7 +643,7 @@
 		66312FC322B665630081D8F1 /* SpecsTests */ = {
 			isa = PBXGroup;
 			children = (
-				66BB4A8122F1D1BF00FEAB35 /* tmp */,
+				66BB4A8122F1D1BF00FEAB35 /* related */,
 				66C3640122E4C0D8002236BF /* CombineXTests */,
 			);
 			path = SpecsTests;
@@ -704,7 +704,7 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
-		66BB4A8022F1D19C00FEAB35 /* tmp */ = {
+		66BB4A8022F1D19C00FEAB35 /* related */ = {
 			isa = PBXGroup;
 			children = (
 				66312FAD22B665620081D8F1 /* AppDelegate.swift */,
@@ -715,15 +715,15 @@
 				66312FB822B665630081D8F1 /* LaunchScreen.storyboard */,
 				66312FBB22B665630081D8F1 /* Info.plist */,
 			);
-			name = tmp;
+			name = related;
 			sourceTree = "<group>";
 		};
-		66BB4A8122F1D1BF00FEAB35 /* tmp */ = {
+		66BB4A8122F1D1BF00FEAB35 /* related */ = {
 			isa = PBXGroup;
 			children = (
 				66312FC622B665630081D8F1 /* Info.plist */,
 			);
-			name = tmp;
+			name = related;
 			sourceTree = "<group>";
 		};
 		66BB4A8722F1F13400FEAB35 /* Extensions */ = {
@@ -865,6 +865,58 @@
 			path = Helpers;
 			sourceTree = "<group>";
 		};
+		66CCBC3622F488AA0023EFC2 /* B */ = {
+			isa = PBXGroup;
+			children = (
+				66CCBC3722F489670023EFC2 /* Combined */,
+				66EF079F22EF3AAF00EE5FC4 /* TryCompactMap.swift */,
+			);
+			path = B;
+			sourceTree = "<group>";
+		};
+		66CCBC3722F489670023EFC2 /* Combined */ = {
+			isa = PBXGroup;
+			children = (
+				66EF078D22EF3AAF00EE5FC4 /* TryFirstWhere.swift */,
+				66EF077622EF3AAF00EE5FC4 /* TryLastWhere.swift */,
+				66EF077922EF3AAF00EE5FC4 /* PrefixWhile.swift */,
+				66EF078722EF3AAF00EE5FC4 /* First.swift */,
+				66EF079822EF3AAF00EE5FC4 /* FirstWhere.swift */,
+				66EF079B22EF3AAF00EE5FC4 /* Filter.swift */,
+				66EF077D22EF3AAF00EE5FC4 /* Encode.swift */,
+				66EF07AC22EF3AAF00EE5FC4 /* DropWhile.swift */,
+				66EF07B322EF3AAF00EE5FC4 /* Drop.swift */,
+				66EF07A322EF3AAF00EE5FC4 /* Count.swift */,
+				66EF078E22EF3AAF00EE5FC4 /* TryMap.swift */,
+				66EF079922EF3AAF00EE5FC4 /* Zip+.swift */,
+				66EF079422EF3AAF00EE5FC4 /* Decode.swift */,
+				66EF079222EF3AAF00EE5FC4 /* Comparison.swift */,
+				66EF079A22EF3AAF00EE5FC4 /* CombineLatest+.swift */,
+				66EF078F22EF3AAF00EE5FC4 /* CompactMap.swift */,
+				66EF078522EF3AAF00EE5FC4 /* AllSatisfy.swift */,
+				66EF077C22EF3AAF00EE5FC4 /* AssertNoFailure.swift */,
+				66EF079722EF3AAF00EE5FC4 /* Catch.swift */,
+				66EF07B222EF3AAF00EE5FC4 /* Collect.swift */,
+				66EF077B22EF3AAF00EE5FC4 /* Contains.swift */,
+				66EF079322EF3AAF00EE5FC4 /* IgnoreOutput.swift */,
+				66EF078122EF3AAF00EE5FC4 /* TryCombineLatest+.swift */,
+				66EF07A422EF3AAF00EE5FC4 /* TryComparison.swift */,
+				66EF07BB22EF3AAF00EE5FC4 /* Retry.swift */,
+				66EF07B822EF3AAF00EE5FC4 /* Scan.swift */,
+				66EF07B122EF3AAF00EE5FC4 /* TryContainsWhere.swift */,
+				66EF07AA22EF3AAF00EE5FC4 /* TryFilter.swift */,
+				66EF07A022EF3AAF00EE5FC4 /* Last.swift */,
+				66EF079022EF3AAF00EE5FC4 /* LastWhere.swift */,
+				66EF07AD22EF3AAF00EE5FC4 /* Map.swift */,
+				66EF079E22EF3AAF00EE5FC4 /* Reduce.swift */,
+				66EF079622EF3AAF00EE5FC4 /* Merge+.swift */,
+				66EF07A222EF3AAF00EE5FC4 /* MapKeyPath.swift */,
+				66EF07B722EF3AAF00EE5FC4 /* RemoveDuplicates.swift */,
+				66EF07A522EF3AAF00EE5FC4 /* ContainsWhere.swift */,
+			);
+			path = Combined;
+			sourceTree = "<group>";
+		};
 		66EF074022EF3AAF00EE5FC4 /* CombineX */ = {
 			isa = PBXGroup;
 			children = (
@@ -945,13 +997,14 @@
 		66EF076322EF3AAF00EE5FC4 /* Publishers */ = {
 			isa = PBXGroup;
 			children = (
-				66EF076522EF3AAF00EE5FC4 /* C */,
-				66EF077422EF3AAF00EE5FC4 /* B */,
+				66CCBC3622F488AA0023EFC2 /* B */,
+				66EF076522EF3AAF00EE5FC4 /* D */,
+				66EF077422EF3AAF00EE5FC4 /* C */,
 			);
 			path = Publishers;
 			sourceTree = "<group>";
 		};
-		66EF076522EF3AAF00EE5FC4 /* C */ = {
+		66EF076522EF3AAF00EE5FC4 /* D */ = {
 			isa = PBXGroup;
 			children = (
 				623D4E7222EFF8030046B28A /* Record.swift */,
@@ -970,85 +1023,48 @@
 				66EF077222EF3AAF00EE5FC4 /* CollectByTime.swift */,
 				66EF077322EF3AAF00EE5FC4 /* SwitchToLatest.swift */,
 			);
-			path = C;
+			path = D;
 			sourceTree = "<group>";
 		};
-		66EF077422EF3AAF00EE5FC4 /* B */ = {
+		66EF077422EF3AAF00EE5FC4 /* C */ = {
 			isa = PBXGroup;
 			children = (
-				66EF07BB22EF3AAF00EE5FC4 /* Retry.swift */,
-				66EF077522EF3AAF00EE5FC4 /* Print.swift */,
-				66EF077622EF3AAF00EE5FC4 /* TryLastWhere.swift */,
-				66EF077722EF3AAF00EE5FC4 /* Deferred.swift */,
-				66EF077822EF3AAF00EE5FC4 /* DropUntilOutput.swift */,
-				66EF077922EF3AAF00EE5FC4 /* PrefixWhile.swift */,
-				66EF077A22EF3AAF00EE5FC4 /* SubscribeOn.swift */,
-				66EF077B22EF3AAF00EE5FC4 /* Contains.swift */,
-				66EF077C22EF3AAF00EE5FC4 /* AssertNoFailure.swift */,
-				66EF077D22EF3AAF00EE5FC4 /* Encode.swift */,
-				66EF077E22EF3AAF00EE5FC4 /* CollectByCount.swift */,
-				66EF077F22EF3AAF00EE5FC4 /* Publishers.swift */,
-				66EF078022EF3AAF00EE5FC4 /* TryCombineLatest.swift */,
-				66EF078122EF3AAF00EE5FC4 /* TryCombineLatest+.swift */,
-				66EF078222EF3AAF00EE5FC4 /* Delay.swift */,
-				66EF078322EF3AAF00EE5FC4 /* Empty.swift */,
-				66EF078422EF3AAF00EE5FC4 /* ReceiveOn.swift */,
-				66EF078522EF3AAF00EE5FC4 /* AllSatisfy.swift */,
-				66EF078622EF3AAF00EE5FC4 /* FlatMap.swift */,
-				66EF078722EF3AAF00EE5FC4 /* First.swift */,
-				66EF078822EF3AAF00EE5FC4 /* Output.swift */,
-				66EF078922EF3AAF00EE5FC4 /* MeasureInterval.swift */,
-				66EF078A22EF3AAF00EE5FC4 /* Result.Publisher.swift */,
-				66EF078B22EF3AAF00EE5FC4 /* TryScan.swift */,
-				66EF078C22EF3AAF00EE5FC4 /* Sequence.swift */,
-				66EF078D22EF3AAF00EE5FC4 /* TryFirstWhere.swift */,
-				66EF078E22EF3AAF00EE5FC4 /* TryMap.swift */,
-				66EF078F22EF3AAF00EE5FC4 /* CompactMap.swift */,
-				66EF079022EF3AAF00EE5FC4 /* LastWhere.swift */,
 				66EF079122EF3AAF00EE5FC4 /* __Publisher.swift */,
-				66EF079222EF3AAF00EE5FC4 /* Comparison.swift */,
-				66EF079322EF3AAF00EE5FC4 /* IgnoreOutput.swift */,
-				66EF079422EF3AAF00EE5FC4 /* Decode.swift */,
-				66EF079522EF3AAF00EE5FC4 /* TryAllSatisfy.swift */,
-				66EF079622EF3AAF00EE5FC4 /* Merge+.swift */,
-				66EF079722EF3AAF00EE5FC4 /* Catch.swift */,
-				66EF079822EF3AAF00EE5FC4 /* FirstWhere.swift */,
-				66EF079922EF3AAF00EE5FC4 /* Zip+.swift */,
-				66EF079A22EF3AAF00EE5FC4 /* CombineLatest+.swift */,
-				66EF079B22EF3AAF00EE5FC4 /* Filter.swift */,
-				66EF079C22EF3AAF00EE5FC4 /* TryRemoveDuplicates.swift */,
-				66EF079D22EF3AAF00EE5FC4 /* TryDropWhile.swift */,
-				66EF079E22EF3AAF00EE5FC4 /* Reduce.swift */,
-				66EF079F22EF3AAF00EE5FC4 /* TryCompactMap.swift */,
-				66EF07A022EF3AAF00EE5FC4 /* Last.swift */,
-				66EF07A122EF3AAF00EE5FC4 /* ReplaceError.swift */,
-				66EF07A222EF3AAF00EE5FC4 /* MapKeyPath.swift */,
-				66EF07A322EF3AAF00EE5FC4 /* Count.swift */,
-				66EF07A422EF3AAF00EE5FC4 /* TryComparison.swift */,
-				66EF07A522EF3AAF00EE5FC4 /* ContainsWhere.swift */,
-				66EF07A622EF3AAF00EE5FC4 /* Zip.swift */,
-				66EF07A722EF3AAF00EE5FC4 /* Merge.swift */,
-				66EF07A822EF3AAF00EE5FC4 /* ReplaceEmpty.swift */,
+				66EF077E22EF3AAF00EE5FC4 /* CollectByCount.swift */,
 				66EF07A922EF3AAF00EE5FC4 /* Concatenate.swift */,
-				66EF07AA22EF3AAF00EE5FC4 /* TryFilter.swift */,
-				66EF07AB22EF3AAF00EE5FC4 /* TryReduce.swift */,
-				66EF07AC22EF3AAF00EE5FC4 /* DropWhile.swift */,
-				66EF07AD22EF3AAF00EE5FC4 /* Map.swift */,
+				66EF077722EF3AAF00EE5FC4 /* Deferred.swift */,
+				66EF078222EF3AAF00EE5FC4 /* Delay.swift */,
+				66EF077822EF3AAF00EE5FC4 /* DropUntilOutput.swift */,
+				66EF078322EF3AAF00EE5FC4 /* Empty.swift */,
 				66EF07AE22EF3AAF00EE5FC4 /* Fail.swift */,
-				66EF07AF22EF3AAF00EE5FC4 /* TryPrefixWhile.swift */,
-				66EF07B022EF3AAF00EE5FC4 /* Optional.Publisher.swift */,
-				66EF07B122EF3AAF00EE5FC4 /* TryContainsWhere.swift */,
-				66EF07B222EF3AAF00EE5FC4 /* Collect.swift */,
-				66EF07B322EF3AAF00EE5FC4 /* Drop.swift */,
+				66EF078622EF3AAF00EE5FC4 /* FlatMap.swift */,
 				66EF07B422EF3AAF00EE5FC4 /* Just.swift */,
-				66EF07B522EF3AAF00EE5FC4 /* TryCatch.swift */,
 				66EF07B622EF3AAF00EE5FC4 /* MapError.swift */,
-				66EF07B722EF3AAF00EE5FC4 /* RemoveDuplicates.swift */,
-				66EF07B822EF3AAF00EE5FC4 /* Scan.swift */,
+				66EF078922EF3AAF00EE5FC4 /* MeasureInterval.swift */,
+				66EF07A722EF3AAF00EE5FC4 /* Merge.swift */,
+				66EF07B022EF3AAF00EE5FC4 /* Optional.Publisher.swift */,
+				66EF078822EF3AAF00EE5FC4 /* Output.swift */,
 				66EF07B922EF3AAF00EE5FC4 /* PrefixUntilOutput.swift */,
+				66EF077522EF3AAF00EE5FC4 /* Print.swift */,
+				66EF077F22EF3AAF00EE5FC4 /* Publishers.swift */,
+				66EF078422EF3AAF00EE5FC4 /* ReceiveOn.swift */,
+				66EF07A822EF3AAF00EE5FC4 /* ReplaceEmpty.swift */,
+				66EF07A122EF3AAF00EE5FC4 /* ReplaceError.swift */,
+				66EF078A22EF3AAF00EE5FC4 /* Result.Publisher.swift */,
+				66EF078C22EF3AAF00EE5FC4 /* Sequence.swift */,
 				66EF07BA22EF3AAF00EE5FC4 /* SetFailureType.swift */,
+				66EF077A22EF3AAF00EE5FC4 /* SubscribeOn.swift */,
+				66EF079522EF3AAF00EE5FC4 /* TryAllSatisfy.swift */,
+				66EF07B522EF3AAF00EE5FC4 /* TryCatch.swift */,
+				66EF078022EF3AAF00EE5FC4 /* TryCombineLatest.swift */,
+				66EF079D22EF3AAF00EE5FC4 /* TryDropWhile.swift */,
+				66EF07AF22EF3AAF00EE5FC4 /* TryPrefixWhile.swift */,
+				66EF07AB22EF3AAF00EE5FC4 /* TryReduce.swift */,
+				66EF079C22EF3AAF00EE5FC4 /* TryRemoveDuplicates.swift */,
+				66EF078B22EF3AAF00EE5FC4 /* TryScan.swift */,
+				66EF07A622EF3AAF00EE5FC4 /* Zip.swift */,
 			);
-			path = B;
+			path = C;
 			sourceTree = "<group>";
 		};
 		66EF07BE22EF3AAF00EE5FC4 /* Subscribers */ = {

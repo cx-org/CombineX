@@ -20,6 +20,27 @@ class OutputSpec: QuickSpec {
         // MARK: - Relay
         describe("Relay") {
             
+            fit("should") {
+                let pub = TestPublisher<Int, Error> { (s) in
+                    s.receive(subscription: Subscriptions.empty)
+                    s.receive(1)
+                    s.receive(2)
+                    s.receive(completion: .failure(TestError.e0))
+                    s.receive(3)
+                }
+                
+                let sink = pub.output(at: 0).sink(receiveCompletion: { (c) in
+                    print("receive c", c)
+                }, receiveValue: { v in
+                    print("receive v", v)
+                })
+                
+                /*
+                 receive v 1
+                 receive c failure(TestError.e0)
+                 */
+            }
+            
             // MARK: 1.1 should only send values specified by the range
             it("should only send values in the specified range") {
                 let subject = PassthroughSubject<Int, Never>()

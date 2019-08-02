@@ -52,8 +52,12 @@ extension Publishers {
         ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, S.Input == Publishers.Count<Upstream>.Output {
             self.upstream
-                .reduce(0) { (count, _) in
-                    count + 1
+                .reduce(Atom(val: 0)) { (counter, _) in
+                    _ = counter.add(1)
+                    return counter
+                }
+                .map {
+                    $0.get()
                 }
                 .receive(subscriber: subscriber)
         }

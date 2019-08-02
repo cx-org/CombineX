@@ -105,7 +105,7 @@ extension Publishers.TryCompactMap {
         
         func receive(_ input: Input) -> Subscribers.Demand {
             self.lock.lock()
-            self.state.preconditionReceiveValue()
+            self.state.preconditionValue()
             guard self.state.isRelaying else {
                 self.lock.unlock()
                 return .none
@@ -130,7 +130,7 @@ extension Publishers.TryCompactMap {
         
         private func complete(_ completion: Subscribers.Completion<Error>) {
             self.lock.lock()
-            self.state.preconditionReceiveCompletion()
+            self.state.preconditionCompletion()
             guard let subscription = self.state.complete() else {
                 self.lock.unlock()
                 return
@@ -150,3 +150,4 @@ extension Publishers.TryCompactMap {
         }
     }
 }
+
