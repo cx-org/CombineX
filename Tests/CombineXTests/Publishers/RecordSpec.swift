@@ -42,9 +42,9 @@ class RecordSpec: QuickSpec {
             
             #if !SWIFT_PACKAGE
             // MARK: 1.3 should fatal if receiving value after receiving completion
-            xit("should fatal if receiving value after receiving completion") {
-                var recording = Recording()
+            it("should fatal if receiving value after receiving completion") {
                 expect {
+                    var recording = Recording()
                     recording.receive(completion: .finished)
                     recording.receive(1)
                     return nil
@@ -52,9 +52,9 @@ class RecordSpec: QuickSpec {
             }
             
             // MARK: 1.4 should fatal if receiving completion after receiving completion
-            xit("should fatal if receiving completion after receiving completion") {
-                var recording = Recording()
+            it("should fatal if receiving completion after receiving completion") {
                 expect {
+                    var recording = Recording()
                     recording.receive(completion: .finished)
                     recording.receive(completion: .finished)
                     return nil
