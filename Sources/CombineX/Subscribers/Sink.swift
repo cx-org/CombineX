@@ -107,9 +107,6 @@ extension Subscribers {
         /// - Parameter input: The published element.
         /// - Returns: A `Demand` instance indicating how many more elements the subcriber expects to receive.
         final public func receive(_ value: Input) -> Subscribers.Demand {
-            guard self.subscription.isNotNil else {
-                return .none
-            }
             self.receiveValue(value)
             return .none
         }
@@ -118,11 +115,8 @@ extension Subscribers {
         ///
         /// - Parameter completion: A `Completion` case indicating whether publishing completed normally or with an error.
         final public func receive(completion: Subscribers.Completion<Failure>) {
-            guard let subscription = self.subscription.exchange(with: nil) else {
-                return
-            }
-            subscription.cancel()
             self.receiveCompletion?(completion)
+            _ = self.subscription.exchange(with: nil)
         }
         
         /// Cancel the activity.

@@ -19,7 +19,7 @@ class TryCompactMapSpec: QuickSpec {
         
         // MARK: Relay
         describe("Relay") {
-            
+
             // MARK: 1.1 should compact map values from upstream
             it("should compact map values from upstream") {
                 let pub = PassthroughSubject<Int, TestError>()

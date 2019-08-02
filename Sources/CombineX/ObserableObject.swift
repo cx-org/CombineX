@@ -1,3 +1,6 @@
+// `ObservableObject` depends on property wrapper(`@Published`), which is only available since Swift 5.1.
+#if swift(>=5.1)
+
 /// A type of object with a publisher that emits before the object has changed.
 ///
 /// By default an `ObservableObject` will synthesize an `objectWillChange`
@@ -37,10 +40,10 @@ extension ObservableObject where Self.ObjectWillChangePublisher == ObservableObj
     /// A publisher that emits before the object has changed.
     public var objectWillChange: ObservableObjectPublisher {
         /*
-         TODO: Default publisher.
-         1. All @Published properties hold this object and relay changes.
-         2. This object gets all @Published properties and subscribes to them.
+         TODO: How to create a default publisher?
          
+            1: All @Published properties hold this object and send changes.
+            2: This object gets all @Published properties and subscribes to them.
          https://github.com/apple/swift-evolution/blob/master/proposals/0258-property-wrappers.md#referencing-the-enclosing-self-in-a-wrapper-type
          */
         Global.RequiresImplementation()
@@ -79,4 +82,4 @@ final public class ObservableObjectPublisher : Publisher {
     }
 }
 
-
+#endif
