@@ -10,10 +10,10 @@ import UIKit
 import Combine
 
 class ViewController: UIViewController {
-
+    
+    let pub = URLSession.shared.dataTaskPublisher(for: URL(string: "http://localhost:3000")!)
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
     }
 }
-

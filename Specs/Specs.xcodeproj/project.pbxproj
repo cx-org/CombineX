@@ -870,6 +870,40 @@
 			children = (
 				66CCBC3722F489670023EFC2 /* Combined */,
 				66EF079F22EF3AAF00EE5FC4 /* TryCompactMap.swift */,
+				66EF079122EF3AAF00EE5FC4 /* __Publisher.swift */,
+				66EF077E22EF3AAF00EE5FC4 /* CollectByCount.swift */,
+				66EF07A922EF3AAF00EE5FC4 /* Concatenate.swift */,
+				66EF077722EF3AAF00EE5FC4 /* Deferred.swift */,
+				66EF078222EF3AAF00EE5FC4 /* Delay.swift */,
+				66EF077822EF3AAF00EE5FC4 /* DropUntilOutput.swift */,
+				66EF078322EF3AAF00EE5FC4 /* Empty.swift */,
+				66EF07AE22EF3AAF00EE5FC4 /* Fail.swift */,
+				66EF078622EF3AAF00EE5FC4 /* FlatMap.swift */,
+				66EF07B422EF3AAF00EE5FC4 /* Just.swift */,
+				66EF07B622EF3AAF00EE5FC4 /* MapError.swift */,
+				66EF078922EF3AAF00EE5FC4 /* MeasureInterval.swift */,
+				66EF07A722EF3AAF00EE5FC4 /* Merge.swift */,
+				66EF07B022EF3AAF00EE5FC4 /* Optional.Publisher.swift */,
+				66EF078822EF3AAF00EE5FC4 /* Output.swift */,
+				66EF07B922EF3AAF00EE5FC4 /* PrefixUntilOutput.swift */,
+				66EF077522EF3AAF00EE5FC4 /* Print.swift */,
+				66EF077F22EF3AAF00EE5FC4 /* Publishers.swift */,
+				66EF078422EF3AAF00EE5FC4 /* ReceiveOn.swift */,
+				66EF07A822EF3AAF00EE5FC4 /* ReplaceEmpty.swift */,
+				66EF07A122EF3AAF00EE5FC4 /* ReplaceError.swift */,
+				66EF078A22EF3AAF00EE5FC4 /* Result.Publisher.swift */,
+				66EF078C22EF3AAF00EE5FC4 /* Sequence.swift */,
+				66EF07BA22EF3AAF00EE5FC4 /* SetFailureType.swift */,
+				66EF077A22EF3AAF00EE5FC4 /* SubscribeOn.swift */,
+				66EF079522EF3AAF00EE5FC4 /* TryAllSatisfy.swift */,
+				66EF07B522EF3AAF00EE5FC4 /* TryCatch.swift */,
+				66EF078022EF3AAF00EE5FC4 /* TryCombineLatest.swift */,
+				66EF079D22EF3AAF00EE5FC4 /* TryDropWhile.swift */,
+				66EF07AF22EF3AAF00EE5FC4 /* TryPrefixWhile.swift */,
+				66EF07AB22EF3AAF00EE5FC4 /* TryReduce.swift */,
+				66EF079C22EF3AAF00EE5FC4 /* TryRemoveDuplicates.swift */,
+				66EF078B22EF3AAF00EE5FC4 /* TryScan.swift */,
+				66EF07A622EF3AAF00EE5FC4 /* Zip.swift */,
 			);
 			path = B;
 			sourceTree = "<group>";
@@ -998,13 +1032,12 @@
 			isa = PBXGroup;
 			children = (
 				66CCBC3622F488AA0023EFC2 /* B */,
-				66EF076522EF3AAF00EE5FC4 /* D */,
-				66EF077422EF3AAF00EE5FC4 /* C */,
+				66EF076522EF3AAF00EE5FC4 /* C */,
 			);
 			path = Publishers;
 			sourceTree = "<group>";
 		};
-		66EF076522EF3AAF00EE5FC4 /* D */ = {
+		66EF076522EF3AAF00EE5FC4 /* C */ = {
 			isa = PBXGroup;
 			children = (
 				623D4E7222EFF8030046B28A /* Record.swift */,
@@ -1022,47 +1055,6 @@
 				66EF077122EF3AAF00EE5FC4 /* Share.swift */,
 				66EF077222EF3AAF00EE5FC4 /* CollectByTime.swift */,
 				66EF077322EF3AAF00EE5FC4 /* SwitchToLatest.swift */,
-			);
-			path = D;
-			sourceTree = "<group>";
-		};
-		66EF077422EF3AAF00EE5FC4 /* C */ = {
-			isa = PBXGroup;
-			children = (
-				66EF079122EF3AAF00EE5FC4 /* __Publisher.swift */,
-				66EF077E22EF3AAF00EE5FC4 /* CollectByCount.swift */,
-				66EF07A922EF3AAF00EE5FC4 /* Concatenate.swift */,
-				66EF077722EF3AAF00EE5FC4 /* Deferred.swift */,
-				66EF078222EF3AAF00EE5FC4 /* Delay.swift */,
-				66EF077822EF3AAF00EE5FC4 /* DropUntilOutput.swift */,
-				66EF078322EF3AAF00EE5FC4 /* Empty.swift */,
-				66EF07AE22EF3AAF00EE5FC4 /* Fail.swift */,
-				66EF078622EF3AAF00EE5FC4 /* FlatMap.swift */,
-				66EF07B422EF3AAF00EE5FC4 /* Just.swift */,
-				66EF07B622EF3AAF00EE5FC4 /* MapError.swift */,
-				66EF078922EF3AAF00EE5FC4 /* MeasureInterval.swift */,
-				66EF07A722EF3AAF00EE5FC4 /* Merge.swift */,
-				66EF07B022EF3AAF00EE5FC4 /* Optional.Publisher.swift */,
-				66EF078822EF3AAF00EE5FC4 /* Output.swift */,
-				66EF07B922EF3AAF00EE5FC4 /* PrefixUntilOutput.swift */,
-				66EF077522EF3AAF00EE5FC4 /* Print.swift */,
-				66EF077F22EF3AAF00EE5FC4 /* Publishers.swift */,
-				66EF078422EF3AAF00EE5FC4 /* ReceiveOn.swift */,
-				66EF07A822EF3AAF00EE5FC4 /* ReplaceEmpty.swift */,
-				66EF07A122EF3AAF00EE5FC4 /* ReplaceError.swift */,
-				66EF078A22EF3AAF00EE5FC4 /* Result.Publisher.swift */,
-				66EF078C22EF3AAF00EE5FC4 /* Sequence.swift */,
-				66EF07BA22EF3AAF00EE5FC4 /* SetFailureType.swift */,
-				66EF077A22EF3AAF00EE5FC4 /* SubscribeOn.swift */,
-				66EF079522EF3AAF00EE5FC4 /* TryAllSatisfy.swift */,
-				66EF07B522EF3AAF00EE5FC4 /* TryCatch.swift */,
-				66EF078022EF3AAF00EE5FC4 /* TryCombineLatest.swift */,
-				66EF079D22EF3AAF00EE5FC4 /* TryDropWhile.swift */,
-				66EF07AF22EF3AAF00EE5FC4 /* TryPrefixWhile.swift */,
-				66EF07AB22EF3AAF00EE5FC4 /* TryReduce.swift */,
-				66EF079C22EF3AAF00EE5FC4 /* TryRemoveDuplicates.swift */,
-				66EF078B22EF3AAF00EE5FC4 /* TryScan.swift */,
-				66EF07A622EF3AAF00EE5FC4 /* Zip.swift */,
 			);
 			path = C;
 			sourceTree = "<group>";

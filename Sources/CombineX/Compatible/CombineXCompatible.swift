@@ -13,4 +13,9 @@ extension CombineXCompatible {
     public var cx: CombineXBox<Self> {
         return CombineXBox(self)
     }
+    
+    public static var cx: CombineXBox<Self>.Type {
+        return CombineXBox<Self>.self
+    }
 }
+
