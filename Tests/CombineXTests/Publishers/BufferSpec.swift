@@ -77,7 +77,7 @@ class BufferSpec: QuickSpec {
             }
             
             // MARK: 1.4 should throw an error
-            xit("should drop newest") {
+            xit("should throw an error") {
                 let subject = PassthroughSubject<Int, TestError>()
                 let pub = subject.buffer(size: 5, prefetch: .byRequest, whenFull: .customError({ TestError.e1 }))
                 let sub = makeTestSubscriber(Int.self, TestError.self, .max(5))

@@ -795,7 +795,6 @@
 				66343B1922F6D5A200417FB2 /* MakeConnectable.swift */,
 				66343B1A22F6D5A200417FB2 /* Debounce.swift */,
 				66343B1B22F6D5A200417FB2 /* Share.swift */,
-				66343B1C22F6D5A200417FB2 /* Record.swift */,
 				66343B1D22F6D5A200417FB2 /* CollectByTime.swift */,
 				66343B1E22F6D5A200417FB2 /* SwitchToLatest.swift */,
 			);
@@ -805,6 +804,7 @@
 		66343B1F22F6D5A200417FB2 /* B */ = {
 			isa = PBXGroup;
 			children = (
+				66343B1C22F6D5A200417FB2 /* Record.swift */,
 				66343B2022F6D5A200417FB2 /* Print.swift */,
 				66343B2122F6D5A200417FB2 /* Deferred.swift */,
 				66343B2222F6D5A200417FB2 /* DropUntilOutput.swift */,

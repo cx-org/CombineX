@@ -18,28 +18,7 @@ class OutputSpec: QuickSpec {
         // MARK: - Relay
         describe("Relay") {
             
-            xit("should receive values even if no subscription is received") {
-                let pub = TestPublisher<Int, Error> { (s) in
-                    s.receive(subscription: Subscriptions.empty)
-                    _ = s.receive(0)
-                    s.receive(completion: .failure(TestError.e0))
-                    _ = s.receive(1)
-                    _ = s.receive(2)
-                    _ = s.receive(3)
-                    _ = s.receive(4)
-                }
-                
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
-//                pub.output(in: 0..<2).subscribe(sub)
-                pub.map { $0 }.subscribe(sub)
-                
-                let got = sub.events.mapError { $0 as! TestError }
-                expect(got).to(equal([.value(0), .value(1)]))
-                
-                // [0, failure(TestError.e0), 1]
-            }
-            
-            xit("should receive values even if no subscription is received") {
+            xit("should not receive values even if no subscription is received") {
                 let pub = TestPublisher<Int, Error> { (s) in
                     _ = s.receive(0)
                     _ = s.receive(1)
@@ -52,6 +31,8 @@ class OutputSpec: QuickSpec {
                 pub.output(in: 0..<2).subscribe(sub)
                 
                 let got = sub.events.mapError { $0 as! TestError }
+                
+                // FIXME: Even if the upstream doesn't send subscription, the downstream still can receive values. 🤔.
                 expect(got).to(equal([.value(0), .value(1)]))
             }
             
