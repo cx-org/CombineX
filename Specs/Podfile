@@ -9,11 +9,11 @@ def pod_quick
   pod 'Nimble'
 end
 
-target 'CombineSpecs' do
+target 'Specs' do
   
   use_frameworks!
 
-  target 'CombineSpecsTests' do
+  target 'SpecsTests' do
     inherit! :search_paths
     
     pod_quick
@@ -21,11 +21,11 @@ target 'CombineSpecs' do
 
 end
 
-target 'Specs' do
+target 'CombineX' do
   
   use_frameworks!
   
-  target 'SpecsTests' do
+  target 'CombineXTests' do
     inherit! :search_paths
     
     pod_quick

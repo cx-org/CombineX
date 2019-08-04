@@ -4,18 +4,14 @@ import Nimble
 
 #if USE_COMBINE
 import Combine
-#elseif SWIFT_PACKAGE
-import CombineX
 #else
-import Specs
+import CombineX
 #endif
 
 #if USE_COMBINE
 typealias ObservableObject = Combine.ObservableObject
-#elseif SWIFT_PACKAGE
-typealias ObservableObject = CombineX.ObservableObject
 #else
-typealias ObservableObject = Specs.ObservableObject
+typealias ObservableObject = CombineX.ObservableObject
 #endif
 
 class DemandSpec: QuickSpec {
@@ -25,7 +21,7 @@ class DemandSpec: QuickSpec {
     override func spec() {
         
         afterEach {
-            Resources.release()
+            TestResources.release()
         }
         
         // MARK: - Create

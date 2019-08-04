@@ -147,7 +147,7 @@ extension Publishers.CollectByCount {
             case .finished:
                 let output = self.buffer
                 self.buffer = []
-                if output.isNotEmpty {
+                if !output.isEmpty {
                     _ = self.sub.receive(output)
                 }
                 self.sub.receive(completion: completion)

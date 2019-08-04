@@ -3,10 +3,8 @@ import Nimble
 
 #if USE_COMBINE
 import Combine
-#elseif SWIFT_PACKAGE
-import CombineX
 #else
-import Specs
+import CombineX
 #endif
 
 class RetrySpec: QuickSpec {
@@ -14,7 +12,7 @@ class RetrySpec: QuickSpec {
     override func spec() {
         
         afterEach {
-            Resources.release()
+            TestResources.release()
         }
         
         // MARK: - Retry
@@ -25,10 +23,10 @@ class RetrySpec: QuickSpec {
                 var errs: [TestError] = [.e0, .e1, .e2]
                 let pub = TestPublisher<Int, TestError> { (s) in
                     s.receive(subscription: Subscriptions.empty)
-                    if errs.isNotEmpty {
-                        s.receive(completion: .failure(errs.removeFirst()))
-                    } else {
+                    if errs.isEmpty {
                         s.receive(completion: .finished)
+                    } else {
+                        s.receive(completion: .failure(errs.removeFirst()))
                     }
                 }
                 let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
@@ -42,10 +40,10 @@ class RetrySpec: QuickSpec {
                 var errs: [TestError] = [.e0, .e1, .e2]
                 let pub = TestPublisher<Int, TestError> { (s) in
                     s.receive(subscription: Subscriptions.empty)
-                    if errs.isNotEmpty {
-                        s.receive(completion: .failure(errs.removeFirst()))
-                    } else {
+                    if errs.isEmpty {
                         s.receive(completion: .finished)
+                    } else {
+                        s.receive(completion: .failure(errs.removeFirst()))
                     }
                 }
                 let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)

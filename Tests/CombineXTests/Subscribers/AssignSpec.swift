@@ -4,10 +4,8 @@ import Nimble
 
 #if USE_COMBINE
 import Combine
-#elseif SWIFT_PACKAGE
-import CombineX
 #else
-import Specs
+import CombineX
 #endif
 
 class AssignSpec: QuickSpec {
@@ -15,7 +13,7 @@ class AssignSpec: QuickSpec {
     override func spec() {
         
         afterEach {
-            Resources.release()
+            TestResources.release()
         }
         
         class Object {

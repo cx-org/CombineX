@@ -3,18 +3,14 @@ import Nimble
 
 #if USE_COMBINE
 import Combine
-#elseif SWIFT_PACKAGE
-import CombineX
 #else
-import Specs
+import CombineX
 #endif
 
 #if USE_COMBINE
 typealias Published = Combine.Published
-#elseif SWIFT_PACKAGE
-typealias Published = CombineX.Published
 #else
-typealias Published = Specs.Published
+typealias Published = CombineX.Published
 #endif
 
 #if swift(>=5.1)
@@ -23,7 +19,7 @@ class PublishedSpec: QuickSpec {
     override func spec() {
         
         afterEach {
-            Resources.release()
+            TestResources.release()
         }
         
         // MARK: - Publish

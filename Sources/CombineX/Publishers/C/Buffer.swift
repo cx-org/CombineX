@@ -169,7 +169,7 @@ extension Publishers.Buffer {
             let new = old + demand
             self.demand = new
             
-             if old == 0, new > 0, self.buffer.isNotEmpty {
+             if old == 0, new > 0, !self.buffer.isEmpty {
                 let count = self.drain(new)
                 subscription.request(demand + count)
             } else {
@@ -337,7 +337,7 @@ extension Publishers.Buffer {
             let new = old + demand
             self.demand = new
             
-            if old == 0, new > 0, self.buffer.isNotEmpty {
+            if old == 0, new > 0, !self.buffer.isEmpty {
                 self.drain(new)
             } else {
                 self.lock.unlock()

@@ -1,6 +1,6 @@
 extension Result {
     
-    public enum CombineX {
+    public enum CX {
     }
 }
 
@@ -8,12 +8,12 @@ extension Result: CombineXCompatible { }
 
 extension CombineXBox where Base: ResultProtocol {
     
-    public var publisher: Result<Base.Success, Base.Failure>.CombineX.Publisher {
+    public var publisher: Result<Base.Success, Base.Failure>.CX.Publisher {
         return .init(self.base.result)
     }
 }
 
-extension Result.CombineX {
+extension Result.CX {
 
     /// A publisher that publishes an output to each subscriber exactly once then finishes, or fails immediately without producing any elements.
     ///
@@ -70,7 +70,7 @@ extension Result.CombineX {
     }
 }
 
-extension Result.CombineX.Publisher {
+extension Result.CX.Publisher {
     
     private final class Inner<S>:
         Subscription,

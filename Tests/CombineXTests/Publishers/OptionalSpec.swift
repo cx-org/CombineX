@@ -4,16 +4,14 @@ import Nimble
 
 #if USE_COMBINE
 import Combine
-#elseif SWIFT_PACKAGE
-import CombineX
 #else
-import Specs
+import CombineX
 #endif
 
 #if USE_COMBINE
 typealias OptionalPublisher<Wrapped> = Optional<Wrapped>.Publisher
 #else
-typealias OptionalPublisher<Wrapped> = Optional<Wrapped>.CombineX.Publisher
+typealias OptionalPublisher<Wrapped> = Optional<Wrapped>.CX.Publisher
 #endif
 
 class OptionalSpec: QuickSpec {
@@ -21,7 +19,7 @@ class OptionalSpec: QuickSpec {
     override func spec() {
         
         afterEach {
-            Resources.release()
+            TestResources.release()
         }
         
         // MARK: - Send Values

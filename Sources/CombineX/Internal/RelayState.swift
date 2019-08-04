@@ -58,8 +58,6 @@ extension RelayState {
     }
 }
 
-// MARK: - Transit
-
 extension RelayState {
     
     @inlinable

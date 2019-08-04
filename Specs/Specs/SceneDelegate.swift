@@ -2,7 +2,7 @@
 //  SceneDelegate.swift
 //  Specs
 //
-//  Created by Quentin Jin on 2019/6/16.
+//  Created by Quentin Jin on 2019/8/4.
 //  Copyright © 2019 Quentin Jin. All rights reserved.
 //
 

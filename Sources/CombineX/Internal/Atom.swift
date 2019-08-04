@@ -1,7 +1,6 @@
 final class Atom<Val> {
-    
+
     private let lock = Lock()
-    
     private var val: Val
     
     init(val: Val) {
@@ -9,15 +8,13 @@ final class Atom<Val> {
     }
     
     func get() -> Val {
-        self.lock.lock()
-        defer { self.lock.unlock() }
-        return self.val
+        self.lock.withLockGet(self.val)
     }
     
     func set(_ new: Val) {
-        self.lock.lock()
-        defer { self.lock.unlock() }
-        self.val = new
+        self.lock.withLock {
+            self.val = new
+        }
     }
     
     func exchange(with new: Val) -> Val {
@@ -44,31 +41,35 @@ final class Atom<Val> {
 extension Atom where Val: Equatable {
     
     func compareAndSet(expected: Val, new: Val) -> Bool {
-        return self.withLockMutating {
-            if $0 == expected {
-                $0 = new
-                return true
-            }
-            return false
+        self.lock.lock()
+        defer { self.lock.unlock() }
+        
+        if self.val == expected {
+            self.val = new
+            return true
         }
+        
+        return false
     }
 }
 
 extension Atom where Val: AdditiveArithmetic {
     
     func add(_ val: Val) -> Val {
-        return self.withLockMutating {
-            let old = $0
-            $0 += val
-            return old
-        }
+        self.lock.lock()
+        defer { self.lock.unlock() }
+        
+        let old = self.val
+        self.val += val
+        return old
     }
     
     func sub(_ val: Val) -> Val {
-        return self.withLockMutating {
-            let old = $0
-            $0 -= val
-            return old
-        }
+        self.lock.lock()
+        defer { self.lock.unlock() }
+        
+        let old = self.val
+        self.val -= val
+        return old
     }
 }

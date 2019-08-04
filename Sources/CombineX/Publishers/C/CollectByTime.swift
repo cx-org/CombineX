@@ -110,7 +110,7 @@ extension Publishers.CollectByTime {
             self.sub = sub
         
             guard case .byTimeOrCount(let context, let time, let count) = pub.strategy else {
-                Global.Impossible()
+                Global.Never()
             }
             self.context = context
             self.time = time
@@ -139,7 +139,7 @@ extension Publishers.CollectByTime {
                 
                 self.rescheduleTimeoutTask()
                 
-                guard buffer.isNotEmpty else {
+                if buffer.isEmpty {
                     return
                 }
                 
@@ -204,7 +204,7 @@ extension Publishers.CollectByTime {
             case .finished:
                 let output = self.buffer
                 self.buffer = []
-                if output.isNotEmpty {
+                if !output.isEmpty {
                     _ = self.sub.receive(output)
                 }
                 self.sub.receive(completion: completion)
@@ -260,7 +260,7 @@ extension Publishers.CollectByTime {
             self.sub = sub
         
             guard case .byTime(let context, let time) = pub.strategy else {
-                Global.Impossible()
+                Global.Never()
             }
             self.context = context
             self.time = time
@@ -293,7 +293,7 @@ extension Publishers.CollectByTime {
                 let buffer = self.buffer
                 self.buffer.removeAll(keepingCapacity: true)
                 
-                guard buffer.isNotEmpty else {
+                if buffer.isEmpty {
                     self.lock.unlock()
                     return
                 }
@@ -366,7 +366,7 @@ extension Publishers.CollectByTime {
             case .finished:
                 let output = self.buffer
                 self.buffer = []
-                if output.isNotEmpty {
+                if !output.isEmpty {
                     _ = self.sub.receive(output)
                 }
                 self.sub.receive(completion: completion)

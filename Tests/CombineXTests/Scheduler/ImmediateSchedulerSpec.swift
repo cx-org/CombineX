@@ -3,10 +3,8 @@ import Nimble
 
 #if USE_COMBINE
 import Combine
-#elseif SWIFT_PACKAGE
-import CombineX
 #else
-import Specs
+import CombineX
 #endif
 
 class ImmediateSchedulerSpec: QuickSpec {
@@ -17,7 +15,7 @@ class ImmediateSchedulerSpec: QuickSpec {
     override func spec() {
         
         afterEach {
-            Resources.release()
+            TestResources.release()
         }
         
         // MARK: It should have a zero magnitude stride

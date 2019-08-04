@@ -32,8 +32,8 @@ extension DemandState {
     
     var demand: Subscribers.Demand? {
         switch self {
-        case .demanding(let d):   return d
-        default:                    return nil
+        case .demanding(let d): return d
+        default:                return nil
         }
     }
 }

@@ -20,7 +20,7 @@ extension Global {
     }
     
     @inlinable
-    static func Impossible(_ fn: String = #function, file: StaticString = #file, line: UInt = #line) -> Never {
-        fatalError("Impossible", file: file, line: line)
+    static func Never(_ fn: String = #function, file: StaticString = #file, line: UInt = #line) -> Never {
+        fatalError("Never", file: file, line: line)
     }
 }

@@ -9,14 +9,29 @@
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
+		<key>CombineX-Package.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
 		<key>CombineX.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
+		<key>CombineXTest.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>Base</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>CombineQ</key>
 		<dict>
 			<key>primary</key>
@@ -28,6 +43,11 @@
 			<true/>
 		</dict>
 		<key>CombineX</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>CombineXTest</key>
 		<dict>
 			<key>primary</key>
 			<true/>

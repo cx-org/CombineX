@@ -21,8 +21,8 @@ internal class NMBWait: NSObject {
         file: FileString = #file,
         line: UInt = #line,
         action: @escaping (@escaping () -> Void) -> Void) {
-            return throwableUntil(timeout: timeout, file: file, line: line) { completed in
-                action(completed)
+            return throwableUntil(timeout: timeout, file: file, line: line) { done in
+                action(done)
             }
     }
 #else
@@ -31,8 +31,8 @@ internal class NMBWait: NSObject {
         file: FileString = #file,
         line: UInt = #line,
         action: @escaping (@escaping () -> Void) -> Void) {
-            return throwableUntil(timeout: timeout, file: file, line: line) { complete in
-                action(complete)
+            return throwableUntil(timeout: timeout, file: file, line: line) { done in
+                action(done)
             }
     }
 #endif

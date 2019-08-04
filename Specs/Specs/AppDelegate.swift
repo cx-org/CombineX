@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  Specs
 //
-//  Created by Quentin Jin on 2019/6/16.
+//  Created by Quentin Jin on 2019/8/4.
 //  Copyright © 2019 Quentin Jin. All rights reserved.
 //
 
@@ -11,14 +11,11 @@ import UIKit
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
+
+
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        
         return true
-    }
-
-    func applicationWillTerminate(_ application: UIApplication) {
-        // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
     // MARK: UISceneSession Lifecycle

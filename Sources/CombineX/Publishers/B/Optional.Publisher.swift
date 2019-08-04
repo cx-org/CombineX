@@ -1,6 +1,6 @@
 extension Optional {
     
-    public enum CombineX {
+    public enum CX {
     }
 }
 
@@ -9,7 +9,7 @@ extension Optional: CombineXCompatible { }
 extension CombineXBox where Base: OptionalProtocol {
 }
 
-extension Optional.CombineX {
+extension Optional.CX {
     
     /// A publisher that publishes an optional value to each subscriber exactly once, if the optional has a value.
     ///

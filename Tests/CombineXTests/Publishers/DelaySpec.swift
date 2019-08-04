@@ -3,10 +3,8 @@ import Nimble
 
 #if USE_COMBINE
 import Combine
-#elseif SWIFT_PACKAGE
-import CombineX
 #else
-import Specs
+import CombineX
 #endif
 
 class DelaySpec: QuickSpec {
@@ -14,7 +12,7 @@ class DelaySpec: QuickSpec {
     override func spec() {
         
         afterEach {
-            Resources.release()
+            TestResources.release()
         }
         
         // MARK: - Relay
@@ -26,9 +24,9 @@ class DelaySpec: QuickSpec {
                 let scheduler = TestScheduler()
                 let pub = subject.delay(for: .seconds(1), scheduler: scheduler)
 
-                let receiveS = Timeline(context: scheduler)
-                let receiveV = Timeline(context: scheduler)
-                let receiveC = Timeline(context: scheduler)
+                let receiveS = TestTimeline(context: scheduler)
+                let receiveV = TestTimeline(context: scheduler)
+                let receiveC = TestTimeline(context: scheduler)
                 
                 let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
                     receiveS.record()
@@ -40,9 +38,9 @@ class DelaySpec: QuickSpec {
                     receiveC.record()
                 })
                 
-                let sendS = Timeline(context: scheduler)
-                let sendV = Timeline(context: scheduler)
-                let sendB = Timeline(context: scheduler)
+                let sendS = TestTimeline(context: scheduler)
+                let sendV = TestTimeline(context: scheduler)
+                let sendB = TestTimeline(context: scheduler)
                 
                 
                 sendS.record()

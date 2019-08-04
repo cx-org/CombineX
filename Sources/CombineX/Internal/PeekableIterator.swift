@@ -1,7 +1,6 @@
 struct PeekableIterator<Element>: IteratorProtocol {
     
     private var iterator: AnyIterator<Element>
-    
     private var nextValue: Element?
     
     init<I: IteratorProtocol>(_ iterator: I) where I.Element == Element {

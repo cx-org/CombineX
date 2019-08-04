@@ -1,31 +1,31 @@
 extension Publishers.Sequence where Failure == Never {
 
-    public func min(by areInIncreasingOrder: (Output, Output) -> Bool) -> Optional<Output>.CombineX.Publisher {
+    public func min(by areInIncreasingOrder: (Output, Output) -> Bool) -> Optional<Output>.CX.Publisher {
         return .init(self.sequence.min(by: areInIncreasingOrder))
     }
 
-    public func max(by areInIncreasingOrder: (Output, Output) -> Bool) -> Optional<Output>.CombineX.Publisher {
+    public func max(by areInIncreasingOrder: (Output, Output) -> Bool) -> Optional<Output>.CX.Publisher {
         return .init(self.sequence.max(by: areInIncreasingOrder))
     }
 
-    public func first(where predicate: (Output) -> Bool) -> Optional<Output>.CombineX.Publisher {
+    public func first(where predicate: (Output) -> Bool) -> Optional<Output>.CX.Publisher {
         return .init(self.sequence.first(where: predicate))
     }
 }
 
 extension Publishers.Sequence {
     
-    public func allSatisfy(_ predicate: (Output) -> Bool) -> Result<Bool, Failure>.CombineX.Publisher {
+    public func allSatisfy(_ predicate: (Output) -> Bool) -> Result<Bool, Failure>.CX.Publisher {
         return .init(self.sequence.allSatisfy(predicate))
     }
   
-    public func tryAllSatisfy(_ predicate: (Output) throws -> Bool) -> Result<Bool, Error>.CombineX.Publisher {
+    public func tryAllSatisfy(_ predicate: (Output) throws -> Bool) -> Result<Bool, Error>.CX.Publisher {
         return .init(Result {
             try self.sequence.allSatisfy(predicate)
         })
     }
   
-    public func collect() -> Result<[Output], Failure>.CombineX.Publisher {
+    public func collect() -> Result<[Output], Failure>.CX.Publisher {
         return .init(Array(self.sequence))
     }
     
@@ -33,11 +33,11 @@ extension Publishers.Sequence {
         return .init(sequence: self.sequence.compactMap(transform))
     }
     
-    public func contains(where predicate: (Output) -> Bool) -> Result<Bool, Failure>.CombineX.Publisher {
+    public func contains(where predicate: (Output) -> Bool) -> Result<Bool, Failure>.CX.Publisher {
         return .init(self.sequence.contains(where: predicate))
     }
     
-    public func tryContains(where predicate: (Output) throws -> Bool) -> Result<Bool, Error>.CombineX.Publisher {
+    public func tryContains(where predicate: (Output) throws -> Bool) -> Result<Bool, Error>.CX.Publisher {
         return .init(Result {
             try self.sequence.contains(where: predicate)
         })
@@ -71,11 +71,11 @@ extension Publishers.Sequence {
         return .init(sequence: self.sequence.prefix(while: predicate))
     }
     
-    public func reduce<T>(_ initialResult: T, _ nextPartialResult: @escaping (T, Output) -> T) -> Result<T, Failure>.CombineX.Publisher {
+    public func reduce<T>(_ initialResult: T, _ nextPartialResult: @escaping (T, Output) -> T) -> Result<T, Failure>.CX.Publisher {
         return .init(self.sequence.reduce(initialResult, nextPartialResult))
     }
   
-    public func tryReduce<T>(_ initialResult: T, _ nextPartialResult: @escaping (T, Output) throws -> T) -> Result<T, Error>.CombineX.Publisher {
+    public func tryReduce<T>(_ initialResult: T, _ nextPartialResult: @escaping (T, Output) throws -> T) -> Result<T, Error>.CX.Publisher {
         return .init(Result {
             try self.sequence.reduce(initialResult, nextPartialResult)
         })
@@ -115,36 +115,36 @@ extension Publishers.Sequence where Elements.Element : Equatable {
         return .init(sequence: s)
     }
     
-    public func contains(_ output: Elements.Element) -> Result<Bool, Failure>.CombineX.Publisher {
+    public func contains(_ output: Elements.Element) -> Result<Bool, Failure>.CX.Publisher {
         return .init(self.sequence.contains(output))
     }
 }
 
 extension Publishers.Sequence where Elements.Element : Comparable, Failure == Never {
     
-    public func min() -> Optional<Output>.CombineX.Publisher {
+    public func min() -> Optional<Output>.CX.Publisher {
         return .init(self.sequence.min())
     }
     
-    public func max() -> Optional<Output>.CombineX.Publisher {
+    public func max() -> Optional<Output>.CX.Publisher {
         return .init(self.sequence.max())
     }
 }
 
 extension Publishers.Sequence where Elements : Collection, Failure == Never {
     
-    public func first() -> Optional<Output>.CombineX.Publisher {
+    public func first() -> Optional<Output>.CX.Publisher {
         return .init(self.sequence.first)
     }
     
-    public func output(at index: Elements.Index) -> Optional<Output>.CombineX.Publisher {
+    public func output(at index: Elements.Index) -> Optional<Output>.CX.Publisher {
         return self.sequence.indices.contains(index) ? .init(nil) : .init(self.sequence[index])
     }
 }
 
 extension Publishers.Sequence where Elements : Collection {
     
-    public func count() -> Result<Int, Failure>.CombineX.Publisher {
+    public func count() -> Result<Int, Failure>.CX.Publisher {
         return .init(self.sequence.count)
     }
     
@@ -155,18 +155,18 @@ extension Publishers.Sequence where Elements : Collection {
 
 extension Publishers.Sequence where Elements : BidirectionalCollection, Failure == Never {
   
-    public func last() -> Optional<Output>.CombineX.Publisher {
+    public func last() -> Optional<Output>.CX.Publisher {
         return .init(self.sequence.last)
     }
     
-    public func last(where predicate: (Output) -> Bool) -> Optional<Output>.CombineX.Publisher {
+    public func last(where predicate: (Output) -> Bool) -> Optional<Output>.CX.Publisher {
         return .init(self.sequence.last(where: predicate))
     }
 }
 
 extension Publishers.Sequence where Elements : RandomAccessCollection, Failure == Never {
     
-    public func output(at index: Elements.Index) -> Optional<Output>.CombineX.Publisher {
+    public func output(at index: Elements.Index) -> Optional<Output>.CX.Publisher {
         return .init(self.sequence[index])
     }
 }
@@ -187,7 +187,7 @@ extension Publishers.Sequence where Elements : RandomAccessCollection, Failure =
 
 extension Publishers.Sequence where Elements : RandomAccessCollection {
 
-    public func count() -> Result<Int, Failure>.CombineX.Publisher {
+    public func count() -> Result<Int, Failure>.CX.Publisher {
         return .init(self.sequence.count)
     }
 }
