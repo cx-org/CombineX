@@ -1,3 +1,5 @@
+#if swift(>=5.1)
+
 import Quick
 import Nimble
 
@@ -13,7 +15,6 @@ typealias Published = Combine.Published
 typealias Published = CombineX.Published
 #endif
 
-#if swift(>=5.1)
 class PublishedSpec: QuickSpec {
     
     override func spec() {
@@ -70,4 +71,5 @@ class PublishedSpec: QuickSpec {
         }
     }
 }
+
 #endif

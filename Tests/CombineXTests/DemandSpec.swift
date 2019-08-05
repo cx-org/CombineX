@@ -8,12 +8,6 @@ import Combine
 import CombineX
 #endif
 
-#if USE_COMBINE
-typealias ObservableObject = Combine.ObservableObject
-#else
-typealias ObservableObject = CombineX.ObservableObject
-#endif
-
 class DemandSpec: QuickSpec {
     
     typealias Demand = Subscribers.Demand
