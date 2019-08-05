@@ -129,6 +129,7 @@ class DemandSpec: QuickSpec {
                 
                 expect {
                     let encoder = JSONEncoder()
+                    encoder.outputFormatting = [.sortedKeys]
                     let data = try encoder.encode(q)
                     
                     expect(String(data: data, encoding: .utf8)).to(equal(#"{"a":9223372036854775808,"b":10}"#))
