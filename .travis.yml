@@ -18,7 +18,7 @@ before_install:
   # - gem update --system
   # - gem install bundler
   - if [[ $TRAVIS_OS_NAME == 'linux' ]]; then
-      eval "$(curl -sL https://swiftenv.fuller.li/install.sh)";
+      eval "$(curl -sL https://raw.githubusercontent.com/kylef/swiftenv/master/docs/install.sh)";
     fi
 
 script:
