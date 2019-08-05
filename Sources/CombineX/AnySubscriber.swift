@@ -90,7 +90,7 @@ public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertibl
     /// - Returns: A `Demand` instance indicating how many more elements the subcriber expects to receive.
     @inlinable
     public func receive(_ value: Input) -> Subscribers.Demand {
-        self.box.receive(value)
+        return self.box.receive(value)
     }
     
     /// Tells the subscriber that the publisher has completed publishing, either normally or with an error.

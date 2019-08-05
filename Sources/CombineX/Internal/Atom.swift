@@ -8,7 +8,7 @@ final class Atom<Val> {
     }
     
     func get() -> Val {
-        self.lock.withLockGet(self.val)
+        return self.lock.withLockGet(self.val)
     }
     
     func set(_ new: Val) {
