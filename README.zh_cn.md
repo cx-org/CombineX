@@ -1,8 +1,17 @@
 # CombineX
 
 <img src="https://img.shields.io/travis/luoxiu/CombineX.svg">
+<img src="https://img.shields.io/badge/swift-5.0%20%7C%205.1-orange">
+<img src="https://img.shields.io/badge/platform-ios%20%7C%20macos%20%7C%20watchos%20%7C%20tvos%20%7C%20linux-lightgrey">
 
-CombineX 是 Apple's [Combine](https://developer.apple.com/documentation/combine) 的开源实现。
+CombineX 是 Apple's [Combine](https://developer.apple.com/documentation/combine) 的开源实现。它可以让你现在就用上 Combine 的 API，不需要 macOS 10.15 或者 iOS 13，不需要 Apple 平台。
+
+#### 目标
+
+`CombineX` 会尽力提供：
+
+1. 与 `Combine` ~100% 一致的行为。
+2. 更多 `Combine` 没有但有用的周边扩展。你可以在[这儿](https://github.com/CombineXCommunity)找到它们。
 
 ## 状态
 
@@ -28,8 +37,8 @@ dependencies.append(
 
 ## 相关
 
-- [CombineX.Foundation](https://github.com/CombineXCommunity/CombineX.Foundation)
-- [CombineX.Compatible](https://github.com/CombineXCommunity/CombineX.Compatible)
+- [CombineX.Foundation](https://github.com/CombineXCommunity/CombineX.Foundation)：提供所有 `Foundation` 扩展实现，基于 `CombineX`，比如 `URLSession`，`NotificationCenter`，`Timer` 等。
+- [CombineX.Compatible](https://github.com/CombineXCommunity/CombineX.Compatible)：提供 `CombineX` 的 API Shims，帮助你解决可能会出现的迁移顾虑。
 
 
 ## 贡献
@@ -61,10 +70,3 @@ dependencies.append(
 1. `Combine` 有较高的版本限制：macOS 10.15+，iOS 13+。也就是说如果你的 App 即使只需要往前兼容两个版本，也需要两三年后才能用得上它。
 2. `Combine` 是闭源的，它与 `UIKit`，`MapKit` 等一样，随 xcode 的更新而更新。当你遇到 bug 时，你应该遇到过系统库的 bug 吧，调试很烦人，然而更烦人的是缓慢的官方反应，通常你只能等待下一次 xcode 的常规更新。
 3. `Combine` 是 Apple 平台独占的，不能在 Linux 上运行。
-
-#### 目标
-
-`CombineX` 会尽力提供：
-
-1. 与 `Combine` ~100% 一致的行为。
-2. 更多 `Combine` 没有但有用的周边扩展。你可以在[这儿](https://github.com/CombineXCommunity)找到它们。

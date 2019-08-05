@@ -1,8 +1,17 @@
 # CombineX([中文](README.zh_cn.md))
 
 <img src="https://img.shields.io/travis/luoxiu/CombineX.svg">
+<img src="https://img.shields.io/badge/swift-5.0%20%7C%205.1-orange">
+<img src="https://img.shields.io/badge/platform-ios%20%7C%20macos%20%7C%20watchos%20%7C%20tvos%20%7C%20linux-lightgrey">
 
-CombineX is an open source implementation for Apple's [Combine](https://developer.apple.com/documentation/combine) specs.
+CombineX is an open source implementation for Apple's [Combine](https://developer.apple.com/documentation/combine) specs. It allows you to use Combine's API right now, without the need for macOS 10.15 or iOS 13, without the need for the Apple platform.
+
+#### Goal
+
+`CombineX` will try to provide:
+
+1. ~100% identical behavior to the Apple Combine.
+2. More `Combine` not provided but very useful extensions. You can find them [here] (https://github.com/CombineXCommunity).
 
 ## Status
 
@@ -28,8 +37,8 @@ pkg.dependencies.append(
 
 ## Related
 
-- [CombineX.Foundation](https://github.com/CombineXCommunity/CombineX.Foundation)
-- [CombineX.Compatible](https://github.com/CombineXCommunity/CombineX.Compatible)
+- [CombineX.Foundation](https://github.com/CombineXCommunity/CombineX.Foundation): provides all `Foundation` extension implementations, built on top of `CombineX`, such as `URLSession`, `NotificationCenter`, `Timer`, etc.
+- [CombineX.Compatible](https://github.com/CombineXCommunity/CombineX.Compatible): provides `CombineX` API Shims, help you resolve migration concerns that may arise.
 
 ## Contribute
 
@@ -60,10 +69,3 @@ Since `Combine` is still in beta, it is inevitable that it has bugs. If you find
 1. `Combine` has a strict system version limit(macOS 10.15+, iOS 13+). This means that even if your app only needs to support two forward versions, you have to wait for almost three years.
 2. `Combine` is closed source. It is the same as `UIKit`, `MapKit`, updating with the update of xcode. When you encounter a bug, you must have encountered a system library bug before, the debugging is very annoying. And the more annoying is the slow official response, usually you can only wait for the next regular update of xcode.
 3. `Combine` is Apple platform only and doesn't support Linux.
-
-#### Goal
-
-`CombineX` will try to provide:
-
-1. ~100% identical behavior to the Apple Combine.
-2. More `Combine` doesn't have but useful extensions. You can find them [here] (https://github.com/CombineXCommunity).
