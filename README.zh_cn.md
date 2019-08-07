@@ -6,7 +6,7 @@
 
 CombineX 是 Apple's [Combine](https://developer.apple.com/documentation/combine) 的开源实现。它可以让你现在就用上 Combine 的 API，不需要 macOS 10.15 或者 iOS 13，不需要 Apple 平台。
 
-#### 目标
+## 目标
 
 `CombineX` 会尽力提供：
 
@@ -17,9 +17,11 @@ CombineX 是 Apple's [Combine](https://developer.apple.com/documentation/combine
 
 与 Combine beta 5 兼容。
 
+每周一会发布一个新的 beta~
+
 ## 注意
 
-本库仍在测试阶段，所以，**还不可以把它用在生产项目中！**
+本库仍在 beta 测试，所以，**还不可以把它用在生产项目中！**
 
 🐱
 
@@ -31,7 +33,7 @@ CombineX 是 Apple's [Combine](https://developer.apple.com/documentation/combine
 
 ```swift
 dependencies.append(
-    .package(url: "https://github.com/luoxiu/CombineX", ._branchItem("master")
+    .package(url: "https://github.com/luoxiu/CombineX", ._branchItem("master"))
 )
 ```
 
