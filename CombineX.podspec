@@ -1,11 +1,11 @@
 Pod::Spec.new do |s|
 
   s.name         = "CombineX"
-  s.version      = "0.0.1-beta.1"
+  s.version      = "0.0.1-beta.2"
   s.summary      = "Open source implementation for Apple's Combine specs."
   s.homepage     = "https://github.com/luoxiu/CombineX"
   s.license      = { :type => "MIT", :file => "LICENSE" }
-  s.author       = { "Quentin Jin" => "jianstm@gmail.com" }
+  s.author       = { "Quentin Jin" => "luoxiustm@gmail.com" }
 
   s.swift_versions              = ['5.0']
   s.osx.deployment_target       = "10.12"
