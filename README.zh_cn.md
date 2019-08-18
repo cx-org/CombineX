@@ -1,8 +1,8 @@
 # CombineX
 
-<img src="https://img.shields.io/travis/luoxiu/CombineX.svg">
-<img src="https://img.shields.io/badge/swift-5.0%20%7C%205.1-orange">
-<img src="https://img.shields.io/badge/platform-ios%20%7C%20macos%20%7C%20watchos%20%7C%20tvos%20%7C%20linux-lightgrey">
+![travis](https://img.shields.io/travis/luoxiu/CombineX.svg)
+![release](https://img.shields.io/github/release-pre/luoxiu/combinex)
+![platform](https://img.shields.io/badge/platform-ios%20%7C%20macos%20%7C%20watchos%20%7C%20tvos%20%7C%20linux-lightgrey)
 
 CombineX 是 Apple's [Combine](https://developer.apple.com/documentation/combine) 的开源实现。它可以让你现在就用上 Combine 的 API，不需要 macOS 10.15 或者 iOS 13，不需要 Apple 平台。
 

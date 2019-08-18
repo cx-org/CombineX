@@ -1,8 +1,8 @@
 # CombineX([中文](README.zh_cn.md))
 
-<img src="https://img.shields.io/travis/luoxiu/CombineX.svg">
-<img src="https://img.shields.io/badge/swift-5.0%20%7C%205.1-orange">
-<img src="https://img.shields.io/badge/platform-ios%20%7C%20macos%20%7C%20watchos%20%7C%20tvos%20%7C%20linux-lightgrey">
+![travis](https://img.shields.io/travis/luoxiu/CombineX.svg)
+![release](https://img.shields.io/github/release-pre/luoxiu/combinex)
+![platform](https://img.shields.io/badge/platform-ios%20%7C%20macos%20%7C%20watchos%20%7C%20tvos%20%7C%20linux-lightgrey)
 
 CombineX is an open source implementation for Apple's [Combine](https://developer.apple.com/documentation/combine) specs. It allows you to use Combine's API right now, without the need for macOS 10.15 or iOS 13, without the need for the Apple platform.
 
