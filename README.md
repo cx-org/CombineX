@@ -14,7 +14,7 @@ A new beta version will be released every Monday.
 
 ## Notice
 
-This library is still in beta testing, **Please do not use it in production!**
+This library is still in beta, **So do not use it in production.**
 
 🐱
 
@@ -41,7 +41,7 @@ pkg.dependencies.append(
 ## Related
 
 - [CombineX.Foundation](https://github.com/luoxiu/CombineX.Foundation): provides all `Foundation` extension implementations, built on top of `CombineX`, such as `URLSession`, `NotificationCenter`, `Timer`, etc.
-- [CombineX.Cocoa](https://github.com/luoxiu/CombineX.Foundation)：provides `Cocoa` exensions, built on top of `CombineX`.
+- [CombineX.Cocoa](https://github.com/luoxiu/CombineX.Foundation): provides `Cocoa` exensions, built on top of `CombineX`.
 - [CombineX.Compatible](https://github.com/CombineXCommunity/CombineX.Compatible): provides `CombineX` API Shims, help you resolve migration concerns that may arise.
 
 ## Contribute
