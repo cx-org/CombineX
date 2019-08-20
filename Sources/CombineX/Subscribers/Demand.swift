@@ -68,7 +68,8 @@ extension Subscribers {
         /// When adding any value to .unlimited, the result is .unlimited.
         @inlinable
         public static func + (lhs: Subscribers.Demand, rhs: Subscribers.Demand) -> Subscribers.Demand {
-            return Demand(lhs.rawValue + rhs.rawValue)
+            let (v, overflow) = lhs.rawValue.addingReportingOverflow(rhs.rawValue)
+            return overflow ? .unlimited : Demand(v)
         }
         
         /// When adding any value to .unlimited, the result is .unlimited.

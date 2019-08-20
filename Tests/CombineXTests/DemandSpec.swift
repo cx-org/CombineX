@@ -46,6 +46,9 @@ class DemandSpec: QuickSpec {
                 expect(d).to(equal(.max(3)))
                 
                 expect(Demand.max(1) + (-1)).to(equal(.max(0)))
+                
+                expect(Demand.unlimited + 1).to(equal(.unlimited))
+                expect(Demand.unlimited + .unlimited).to(equal(.unlimited))
             }
             
             // MARK: 2.2 should sub as expected
