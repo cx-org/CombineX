@@ -6,13 +6,6 @@
 
 CombineX is an open source implementation for Apple's [Combine](https://developer.apple.com/documentation/combine) specs. It allows you to use Combine's API right now, without the need for macOS 10.15 or iOS 13, without the need for the Apple platform.
 
-## Goal
-
-`CombineX` will try to provide:
-
-1. ~100% consistent behavior with the Apple Combine.
-2. More extensions `Combine` don't have but are very useful. You can find them [here] (https://github.com/CombineXCommunity).
-
 ## Status
 
 Compatible with Combine beta 5. 
