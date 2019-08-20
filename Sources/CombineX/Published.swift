@@ -26,7 +26,7 @@
     
     private lazy var publisher = Publisher(value: self.value)
     
-    public class Publisher : __Publisher {
+    public struct Publisher : __Publisher {
 
         /// The kind of values published by this publisher.
         public typealias Output = Value
