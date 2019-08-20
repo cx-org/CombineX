@@ -27,6 +27,14 @@ This library is still in beta testing, **Please do not use it in production!**
 
 ## Try it out
 
+#### CocoaPods
+
+In your `Podfile`:
+
+```ruby
+pod 'CombineX.swift', :git => 'https://github.com/luoxiu/CombineX.git', :branch => 'master'
+```
+
 #### Swift Package Manager
 
 In your `Package.swift`:
@@ -39,7 +47,8 @@ pkg.dependencies.append(
 
 ## Related
 
-- [CombineX.Foundation](https://github.com/CombineXCommunity/CombineX.Foundation): provides all `Foundation` extension implementations, built on top of `CombineX`, such as `URLSession`, `NotificationCenter`, `Timer`, etc.
+- [CombineX.Foundation](https://github.com/luoxiu/CombineX.Foundation): provides all `Foundation` extension implementations, built on top of `CombineX`, such as `URLSession`, `NotificationCenter`, `Timer`, etc.
+- [CombineX.Cocoa](https://github.com/luoxiu/CombineX.Foundation)：provides `Cocoa` exensions, built on top of `CombineX`.
 - [CombineX.Compatible](https://github.com/CombineXCommunity/CombineX.Compatible): provides `CombineX` API Shims, help you resolve migration concerns that may arise.
 
 ## Contribute

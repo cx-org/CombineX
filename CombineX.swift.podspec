@@ -2,7 +2,7 @@ Pod::Spec.new do |s|
 
   s.name         = "CombineX.swift"
   s.module_name  = "CombineX"
-  s.version      = "0.0.1-beta.2"
+  s.version      = "0.0.1-beta.3"
   s.summary      = "Open source implementation for Apple's Combine specs."
   s.homepage     = "https://github.com/luoxiu/CombineX"
   s.license      = { :type => "MIT", :file => "LICENSE" }

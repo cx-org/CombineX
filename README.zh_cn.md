@@ -27,6 +27,16 @@ CombineX 是 Apple's [Combine](https://developer.apple.com/documentation/combine
 
 ## 试下
 
+#### CocoaPods
+
+#### CocoaPods
+
+在你的 `Podfile` 里：
+
+```ruby
+pod 'CombineX.swift', :git => 'https://github.com/luoxiu/CombineX.git', :branch => 'master'
+```
+
 #### Swift Package Manager
 
 在你的 `Package.swift` 里：
@@ -39,7 +49,8 @@ dependencies.append(
 
 ## 相关
 
-- [CombineX.Foundation](https://github.com/CombineXCommunity/CombineX.Foundation)：提供所有 `Foundation` 扩展实现，基于 `CombineX`，比如 `URLSession`，`NotificationCenter`，`Timer` 等。
+- [CombineX.Foundation](https://github.com/luoxiu/CombineX.Foundation)：提供所有 `Foundation` 扩展实现，基于 `CombineX`，比如 `URLSession`，`NotificationCenter`，`Timer` 等。
+- [CombineX.Cocoa](https://github.com/luoxiu/CombineX.Foundation)：提供 `Cocoa` 扩展，基于 `CombineX`。
 - [CombineX.Compatible](https://github.com/CombineXCommunity/CombineX.Compatible)：提供 `CombineX` 的 API Shims，帮助你解决可能会出现的迁移顾虑。
 
 
