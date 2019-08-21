@@ -6,72 +6,86 @@
 ![platform](https://img.shields.io/badge/platform-ios%20%7C%20macos%20%7C%20watchos%20%7C%20tvos%20%7C%20linux-lightgrey)
 ![GitHub](https://img.shields.io/github/license/luoxiu/combinex?color=black)
 
-CombineX is an open source implementation for Apple's [Combine](https://developer.apple.com/documentation/combine) specs. It allows you to use Combine's API right now, without the need for macOS 10.15 or iOS 13, without the need for the Apple platform.
-
-## Status
-
-Compatible with Combine beta 5. 
-
-A new beta version will be released every Monday.
+CombineX is an open source implementation for Apple's [Combine](https://developer.apple.com/documentation/combine). It allows you to get rid of platform and version restrictions, and use Combine's API now.
 
 ## Notice
 
-This library is still in beta, **So do not use it in production.**
+This library is still in beta, so **do not use it in production!**
 
 🐱
 
-## Try it out
+## Status
 
-#### CocoaPods
+Compatible with Combine beta 6.
 
-In your `Podfile`:
+A new beta will be released every two weeks~
+
+## What is Combine
+
+Combine is a responsive framework published by Apple at WWDC 2019, which refers to the interface design of [ReactiveX](http://reactivex.io/) and provides Apple's preferred implementation for Swift asynchronous programming. It will definitely be the cornerstone of Swift programming in the foreseeable future.
+
+## What is CombineX
+
+CombineX is an open source implementation of Combine. In addition to having an API and behavior consistent with Combine, it has the following advantages:
+
+### 1. Versions and Platforms
+
+`Combine` has very high version restrictions: macOS 10.15+, iOS 13+. In other words, even if your app only needs to be compatible with two versions forward, it will take two to three years before you can use it. `Combine` is exclusive to the Apple platform and does not support Linux.
+
+`CombineX` helps you get rid of these limitations, it supports macOS 10.12+, iOS 10+, and supports Linux. With `CombineX`, you can use the same code on more platforms and versions.
+
+### 2. Open source
+
+'Combine' is closed source, it is like 'UIKit', 'MapKit', etc., updated with the update of Xcode. When you encounter a bug, "you should have encountered a system library bug," debugging is very annoying, but more annoying is the slow official response, usually, you can't do anything but wait for the next regular update of Xcode.
+
+### 3. Extensions
+
+`CombineX` provides a number of related extensions, including but not limited to:
+
+- [CombineX.Foundation](https://github.com/luoxiu/CombineX.Foundation): provides all `Foundation` extension implementations, built on top of `CombineX`. For example, `URLSession`, `NotificationCenter`, `Timer`, `DispatchQueue+Scheduler`, `RunLoop+Scheduler`, etc.
+- [CombineX.Cocoa](https://github.com/luoxiu/CombineX.Foundation): provides `Cocoa` extension implementations, built on top of `CombineX`. For example, `KVOPublisher`, `MethodInterceptionPublisher`, `UIKit+CX`, etc.
+- [CombineX.Compatible](https://github.com/CombineXCommunity/CombineX.Compatible): provides API Shims for `CombineX` to help you resolve migration concerns that may arise. With this library, you can easily switch the underlying library from `CombineX` to `Combine` at any time.
+
+## Install
+
+### Swift Package Manager
+
+```swift
+dependencies.append(
+    .package(url: "https://github.com/luoxiu/CombineX", ._branchItem("master"))
+)
+```
+
+### CocoaPods
 
 ```ruby
 pod 'CombineX.swift', :git => 'https://github.com/luoxiu/CombineX.git', :branch => 'master'
 ```
 
-#### Swift Package Manager
+### Carthage
 
-In your `Package.swift`:
-
-```swift
-pkg.dependencies.append(
-    .package(url: "https://github.com/luoxiu/CombineX", ._branchItem("master"))
-)
+```carthage
+github "luoxiu/CombineX" "master"
 ```
-
-## Related
-
-- [CombineX.Foundation](https://github.com/luoxiu/CombineX.Foundation): provides all `Foundation` extension implementations, built on top of `CombineX`, such as `URLSession`, `NotificationCenter`, `Timer`, etc.
-- [CombineX.Cocoa](https://github.com/luoxiu/CombineX.Foundation): provides `Cocoa` exensions, built on top of `CombineX`.
-- [CombineX.Compatible](https://github.com/CombineXCommunity/CombineX.Compatible): provides `CombineX` API Shims, help you resolve migration concerns that may arise.
 
 ## Contribute
 
-Welcome! CombineX is always looking for collaborators! 
+**Welcome! CombineX really need collaborators!!!**
 
 Now, what `CombineX` need most are testing. You can:
 
 1. Add more functional tests.
 2. Make sure `Combine` can pass it.
-3. If `CombineX` can not pass it, open an issue, or fix it directly!
+3. If `CombineX` can not pass it, then you have found a `CombineX` bug, you can open an issue, or fix it directly!
 
-#### Flow
+### Flow
 
-Since some people may not have macOS 10.15 beta installed, the recommended contributing way is: 
+Since some people may not have macOS 10.15 beta installed, the recommended contributing way is:
 
 1. Fork the project.
-2. Open `Specs/Specs.xcworkspace`, make your changes under `CombineX/CombineX` folder. 
+2. Open `Specs/Specs.xcworkspace`, make your changes under `CombineX/CombineX` folder.
 3. All tests go `CombineXTests/CombineXTests` folder. Make sure both scheme `Specs` and scheme `CombineX` pass the tests you wrote.
 
 ## Bugs in Combine
 
-Since `Combine` is still in beta, it is inevitable that it has bugs. If you find something strange, open an issue to discuss with us, or leave a `// FIXME:` annotation. In fact, there are already some `FIXME` annotations in `CombineX`.
-
-## Other
-
-#### Why write this?
-
-1. `Combine` has a strict system version limit(macOS 10.15+, iOS 13+). This means that even if your app only needs to support two forward versions, you have to wait for almost three years.
-2. `Combine` is closed source. It is the same as `UIKit`, `MapKit`, updating with the update of xcode. When you encounter a bug, you must have encountered a system library bug before, the debugging is very annoying. And the more annoying is the slow official response, usually you can only wait for the next regular update of xcode.
-3. `Combine` is Apple platform only and doesn't support Linux.
+Since `Combine` is still in beta, it is inevitable that it has bugs. If you find something strange, open an issue and discuss it with us!
