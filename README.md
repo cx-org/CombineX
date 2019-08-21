@@ -4,7 +4,7 @@
 ![release](https://img.shields.io/github/release-pre/luoxiu/combinex)
 ![install](https://img.shields.io/badge/install-spm%20%7C%20cocoapods%20%7C%20carthage-ff69b4)
 ![platform](https://img.shields.io/badge/platform-ios%20%7C%20macos%20%7C%20watchos%20%7C%20tvos%20%7C%20linux-lightgrey)
-![GitHub](https://img.shields.io/github/license/luoxiu/combinex?color=black)
+![license](https://img.shields.io/github/license/luoxiu/combinex?color=black)
 
 CombineX is an open source implementation for Apple's [Combine](https://developer.apple.com/documentation/combine). It allows you to get rid of platform and version restrictions, and use Combine's API now.
 
