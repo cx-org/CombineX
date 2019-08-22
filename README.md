@@ -46,6 +46,13 @@ CombineX is an open source implementation of Combine. In addition to having an A
 - [CombineX.Cocoa](https://github.com/luoxiu/CombineX.Foundation): provides `Cocoa` extension implementations, built on top of `CombineX`. For example, `KVOPublisher`, `MethodInterceptionPublisher`, `UIKit+CX`, etc.
 - [CombineX.Compatible](https://github.com/CombineXCommunity/CombineX.Compatible): provides API Shims for `CombineX` to help you resolve migration concerns that may arise. With this library, you can easily switch the underlying library from `CombineX` to `Combine` at any time.
 
+#### 3.1 CombineX.Cocoa Demo
+
+<p align="center">
+<img src="demo.1.gif" height="500">
+<img src="demo.2.gif" height="500">
+</p>
+
 ## Install
 
 ### Swift Package Manager
