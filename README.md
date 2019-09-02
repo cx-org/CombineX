@@ -43,7 +43,7 @@ CombineX is an open source implementation of Combine. In addition to having an A
 `CombineX` provides a number of related extensions, including but not limited to:
 
 - [CombineX.Foundation](https://github.com/luoxiu/CombineX.Foundation): provides all `Foundation` extension implementations, built on top of `CombineX`. For example, `URLSession`, `NotificationCenter`, `Timer`, `DispatchQueue+Scheduler`, `RunLoop+Scheduler`, etc.
-- [CombineX.Cocoa](https://github.com/luoxiu/CombineX.Foundation): provides `Cocoa` extension implementations, built on top of `CombineX`. For example, `KVOPublisher`, `MethodInterceptionPublisher`, `UIKit+CX`, etc.
+- [CombineX.Cocoa](https://github.com/luoxiu/CombineX.Cocoa): provides `Cocoa` extension implementations, built on top of `CombineX`. For example, `KVOPublisher`, `MethodInterceptionPublisher`, `UIKit+CX`, etc.
 - [CombineX.Compatible](https://github.com/CombineXCommunity/CombineX.Compatible): provides API Shims for `CombineX` to help you resolve migration concerns that may arise. With this library, you can easily switch the underlying library from `CombineX` to `Combine` at any time.
 
 #### 3.1 CombineX.Cocoa Demo
