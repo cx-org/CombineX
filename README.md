@@ -59,7 +59,7 @@ CombineX is an open source implementation of Combine. In addition to having an A
 
 ```swift
 dependencies.append(
-    .package(url: "https://github.com/luoxiu/CombineX", ._branchItem("master"))
+    .package(url: "https://github.com/luoxiu/CombineX", .branch("master"))
 )
 ```
 
