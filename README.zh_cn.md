@@ -59,7 +59,7 @@ CombineX 是 Combine 的开源实现。除了有着与 Combine 一致的 API 和
 
 ```swift
 dependencies.append(
-    .package(url: "https://github.com/luoxiu/CombineX", ._branchItem("master"))
+    .package(url: "https://github.com/luoxiu/CombineX", .branch("master"))
 )
 ```
 
