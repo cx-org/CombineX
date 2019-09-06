@@ -22,7 +22,7 @@
         }
     }
 
-    public var value: Value
+    private var value: Value
     
     private lazy var publisher = Publisher(value: self.value)
     
