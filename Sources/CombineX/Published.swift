@@ -17,14 +17,14 @@
     public var wrappedValue: Value {
         get { return self.value }
         set {
-            self.publisher.subject.send(newValue)
+            self.publisher?.subject.send(newValue)
             self.value = newValue
         }
     }
 
     private var value: Value
     
-    private lazy var publisher = Publisher(value: self.value)
+    private var publisher: Publisher?
     
     public struct Publisher : __Publisher {
 
@@ -56,7 +56,13 @@
     /// The property that can be accessed with the `$` syntax and allows access to the `Publisher`
     public var projectedValue: Published<Value>.Publisher {
         mutating get {
-            self.publisher
+            if let pub = self.publisher {
+                return pub
+            } else {
+                let pub = Publisher(value: self.value)
+                self.publisher = pub
+                return pub
+            }
         }
     }
 
