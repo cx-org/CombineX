@@ -1,10 +1,10 @@
 # CombineX([中文](README.zh_cn.md))
 
-![travis](https://img.shields.io/travis/luoxiu/CombineX.svg)
-![release](https://img.shields.io/github/release-pre/luoxiu/combinex)
+![travis](https://img.shields.io/travis/cxswift/CombineX.svg)
+![release](https://img.shields.io/github/release-pre/cxswift/combinex)
 ![install](https://img.shields.io/badge/install-spm%20%7C%20cocoapods%20%7C%20carthage-ff69b4)
 ![platform](https://img.shields.io/badge/platform-ios%20%7C%20macos%20%7C%20watchos%20%7C%20tvos%20%7C%20linux-lightgrey)
-![license](https://img.shields.io/github/license/luoxiu/combinex?color=black)
+![license](https://img.shields.io/github/license/cxswift/combinex?color=black)
 
 CombineX is an open source implementation for Apple's [Combine](https://developer.apple.com/documentation/combine). It allows you to get rid of platform and version restrictions, and use Combine's API now.
 
@@ -17,8 +17,6 @@ This library is still in beta, so **do not use it in production!**
 ## Status
 
 Compatible with Combine beta 6.
-
-A new beta will be released every two weeks~
 
 ## What is Combine
 
@@ -59,20 +57,20 @@ CombineX is an open source implementation of Combine. In addition to having an A
 
 ```swift
 dependencies.append(
-    .package(url: "https://github.com/luoxiu/CombineX", .branch("master"))
+    .package(url: "https://github.com/cxswift/CombineX", .branch("master"))
 )
 ```
 
 ### CocoaPods
 
 ```ruby
-pod 'CombineX.swift', :git => 'https://github.com/luoxiu/CombineX.git', :branch => 'master'
+pod 'CombineX.swift', :git => 'https://github.com/cxswift/CombineX.git', :branch => 'master'
 ```
 
 ### Carthage
 
 ```carthage
-github "luoxiu/CombineX" "master"
+github "cxswift/CombineX" "master"
 ```
 
 ## Contribute
