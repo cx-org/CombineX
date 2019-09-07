@@ -293,6 +293,8 @@
 		66343CD222F6D5F100417FB2 /* AssignSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66343C3F22F6D5F100417FB2 /* AssignSpec.swift */; };
 		66343CD322F6D5F100417FB2 /* SinkSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66343C4022F6D5F100417FB2 /* SinkSpec.swift */; };
 		66343CD422F6D5F100417FB2 /* SinkSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66343C4022F6D5F100417FB2 /* SinkSpec.swift */; };
+		66D2F174232409B50070464C /* OptionalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D2F173232409B50070464C /* OptionalExtensions.swift */; };
+		66D2F176232409D80070464C /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D2F175232409D80070464C /* Result.swift */; };
 		B490F8C09A475B44BE7C8201 /* Pods_SpecsTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACE4695056F87B24ED8A35F3 /* Pods_SpecsTests.framework */; };
 		D8C3FB5D42F53F7018920459 /* Pods_Specs.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27520BBFFDA5248F72504FD6 /* Pods_Specs.framework */; };
 		DBB37A4313D809512F507653 /* Pods_CombineXTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83788EC902BF581318F5E85C /* Pods_CombineXTests.framework */; };
@@ -539,6 +541,8 @@
 		66343C3D22F6D5F100417FB2 /* CombineLatestSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CombineLatestSpec.swift; sourceTree = "<group>"; };
 		66343C3F22F6D5F100417FB2 /* AssignSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssignSpec.swift; sourceTree = "<group>"; };
 		66343C4022F6D5F100417FB2 /* SinkSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SinkSpec.swift; sourceTree = "<group>"; };
+		66D2F173232409B50070464C /* OptionalExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionalExtensions.swift; sourceTree = "<group>"; };
+		66D2F175232409D80070464C /* Result.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
 		720BEC32E3B25DDB6F6E4601 /* Pods-CombineX.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CombineX.release.xcconfig"; path = "Target Support Files/Pods-CombineX/Pods-CombineX.release.xcconfig"; sourceTree = "<group>"; };
 		83788EC902BF581318F5E85C /* Pods_CombineXTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CombineXTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D8774EEFBA22A2173B8BFDC /* Pods_CombineX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CombineX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -749,6 +753,8 @@
 			isa = PBXGroup;
 			children = (
 				66343AF722F6D5A200417FB2 /* CompletionExtensions.swift */,
+				66D2F173232409B50070464C /* OptionalExtensions.swift */,
+				66D2F175232409D80070464C /* Result.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1425,6 +1431,7 @@
 				66343BAC22F6D5A200417FB2 /* MeasureInterval.swift in Sources */,
 				66343BE022F6D5A200417FB2 /* TryPrefixWhile.swift in Sources */,
 				66343BED22F6D5A200417FB2 /* Completion.swift in Sources */,
+				66D2F176232409D80070464C /* Result.swift in Sources */,
 				66343BE122F6D5A200417FB2 /* Optional.Publisher.swift in Sources */,
 				66343B8822F6D5A200417FB2 /* Subject.swift in Sources */,
 				66343B9C22F6D5A200417FB2 /* Share.swift in Sources */,
@@ -1432,6 +1439,7 @@
 				66343BDE22F6D5A200417FB2 /* Retry.swift in Sources */,
 				66343B7B22F6D5A200417FB2 /* Lock.swift in Sources */,
 				66343B9922F6D5A200417FB2 /* Multicast.swift in Sources */,
+				66D2F174232409B50070464C /* OptionalExtensions.swift in Sources */,
 				66343B8B22F6D5A200417FB2 /* PassthroughSubject.swift in Sources */,
 				66343B9322F6D5A200417FB2 /* Buffer.swift in Sources */,
 				66343BB822F6D5A200417FB2 /* ReplaceEmpty.swift in Sources */,
