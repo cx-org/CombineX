@@ -46,6 +46,8 @@ class ReceiveOnSpec: QuickSpec {
                 
                 pub.subscribe(sub)
                 
+                expect(sub.subscription).toEventuallyNot(beNil())
+                
                 1000.times {
                     subject.send($0)
                 }

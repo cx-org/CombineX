@@ -2,7 +2,7 @@ env:
   global: 
     - WORKSPACE="Specs.xcworkspace"
     - SDK="iphonesimulator13.0"
-    - DESTINATION="platform=iOS Simulator,name=iPhone X,OS=13.0"
+    - DESTINATION="platform=iOS Simulator,name=iPhone 8,OS=13.0"
 
 matrix:
   include:
