@@ -3,7 +3,6 @@ env:
     - WORKSPACE="Specs.xcworkspace"
     - SDK="iphonesimulator13.0"
     - DESTINATION="platform=iOS Simulator,name=iPhone X,OS=13.0"
-    - SWIFT_VERSION=5.0
 
 matrix:
   include:
@@ -25,18 +24,18 @@ matrix:
 
 before_install:
   - if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
-      gem install xcpretty
+      gem install xcpretty;
     fi
   - if [[ $TRAVIS_OS_NAME == 'linux' ]]; then
-      eval "$(curl -sL https://raw.githubusercontent.com/kylef/swiftenv/master/docs/install.sh)"
+      eval "$(curl -sL https://raw.githubusercontent.com/kylef/swiftenv/master/docs/install.sh)";
     fi
 
 script:
   - if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
-      cd Specs
-      echo "Start testing $SCHEME..."
-      xcodebuild test -workspace "$WORKSPACE" -scheme "$SCHEME" -sdk "$SDK" -destination "$DESTINATION" | xcpretty
+      cd Specs;
+      echo "Start testing $SCHEME...";
+      xcodebuild test -workspace "$WORKSPACE" -scheme "$SCHEME" -sdk "$SDK" -destination "$DESTINATION" | xcpretty;
     fi
   - if [[ $TRAVIS_OS_NAME == 'linux' ]]; then
-      swift test
+      swift test;
     fi
