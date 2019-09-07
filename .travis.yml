@@ -32,6 +32,7 @@ before_install:
 
 script:
   - if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
+      cd Specs;
       xcodebuild test -workspace "$WORKSPACE" -scheme "$SCHEME" -sdk "$SDK" -destination "$DESTINATION" | xcpretty;
     fi
   - if [[ $TRAVIS_OS_NAME == 'linux' ]]; then
