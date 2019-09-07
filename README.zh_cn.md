@@ -64,7 +64,7 @@ dependencies.append(
 ### CocoaPods
 
 ```ruby
-pod 'CombineX.swift', :git => 'https://github.com/cx-org/CombineX.git', :branch => 'master'
+pod 'CombineX', :git => 'https://github.com/cx-org/CombineX.git', :branch => 'master'
 ```
 
 ### Carthage
