@@ -1,10 +1,10 @@
 # CombineX
 
-![travis](https://img.shields.io/travis/cxswift/CombineX.svg)
-![release](https://img.shields.io/github/release-pre/cxswift/combinex)
+![travis](https://img.shields.io/travis/cx-org/CombineX.svg)
+![release](https://img.shields.io/github/release-pre/cx-org/combinex)
 ![install](https://img.shields.io/badge/install-spm%20%7C%20cocoapods%20%7C%20carthage-ff69b4)
 ![platform](https://img.shields.io/badge/platform-ios%20%7C%20macos%20%7C%20watchos%20%7C%20tvos%20%7C%20linux-lightgrey)
-![license](https://img.shields.io/github/license/cxswift/combinex?color=black)
+![license](https://img.shields.io/github/license/cx-org/combinex?color=black)
 
 CombineX 是 Apple's [Combine](https://developer.apple.com/documentation/combine) 的开源实现。它可以让你摆脱平台与版本的限制，现在就用上 Combine 的 API。
 
@@ -57,20 +57,20 @@ CombineX 是 Combine 的开源实现。除了有着与 Combine 一致的 API 和
 
 ```swift
 dependencies.append(
-    .package(url: "https://github.com/cxswift/CombineX", .branch("master"))
+    .package(url: "https://github.com/cx-org/CombineX", .branch("master"))
 )
 ```
 
 ### CocoaPods
 
 ```ruby
-pod 'CombineX.swift', :git => 'https://github.com/cxswift/CombineX.git', :branch => 'master'
+pod 'CombineX.swift', :git => 'https://github.com/cx-org/CombineX.git', :branch => 'master'
 ```
 
 ### Carthage
 
 ```carthage
-github "cxswift/CombineX" "master"
+github "cx-org/CombineX" "master"
 ```
 
 ## 贡献
