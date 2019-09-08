@@ -1,8 +1,6 @@
 env:
   global: 
     - WORKSPACE="Specs.xcworkspace"
-    - SDK="iphonesimulator13.0"
-    - DESTINATION="platform=iOS Simulator,name=iPhone 8,OS=13.0"
 
 matrix:
   include:
@@ -21,16 +19,22 @@ matrix:
       osx_image: xcode10.3
       env:
         - SCHEME="CombineX"
+        - SDK="iphonesimulator12.4"
+        - DESTINATION="platform=iOS Simulator,name=iPhone 8,OS=12.4"
     - os: osx
       language: swift
       osx_image: xcode11
       env:
         - SCHEME="CombineX"
+        - SDK="iphonesimulator13.0"
+        - DESTINATION="platform=iOS Simulator,name=iPhone 8,OS=13.0"
     - os: osx
       language: swift
       osx_image: xcode11
       env:
         - SCHEME="Specs"
+        - SDK="iphonesimulator13.0"
+        - DESTINATION="platform=iOS Simulator,name=iPhone 8,OS=13.0"
 
 before_install:
   - if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
