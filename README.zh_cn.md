@@ -40,11 +40,11 @@ CombineX 是 Combine 的开源实现。除了有着与 Combine 一致的 API 和
 
 `CombineX` 贴心地为你提供了诸多相关扩展，包括但不限于：
 
-- [CombineX.Foundation](https://github.com/luoxiu/CombineX.Foundation)：提供所有 `Foundation` 的扩展实现，基于 `CombineX`。比如 `URLSession`，`NotificationCenter`，`Timer`，`DispatchQueue+Scheduler`，`RunLoop+Scheduler`等。
-- [CombineX.Cocoa](https://github.com/luoxiu/CombineX.Cocoa)：提供 `Cocoa` 的扩展实现，基于 `CombineX`。比如 `KVOPublisher`，`MethodInterceptionPublisher`，`UIKit+CX` 等。
-- [CombineX.Compatible](https://github.com/CombineXCommunity/CombineX.Compatible)：提供 `CombineX` 的 API Shims，帮助你解决可能会出现的迁移顾虑。通过该库，你可以在任何时候轻松地被底层库从 `CombineX` 切换到 `Combine`。
+- [CXFoundation](https://github.com/cx-org/CXFoundation)：提供所有 `Foundation` 的扩展实现，基于 `CombineX`。比如 `URLSession`，`NotificationCenter`，`Timer`，`DispatchQueue+Scheduler`，`RunLoop+Scheduler`等。
+- [CXCocoa](https://github.com/cx-org/CXCocoa)：提供 `Cocoa` 的扩展实现，基于 `CombineX`。比如 `KVOPublisher`，`MethodInterceptionPublisher`，`UIKit+CX` 等。
+- [CXCompatible](https://github.com/cx-org/CXCompatible)：提供 `CombineX` 的 API Shims，帮助你解决可能会出现的迁移顾虑。通过该库，你可以在任何时候轻松地被底层库从 `CombineX` 切换到 `Combine`。
 
-#### 3.1 CombineX.Cocoa 实例
+#### 3.1 CXCocoa 实例
 
 <p align="center">
 <img src="demo.1.gif" height="500">
