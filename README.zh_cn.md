@@ -5,44 +5,65 @@
 ![install](https://img.shields.io/badge/install-spm%20%7C%20cocoapods%20%7C%20carthage-ff69b4)
 ![platform](https://img.shields.io/badge/platform-ios%20%7C%20macos%20%7C%20watchos%20%7C%20tvos%20%7C%20linux-lightgrey)
 ![license](https://img.shields.io/github/license/cx-org/combinex?color=black)
+[![dicord](https://img.shields.io/badge/chat-discord-blue)](https://discord.gg/cresT3X)
 
-CombineX 是 Apple's [Combine](https://developer.apple.com/documentation/combine) 的开源实现。它可以让你摆脱平台与版本的限制，现在就用上 Combine 的 API。
+`CombineX` 是 Apple's [Combine](https://developer.apple.com/documentation/combine) 的开源实现，它提供了与 `Combine` 完全一致的 API，让你摆脱版本与平台的限制。
 
 ## 注意
 
-本库仍在 beta 测试，所以，**还不可以把它用在生产项目中！**
+本库仍在 beta，所以，**还不可以把它用在生产项目中！**
 
 🐱
 
-## 状态
+## 👩‍💻 贡献
 
-与 Combine beta 6 兼容。
+想参与进来吗？太酷了！**`CombineX` 现在非常需要协作者！**
+
+`CombineX` 最需要的是测试。你可以：
+
+1. 添加更多的功能测试。
+2. 确保 `Specs` 能通过它。
+3. 如果 `CombineX` 不能通过，那说明你发现了一个 `CombineX` 的 bug，你可以开一个 issue，或者直接修复它！
+
+### 详细流程
+
+因为很多人还没有安装 macOS 10.15 beta，比如我，所以现在推荐的贡献方式是：
+
+1. Fork 项目
+2. 打开 `Specs/Specs.xcworkspace`，在 `CombineX/CombineX` 文件夹下进行你的修改。
+3. 所有的测试都在 `CombineXTests/CombineXTests` 文件夹下，要确保你的测试能同时通过 `Specs` 和 `CombineX` 两个 Scheme 哦。
 
 ## 什么是 Combine
 
-Combine 是 Apple 在 WWDC 2019 上推出的响应式框架，它「参考」了 [ReactiveX](http://reactivex.io/) 的接口设计，为 Swift 异步编程提供了钦定实现。在可预见的将来，它一定会成为 Swift 编程的基石。
+`Combine` 是 Apple 在 WWDC 2019 上推出的响应式框架，它「参考」了 [ReactiveX](http://reactivex.io/) 的接口设计，为 Swift 异步编程提供了钦定实现。在可预见的将来，它一定会成为 Swift 编程的基石。
 
 ## 什么是 CombineX
 
-CombineX 是 Combine 的开源实现。除了有着与 Combine 一致的 API 和行为，它还有以下优势：
+`CombineX` 是 `Combine` 的开源实现。除了有着与 `Combine` 一致的 API，它还拥有有以下优势：
 
 ### 1. 版本与平台
 
-`Combine` 有极高的版本限制：macOS 10.15+，iOS 13+。也就是说，即使你的 App 只需要向前兼容两个版本，也需要两三年后才能用得上它。`Combine` 是 Apple 平台独占的，不支持 Linux。
+`Combine` 有着极高的版本限制：macOS 10.15+，iOS 13+。这意味着，即使你的 App 只需要向前兼容两个版本，也需要两三年后才能使用 `Combine`。而且，`Combine` 是 Apple 平台独占的，不支持 Linux，所以你无法在 apple 和 linux 上共享一份代码。
 
-`CombineX` 帮你摆脱了这些限制，它支持 macOS 10.12+，iOS 10+，支持 Linux。通过 `CombineX`，你可以在更多的平台和版本上使用相同的代码。
+`CombineX` 帮你摆脱了这些限制，它支持 macOS 10.10+，iOS 8+，支持 Linux。通过 `CombineX`，你可以在更多的平台和版本上使用相同的代码。
 
 ### 2. 开源
 
-`Combine` 是闭源的，它与 `UIKit`，`MapKit` 等一样，随着 xcode 的更新而更新。当你遇到 bug 时，「你应该遇到过系统库的 bug 吧」，调试是非常烦人的，但更烦人的是缓慢的官方反应，通常你除了等待下一次 xcode 的常规更新以外无能为力。
+`Combine` 是闭源的，它与 `UIKit`，`MapKit` 等一样，随着 Xcode 的更新而更新。当你遇到 bug 时，「你应该遇到过系统库的 bug 吧」，调试是非常烦人的，但更烦人的是缓慢的官方反应，通常你除了等待下一次 Xcode 的常规更新以外无能为力。
+
+而 `CombineX` 是完全开源的，除了可以逐行调试以外，你还能得到更快的社区响应！
 
 ### 3. 扩展
 
 `CombineX` 贴心地为你提供了诸多相关扩展，包括但不限于：
 
-- [CXFoundation](https://github.com/cx-org/CXFoundation)：提供所有 `Foundation` 的扩展实现，基于 `CombineX`。比如 `URLSession`，`NotificationCenter`，`Timer`，`DispatchQueue+Scheduler`，`RunLoop+Scheduler`等。
-- [CXCocoa](https://github.com/cx-org/CXCocoa)：提供 `Cocoa` 的扩展实现，基于 `CombineX`。比如 `KVOPublisher`，`MethodInterceptionPublisher`，`UIKit+CX` 等。
-- [CXCompatible](https://github.com/cx-org/CXCompatible)：提供 `CombineX` 的 API Shims，帮助你解决可能会出现的迁移顾虑。通过该库，你可以在任何时候轻松地被底层库从 `CombineX` 切换到 `Combine`。
+- [CXFoundation](https://github.com/cx-org/CXFoundation)：提供所有 `Foundation` 扩展的实现，基于 `CombineX`。比如 `URLSession`，`NotificationCenter`，`Timer`，`DispatchQueue+Scheduler`，`RunLoop+Scheduler`等。
+- [CXCompatible](https://github.com/cx-org/CXCompatible)：提供 `CombineX` 的 API Shims，帮助你解决可能会出现的迁移顾虑。通过该库，你可以在任何时候轻松地把依赖从 `CombineX` 切换到 `Combine`。
+
+有了 `CombineX`，你可以自由地开发 `Combine` 相关框架，不用担心版本和平台的限制：
+
+- [CXCocoa](https://github.com/cx-org/CXCocoa)：提供 `Cocoa` 的扩展实现。比如 `KVOPublisher`，`MethodInterceptionPublisher`，`UIBinding` 等。
+- [CXExtensions](https://github.com/cx-org/CXExtensions)：提供一系列有用的 Combine 扩展，比如：`DiscardError`，`DelayedAutoCancellable` 等。
 
 #### 3.1 CXCocoa 实例
 
@@ -72,24 +93,6 @@ pod 'CombineX', :git => 'https://github.com/cx-org/CombineX.git', :branch => 'ma
 ```carthage
 github "cx-org/CombineX" "master"
 ```
-
-## 贡献
-
-**欢迎！`CombineX` 非常需要协作者！！！**
-
-现阶段，`CombineX` 最需要的是测试。你可以：
-
-1. 添加更多的功能测试。
-2. 确保 `Specs` 能通过它。
-3. 如果 `CombineX` 不能通过，那说明你发现了一个 `CombineX` 的 bug，你可以开一个 issue，或者直接修复它！
-
-### 流程
-
-因为很多人还没有安装 macOS 10.15 beta，比如我，所以现在推荐的贡献流程是：
-
-1. Fork 项目
-2. 打开 `Specs/Specs.xcworkspace`，把你的修改放在 `CombineX/CombineX` 文件夹下。
-3. 所有的测试都在 `CombineXTests/CombineXTests` 文件夹下，要确保你的测试能同时通过 `Specs` 和 `CombineX` 两个 Scheme 哦。
 
 ## Combine 里的 bug
 
