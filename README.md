@@ -17,7 +17,7 @@ This library is still in beta, so **do not use it in production!**
 
 ## 👩‍💻 Contributing
 
-Want to get involved! Awesome! **`CombineX` really need collaborators now!**
+Want to get involved? Awesome! **`CombineX` really need collaborators now!**
 
 What `CombineX` need most are testing. You can:
 
