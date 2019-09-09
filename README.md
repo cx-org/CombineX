@@ -15,15 +15,27 @@ This library is still in beta, so **do not use it in production!**
 
 🐱
 
-## 👩‍💻 Contributing
+## Contributing (｡◕‿◕｡✿)
 
-Want to get involved? Awesome! **`CombineX` really need collaborators now!**
+Want to get involved? Awesome! **`CombineX` really needs your help now!**
 
-What `CombineX` need most are testing. You can:
+You can：
+
+- Finding bug
+- Improving implementation
+- Discussing in issues
+- Reviewing pull request
+
+Or just star! Then tell your friends!
+
+### Testing
+
+What `CombineX` need most are testing, using more test cases to ensure consistency of its behavior with `Combine`. The rules of adding tests are:
 
 1. Add more functional tests.
 2. Make sure `Specs` can pass it.
 3. If `CombineX` can not pass it, then you have found a `CombineX`'s bug, you can open an issue, or fix it directly!
+
 
 ### Detailed Flow
 
@@ -64,8 +76,6 @@ With `CombineX`, you are free to develop `Combine` related frameworks without wo
 
 - [CXCocoa](https://github.com/cx-org/CXCocoa): provides `Cocoa` extension implementations, such as `KVOPublisher`, `MethodInterceptionPublisher`, `UIBinding`, etc.
 - [CXExtensions](https://github.com/cx-org/CXExtensions): provides a collection of useful extensions for `Combine`, such as `DiscardError`, `DelayedAutoCancellable`, etc.
-
-#### 3.1 CXCocoa Demo
 
 <p align="center">
 <img src="demo.1.gif" height="500">

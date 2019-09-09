@@ -15,11 +15,22 @@
 
 🐱
 
-## 👩‍💻 贡献
+## 贡献 (｡◕‿◕｡✿)
 
-想参与进来吗？太酷了！**`CombineX` 现在非常需要协作者！**
+想参与进来吗？太酷了！**`CombineX` 现在非常需要你的帮助！**
 
-`CombineX` 最需要的是测试。你可以：
+你可以：
+
+- 寻找 bug
+- 改进实现
+- 参与 issue 里的讨论
+- 审核 pull request
+
+或者更简单点？star！然后告诉你的朋友们！
+
+### 测试
+
+`CombineX` 最需要的是测试，用更多的测试用例来保证它与 `Combine` 的行为一致性，添加测试的规则是：
 
 1. 添加更多的功能测试。
 2. 确保 `Specs` 能通过它。
@@ -60,12 +71,10 @@
 - [CXFoundation](https://github.com/cx-org/CXFoundation)：提供所有 `Foundation` 扩展的实现，基于 `CombineX`。比如 `URLSession`，`NotificationCenter`，`Timer`，`DispatchQueue+Scheduler`，`RunLoop+Scheduler`等。
 - [CXCompatible](https://github.com/cx-org/CXCompatible)：提供 `CombineX` 的 API Shims，帮助你解决可能会出现的迁移顾虑。通过该库，你可以在任何时候轻松地把依赖从 `CombineX` 切换到 `Combine`。
 
-有了 `CombineX`，你可以自由地开发 `Combine` 相关框架，不用担心版本和平台的限制：
+有了 `CombineX`，你可以自由地开发 `Combine` 的相关框架，不用担心版本和平台的限制。
 
 - [CXCocoa](https://github.com/cx-org/CXCocoa)：提供 `Cocoa` 的扩展实现。比如 `KVOPublisher`，`MethodInterceptionPublisher`，`UIBinding` 等。
 - [CXExtensions](https://github.com/cx-org/CXExtensions)：提供一系列有用的 Combine 扩展，比如：`DiscardError`，`DelayedAutoCancellable` 等。
-
-#### 3.1 CXCocoa 实例
 
 <p align="center">
 <img src="demo.1.gif" height="500">
