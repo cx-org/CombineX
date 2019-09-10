@@ -5,8 +5,6 @@ extension Result {
 }
 
 extension Result: CombineXCompatible {
-    
-    public typealias CXWrapper = AnyCombineXWrapper<Result>
 }
 
 extension CombineXWrapper where Base: ResultProtocol {

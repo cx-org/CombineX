@@ -400,11 +400,9 @@ extension Publishers.Sequence {
 }
 
 extension Sequence {
-    
-    public typealias Wrapper = AnyCombineXWrapper<Self>
-    
-    public var cx: Wrapper {
-        return Wrapper(self)
+
+    public var cx: AnyCXWrapper<Self> {
+        return AnyCXWrapper<Self>(self)
     }
 }
 

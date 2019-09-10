@@ -5,8 +5,6 @@ extension Optional {
 }
 
 extension Optional: CombineXCompatible {
-    
-    public typealias CXWrapper = AnyCombineXWrapper<Optional>
 }
 
 extension CombineXWrapper where Base: OptionalProtocol {
