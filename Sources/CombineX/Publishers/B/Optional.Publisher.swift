@@ -4,9 +4,12 @@ extension Optional {
     }
 }
 
-extension Optional: CombineXCompatible { }
+extension Optional: CombineXCompatible {
+    
+    public typealias CXWrapper = AnyCombineXWrapper<Optional>
+}
 
-extension CombineXBox where Base: OptionalProtocol {
+extension CombineXWrapper where Base: OptionalProtocol {
 }
 
 extension Optional.CX {

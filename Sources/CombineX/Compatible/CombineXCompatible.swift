@@ -1,21 +1,29 @@
-public struct CombineXBox<Base> {
+public protocol CombineXWrapper {
+    associatedtype Base
+    var base: Base { get }
+    init(_ base: Base)
+}
+
+public struct AnyCombineXWrapper<Base>: CombineXWrapper {
     public let base: Base
-    
     public init(_ base: Base) {
         self.base = base
     }
 }
 
-public protocol CombineXCompatible { }
+public protocol CombineXCompatible {
+    
+    associatedtype CXWrapper where CXWrapper: CombineXWrapper, CXWrapper.Base == Self
+}
 
 extension CombineXCompatible {
     
-    public var cx: CombineXBox<Self> {
-        return CombineXBox(self)
+    public var cx: CXWrapper {
+        return CXWrapper(self)
     }
     
-    public static var cx: CombineXBox<Self>.Type {
-        return CombineXBox<Self>.self
+    public static var cx: CXWrapper.Type {
+        return CXWrapper.self
     }
 }
 
