@@ -4,9 +4,10 @@ extension Optional {
     }
 }
 
-extension Optional: CombineXCompatible { }
+extension Optional: CombineXCompatible {
+}
 
-extension CombineXBox where Base: OptionalProtocol {
+extension CombineXWrapper where Base: OptionalProtocol {
 }
 
 extension Optional.CX {

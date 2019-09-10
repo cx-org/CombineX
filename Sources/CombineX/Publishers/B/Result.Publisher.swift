@@ -4,9 +4,10 @@ extension Result {
     }
 }
 
-extension Result: CombineXCompatible { }
+extension Result: CombineXCompatible {
+}
 
-extension CombineXBox where Base: ResultProtocol {
+extension CombineXWrapper where Base: ResultProtocol {
     
     public var publisher: Result<Base.Success, Base.Failure>.CX.Publisher {
         return .init(self.base.result)

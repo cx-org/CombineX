@@ -400,13 +400,13 @@ extension Publishers.Sequence {
 }
 
 extension Sequence {
-    
-    public var cx: CombineXBox<Self> {
-        return CombineXBox(self)
+
+    public var cx: AnyCXWrapper<Self> {
+        return AnyCXWrapper<Self>(self)
     }
 }
 
-extension CombineXBox where Base: Sequence {
+extension CombineXWrapper where Base: Sequence {
     
     public var publisher: Publishers.Sequence<Base, Never> {
         return .init(sequence: self.base)
