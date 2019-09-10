@@ -1,11 +1,11 @@
 # CombineX
 
-![travis](https://img.shields.io/travis/cx-org/CombineX.svg)
-![release](https://img.shields.io/github/release-pre/cx-org/combinex)
+[![travis](https://img.shields.io/travis/cx-org/CombineX.svg)](https://travis-ci.org/cx-org/CombineX)
+[![release](https://img.shields.io/github/release-pre/cx-org/combinex)](https://github.com/cx-org/CombineX/releases)
 ![install](https://img.shields.io/badge/install-spm%20%7C%20cocoapods%20%7C%20carthage-ff69b4)
 ![platform](https://img.shields.io/badge/platform-ios%20%7C%20macos%20%7C%20watchos%20%7C%20tvos%20%7C%20linux-lightgrey)
 ![license](https://img.shields.io/github/license/cx-org/combinex?color=black)
-[![dicord](https://img.shields.io/badge/chat-discord-blue)](https://discord.gg/cresT3X)
+[![dicord](https://img.shields.io/badge/chat-discord-9cf)](https://discord.gg/cresT3X)
 
 `CombineX` 是 Apple's [Combine](https://developer.apple.com/documentation/combine) 的开源实现，它提供了与 `Combine` 完全一致的 API，让你摆脱版本与平台的限制。
 
