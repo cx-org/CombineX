@@ -92,7 +92,7 @@ Because many people, like me, have not installed macOS 10.15 beta, so the recomm
 2. Open `Specs/Specs.xcworkspace` and make your changes in the `CombineX/CombineX` folder.
 3. All tests are in the `CombineXTests/CombineXTests` folder. Make sure your tests pass both the `Specs` and `CombineX` schemes.
 
-⚠️⚠️⚠️ Do not open `CombineX.xcodeproj` directly to edit, it only exists for Carthage.
+⚠️⚠️⚠️ Do not open `CombineX.xcodeproj` to edit, it only exists for Carthage.
 
 ## Installation
 

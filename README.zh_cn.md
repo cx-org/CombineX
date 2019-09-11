@@ -94,7 +94,7 @@
 2. 打开 `Specs/Specs.xcworkspace`，在 `CombineX/CombineX` 文件夹下进行你的修改。
 3. 所有的测试都在 `CombineXTests/CombineXTests` 文件夹下，要确保你的测试能同时通过 `Specs` 和 `CombineX` 两个 Scheme 哦。
 
-⚠️⚠️⚠️ 不要直接打开 `CombineX.xcodeproj` 进行编辑，它只为 carthage 存在。
+⚠️⚠️⚠️ 不要打开 `CombineX.xcodeproj` 进行编辑，它只为 carthage 存在。
 
 ## 安装
 
