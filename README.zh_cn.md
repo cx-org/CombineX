@@ -5,7 +5,7 @@
 ![install](https://img.shields.io/badge/install-spm%20%7C%20cocoapods%20%7C%20carthage-ff69b4)
 ![platform](https://img.shields.io/badge/platform-ios%20%7C%20macos%20%7C%20watchos%20%7C%20tvos%20%7C%20linux-lightgrey)
 ![license](https://img.shields.io/github/license/cx-org/combinex?color=black)
-[![dicord](https://img.shields.io/badge/chat-discord-9cf)](https://discord.gg/cresT3X)
+[![dicord](https://img.shields.io/badge/chat-discord-9cf)](https://discord.gg/9vzqgZx)
 
 `CombineX` 是 Apple's [Combine](https://developer.apple.com/documentation/combine) 的开源实现。它的 API 与 `Combine` 一致，它可以作为 `Combine` 在 iOS 8、macOS 10.10 与 Linux 上的 polyfill，帮你摆脱系统版本与平台的限制。
 

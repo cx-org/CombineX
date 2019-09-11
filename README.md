@@ -5,7 +5,7 @@
 ![install](https://img.shields.io/badge/install-spm%20%7C%20cocoapods%20%7C%20carthage-ff69b4)
 ![platform](https://img.shields.io/badge/platform-ios%20%7C%20macos%20%7C%20watchos%20%7C%20tvos%20%7C%20linux-lightgrey)
 ![license](https://img.shields.io/github/license/cx-org/combinex?color=black)
-[![dicord](https://img.shields.io/badge/chat-discord-9cf)](https://discord.gg/cresT3X)
+[![dicord](https://img.shields.io/badge/chat-discord-9cf)](https://discord.gg/9vzqgZx)
 
 `CombineX` is an open source implementation for Apple's [Combine](https://developer.apple.com/documentation/combine). Its API is consistent with `Combine`, which can be used as a `Combine` polyfill on iOS 8, macOS 10.10 and Linux to help you get rid of system limitations and platform limitations.
 
