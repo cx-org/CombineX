@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		628E0253232F4F48001A3619 /* AutoconnectSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 628E0252232F4F48001A3619 /* AutoconnectSpec.swift */; };
+		628E0254232F4F48001A3619 /* AutoconnectSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 628E0252232F4F48001A3619 /* AutoconnectSpec.swift */; };
 		64CFB11E8618431121DF7A4B /* Pods_CombineX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D8774EEFBA22A2173B8BFDC /* Pods_CombineX.framework */; };
 		66343A9A22F6D42A00417FB2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66343A9922F6D42A00417FB2 /* AppDelegate.swift */; };
 		66343A9C22F6D42A00417FB2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66343A9B22F6D42A00417FB2 /* SceneDelegate.swift */; };
@@ -321,6 +323,7 @@
 		026567D1612878B65EF40D4B /* Pods-CombineX.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CombineX.debug.xcconfig"; path = "Target Support Files/Pods-CombineX/Pods-CombineX.debug.xcconfig"; sourceTree = "<group>"; };
 		09D5761BCC59D157F5981BD0 /* Pods-Specs.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Specs.debug.xcconfig"; path = "Target Support Files/Pods-Specs/Pods-Specs.debug.xcconfig"; sourceTree = "<group>"; };
 		27520BBFFDA5248F72504FD6 /* Pods_Specs.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Specs.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		628E0252232F4F48001A3619 /* AutoconnectSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoconnectSpec.swift; sourceTree = "<group>"; };
 		652CD1BCC1A09157D524A44F /* Pods-SpecsTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpecsTests.release.xcconfig"; path = "Target Support Files/Pods-SpecsTests/Pods-SpecsTests.release.xcconfig"; sourceTree = "<group>"; };
 		66343A9622F6D42A00417FB2 /* Specs.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Specs.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		66343A9922F6D42A00417FB2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -604,6 +607,22 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		628E0251232F3683001A3619 /* D */ = {
+			isa = PBXGroup;
+			children = (
+				66343B1022F6D5A200417FB2 /* Timeout.swift */,
+				66343B1122F6D5A200417FB2 /* HandleEvents.swift */,
+				66343B1222F6D5A200417FB2 /* Buffer.swift */,
+				66343B1422F6D5A200417FB2 /* CombineLatest.swift */,
+				66343B1522F6D5A200417FB2 /* Throttle.swift */,
+				66343B1622F6D5A200417FB2 /* BreakPoint.swift */,
+				66343B1A22F6D5A200417FB2 /* Debounce.swift */,
+				66343B1D22F6D5A200417FB2 /* CollectByTime.swift */,
+				66343B1E22F6D5A200417FB2 /* SwitchToLatest.swift */,
+			);
+			path = D;
+			sourceTree = "<group>";
+		};
 		66343A8D22F6D42A00417FB2 = {
 			isa = PBXGroup;
 			children = (
@@ -780,6 +799,7 @@
 		66343B0E22F6D5A200417FB2 /* Publishers */ = {
 			isa = PBXGroup;
 			children = (
+				628E0251232F3683001A3619 /* D */,
 				66343B0F22F6D5A200417FB2 /* C */,
 				66343B1F22F6D5A200417FB2 /* B */,
 			);
@@ -789,20 +809,11 @@
 		66343B0F22F6D5A200417FB2 /* C */ = {
 			isa = PBXGroup;
 			children = (
-				66343B1022F6D5A200417FB2 /* Timeout.swift */,
-				66343B1122F6D5A200417FB2 /* HandleEvents.swift */,
-				66343B1222F6D5A200417FB2 /* Buffer.swift */,
-				66343B1322F6D5A200417FB2 /* Future.swift */,
-				66343B1422F6D5A200417FB2 /* CombineLatest.swift */,
-				66343B1522F6D5A200417FB2 /* Throttle.swift */,
-				66343B1622F6D5A200417FB2 /* BreakPoint.swift */,
-				66343B1722F6D5A200417FB2 /* Autoconnect.swift */,
-				66343B1822F6D5A200417FB2 /* Multicast.swift */,
-				66343B1922F6D5A200417FB2 /* MakeConnectable.swift */,
-				66343B1A22F6D5A200417FB2 /* Debounce.swift */,
 				66343B1B22F6D5A200417FB2 /* Share.swift */,
-				66343B1D22F6D5A200417FB2 /* CollectByTime.swift */,
-				66343B1E22F6D5A200417FB2 /* SwitchToLatest.swift */,
+				66343B1722F6D5A200417FB2 /* Autoconnect.swift */,
+				66343B1922F6D5A200417FB2 /* MakeConnectable.swift */,
+				66343B1822F6D5A200417FB2 /* Multicast.swift */,
+				66343B1322F6D5A200417FB2 /* Future.swift */,
 			);
 			path = C;
 			sourceTree = "<group>";
@@ -1038,6 +1049,7 @@
 				66343C3B22F6D5F100417FB2 /* MergeSpec.swift */,
 				66343C3C22F6D5F100417FB2 /* CollectByTimeSpec.swift */,
 				66343C3D22F6D5F100417FB2 /* CombineLatestSpec.swift */,
+				628E0252232F4F48001A3619 /* AutoconnectSpec.swift */,
 			);
 			path = Publishers;
 			sourceTree = "<group>";
@@ -1524,6 +1536,7 @@
 				66343CCD22F6D5F100417FB2 /* CollectByTimeSpec.swift in Sources */,
 				66343C7B22F6D5F100417FB2 /* DropUntilOutputSpec.swift in Sources */,
 				66343CCB22F6D5F100417FB2 /* MergeSpec.swift in Sources */,
+				628E0253232F4F48001A3619 /* AutoconnectSpec.swift in Sources */,
 				66343CC322F6D5F100417FB2 /* HandleEventsSpec.swift in Sources */,
 				66343CA722F6D5F100417FB2 /* JustSpec.swift in Sources */,
 				66343CB922F6D5F100417FB2 /* MapErrorSpec.swift in Sources */,
@@ -1605,6 +1618,7 @@
 				66343CCE22F6D5F100417FB2 /* CollectByTimeSpec.swift in Sources */,
 				66343C7C22F6D5F100417FB2 /* DropUntilOutputSpec.swift in Sources */,
 				66343CCC22F6D5F100417FB2 /* MergeSpec.swift in Sources */,
+				628E0254232F4F48001A3619 /* AutoconnectSpec.swift in Sources */,
 				66343CC422F6D5F100417FB2 /* HandleEventsSpec.swift in Sources */,
 				66343CA822F6D5F100417FB2 /* JustSpec.swift in Sources */,
 				66343CBA22F6D5F100417FB2 /* MapErrorSpec.swift in Sources */,
