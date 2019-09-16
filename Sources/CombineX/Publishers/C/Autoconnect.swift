@@ -49,6 +49,7 @@ extension Publishers {
                         cancel = self.upstream.connect()
                     }, receiveCancel: {
                         cancel?.cancel()
+                        cancel = nil
                     }
                 )
                 .receive(subscriber: subscriber)
