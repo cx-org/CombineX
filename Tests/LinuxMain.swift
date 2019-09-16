@@ -10,6 +10,7 @@ QCKMain([
     DemandSpec.self,
     
     AssertNoFailureSpec.self,
+    AutoconnectSpec.self,
     BufferSpec.self,
     CollectByCountSpec.self,
     CollectByTimeSpec.self,
