@@ -36,7 +36,7 @@ extension Subscribers {
         final public let receiveValue: (Input) -> Void
         
         /// The closure to execute on completion.
-        final public let receiveCompletion: ((Subscribers.Completion<Failure>) -> Void)?
+        final public let receiveCompletion: (Subscribers.Completion<Failure>) -> Void
         
         /// Initializes a sink with the provided closures.
         ///
@@ -115,7 +115,7 @@ extension Subscribers {
         ///
         /// - Parameter completion: A `Completion` case indicating whether publishing completed normally or with an error.
         final public func receive(completion: Subscribers.Completion<Failure>) {
-            self.receiveCompletion?(completion)
+            self.receiveCompletion(completion)
             _ = self.subscription.exchange(with: nil)
         }
         
