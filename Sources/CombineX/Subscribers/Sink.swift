@@ -88,14 +88,30 @@ extension Subscribers {
             return self.description
         }
         
-        private let subscription = Atom<Subscription?>(val: nil)
+        enum State {
+            case unsubscribed
+            case subscribed(Subscription)
+            case closed
+        }
+
+        private let state = Atom<State>(val: .unsubscribed)
         
         /// Tells the subscriber that it has successfully subscribed to the publisher and may request items.
         ///
         /// Use the received `Subscription` to request items from the publisher.
         /// - Parameter subscription: A subscription that represents the connection between publisher and subscriber.
         final public func receive(subscription: Subscription) {
-            if self.subscription.setIfNil(subscription) {
+            var didSet = false
+            self.state.withLockMutating { state in
+                guard case .unsubscribed = state else {
+                    return
+                }
+
+                state = .subscribed(subscription)
+                didSet = true
+            }
+
+            if didSet {
                 subscription.request(.unlimited)
             } else {
                 subscription.cancel()
@@ -116,12 +132,15 @@ extension Subscribers {
         /// - Parameter completion: A `Completion` case indicating whether publishing completed normally or with an error.
         final public func receive(completion: Subscribers.Completion<Failure>) {
             self.receiveCompletion(completion)
-            _ = self.subscription.exchange(with: nil)
+            _ = self.state.exchange(with: .closed)
         }
         
         /// Cancel the activity.
         final public func cancel() {
-            self.subscription.exchange(with: nil)?.cancel()
+            let oldState = self.state.exchange(with: .closed)
+            if case let .subscribed(subscription) = oldState {
+                subscription.cancel()
+            }
         }
     }
 }
