@@ -78,6 +78,27 @@ class AssignSpec: QuickSpec {
                 
                 expect(obj.records).to(equal([1]))
             }
+
+            // MARK: 1.4 should not receive vaules when re-activated
+            it("should not receive vaules when re-activated") {
+                let pub = PassthroughSubject<Int, Never>()
+
+                let obj = Object()
+                let assign = Subscribers.Assign<Object, Int>(object: obj, keyPath: \Object.value)
+                pub.subscribe(assign)
+                pub.send(1)
+                pub.send(completion: .finished)
+
+                expect(obj.records).to(equal([1]))
+
+                // Try to start a new one
+                let pub2 = PassthroughSubject<Int, Never>()
+                pub2.subscribe(assign)
+                pub2.send(2)
+                pub2.send(completion: .finished)
+
+                expect(obj.records).to(equal([1]))
+            }
         }
         
         // MARK: - Release Resources

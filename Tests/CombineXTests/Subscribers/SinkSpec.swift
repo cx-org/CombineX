@@ -81,6 +81,29 @@ class SinkSpec: QuickSpec {
                 
                 _ = sink
             }
+
+            // MARK: 1.4 should not receive vaules when re-activated
+            it("should not receive vaules when re-activated") {
+                let pub = PassthroughSubject<Int, Never>()
+
+                var events = [TestSubscriberEvent<Int, Never>]()
+                let sink = Subscribers.Sink<Int, Never>(receiveCompletion: { (c) in
+                    events.append(.completion(c))
+                }, receiveValue: { v in
+                    events.append(.value(v))
+                })
+                pub.subscribe(sink)
+                pub.send(1)
+
+                expect(events).to(equal([.value(1)]))
+
+                // Try to start a new one
+                let pub2 = PassthroughSubject<Int, Never>()
+                pub2.subscribe(sink)
+                pub2.send(2)
+
+                expect(events).to(equal([.value(1)]))
+            }
         }
         
         // MARK: - Release Resources
