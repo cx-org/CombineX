@@ -94,6 +94,19 @@ class AssignSpec: QuickSpec {
 
                 expect(obj.records).to(equal([1]))
             }
+
+            // MARK: 1.5 should not receive vaules if it was cancelled
+            it("should not receive vaules if it was cancelled") {
+                let pub = PassthroughSubject<Int, Never>()
+
+                let obj = Object()
+                let cancellable = pub.assign(to: \Object.value, on: obj)
+
+                cancellable.cancel()
+                expect(obj.records).to(equal([]))
+                pub.send(1)
+                expect(obj.records).to(equal([]))
+            }
         }
         
         // MARK: - Release Resources
