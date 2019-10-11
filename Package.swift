@@ -2,14 +2,22 @@
 
 import PackageDescription
 
+let platforms: [SupportedPlatform]
+
+#if USE_COMBINE
+platforms = [.macOS("10.15")]
+#else
+platforms = [
+    .macOS(.v10_10),
+    .iOS(.v8),
+    .tvOS(.v9),
+    .watchOS(.v2)
+]
+#endif
+
 let package = Package(
     name: "CombineX",
-    platforms: [
-        .macOS(.v10_10),
-        .iOS(.v8),
-        .tvOS(.v9),
-        .watchOS(.v2)
-    ],
+    platforms: platforms,
     products: [
         .library(name: "CombineX", targets: ["CombineX"])
     ],
