@@ -1,7 +1,3 @@
-env:
-  global: 
-    - WORKSPACE="Specs.xcworkspace"
-
 matrix:
   include:
     - os: linux
@@ -19,10 +15,10 @@ matrix:
       osx_image: xcode10.3
     - os: osx
       language: swift
-      osx_image: xcode11
+      osx_image: xcode11.1
     - os: osx
       language: swift
-      osx_image: xcode11
+      osx_image: xcode11.1
       env: USE_COMBINE="YES"
 
 before_install:
@@ -32,7 +28,11 @@ before_install:
 
 script:
   - if [[ $USE_COMBINE == 'YES' ]]; then
-      swift test -Xswiftc -DUSE_COMBINE;
+      # swift package generate-xcodeproj -Xswiftc -DUSE_COMBINE;
+      # xcodebuild test -project "CombineX.xcodeproj" -scheme "CombineX-Package" -destination "platform=iOS Simulator,OS=13.1,name=iPhone 8" "OTHER_SWIFT_FLAGS=-DUSE_COMBINE";
+
+      # waiting for travis to support macos 10.15
+      # swift test -Xswiftc -DUSE_COMBINE; 
     else
       swift test;
     fi

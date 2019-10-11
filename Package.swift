@@ -2,7 +2,14 @@
 
 import PackageDescription
 
+/*
+ for cli test:
+ 
+ `swift test`: test CombineX
+ `swift test -Xswiftc -DUSE_COMBINE`: test Combine
+ */
 let platforms: [SupportedPlatform]
+let settings: [SwiftSetting]?
 
 #if USE_COMBINE
 platforms = [.macOS("10.15")]
@@ -14,6 +21,15 @@ platforms = [
     .watchOS(.v2)
 ]
 #endif
+
+
+/*
+ for xcode test:
+ 
+ change `useCombine` to `true` to test Combine with Xcode
+ */
+let useCombine = false
+let swiftSettings: [SwiftSetting]? = useCombine ? [.define("USE_COMBINE")] : nil
 
 let package = Package(
     name: "CombineX",
@@ -27,9 +43,7 @@ let package = Package(
     ],
     targets: [
         .target(name: "CombineX"),
-        .testTarget(name: "CombineXTests", dependencies: [
-            "CombineX", "Quick", "Nimble"
-        ])
+        .testTarget(name: "CombineXTests", dependencies: ["CombineX", "Quick", "Nimble"], swiftSettings: swiftSettings)
     ],
     swiftLanguageVersions: [
         .v5
