@@ -393,6 +393,43 @@ class CurrentValueSubjectSpec: QuickSpec {
                 
                 expect(sub.events.count).to(equal(10))
             }
+
+            // MARK: 4.4 should not invoke receiveValue on multiple threads at the same time
+            it("no guarantee of synchronous backpressure") {
+                let sequenceLength = 100
+                let subject = CurrentValueSubject<Int, Never>(0)
+                let semaphore = DispatchSemaphore(value: 0)
+
+                let total = Atom<Int>(val: 0)
+                var collision = false
+                let c = subject
+                   .sink(receiveValue: { value in
+                    if total.isMutating {
+                         // Check to see if this closure is concurrently invoked
+                         collision = true
+                      }
+                    total.withLockMutating { total in
+                         // Make sure we're in the handler for enough time to get a concurrent invocation
+                         Thread.sleep(forTimeInterval: 0.001)
+                         total += value
+                         if total == sequenceLength {
+                            semaphore.signal()
+                         }
+                      }
+                   })
+
+                // Try to send from a hundred different threads at once
+                for _ in 1...sequenceLength {
+                   DispatchQueue.global().async {
+                      subject.send(1)
+                   }
+                }
+
+                semaphore.wait()
+                c.cancel()
+                expect(total.get()).to(be(sequenceLength))
+                expect(collision).to(beFalse())
+            }
         }
         
         // MARK: - Current
