@@ -1,14 +1,8 @@
 #!/bin/bash
 
-echo "copy..."
-
-cp ci/Package.swift Package.swift
-
-echo "generate xcodeproj..."
+cp ci/package2.swift Package.swift
 
 swift package generate-xcodeproj
-
-echo "test..."
 
 xcode_project="CombineX.xcodeproj"
 xcode_scheme="CombineX-Package"
