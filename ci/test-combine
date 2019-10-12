@@ -1,0 +1,13 @@
+#!/bin/bash
+
+cp ci/test-combine-package.swift Package.swift
+
+swift package generate-xcodeproj
+
+xcode_project="CombineX.xcodeproj"
+xcode_scheme="CombineX-Package"
+xcode_destination="platform=iOS Simulator,OS=13.1,name=iPhone 8"
+
+gem install xcpretty
+
+xcodebuild test -project "$xcode_project" -scheme "$xcode_scheme" -destination "$xcode_destination" | xcpretty

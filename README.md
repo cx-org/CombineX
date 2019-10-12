@@ -86,13 +86,7 @@ Participation doesn't have to be related to the code, and it's even simpler, sta
 
 ### Contribution flow
 
-Because many people, like me, have not installed macOS 10.15 beta, so the recommended contribution flow is:
-
-1. Fork project
-2. Open `Specs/Specs.xcworkspace` and make your changes in the `CombineX/CombineX` folder.
-3. All tests are in the `CombineXTests/CombineXTests` folder. Make sure your tests pass both the `Specs` and `CombineX` schemes.
-
-⚠️⚠️⚠️ Do not open `CombineX.xcodeproj` to edit, it only exists for Carthage.
+Open `Package.swift` directly with xcode 11, don't use `CombineX.xcodeproj`, it only exists for carthage.
 
 ## Installation
 
