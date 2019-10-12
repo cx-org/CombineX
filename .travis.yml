@@ -26,12 +26,12 @@ before_install:
       eval "$(curl -sL https://raw.githubusercontent.com/kylef/swiftenv/master/docs/install.sh)";
     fi
 
+
+# swift test -Xswiftc -DUSE_COMBINE;
+
 script:
   - if [[ $USE_COMBINE == 'YES' ]]; then
       ./ci/test;
-
-      # waiting for travis to support macos 10.15
-      # swift test -Xswiftc -DUSE_COMBINE; 
     else
       swift test;
     fi
