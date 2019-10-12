@@ -45,9 +45,9 @@ class MeasureIntervalSpec: QuickSpec {
                 for (idx, event) in sub.events.enumerated() {
                     switch (idx, event) {
                     case (0, .value(let s)):
-                        expect(s.seconds).to(beCloseTo(0.2, within: 0.01))
+                        expect(s.seconds).to(beCloseTo(0.2, within: 0.1))
                     case (1, .value(let s)):
-                        expect(s.seconds).to(beCloseTo(0.1, within: 0.01))
+                        expect(s.seconds).to(beCloseTo(0.1, within: 0.1))
                     case (2, .completion(.finished)):
                         break
                     default:
