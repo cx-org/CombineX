@@ -1,21 +1,13 @@
 matrix:
   include:
-    # - os: linux
-    #   language: generic
-    #   dist: xenial
-    #   env: SWIFT_VERSION="5.1-DEVELOPMENT-SNAPSHOT-2019-09-05-a"
-    #   sudo: required
-    # - os: linux
-    #   language: generic
-    #   dist: xenial
-    #   env: SWIFT_VERSION="5.0"
-    #   sudo: required
-    # - os: osx
-    #   language: swift
-    #   osx_image: xcode10.3
-    # - os: osx
-    #   language: swift
-    #   osx_image: xcode11.1
+    - os: linux
+      language: generic
+      dist: xenial
+      env: SWIFT_VERSION="5.1"
+      sudo: required
+    - os: osx
+      language: swift
+      osx_image: xcode11.1
     - os: osx
       language: swift
       osx_image: xcode11.1
