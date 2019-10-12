@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cp ci/package2.swift Package.swift
+cp ci/test-combine-package.swift Package.swift
 
 swift package generate-xcodeproj
 

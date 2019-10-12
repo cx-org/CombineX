@@ -31,7 +31,7 @@ before_install:
 
 script:
   - if [[ $USE_COMBINE == 'YES' ]]; then
-      ./ci/test;
+      ./ci/test-combine;
     else
       swift test;
     fi
