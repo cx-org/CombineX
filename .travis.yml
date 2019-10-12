@@ -11,18 +11,15 @@ matrix:
     - os: osx
       language: swift
       osx_image: xcode11.1
-      env: USE_COMBINE="YES"
+      env: TEST_COMBINE="YES"
 
 before_install:
   - if [[ $TRAVIS_OS_NAME == 'linux' ]]; then
       eval "$(curl -sL https://raw.githubusercontent.com/kylef/swiftenv/master/docs/install.sh)";
     fi
 
-
-# swift test -Xswiftc -DUSE_COMBINE;
-
 script:
-  - if [[ $USE_COMBINE == 'YES' ]]; then
+  - if [[ $TEST_COMBINE == 'YES' ]]; then
       ./ci/test-combine;
     else
       swift test;

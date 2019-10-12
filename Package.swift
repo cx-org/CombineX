@@ -1,36 +1,29 @@
 // swift-tools-version:5.0
 
+import Foundation
 import PackageDescription
 
-/*
- for cli test:
- 
- `swift test`: test CombineX
- `swift test -Xswiftc -DUSE_COMBINE`: test Combine
- */
-let platforms: [SupportedPlatform]
-let settings: [SwiftSetting]?
+func testCombine() -> Bool {
+//    return true
+    
+    let env = ProcessInfo.processInfo.environment
+    return env["TEST_COMBINE"] != nil
+}
 
-#if USE_COMBINE
-platforms = [
-    .macOS("10.15")
-]
-#else
-platforms = [
+var platforms: [SupportedPlatform] = [
     .macOS(.v10_10),
     .iOS(.v8),
     .tvOS(.v9),
     .watchOS(.v2)
 ]
-#endif
+var swiftSettings: [SwiftSetting]?
 
-/*
- for xcode test:
- 
- change `useCombine` to `true` to test Combine with Xcode
- */
-let useCombine = false
-let swiftSettings: [SwiftSetting]? = useCombine ? [.define("USE_COMBINE")] : nil
+if testCombine() {
+    platforms = [
+        .macOS("10.15")
+    ]
+    swiftSettings = [.define("USE_COMBINE")]
+}
 
 let package = Package(
     name: "CombineX",
