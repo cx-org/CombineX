@@ -12,7 +12,9 @@ let platforms: [SupportedPlatform]
 let settings: [SwiftSetting]?
 
 #if USE_COMBINE
-platforms = [.macOS("10.15")]
+platforms = [
+    .macOS("10.15")
+]
 #else
 platforms = [
     .macOS(.v10_10),
@@ -21,7 +23,6 @@ platforms = [
     .watchOS(.v2)
 ]
 #endif
-
 
 /*
  for xcode test:

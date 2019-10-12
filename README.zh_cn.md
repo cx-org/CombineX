@@ -88,13 +88,7 @@
 
 ### 贡献流程
 
-因为很多人还没有安装 macOS 10.15 beta，比如我，所以现在推荐的贡献流程是：
-
-1. Fork 项目
-2. 打开 `Specs/Specs.xcworkspace`，在 `CombineX/CombineX` 文件夹下进行你的修改。
-3. 所有的测试都在 `CombineXTests/CombineXTests` 文件夹下，要确保你的测试能同时通过 `Specs` 和 `CombineX` 两个 Scheme 哦。
-
-⚠️⚠️⚠️ 不要打开 `CombineX.xcodeproj` 进行编辑，它只为 carthage 存在。
+直接用 xcode 11 打开 `Package.swift`，不要使用 `CombineX.xcodeproj`，它只为 carthage 存在。
 
 ## 安装
 

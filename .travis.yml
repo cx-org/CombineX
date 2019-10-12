@@ -1,21 +1,21 @@
 matrix:
   include:
-    - os: linux
-      language: generic
-      dist: xenial
-      env: SWIFT_VERSION="5.1-DEVELOPMENT-SNAPSHOT-2019-09-05-a"
-      sudo: required
-    - os: linux
-      language: generic
-      dist: xenial
-      env: SWIFT_VERSION="5.0"
-      sudo: required
-    - os: osx
-      language: swift
-      osx_image: xcode10.3
-    - os: osx
-      language: swift
-      osx_image: xcode11.1
+    # - os: linux
+    #   language: generic
+    #   dist: xenial
+    #   env: SWIFT_VERSION="5.1-DEVELOPMENT-SNAPSHOT-2019-09-05-a"
+    #   sudo: required
+    # - os: linux
+    #   language: generic
+    #   dist: xenial
+    #   env: SWIFT_VERSION="5.0"
+    #   sudo: required
+    # - os: osx
+    #   language: swift
+    #   osx_image: xcode10.3
+    # - os: osx
+    #   language: swift
+    #   osx_image: xcode11.1
     - os: osx
       language: swift
       osx_image: xcode11.1
@@ -28,8 +28,7 @@ before_install:
 
 script:
   - if [[ $USE_COMBINE == 'YES' ]]; then
-      # swift package generate-xcodeproj -Xswiftc -DUSE_COMBINE;
-      # xcodebuild test -project "CombineX.xcodeproj" -scheme "CombineX-Package" -destination "platform=iOS Simulator,OS=13.1,name=iPhone 8" "OTHER_SWIFT_FLAGS=-DUSE_COMBINE";
+      ./ci/test
 
       # waiting for travis to support macos 10.15
       # swift test -Xswiftc -DUSE_COMBINE; 
