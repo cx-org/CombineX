@@ -28,7 +28,7 @@ before_install:
 
 script:
   - if [[ $USE_COMBINE == 'YES' ]]; then
-      ./ci/test
+      ./ci/test;
 
       # waiting for travis to support macos 10.15
       # swift test -Xswiftc -DUSE_COMBINE; 
