@@ -1,3 +1,5 @@
+import CXUtility
+
 extension Publisher {
     
     /// Republishes elements while a error-throwing predicate closure indicates publishing should continue.

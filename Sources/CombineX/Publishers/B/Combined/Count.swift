@@ -1,3 +1,5 @@
+import CXUtility
+
 extension Publisher {
     
     /// Publishes the number of elements received from the upstream publisher.

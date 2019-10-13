@@ -1,3 +1,5 @@
+import CXUtility
+
 extension Publisher {
     
     /// Collects up to the specified number of elements, and then emits a single array of the collection.

@@ -1,3 +1,5 @@
+import CXUtility
+
 extension Publisher {
     
     /// Measures and emits the time interval between events received from an upstream publisher.

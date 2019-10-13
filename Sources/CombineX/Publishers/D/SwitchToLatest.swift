@@ -1,3 +1,5 @@
+import CXUtility
+
 extension Publisher where Self.Failure == Self.Output.Failure, Self.Output : Publisher {
     
     /// Flattens the stream of events from multiple upstream publishers to appear as if they were coming from a single stream of events.

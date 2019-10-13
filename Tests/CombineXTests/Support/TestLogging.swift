@@ -2,6 +2,8 @@
  Simple log util, for testing only!
  */
 
+import CXUtility
+
 protocol TestLogging: AnyObject {
     
     var name: String? {

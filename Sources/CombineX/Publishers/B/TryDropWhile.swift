@@ -1,3 +1,5 @@
+import CXUtility
+
 extension Publisher {
     
     /// Omits elements from the upstream publisher until an error-throwing closure returns false, before republishing all remaining elements.

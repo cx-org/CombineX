@@ -1,3 +1,5 @@
+import CXUtility
+
 extension Publisher {
     
     /// Replaces any errors in the stream with the provided element.

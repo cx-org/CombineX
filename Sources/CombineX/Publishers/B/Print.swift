@@ -1,3 +1,5 @@
+import CXUtility
+
 extension Publisher {
     
     /// Prints log messages for all publishing events.

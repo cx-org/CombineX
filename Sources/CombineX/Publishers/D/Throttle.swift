@@ -1,3 +1,5 @@
+import CXUtility
+
 extension Publisher {
 
     /// Publishes either the most-recent or first element published by the upstream publisher in the specified time interval.

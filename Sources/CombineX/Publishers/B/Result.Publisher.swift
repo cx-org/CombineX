@@ -1,3 +1,5 @@
+import CXUtility
+
 extension Result {
     
     public enum CX {

@@ -1,3 +1,5 @@
+import CXUtility
+
 extension Publishers.Sequence where Failure == Never {
 
     public func min(by areInIncreasingOrder: (Output, Output) -> Bool) -> Optional<Output>.CX.Publisher {

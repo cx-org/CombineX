@@ -1,3 +1,5 @@
+import CXUtility
+
 extension Publisher {
     
     /// Combine elements from another publisher and deliver pairs of elements as tuples.

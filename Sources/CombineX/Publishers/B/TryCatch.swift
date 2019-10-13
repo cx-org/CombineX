@@ -1,3 +1,5 @@
+import CXUtility
+
 extension Publisher {
     
     /// Handles errors from an upstream publisher by either replacing it with another publisher or `throw`ing  a new error.

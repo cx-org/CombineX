@@ -1,3 +1,5 @@
+import CXUtility
+
 extension Publisher {
 
     /// Terminates publishing if the upstream publisher exceeds the specified time interval without producing an element.

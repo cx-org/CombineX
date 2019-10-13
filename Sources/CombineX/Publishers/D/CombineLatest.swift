@@ -1,3 +1,5 @@
+import CXUtility
+
 extension Publisher {
     
     /// Subscribes to an additional publisher and publishes a tuple upon receiving output from either publisher.

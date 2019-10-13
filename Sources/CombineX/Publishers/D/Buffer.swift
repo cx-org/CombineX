@@ -1,3 +1,5 @@
+import CXUtility
+
 extension Publisher {
     
     public func buffer(size: Int, prefetch: Publishers.PrefetchStrategy, whenFull: Publishers.BufferingStrategy<Self.Failure>) -> Publishers.Buffer<Self> {

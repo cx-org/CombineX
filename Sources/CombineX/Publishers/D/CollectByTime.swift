@@ -1,3 +1,5 @@
+import CXUtility
+
 extension Publisher {
 
     /// Collects elements by a given strategy, and emits a single array of the collection.

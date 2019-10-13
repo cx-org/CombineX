@@ -1,3 +1,5 @@
+import CXUtility
+
 extension Publisher {
     
     /// Replaces an empty stream with the provided element.
