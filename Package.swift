@@ -39,7 +39,7 @@ let package = Package(
     targets: [
         .target(name: "CXUtility"),
         .target(name: "CombineX", dependencies: ["CXUtility"]),
-        .target(name: "CXFoundation", dependencies: ["CombineX"]),
+        .target(name: "CXFoundation", dependencies: ["CXUtility", "CombineX"]),
         .testTarget(name: "CombineXTests", dependencies: ["CXUtility", "CombineX", "Quick", "Nimble"], swiftSettings: swiftSettings),
         .testTarget(name: "CXFoundationTests", dependencies: ["CXFoundation", "Quick", "Nimble"]),
     ],
