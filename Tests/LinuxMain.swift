@@ -2,6 +2,7 @@ import XCTest
 import Quick
 
 @testable import CombineXTests
+@testable import CXFoundationTests
 
 QCKMain([
     AnyCancellableSpec.self,
@@ -62,4 +63,13 @@ QCKMain([
     
     AssignSpec.self,
     SinkSpec.self,
+    
+    // MARK: - CXFoundation
+    
+    CoderSpec.self,
+    DoubleExtensionsSpec.self,
+    NotificationCenterSpec.self,
+    SchedulerSpec.self,
+    TimerSpec.self,
+    URLSessionSpec.self,
 ])
