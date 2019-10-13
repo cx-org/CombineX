@@ -1,3 +1,5 @@
+import CXUtility
+
 private let counter = Atom<UInt>(val: 0)
 
 public struct CombineIdentifier : Hashable, CustomStringConvertible {

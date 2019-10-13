@@ -1,3 +1,5 @@
+import CXUtility
+
 extension Publisher {
     
     /// Transforms elements from the upstream publisher by providing the current element to an error-throwing closure along with the last value returned by the closure.

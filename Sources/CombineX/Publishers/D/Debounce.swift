@@ -1,3 +1,5 @@
+import CXUtility
+
 extension Publisher {
 
     /// Publishes elements only after a specified time interval elapses between events.

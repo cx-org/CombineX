@@ -1,3 +1,5 @@
+import CXUtility
+
 extension Publisher {
     
     /// Specifies the scheduler on which to receive elements from the publisher.

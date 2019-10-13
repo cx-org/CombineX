@@ -1,3 +1,5 @@
+import CXUtility
+
 extension Publisher {
     
     public func multicast<S>(_ createSubject: @escaping () -> S) -> Publishers.Multicast<Self, S> where S : Subject, Self.Failure == S.Failure, Self.Output == S.Output {

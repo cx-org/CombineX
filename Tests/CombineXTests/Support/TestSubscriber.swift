@@ -4,6 +4,8 @@ import Combine
 import CombineX
 #endif
 
+import CXUtility
+
 func makeTestSubscriber<Input, Failure: Error>(_ input: Input.Type, _ failure: Failure.Type, _ demand: Subscribers.Demand) -> TestSubscriber<Input, Failure> {
     return TestSubscriber<Input, Failure>(receiveSubscription: { (s) in
          s.request(demand)

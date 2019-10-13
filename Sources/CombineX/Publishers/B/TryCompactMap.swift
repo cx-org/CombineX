@@ -1,3 +1,5 @@
+import CXUtility
+
 extension Publisher {
     
     /// Calls an error-throwing closure with each received element and publishes any returned optional that has a value.

@@ -1,26 +1,25 @@
-final class Atom<Val> {
+public final class Atom<Val> {
     
     private let lock = Lock()
-    
     private var val: Val
     
-    init(val: Val) {
+    public init(val: Val) {
         self.val = val
     }
     
-    func get() -> Val {
+    public func get() -> Val {
         self.lock.lock()
         defer { self.lock.unlock() }
         return self.val
     }
     
-    func set(_ new: Val) {
+    public func set(_ new: Val) {
         self.lock.lock()
         defer { self.lock.unlock() }
         self.val = new
     }
     
-    func exchange(with new: Val) -> Val {
+    public func exchange(with new: Val) -> Val {
         self.lock.lock()
         defer { self.lock.unlock() }
         let old = self.val
@@ -28,20 +27,20 @@ final class Atom<Val> {
         return old
     }
     
-    func withLock<R>(_ body: (Val) throws -> R) rethrows -> R {
+    public func withLock<R>(_ body: (Val) throws -> R) rethrows -> R {
         self.lock.lock()
         defer { self.lock.unlock() }
         return try body(self.val)
     }
     
-    func withLockMutating<R>(_ body: (inout Val) throws -> R) rethrows -> R {
+    public func withLockMutating<R>(_ body: (inout Val) throws -> R) rethrows -> R {
         self.lock.lock()
         defer { self.lock.unlock() }
         return try body(&self.val)
     }
 }
 
-extension Atom where Val: Equatable {
+public extension Atom where Val: Equatable {
     
     func compareAndSet(expected: Val, new: Val) -> Bool {
         return self.withLockMutating {
@@ -54,7 +53,7 @@ extension Atom where Val: Equatable {
     }
 }
 
-extension Atom where Val: AdditiveArithmetic {
+public extension Atom where Val: AdditiveArithmetic {
     
     func add(_ val: Val) -> Val {
         return self.withLockMutating {

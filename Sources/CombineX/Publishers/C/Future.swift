@@ -1,3 +1,5 @@
+import CXUtility
+
 /// A publisher that eventually produces one value and then finishes or fails.
 final public class Future<Output, Failure> : Publisher where Failure : Error {
     

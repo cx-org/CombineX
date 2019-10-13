@@ -1,3 +1,5 @@
+import CXUtility
+
 protocol TestResourceProtocol: AnyObject {
     
     func release()

@@ -15,8 +15,9 @@ let package = Package(
         .package(url: "https://github.com/Quick/Nimble.git", from: "8.0.0"),
     ],
     targets: [
-        .target(name: "CombineX"),
-        .testTarget(name: "CombineXTests", dependencies: ["CombineX", "Quick", "Nimble"], swiftSettings: [.define("USE_COMBINE")])
+        .target(name: "CXUtility"),
+        .target(name: "CombineX", dependencies: ["CXUtility"]),
+        .testTarget(name: "CombineXTests", dependencies: ["CXUtility", "CombineX", "Quick", "Nimble"], swiftSettings: [.define("USE_COMBINE")])
     ],
     swiftLanguageVersions: [
         .v5

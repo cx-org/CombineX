@@ -1,3 +1,5 @@
+import CXUtility
+
 extension Publisher {
     
     /// Applies an error-throwing closure that accumulates each element of a stream and publishes a final result upon completion.

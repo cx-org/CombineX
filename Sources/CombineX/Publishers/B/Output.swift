@@ -1,3 +1,5 @@
+import CXUtility
+
 extension Publisher {
     
     /// Publishes a specific element, indicated by its index in the sequence of published elements.

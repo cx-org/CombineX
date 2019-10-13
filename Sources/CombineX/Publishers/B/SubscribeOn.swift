@@ -1,3 +1,5 @@
+import CXUtility
+
 extension Publisher {
     
     /// Specifies the scheduler on which to perform subscribe, cancel, and request operations.
