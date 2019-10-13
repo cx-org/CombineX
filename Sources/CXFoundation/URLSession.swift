@@ -1,6 +1,10 @@
 import Foundation
 import CombineX
 
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
+
 extension CombineXWrapper where Base: URLSession {
     
     /// Returns a publisher that wraps a URL session data task for a given URL.

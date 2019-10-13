@@ -4,6 +4,10 @@ import Nimble
 import Foundation
 import CombineX
 
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
+
 class URLSessionSpec: QuickSpec {
     
     let URL = Foundation.URL(string: "https://github.com/repos/cx-org/CXFoundation/releases/latest")!
