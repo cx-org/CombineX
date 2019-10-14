@@ -29,8 +29,7 @@ let package = Package(
     name: "CombineX",
     platforms: platforms,
     products: [
-        .library(name: "CombineX", targets: ["CombineX"]),
-        .library(name: "CXFoundation", targets: ["CXFoundation"]),
+        .library(name: "CombineX", targets: ["CombineX", "CXFoundation"]),
     ],
     dependencies: [
         .package(url: "https://github.com/Quick/Quick.git", from: "2.0.0"),
