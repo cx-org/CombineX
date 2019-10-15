@@ -12,6 +12,10 @@ public typealias Published = Combine.Published
 
 #endif // swift(>=5.1)
 
+#else // canImport(Combine)
+
+#error("Combine is not available on this platform, please specify another Combine implementation.")
+
 #endif // canImport(Combine)
 
 #elseif USE_COMBINEX // USE_COMBINE
