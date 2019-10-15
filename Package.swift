@@ -15,6 +15,7 @@ var combineSwiftSetting: [SwiftSetting]? = nil
 if useCombineX {
     combineTargetDependencies += [
         .target(name: "CombineX"),
+        .target(name: "CXFoundation"),
     ]
     combineSwiftSetting = [
         .define("USE_COMBINEX")
@@ -49,7 +50,7 @@ let package = Package(
         .target(name: "CXCompatible", dependencies: []),
         .target(name: "CXShim", dependencies: combineTargetDependencies, swiftSettings: combineSwiftSetting),
         .testTarget(name: "CombineXTests", dependencies: ["CXUtility", "CXShim", "Quick", "Nimble"]),
-        .testTarget(name: "CXFoundationTests", dependencies: ["CXFoundation", "Quick", "Nimble"], swiftSettings: combineSwiftSetting),
+        .testTarget(name: "CXFoundationTests", dependencies: ["CXShim", "Quick", "Nimble"], swiftSettings: combineSwiftSetting),
     ],
     swiftLanguageVersions: [
         .v5

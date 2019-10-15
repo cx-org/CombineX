@@ -1,9 +1,7 @@
 import Foundation
-import CombineX
+import CXShim
 import Quick
 import Nimble
-
-@testable import CXFoundation
 
 class NotificationCenterSpec: QuickSpec {
     
