@@ -1,8 +1,4 @@
-#if USE_COMBINE
-import Combine
-#else
-import CombineX
-#endif
+import CXShim
 
 class TestPublisher<Output, Failure>: Publisher where Failure : Error {
     

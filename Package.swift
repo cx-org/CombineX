@@ -3,33 +3,40 @@
 import Foundation
 import PackageDescription
 
-func testCombine() -> Bool {
-//    return true
-    
-    let env = ProcessInfo.processInfo.environment
-    return env["TEST_COMBINE"] != nil
-}
+#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
+let useCombineX = ProcessInfo.processInfo.environment["SWIFT_PACKAGE_USE_COMBINEX"] != nil
+#else
+let useCombineX = true
+#endif
 
-var platforms: [SupportedPlatform] = [
-    .macOS(.v10_10),
-    .iOS(.v8),
-    .tvOS(.v9),
-    .watchOS(.v2)
-]
-var swiftSettings: [SwiftSetting]?
+var combineTargetDependencies: [PackageDescription.Target.Dependency] = []
+var combineSwiftSetting: [SwiftSetting]? = nil
 
-if testCombine() {
-    platforms = [
-        .macOS("10.15")
+if useCombineX {
+    combineTargetDependencies += [
+        .target(name: "CombineX"),
     ]
-    swiftSettings = [.define("USE_COMBINE")]
+    combineSwiftSetting = [
+        .define("USE_COMBINEX")
+    ]
+} else {
+    combineTargetDependencies += [
+        .target(name: "CXCompatible"),
+    ]
 }
 
 let package = Package(
     name: "CombineX",
-    platforms: platforms,
+    platforms: [
+        .macOS(.v10_10),
+        .iOS(.v8),
+        .tvOS(.v9),
+        .watchOS(.v2),
+    ],
     products: [
         .library(name: "CombineX", targets: ["CombineX", "CXFoundation"]),
+        .library(name: "CXCompatible", targets: ["CXCompatible"]),
+        .library(name: "CXShim", targets: ["CXShim"]),
     ],
     dependencies: [
         .package(url: "https://github.com/Quick/Quick.git", from: "2.0.0"),
@@ -39,8 +46,10 @@ let package = Package(
         .target(name: "CXUtility"),
         .target(name: "CombineX", dependencies: ["CXUtility"]),
         .target(name: "CXFoundation", dependencies: ["CXUtility", "CombineX"]),
-        .testTarget(name: "CombineXTests", dependencies: ["CXUtility", "CombineX", "Quick", "Nimble"], swiftSettings: swiftSettings),
-        .testTarget(name: "CXFoundationTests", dependencies: ["CXFoundation", "Quick", "Nimble"]),
+        .target(name: "CXCompatible", dependencies: []),
+        .target(name: "CXShim", dependencies: combineTargetDependencies, swiftSettings: combineSwiftSetting),
+        .testTarget(name: "CombineXTests", dependencies: ["CXUtility", "CXShim", "Quick", "Nimble"]),
+        .testTarget(name: "CXFoundationTests", dependencies: ["CXFoundation", "Quick", "Nimble"], swiftSettings: combineSwiftSetting),
     ],
     swiftLanguageVersions: [
         .v5

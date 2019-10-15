@@ -1,18 +1,8 @@
-import Dispatch
+import CXShim
 import Quick
 import Nimble
 
-#if USE_COMBINE
-import Combine
-#else
-import CombineX
-#endif
-
-#if USE_COMBINE
-typealias OptionalPublisher<Wrapped> = Optional<Wrapped>.Publisher
-#else
 typealias OptionalPublisher<Wrapped> = Optional<Wrapped>.CX.Publisher
-#endif
 
 class OptionalSpec: QuickSpec {
     

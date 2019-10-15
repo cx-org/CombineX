@@ -1,10 +1,5 @@
 import CXUtility
-
-#if USE_COMBINE
-import Combine
-#else
-import CombineX
-#endif
+import CXShim
 
 class TestSubject<Output, Failure>: Subject, TestLogging where Failure : Error {
     

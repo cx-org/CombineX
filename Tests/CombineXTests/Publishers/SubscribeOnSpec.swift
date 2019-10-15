@@ -1,13 +1,8 @@
 import Foundation
 import CXUtility
+import CXShim
 import Quick
 import Nimble
-
-#if USE_COMBINE
-import Combine
-#else
-import CombineX
-#endif
 
 class SubscribeOnSpec: QuickSpec {
     

@@ -1,18 +1,9 @@
 import Dispatch
+import CXShim
 import Quick
 import Nimble
 
-#if USE_COMBINE
-import Combine
-#else
-import CombineX
-#endif
-
-#if USE_COMBINE
-typealias ResultPublisher<Success, Failure: Error> = Result<Success, Failure>.Publisher
-#else
 typealias ResultPublisher<Success, Failure: Error> = Result<Success, Failure>.CX.Publisher
-#endif
 
 class ResultSpec: QuickSpec {
     

@@ -1,9 +1,5 @@
 import Foundation
-#if USE_COMBINE
-import Combine
-#else
-import CombineX
-#endif
+import CXShim
 
 extension Array {
     

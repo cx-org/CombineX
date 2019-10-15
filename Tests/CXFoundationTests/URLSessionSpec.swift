@@ -1,8 +1,9 @@
-import Quick
-import Nimble
-@testable import CXFoundation
 import Foundation
 import CombineX
+import Quick
+import Nimble
+
+@testable import CXFoundation
 
 #if canImport(FoundationNetworking)
 import FoundationNetworking

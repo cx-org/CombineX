@@ -1,6 +1,8 @@
+import Foundation
+import CombineX
 import Quick
 import Nimble
-import Foundation
+
 @testable import CXFoundation
 
 class CoderSpec: QuickSpec {

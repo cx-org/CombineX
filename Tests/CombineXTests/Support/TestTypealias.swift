@@ -1,8 +1,4 @@
-#if USE_COMBINE
-import Combine
-#else
-import CombineX
-#endif
+import CXShim
 
 typealias Demand = Subscribers.Demand
 typealias Completion = Subscribers.Completion

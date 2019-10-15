@@ -1,10 +1,5 @@
-#if USE_COMBINE
-import Combine
-#else
-import CombineX
-#endif
-
 import CXUtility
+import CXShim
 
 func makeTestSubscriber<Input, Failure: Error>(_ input: Input.Type, _ failure: Failure.Type, _ demand: Subscribers.Demand) -> TestSubscriber<Input, Failure> {
     return TestSubscriber<Input, Failure>(receiveSubscription: { (s) in
