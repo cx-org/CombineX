@@ -15,7 +15,13 @@ matrix:
     - os: osx
       language: swift
       osx_image: xcode11.1
-      env: TEST_COMBINE="YES"
+      env: SWIFT_PACKAGE_USE_COMBINEX="YES"
+
+env:
+  global:
+    - PROJECT="CombineX.xcodeproj"
+    - SCHEME="CombineX-Package"
+    - DESTINATION="platform=iOS Simulator,OS=13.1,name=iPhone 8"
 
 before_install:
   - if [[ $TRAVIS_OS_NAME == 'linux' ]]; then
@@ -23,8 +29,10 @@ before_install:
     fi
 
 script:
-  - if [[ $TEST_COMBINE == 'YES' ]]; then
-      ./ci/test-combine;
-    else
+  - if [[ $SWIFT_PACKAGE_USE_COMBINEX == 'YES' ]]; then
       swift test;
+    else
+      gem install xcpretty;
+      swift package generate-xcodeproj;
+      xcodebuild test -project "$PROJECT" -scheme "$SCHEME" -destination "$DESTINATION" | xcpretty;
     fi
