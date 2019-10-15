@@ -1,15 +1,4 @@
-#if USE_COMBINEX
-
-@_exported import CombineX
-@_exported import CXFoundation
-
-#if swift(>=5.1)
-
-public typealias Published = CombineX.Published
-
-#endif // swift(>=5.1)
-
-#else // USE_COMBINEX
+#if USE_COMBINE
 
 #if canImport(Combine)
 
@@ -25,4 +14,30 @@ public typealias Published = Combine.Published
 
 #endif // canImport(Combine)
 
-#endif // USE_COMBINEX
+#elseif USE_COMBINEX // USE_COMBINE
+
+@_exported import CombineX
+@_exported import CXFoundation
+
+#if swift(>=5.1)
+
+public typealias Published = CombineX.Published
+
+#endif // swift(>=5.1)
+
+#elseif USE_OPEN_COMBINE
+
+@_exported import OpenCombine
+@_exported import OpenCombineDispatch
+
+#if swift(>=5.1)
+
+public typealias Published = OpenCombine.Published
+
+#endif // swift(>=5.1)
+
+#else // USE_COMBINE
+
+#error("Must specify a Combine implementation.")
+
+#endif // USE_COMBINE

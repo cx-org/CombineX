@@ -3,28 +3,66 @@
 import Foundation
 import PackageDescription
 
-#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
-let useCombineX = ProcessInfo.processInfo.environment["SWIFT_PACKAGE_USE_COMBINEX"] != nil
-#else
-let useCombineX = true
-#endif
-
-var combineTargetDependencies: [PackageDescription.Target.Dependency] = []
-var combineSwiftSetting: [SwiftSetting]? = nil
-
-if useCombineX {
-    combineTargetDependencies += [
-        .target(name: "CombineX"),
-        .target(name: "CXFoundation"),
-    ]
-    combineSwiftSetting = [
-        .define("USE_COMBINEX")
-    ]
-} else {
-    combineTargetDependencies += [
-        .target(name: "CXCompatible"),
-    ]
+enum CombineImplementation: CaseIterable {
+    
+    case combine
+    case combineX
+    case openCombine
+    
+    var environmentFlag: String {
+        switch self {
+        case .combine: return "SWIFT_PACKAGE_USE_COMBINE"
+        case .combineX: return "SWIFT_PACKAGE_USE_COMBINEX"
+        case .openCombine: return "SWIFT_PACKAGE_USE_OPEN_COMBINE"
+        }
+    }
+    
+    var packageDependencies: [Package.Dependency] {
+        switch self {
+        case .combine, .combineX:
+            return []
+        case .openCombine:
+            return [
+                .package(url: "https://github.com/broadwaylamb/OpenCombine", .branch("master")),
+            ]
+        }
+    }
+    
+    var targetDependencies: [Target.Dependency] {
+        switch self {
+        case .combine: return []
+        case .combineX:
+            return ["CombineX", "CXFoundation"]
+        case .openCombine:
+            return ["OpenCombine", "OpenCombineDispatch"]
+        }
+    }
+    
+    var swiftFlag: String {
+        switch self {
+        case .combine: return "USE_COMBINE"
+        case .combineX: return "USE_COMBINEX"
+        case .openCombine: return "USE_OPEN_COMBINE"
+        }
+    }
 }
+
+func selectCombineImpl() -> CombineImplementation {
+    #if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
+    let defaultCombineImpl = CombineImplementation.combine
+    #else
+    let defaultCombineImpl = CombineImplementation.combineX
+    #endif
+    
+    let env = ProcessInfo.processInfo.environment
+    return CombineImplementation.allCases.first { impl in
+        env[impl.environmentFlag] != nil
+    } ?? defaultCombineImpl
+}
+
+let combineImpl: CombineImplementation = selectCombineImpl()
+
+// MARK: - Package
 
 let package = Package(
     name: "CombineX",
@@ -42,15 +80,15 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/Quick/Quick.git", from: "2.0.0"),
         .package(url: "https://github.com/Quick/Nimble.git", from: "8.0.0"),
-    ],
+        ] + combineImpl.packageDependencies,
     targets: [
         .target(name: "CXUtility"),
         .target(name: "CombineX", dependencies: ["CXUtility"]),
         .target(name: "CXFoundation", dependencies: ["CXUtility", "CombineX"]),
         .target(name: "CXCompatible", dependencies: []),
-        .target(name: "CXShim", dependencies: combineTargetDependencies, swiftSettings: combineSwiftSetting),
+        .target(name: "CXShim", dependencies: combineImpl.targetDependencies, swiftSettings: [.define(combineImpl.swiftFlag)]),
         .testTarget(name: "CombineXTests", dependencies: ["CXUtility", "CXShim", "Quick", "Nimble"]),
-        .testTarget(name: "CXFoundationTests", dependencies: ["CXShim", "Quick", "Nimble"], swiftSettings: combineSwiftSetting),
+        .testTarget(name: "CXFoundationTests", dependencies: ["CXShim", "Quick", "Nimble"]),
     ],
     swiftLanguageVersions: [
         .v5
