@@ -29,7 +29,7 @@ let package = Package(
     name: "CombineX",
     platforms: platforms,
     products: [
-        .library(name: "CombineX", targets: ["CombineX"])
+        .library(name: "CombineX", targets: ["CombineX", "CXFoundation"]),
     ],
     dependencies: [
         .package(url: "https://github.com/Quick/Quick.git", from: "2.0.0"),
@@ -38,7 +38,9 @@ let package = Package(
     targets: [
         .target(name: "CXUtility"),
         .target(name: "CombineX", dependencies: ["CXUtility"]),
-        .testTarget(name: "CombineXTests", dependencies: ["CXUtility", "CombineX", "Quick", "Nimble"], swiftSettings: swiftSettings)
+        .target(name: "CXFoundation", dependencies: ["CXUtility", "CombineX"]),
+        .testTarget(name: "CombineXTests", dependencies: ["CXUtility", "CombineX", "Quick", "Nimble"], swiftSettings: swiftSettings),
+        .testTarget(name: "CXFoundationTests", dependencies: ["CXFoundation", "Quick", "Nimble"]),
     ],
     swiftLanguageVersions: [
         .v5
