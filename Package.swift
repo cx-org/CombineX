@@ -73,22 +73,44 @@ let package = Package(
         .watchOS(.v2),
     ],
     products: [
-        .library(name: "CombineX", targets: ["CombineX", "CXFoundation"]),
-        .library(name: "CXCompatible", targets: ["CXCompatible"]),
-        .library(name: "CXShim", targets: ["CXShim"]),
+        .library(
+            name: "CombineX",
+            targets: ["CombineX", "CXFoundation"]),
+        .library(
+            name: "CXCompatible",
+            targets: ["CXCompatible"]),
+        .library(
+            name: "CXShim",
+            targets: ["CXShim"]),
     ],
     dependencies: [
         .package(url: "https://github.com/Quick/Quick.git", from: "2.0.0"),
         .package(url: "https://github.com/Quick/Nimble.git", from: "8.0.0"),
-        ] + combineImpl.packageDependencies,
+    ] + combineImpl.packageDependencies,
     targets: [
-        .target(name: "CXUtility"),
-        .target(name: "CombineX", dependencies: ["CXUtility"]),
-        .target(name: "CXFoundation", dependencies: ["CXUtility", "CombineX"]),
-        .target(name: "CXCompatible", dependencies: []),
-        .target(name: "CXShim", dependencies: combineImpl.targetDependencies, swiftSettings: [.define(combineImpl.swiftFlag)]),
-        .testTarget(name: "CombineXTests", dependencies: ["CXUtility", "CXShim", "Quick", "Nimble"]),
-        .testTarget(name: "CXFoundationTests", dependencies: ["CXShim", "Quick", "Nimble"]),
+        .target(
+            name: "CXUtility"),
+        .target(
+            name: "CombineX",
+            dependencies: ["CXUtility"]),
+        .target(
+            name: "CXFoundation",
+            dependencies: ["CXUtility", "CombineX"]),
+        .target(
+            name: "CXCompatible",
+            dependencies: []),
+        .target(
+            name: "CXShim",
+            dependencies: combineImpl.targetDependencies,
+            swiftSettings: [.define(combineImpl.swiftFlag)]),
+        
+        // MARK: Tests
+        .testTarget(
+            name: "CombineXTests",
+            dependencies: ["CXUtility", "CXShim", "Quick", "Nimble"]),
+        .testTarget(
+            name: "CXFoundationTests",
+            dependencies: ["CXShim", "Quick", "Nimble"]),
     ],
     swiftLanguageVersions: [
         .v5
