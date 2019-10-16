@@ -1,11 +1,6 @@
 import Foundation
 import CXUtility
-
-#if USE_COMBINE
-import Combine
-#else
-import CombineX
-#endif
+import CXShim
 
 private let counter = Atom<Int>(val: 0)
 

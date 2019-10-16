@@ -1,8 +1,7 @@
+import Foundation
+import CXShim
 import Quick
 import Nimble
-import Foundation
-import CombineX
-@testable import CXFoundation
 
 class SchedulerSpec: QuickSpec {
     

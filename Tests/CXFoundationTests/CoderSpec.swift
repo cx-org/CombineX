@@ -1,7 +1,7 @@
+import Foundation
+import CXShim
 import Quick
 import Nimble
-import Foundation
-@testable import CXFoundation
 
 class CoderSpec: QuickSpec {
     

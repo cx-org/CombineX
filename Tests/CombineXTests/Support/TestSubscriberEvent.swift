@@ -1,8 +1,4 @@
-#if USE_COMBINE
-import Combine
-#else
-import CombineX
-#endif
+import CXShim
 
 enum TestSubscriberEvent<Input, Failure: Error> {
     case value(Input)

@@ -1,12 +1,6 @@
-import CXUtility
-
-#if USE_COMBINE
-import Combine
-#else
-import CombineX
-#endif
-
 import Foundation
+import CXUtility
+import CXShim
 
 class TestDispatchQueueScheduler: Scheduler {
     
