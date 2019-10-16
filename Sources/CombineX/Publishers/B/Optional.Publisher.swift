@@ -51,3 +51,10 @@ extension Optional.CX {
         }
     }
 }
+
+extension Optional.CX.Publisher: Equatable where Wrapped: Equatable {
+    
+    public static func == (lhs: Optional.CX.Publisher, rhs: Optional.CX.Publisher) -> Bool {
+        return lhs.output == rhs.output
+    }
+}
