@@ -30,7 +30,8 @@ enum CombineImplementation: CaseIterable {
     
     var targetDependencies: [Target.Dependency] {
         switch self {
-        case .combine: return []
+        case .combine:
+            return ["CXCompatible"]
         case .combineX:
             return ["CombineX", "CXFoundation"]
         case .openCombine:

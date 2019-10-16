@@ -16,7 +16,7 @@ extension Publishers.TryCompactMap {
     
     public func compactMap<T>(_ transform: @escaping (Output) throws -> T?) -> Publishers.TryCompactMap<Upstream, T> {
         return self.upstream.tryCompactMap {
-            try self.transform($0).map(transform).unwrap()
+            try self.transform($0).flatMap(transform)
         }
     }
 }

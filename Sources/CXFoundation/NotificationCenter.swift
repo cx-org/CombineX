@@ -1,7 +1,21 @@
 import CombineX
 import Foundation
 
-extension CombineXWrapper where Base: NotificationCenter {
+extension CXWrappers {
+    
+    public class NotificationCenter: NSObject<Foundation.NotificationCenter> {}
+}
+
+extension NotificationCenter {
+    
+    public typealias CX = CXWrappers.NotificationCenter
+    
+    public var cx: CXWrappers.NotificationCenter {
+        return CXWrappers.NotificationCenter(self)
+    }
+}
+
+extension CXWrappers.NotificationCenter {
     
     /// Returns a publisher that emits events when broadcasting notifications.
     ///
@@ -9,12 +23,12 @@ extension CombineXWrapper where Base: NotificationCenter {
     ///   - name: The name of the notification to publish.
     ///   - object: The object posting the named notfication. If `nil`, the publisher emits elements for any object producing a notification with the given name.
     /// - Returns: A publisher that emits events when broadcasting notifications.
-    public func publisher(for name: Notification.Name, object: AnyObject? = nil) -> NotificationCenter.CX.NotificationPublisher {
+    public func publisher(for name: Notification.Name, object: AnyObject? = nil) -> CXWrappers.NotificationCenter.NotificationPublisher {
         return .init(center: self.base, name: name, object: object)
     }
 }
 
-extension NotificationCenter.CX {
+extension CXWrappers.NotificationCenter {
     
     /// A publisher that emits elements when broadcasting notifications.
     public struct NotificationPublisher : CombineX.Publisher {

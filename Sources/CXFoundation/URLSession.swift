@@ -5,14 +5,28 @@ import CombineX
 import FoundationNetworking
 #endif
 
-extension CombineXWrapper where Base: URLSession {
+extension CXWrappers {
+    
+    public class URLSession: NSObject<Foundation.URLSession> {}
+}
+
+extension URLSession {
+    
+    typealias CX = CXWrappers.URLSession
+    
+    public var cx: CXWrappers.URLSession {
+        return CXWrappers.URLSession(self)
+    }
+}
+
+extension CXWrappers.URLSession {
     
     /// Returns a publisher that wraps a URL session data task for a given URL.
     ///
     /// The publisher publishes data when the task completes, or terminates if the task fails with an error.
     /// - Parameter url: The URL for which to create a data task.
     /// - Returns: A publisher that wraps a data task for the URL.
-    public func dataTaskPublisher(for url: URL) -> URLSession.CX.DataTaskPublisher {
+    public func dataTaskPublisher(for url: URL) -> DataTaskPublisher {
         return self.dataTaskPublisher(for: URLRequest(url: url))
     }
 
@@ -21,13 +35,13 @@ extension CombineXWrapper where Base: URLSession {
     /// The publisher publishes data when the task completes, or terminates if the task fails with an error.
     /// - Parameter request: The URL request for which to create a data task.
     /// - Returns: A publisher that wraps a data task for the URL request.
-    public func dataTaskPublisher(for request: URLRequest) -> URLSession.CX.DataTaskPublisher {
+    public func dataTaskPublisher(for request: URLRequest) -> DataTaskPublisher {
         return .init(request: request, session: self.base)
     }
 }
 
 
-extension URLSession.CX {
+extension CXWrappers.URLSession {
     
     public struct DataTaskPublisher : Publisher {
 

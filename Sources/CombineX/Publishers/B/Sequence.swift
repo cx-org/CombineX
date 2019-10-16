@@ -401,14 +401,26 @@ extension Publishers.Sequence {
     }
 }
 
-extension Sequence {
-
-    public var cx: AnyCXWrapper<Self> {
-        return AnyCXWrapper<Self>(self)
+extension CXWrappers {
+    
+    public struct Sequence<Base: Swift.Sequence>: CXWrapper {
+        
+        public var base: Base
+        
+        public init(_ base: Base) {
+            self.base = base
+        }
     }
 }
 
-extension CombineXWrapper where Base: Sequence {
+extension Sequence {
+
+    public var cx: CXWrappers.Sequence<Self> {
+        return CXWrappers.Sequence<Self>(self)
+    }
+}
+
+extension CXWrappers.Sequence {
     
     public var publisher: Publishers.Sequence<Base, Never> {
         return .init(sequence: self.base)

@@ -1,29 +1,34 @@
+#if !os(Linux)
+
 import CombineX
 import Foundation
 
-#if !os(Linux)
-public typealias PropertyListEncoderCXWrapper = PropertyListEncoder.PropertyListEncoderCXWrapper
-
-extension CombineXCompatible where Self: PropertyListEncoder {
+extension CXWrappers {
     
-    public var cx: PropertyListEncoderCXWrapper {
-        return PropertyListEncoderCXWrapper(self)
-    }
-    
-    public static var cx: PropertyListEncoderCXWrapper.Type {
-        return PropertyListEncoderCXWrapper.self
-    }
-}
-
-extension PropertyListEncoder: CombineXCompatible {
-    
-    public class PropertyListEncoderCXWrapper: AnyObjectCXWrapper<PropertyListEncoder>, CombineX.TopLevelEncoder {
-     
-        public typealias Output = Data
+    open class PropertyListEncoder: CXWrapper {
         
-        public func encode<T>(_ value: T) throws -> Output where T : Encodable {
-            return try self.base.encode(value)
+        public typealias Base = Foundation.PropertyListEncoder
+        
+        public var base: Base
+        
+        public required init(_ base: Base) {
+            self.base = base
         }
     }
 }
+
+extension PropertyListEncoder: CXCompatible {
+    
+    public typealias CX = CXWrappers.PropertyListEncoder
+}
+
+extension PropertyListEncoder.CX: CombineX.TopLevelEncoder {
+     
+    public typealias Output = Data
+    
+    public func encode<T>(_ value: T) throws -> Output where T : Encodable {
+        return try self.base.encode(value)
+    }
+}
+
 #endif

@@ -1,5 +1,22 @@
 import CXUtility
 
+protocol OptionalProtocol {
+    
+    associatedtype Wrapped
+    
+    var optional: Wrapped? {
+        set get
+    }
+}
+
+extension Optional: OptionalProtocol {
+
+    var optional: Wrapped? {
+        get { return self }
+        set { self = newValue }
+    }
+}
+
 extension OptionalProtocol {
     
     var isNil: Bool {
@@ -35,12 +52,5 @@ extension Atom where Val: OptionalProtocol {
         return self.withLockMutating {
             $0.setIfNil(value)
         }
-    }
-}
-
-extension OptionalProtocol where Wrapped: OptionalProtocol {
-    
-    func unwrap() -> Wrapped.Wrapped? {
-        return self.optional?.optional ?? nil
     }
 }

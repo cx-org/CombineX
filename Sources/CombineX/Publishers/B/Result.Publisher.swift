@@ -1,18 +1,28 @@
 import CXUtility
 
-extension Result {
+extension CXWrappers {
     
-    public enum CX {
+    typealias Result<Success, Failure> = Swift.Result<Success, Failure>.CX where Failure: Error
+}
+
+extension Result: CXCompatible {
+    
+    public struct CX: CXWrapper {
+        
+        public typealias Base = Result<Success, Failure>
+        
+        public var base: Base
+        
+        public init(_ base: Base) {
+            self.base = base
+        }
     }
 }
 
-extension Result: CombineXCompatible {
-}
-
-extension CombineXWrapper where Base: ResultProtocol {
+extension Result.CX {
     
-    public var publisher: Result<Base.Success, Base.Failure>.CX.Publisher {
-        return .init(self.base.result)
+    public var publisher: Publisher {
+        return .init(self.base)
     }
 }
 
