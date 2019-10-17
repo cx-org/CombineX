@@ -9,9 +9,9 @@ extension CXWrappers {
         
         public typealias Base = Dispatch.DispatchQueue
         
-        public var base: Base
+        public let base: Base
         
-        public required init(_ base: Base) {
+        public init(_ base: Base) {
             self.base = base
         }
     }

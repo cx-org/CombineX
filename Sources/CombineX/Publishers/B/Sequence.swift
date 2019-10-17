@@ -405,7 +405,7 @@ extension CXWrappers {
     
     public struct Sequence<Base: Swift.Sequence>: CXWrapper {
         
-        public var base: Base
+        public let base: Base
         
         public init(_ base: Base) {
             self.base = base

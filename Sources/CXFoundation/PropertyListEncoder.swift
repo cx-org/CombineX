@@ -5,13 +5,13 @@ import Foundation
 
 extension CXWrappers {
     
-    open class PropertyListEncoder: CXWrapper {
+    public class PropertyListEncoder: CXWrapper {
         
         public typealias Base = Foundation.PropertyListEncoder
         
-        public var base: Base
+        public let base: Base
         
-        public required init(_ base: Base) {
+        public init(_ base: Base) {
             self.base = base
         }
     }

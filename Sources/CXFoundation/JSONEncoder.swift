@@ -3,13 +3,13 @@ import Foundation
 
 extension CXWrappers {
     
-    open class JSONEncoder: CXWrapper {
+    public class JSONEncoder: CXWrapper {
         
         public typealias Base = Foundation.JSONEncoder
         
-        public var base: Base
+        public let base: Base
         
-        public required init(_ base: Base) {
+        public init(_ base: Base) {
             self.base = base
         }
     }
