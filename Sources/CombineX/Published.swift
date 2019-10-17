@@ -26,6 +26,8 @@
     
     private var publisher: Publisher?
     
+    var objectWillChange: ObservableObjectPublisher?
+    
     public struct Publisher : __Publisher {
 
         /// The kind of values published by this publisher.

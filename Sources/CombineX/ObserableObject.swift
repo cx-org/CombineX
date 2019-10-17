@@ -1,6 +1,8 @@
 // `ObservableObject` depends on property wrapper(`@Published`), which is only available since Swift 5.1.
 #if swift(>=5.1)
 
+import Runtime
+
 /// A type of object with a publisher that emits before the object has changed.
 ///
 /// By default an `ObservableObject` will synthesize an `objectWillChange`
@@ -35,18 +37,45 @@ public protocol ObservableObject : AnyObject {
     var objectWillChange: Self.ObjectWillChangePublisher { get }
 }
 
-extension ObservableObject where Self.ObjectWillChangePublisher == ObservableObjectPublisher {
+private protocol PublishedProtocol {
+    var objectWillChange: ObservableObjectPublisher? { get set }
+}
+extension Published: PublishedProtocol {}
 
+extension ObservableObject where Self.ObjectWillChangePublisher == ObservableObjectPublisher {
+    
+    private static func publishedProperties() throws -> [PropertyInfo] {
+        // TODO: cache
+        let info = try typeInfo(of: self)
+        return info.properties.filter { $0.type is PublishedProtocol }
+    }
+    
+    private func set(objectWillChange: ObservableObjectPublisher, for publishedProperty: PropertyInfo) throws {
+        // TODO: mutate in place
+        var published = try publishedProperty.get(from: self) as! PublishedProtocol
+        published.objectWillChange = objectWillChange
+        try withUnsafePointer(to: self) { ptr in
+            let mptr = UnsafeMutablePointer(mutating: ptr)
+            try publishedProperty.set(value: published, on: &(mptr.pointee))
+        }
+    }
+    
     /// A publisher that emits before the object has changed.
     public var objectWillChange: ObservableObjectPublisher {
-        /*
-         TODO: How to create a default publisher?
-         
-            1: All @Published properties hold this object and send changes.
-            2: This object gets all @Published properties and subscribes to them.
-         https://github.com/apple/swift-evolution/blob/master/proposals/0258-property-wrappers.md#referencing-the-enclosing-self-in-a-wrapper-type
-         */
-        Global.RequiresImplementation()
+        do {
+            let publishedProperties = try type(of: self).publishedProperties()
+            guard !publishedProperties.isEmpty else {
+                return ObservableObjectPublisher()
+            }
+            if let pub = (try publishedProperties[0].get(from: self) as! PublishedProtocol).objectWillChange {
+                return pub
+            }
+            let pub = ObservableObjectPublisher()
+            try publishedProperties.forEach { try set(objectWillChange: pub, for: $0) }
+            return pub
+        } catch {
+            fatalError(error.localizedDescription)
+        }
     }
 }
 

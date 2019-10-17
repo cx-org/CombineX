@@ -85,6 +85,7 @@ let package = Package(
             targets: ["CXShim"]),
     ],
     dependencies: [
+        .package(url: "https://github.com/wickwirew/Runtime", from: "2.0.0"),
         .package(url: "https://github.com/Quick/Quick.git", from: "2.0.0"),
         .package(url: "https://github.com/Quick/Nimble.git", from: "8.0.0"),
     ] + combineImpl.packageDependencies,
@@ -93,7 +94,7 @@ let package = Package(
             name: "CXUtility"),
         .target(
             name: "CombineX",
-            dependencies: ["CXUtility"]),
+            dependencies: ["CXUtility", "Runtime"]),
         .target(
             name: "CXFoundation",
             dependencies: ["CXUtility", "CombineX"]),
