@@ -1,2 +1,3 @@
 .swiftpm
-.build/
+.build
+/*.xcodeproj
