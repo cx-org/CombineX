@@ -1,6 +1,9 @@
 #if canImport(Foundation)
-
 import Foundation
+
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 
 extension NSObject: CXWrappable, CXWrapper {}
 extension JSONEncoder: CXWrappable, CXWrapper {}
