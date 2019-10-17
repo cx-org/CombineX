@@ -4,7 +4,7 @@ import Foundation
 
 extension CXWrappers {
     
-    public class RunLoop: NSObject<Foundation.RunLoop> {}
+    public final class RunLoop: NSObject<Foundation.RunLoop> {}
 }
 
 extension RunLoop {

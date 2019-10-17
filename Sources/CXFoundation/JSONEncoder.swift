@@ -3,7 +3,7 @@ import Foundation
 
 extension CXWrappers {
     
-    public class JSONEncoder: CXWrapper {
+    public final class JSONEncoder: CXWrapper {
         
         public typealias Base = Foundation.JSONEncoder
         

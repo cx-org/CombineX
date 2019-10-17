@@ -3,7 +3,7 @@ import Foundation
 
 extension CXWrappers {
     
-    public class OperationQueue: NSObject<Foundation.OperationQueue> {}
+    public final class OperationQueue: NSObject<Foundation.OperationQueue> {}
 }
 
 extension OperationQueue {

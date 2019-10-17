@@ -6,11 +6,11 @@ extension CXWrappers {
     
     #if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
     
-    public class DispatchQueue: NSObject<Dispatch.DispatchQueue> {}
+    public final class DispatchQueue: NSObject<Dispatch.DispatchQueue> {}
     
     #else
     
-    public class DispatchQueue: CXWrapper {
+    public final class DispatchQueue: CXWrapper {
         
         public typealias Base = Dispatch.DispatchQueue
         

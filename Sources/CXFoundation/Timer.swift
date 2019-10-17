@@ -3,7 +3,7 @@ import Foundation
 
 extension CXWrappers {
     
-    public class Timer: NSObject<Foundation.Timer> {}
+    public final class Timer: NSObject<Foundation.Timer> {}
 }
 
 extension Timer {

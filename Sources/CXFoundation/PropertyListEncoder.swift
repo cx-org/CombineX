@@ -5,7 +5,7 @@ import Foundation
 
 extension CXWrappers {
     
-    public class PropertyListEncoder: CXWrapper {
+    public final class PropertyListEncoder: CXWrapper {
         
         public typealias Base = Foundation.PropertyListEncoder
         
