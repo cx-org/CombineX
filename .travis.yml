@@ -12,6 +12,7 @@ matrix:
     - os: osx
       language: swift
       osx_image: xcode11.1
+      env: SWIFT_PACKAGE_USE_COMBINEX="YES"
     - os: osx
       language: swift
       osx_image: xcode11.1
@@ -34,5 +35,5 @@ script:
       swift package generate-xcodeproj;
       xcodebuild test -project "$PROJECT" -scheme "$SCHEME" -destination "$DESTINATION" | xcpretty;
     else
-      swift test;
+      swift test -Xswiftc -suppress-warnings;
     fi
