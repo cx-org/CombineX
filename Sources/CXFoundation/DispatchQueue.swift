@@ -4,7 +4,16 @@ import Dispatch
 
 extension CXWrappers {
     
-    public class DispatchQueue: NSObject<Dispatch.DispatchQueue> {}
+    open class DispatchQueue: CXWrapper {
+        
+        public typealias Base = Dispatch.DispatchQueue
+        
+        public var base: Base
+        
+        public require init(_ base: Base) {
+            self.base = base
+        }
+    }
 }
 
 extension DispatchQueue {
