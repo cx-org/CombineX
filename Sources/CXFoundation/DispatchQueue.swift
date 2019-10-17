@@ -4,16 +4,20 @@ import Dispatch
 
 extension CXWrappers {
     
+    #if os(Linux)
     open class DispatchQueue: CXWrapper {
         
         public typealias Base = Dispatch.DispatchQueue
         
         public var base: Base
         
-        public require init(_ base: Base) {
+        public required init(_ base: Base) {
             self.base = base
         }
     }
+    #else
+    public class DispatchQueue: NSObject<Dispatch.DispatchQueue> {}
+    #endif
 }
 
 extension DispatchQueue {
