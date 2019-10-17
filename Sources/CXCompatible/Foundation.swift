@@ -17,7 +17,11 @@ extension CXWrappers {
     public typealias OperationQueue = Foundation.OperationQueue
     public typealias RunLoop = Foundation.RunLoop
     public typealias Timer = Foundation.Timer
+    #if canImport(FoundationNetworking)
+    public typealias URLSession = FoundationNetworking.URLSession
+    #else
     public typealias URLSession = Foundation.URLSession
+    #endif
 }
 
 #if !os(Linux)
