@@ -134,3 +134,10 @@ extension Result.CX.Publisher {
         }
     }
 }
+
+extension Result.CX.Publisher: Equatable where Success: Equatable, Failure: Equatable {
+    
+    public static func == (lhs: Result.CX.Publisher, rhs: Result.CX.Publisher) -> Bool {
+        return lhs.result == rhs.result
+    }
+}
