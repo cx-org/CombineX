@@ -3,7 +3,7 @@
 import Dispatch
 
 extension CXWrappers {
-    typealias DispatchQueue = Dispatch.DispatchQueue
+    public typealias DispatchQueue = Dispatch.DispatchQueue
 }
 
 #endif
