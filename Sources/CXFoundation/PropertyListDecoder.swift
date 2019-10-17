@@ -1,4 +1,4 @@
-#if !os(Linux)
+#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
 
 import CombineX
 import Foundation

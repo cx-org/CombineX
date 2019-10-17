@@ -4,7 +4,12 @@ import Dispatch
 
 extension CXWrappers {
     
-    #if os(Linux)
+    #if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
+    
+    public class DispatchQueue: NSObject<Dispatch.DispatchQueue> {}
+    
+    #else
+    
     public class DispatchQueue: CXWrapper {
         
         public typealias Base = Dispatch.DispatchQueue
@@ -15,8 +20,7 @@ extension CXWrappers {
             self.base = base
         }
     }
-    #else
-    public class DispatchQueue: NSObject<Dispatch.DispatchQueue> {}
+    
     #endif
 }
 
