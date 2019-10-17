@@ -117,3 +117,10 @@ let package = Package(
         .v5
     ]
 )
+
+
+// For test
+let env = ProcessInfo.processInfo.environment
+if env["TEST_COMBINE"] != nil {
+    package.platforms = [.iOS("13.0")]
+}
