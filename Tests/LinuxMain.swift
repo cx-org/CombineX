@@ -67,7 +67,6 @@ QCKMain([
     // MARK: - CXFoundation
     
     CoderSpec.self,
-    DoubleExtensionsSpec.self,
     NotificationCenterSpec.self,
     SchedulerSpec.self,
     TimerSpec.self,

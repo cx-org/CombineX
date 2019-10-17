@@ -119,8 +119,9 @@ let package = Package(
 )
 
 
-// For test
-let env = ProcessInfo.processInfo.environment
-if env["TEST_COMBINE"] != nil {
+/**
+ for ci test
+ */
+if combineImpl == .combine && ProcessInfo.processInfo.environment["TRAVIS"] != nil {
     package.platforms = [.iOS("13.0")]
 }
