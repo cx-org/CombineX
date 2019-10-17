@@ -22,3 +22,18 @@ public extension CXWrappable {
 }
 
 public enum CXWrappers {}
+
+// MARK: - Compatible
+
+public protocol CXSelfWrapping: CXWrappable, CXWrapper where Base == Self {}
+
+public extension CXSelfWrapping {
+    
+    var base: Base {
+        return self
+    }
+    
+    init(_ base: Base) {
+        self = base
+    }
+}

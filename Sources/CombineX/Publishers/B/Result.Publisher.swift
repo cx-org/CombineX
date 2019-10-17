@@ -1,4 +1,5 @@
 import CXUtility
+import CXNamespace
 
 extension CXWrappers {
     

@@ -1,4 +1,5 @@
 import Foundation
+import CXNamespace
 import CombineX
 
 #if canImport(FoundationNetworking)

@@ -1,6 +1,7 @@
 #if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
 
 import CombineX
+import CXNamespace
 import Foundation
 
 extension CXWrappers {

@@ -1,4 +1,5 @@
 import CombineX
+import CXNamespace
 import Foundation
 
 extension CXWrappers {

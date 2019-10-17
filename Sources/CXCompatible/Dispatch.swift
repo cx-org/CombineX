@@ -1,5 +1,6 @@
 #if canImport(Dispatch)
 
+import CXNamespace
 import Dispatch
 
 extension CXWrappers {

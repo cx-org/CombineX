@@ -1,3 +1,5 @@
+import CXNamespace
+
 extension CXWrappers {
     
     typealias Optional<Wrapped> = Swift.Optional<Wrapped>.CX
