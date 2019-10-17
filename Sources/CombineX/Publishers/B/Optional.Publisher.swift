@@ -1,13 +1,20 @@
-extension Optional {
+extension CXWrappers {
     
-    public enum CX {
+    typealias Optional<Wrapped> = Swift.Optional<Wrapped>.CX
+}
+
+extension Optional: CXWrappable {
+    
+    public struct CX: CXWrapper {
+        
+        public typealias Base = Optional<Wrapped>
+        
+        public var base: Base
+        
+        public init(_ base: Base) {
+            self.base = base
+        }
     }
-}
-
-extension Optional: CombineXCompatible {
-}
-
-extension CombineXWrapper where Base: OptionalProtocol {
 }
 
 extension Optional.CX {

@@ -1,7 +1,21 @@
 import CombineX
 import Foundation
 
-extension CombineXWrapper where Base: Timer {
+extension CXWrappers {
+    
+    public class Timer: NSObject<Foundation.Timer> {}
+}
+
+extension Timer {
+    
+    public typealias CX = CXWrappers.Timer
+    
+    public var cx: CXWrappers.Timer {
+        return CXWrappers.Timer(self)
+    }
+}
+
+extension CXWrappers.Timer {
 
     /// Returns a publisher that repeatedly emits the current date on the given interval.
     ///
@@ -12,13 +26,13 @@ extension CombineXWrapper where Base: Timer {
     ///   - mode: The run loop mode in which to run the timer.
     ///   - options: Scheduler options passed to the timer. Defaults to `nil`.
     /// - Returns: A publisher that repeatedly emits the current date on the given interval.
-    public static func publish(every interval: TimeInterval, tolerance: TimeInterval? = nil, on runLoop: RunLoop, in mode: RunLoop.Mode, options: RunLoopCXWrapper.SchedulerOptions? = nil) -> Timer.CX.TimerPublisher {
+    public static func publish(every interval: TimeInterval, tolerance: TimeInterval? = nil, on runLoop: RunLoop, in mode: RunLoop.Mode, options: CXWrappers.RunLoop.SchedulerOptions? = nil) -> TimerPublisher {
         return .init(interval: interval, tolerance: tolerance, runLoop: runLoop, mode: mode, options: options)
     }
     
 }
 
-extension Timer.CX {
+extension CXWrappers.Timer {
     
     /// A publisher that repeatedly emits the current date on a given interval.
     final public class TimerPublisher : ConnectablePublisher {
@@ -39,7 +53,7 @@ extension Timer.CX {
 
         final public let mode: RunLoop.Mode
 
-        final public let options: RunLoopCXWrapper.SchedulerOptions?
+        final public let options: CXWrappers.RunLoop.SchedulerOptions?
         
         private typealias Subject = PassthroughSubject<Date, Never>
         private typealias Multicast = Publishers.Multicast<Subject, Subject>
@@ -55,7 +69,7 @@ extension Timer.CX {
         ///   - runLoop: The run loop on which the timer runs.
         ///   - mode: The run loop mode in which to run the timer.
         ///   - options: Scheduler options passed to the timer. Defaults to `nil`.
-        public init(interval: TimeInterval, tolerance: TimeInterval? = nil, runLoop: RunLoop, mode: RunLoop.Mode, options: RunLoopCXWrapper.SchedulerOptions? = nil) {
+        public init(interval: TimeInterval, tolerance: TimeInterval? = nil, runLoop: RunLoop, mode: RunLoop.Mode, options: CXWrappers.RunLoop.SchedulerOptions? = nil) {
             self.interval = interval
             self.tolerance = tolerance
             self.runLoop = runLoop
@@ -81,7 +95,7 @@ extension Timer.CX {
         /// - Parameters:
         ///     - subscriber: The subscriber to attach to this `Publisher`.
         ///                   once attached it can begin to receive values.
-        final public func receive<S>(subscriber: S) where S : Subscriber, S.Failure == Timer.CX.TimerPublisher.Failure, S.Input == Timer.CX.TimerPublisher.Output {
+        final public func receive<S>(subscriber: S) where S : Subscriber, S.Failure == TimerPublisher.Failure, S.Input == TimerPublisher.Output {
             self.multicast.receive(subscriber: subscriber)
         }
 

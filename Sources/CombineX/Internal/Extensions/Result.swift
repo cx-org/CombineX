@@ -1,7 +1,7 @@
-extension ResultProtocol {
+extension Result {
     
     func tryMap<NewSuccess>(_ transform: (Success) throws -> NewSuccess) -> Result<NewSuccess, Error> {
-        switch self.result {
+        switch self {
         case .success(let success):
             do {
                 return .success(try transform(success))

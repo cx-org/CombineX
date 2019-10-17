@@ -1,28 +1,31 @@
 import CombineX
 import Foundation
 
-public typealias JSONDecoderCXWrapper = JSONDecoder.JSONDecoderCXWrapper
-
-extension CombineXCompatible where Self: JSONDecoder {
+extension CXWrappers {
     
-    public var cx: JSONDecoderCXWrapper {
-        return JSONDecoderCXWrapper(self)
-    }
-    
-    public static var cx: JSONDecoderCXWrapper.Type {
-        return JSONDecoderCXWrapper.self
+    open class JSONDecoder: CXWrapper {
+        
+        public typealias Base = Foundation.JSONDecoder
+        
+        public var base: Base
+        
+        public required init(_ base: Base) {
+            self.base = base
+        }
     }
 }
 
-extension JSONDecoder: CombineXCompatible {
+extension JSONDecoder: CXWrappable {
     
-    public class JSONDecoderCXWrapper: AnyObjectCXWrapper<JSONDecoder>, CombineX.TopLevelDecoder {
+    public typealias CX = CXWrappers.JSONDecoder
+}
+
+extension JSONDecoder.CX: CombineX.TopLevelDecoder {
         
-        public typealias Input = Data
-        
-        public func decode<T>(_ type: T.Type, from: Input) throws -> T where T : Decodable {
-            return try self.base.decode(type, from: from)
-        }
+    public typealias Input = Data
+    
+    public func decode<T>(_ type: T.Type, from: Input) throws -> T where T : Decodable {
+        return try self.base.decode(type, from: from)
     }
 }
 

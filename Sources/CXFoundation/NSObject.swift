@@ -1,33 +1,33 @@
 import CombineX
 import Foundation
 
-open class AnyObjectCXWrapper<Base>: CombineXWrapper {
-    public let base: Base
-    required public init(_ base: Base) {
-        self.base = base
+extension CXWrappers {
+    
+    open class NSObject<Base: Foundation.NSObject>: CXWrapper {
+        
+        public var base: Base
+        
+        public required init(_ base: Base) {
+            self.base = base
+        }
     }
 }
 
-extension NSObject: CombineXCompatible {
-}
-
-extension CombineXCompatible where Self: AnyObject {
+extension NSObject: CXWrappable {
     
-    public var cx: AnyObjectCXWrapper<Self> {
-        return .init(self)
-    }
-    
-    public static var cx: AnyObjectCXWrapper<Self>.Type {
-        return AnyObjectCXWrapper<Self>.self
-    }
-}
-
-extension NSObject {
-    
-    public enum CX { }
+    public typealias CX = CXWrappers.NSObject<NSObject>
 }
 
 #if canImport(ObjectiveC)
+
+// FIXME: NSObject.KeyValueObservingPublisher doesn't conform ot `Publisher` protocol, 🤔.
+extension NSObject.CX {
+    
+    func keyValueObservingPublisher<Value>(_ keyPath: KeyPath<Base, Value>, _ options: NSKeyValueObservingOptions) -> KeyValueObservingPublisher<Base, Value> {
+        return .init(object: self.base, keyPath: keyPath, options: options)
+    }
+}
+
 extension NSObject.CX {
     
     /// A publisher that emits events when the value of a KVO-compliant property changes.
@@ -58,15 +58,6 @@ extension NSObject.CX {
                 && lhs.keyPath == rhs.keyPath
                 && lhs.options == rhs.options
         }
-    }
-}
-
-
-// FIXME: NSObject.KeyValueObservingPublisher doesn't conform ot `Publisher` protocol, 🤔.
-extension CombineXWrapper where Base: NSObject {
-    
-    func keyValueObservingPublisher<Value>(_ keyPath: KeyPath<Base, Value>, _ options: NSKeyValueObservingOptions) -> NSObject.CX.KeyValueObservingPublisher<Base, Value> {
-        return .init(object: self.base, keyPath: keyPath, options: options)
     }
 }
 

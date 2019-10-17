@@ -9,7 +9,7 @@ class TimerSpec: QuickSpec {
 
         // MARK: 1.1 should not send values before connect
         it("should not send values before connect") {
-            let pub = Timer.cx.publish(every: 0.1, on: RunLoop.main, in: .common)
+            let pub = Timer.CX.publish(every: 0.1, on: RunLoop.main, in: .common)
             var dates: [Date] = []
             let cancel = pub.sink { (date) in
                 dates.append(date)
@@ -27,7 +27,7 @@ class TimerSpec: QuickSpec {
         
         // MARK: 1.2 should send values repeatedly
         it("should send values repeatedly") {
-            let pub = Timer.cx.publish(every: 0.1, on: RunLoop.main, in: .common)
+            let pub = Timer.CX.publish(every: 0.1, on: RunLoop.main, in: .common)
             var dates: [Date] = []
             let cancel = pub.sink { (date) in
                 dates.append(date)
