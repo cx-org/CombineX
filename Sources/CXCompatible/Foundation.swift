@@ -2,9 +2,9 @@
 
 import Foundation
 
-extension NSObject: CXCompatible, CXWrapper {}
-extension JSONEncoder: CXCompatible, CXWrapper {}
-extension JSONDecoder: CXCompatible, CXWrapper {}
+extension NSObject: CXWrappable, CXWrapper {}
+extension JSONEncoder: CXWrappable, CXWrapper {}
+extension JSONDecoder: CXWrappable, CXWrapper {}
 
 extension CXWrappers {
     typealias NSObject = Foundation.NSObject
@@ -19,8 +19,8 @@ extension CXWrappers {
 
 #if !os(Linux)
 
-extension PropertyListEncoder: CXCompatible, CXWrapper {}
-extension PropertyListDecoder: CXCompatible, CXWrapper {}
+extension PropertyListEncoder: CXWrappable, CXWrapper {}
+extension PropertyListDecoder: CXWrappable, CXWrapper {}
 
 extension CXWrappers {
     typealias PropertyListEncoder = Foundation.PropertyListEncoder

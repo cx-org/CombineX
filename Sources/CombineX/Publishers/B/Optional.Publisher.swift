@@ -3,7 +3,7 @@ extension CXWrappers {
     typealias Optional<Wrapped> = Swift.Optional<Wrapped>.CX
 }
 
-extension Optional: CXCompatible {
+extension Optional: CXWrappable {
     
     public struct CX: CXWrapper {
         

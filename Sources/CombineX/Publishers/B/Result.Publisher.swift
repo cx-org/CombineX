@@ -5,7 +5,7 @@ extension CXWrappers {
     typealias Result<Success, Failure> = Swift.Result<Success, Failure>.CX where Failure: Error
 }
 
-extension Result: CXCompatible {
+extension Result: CXWrappable {
     
     public struct CX: CXWrapper {
         

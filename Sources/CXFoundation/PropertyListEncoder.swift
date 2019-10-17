@@ -17,7 +17,7 @@ extension CXWrappers {
     }
 }
 
-extension PropertyListEncoder: CXCompatible {
+extension PropertyListEncoder: CXWrappable {
     
     public typealias CX = CXWrappers.PropertyListEncoder
 }

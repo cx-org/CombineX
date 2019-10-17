@@ -7,14 +7,14 @@ public protocol CXWrapper {
     init(_ base: Base)
 }
 
-public protocol CXCompatible {
+public protocol CXWrappable {
     
     associatedtype CX: CXWrapper where CX.Base == Self
     
     var cx: CX { get }
 }
 
-public extension CXCompatible {
+public extension CXWrappable {
     
     var cx: CX {
         return CX(self)

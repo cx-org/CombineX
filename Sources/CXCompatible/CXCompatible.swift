@@ -13,9 +13,9 @@ public extension CXWrapper {
     }
 }
 
-public protocol CXCompatible {}
+public protocol CXWrappable {}
 
-public extension CXCompatible {
+public extension CXWrappable {
     
     typealias CX = Self
     
