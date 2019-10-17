@@ -5,7 +5,7 @@ import Dispatch
 extension CXWrappers {
     
     #if os(Linux)
-    open class DispatchQueue: CXWrapper {
+    public class DispatchQueue: CXWrapper {
         
         public typealias Base = Dispatch.DispatchQueue
         

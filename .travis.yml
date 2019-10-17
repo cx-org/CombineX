@@ -9,14 +9,14 @@ matrix:
       dist: xenial
       env: SWIFT_VERSION="5.1"
       sudo: required
-    - os: osx
-      language: swift
-      osx_image: xcode11.1
-      env: SWIFT_PACKAGE_USE_COMBINEX="YES"
-    - os: osx
-      language: swift
-      osx_image: xcode11.1
-      env: TEST_COMBINE="YES"
+    # - os: osx
+    #   language: swift
+    #   osx_image: xcode11.1
+    #   env: SWIFT_PACKAGE_USE_COMBINEX="YES"
+    # - os: osx
+    #   language: swift
+    #   osx_image: xcode11.1
+    #   env: TEST_COMBINE="YES"
 
 env:
   global:
