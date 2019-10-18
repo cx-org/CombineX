@@ -2,9 +2,9 @@ import CXShim
 import Quick
 import Nimble
 
-#if swift(>=5.1)
-
 class ObserableObjectSpec: QuickSpec {
+
+    #if swift(>=5.1)
     
     typealias Published = CXShim.Published
     
@@ -35,6 +35,6 @@ class ObserableObjectSpec: QuickSpec {
             }
         }
     }
-}
 
-#endif
+    #endif
+}
