@@ -1,4 +1,4 @@
-class WeakBox<Value: AnyObject> {
+class WeakHashBox<Value: AnyObject> {
     
     private(set) weak var value: Value?
     
@@ -10,9 +10,9 @@ class WeakBox<Value: AnyObject> {
     }
 }
 
-extension WeakBox: Equatable, Hashable {
+extension WeakHashBox: Equatable, Hashable {
     
-    static func == (lhs: WeakBox<Value>, rhs: WeakBox<Value>) -> Bool {
+    static func == (lhs: WeakHashBox<Value>, rhs: WeakHashBox<Value>) -> Bool {
         return lhs.id == rhs.id
     }
     

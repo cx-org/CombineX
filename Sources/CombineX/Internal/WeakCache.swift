@@ -2,7 +2,7 @@ import CXUtility
 
 class WeakCache<Key: AnyObject, Value: AnyObject> {
     
-    private var storage: [WeakBox<Key>: WeakBox<Value>] = [:]
+    private var storage: [WeakHashBox<Key>: WeakHashBox<Value>] = [:]
     
     private func reap() {
         // FIXME: Lock
@@ -13,15 +13,15 @@ class WeakCache<Key: AnyObject, Value: AnyObject> {
     
     public subscript(key: Key) -> Value? {
         get {
-            return storage[WeakBox(key)]?.value
+            return storage[WeakHashBox(key)]?.value
         }
         set {
             reap()
             guard let value = newValue else {
-                storage[WeakBox(key)] = nil
+                storage[WeakHashBox(key)] = nil
                 return
             }
-            storage[WeakBox(key)] = WeakBox(value)
+            storage[WeakHashBox(key)] = WeakHashBox(value)
         }
     }
 }
