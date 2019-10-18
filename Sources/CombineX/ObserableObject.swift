@@ -47,7 +47,7 @@ extension ObservableObject where Self.ObjectWillChangePublisher == ObservableObj
     private static func publishedProperties() throws -> [PropertyInfo] {
         // TODO: cache
         let info = try typeInfo(of: self)
-        return info.properties.filter { $0.type is PublishedProtocol }
+        return info.properties.filter { $0.type is PublishedProtocol.Type }
     }
     
     private func set(objectWillChange: ObservableObjectPublisher, for publishedProperty: PropertyInfo) throws {
@@ -65,6 +65,7 @@ extension ObservableObject where Self.ObjectWillChangePublisher == ObservableObj
         do {
             let publishedProperties = try type(of: self).publishedProperties()
             guard !publishedProperties.isEmpty else {
+                // TODO: cache
                 return ObservableObjectPublisher()
             }
             if let pub = (try publishedProperties[0].get(from: self) as! PublishedProtocol).objectWillChange {
@@ -93,7 +94,7 @@ final public class ObservableObjectPublisher : Publisher {
     private let subject = PassthroughSubject<Output, Failure>()
 
     public init() {
-        Global.RequiresImplementation()
+        // Do nothing
     }
 
     /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`

@@ -17,6 +17,7 @@
     public var wrappedValue: Value {
         get { return self.value }
         set {
+            self.objectWillChange?.send()
             self.publisher?.subject.send(newValue)
             self.value = newValue
         }

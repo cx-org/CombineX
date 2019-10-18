@@ -64,6 +64,8 @@ QCKMain([
     AssignSpec.self,
     SinkSpec.self,
     
+    ObserableObjectSpec.self,
+    
     // MARK: - CXFoundation
     
     CoderSpec.self,
