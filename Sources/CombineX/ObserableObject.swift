@@ -43,7 +43,7 @@ private protocol PublishedProtocol {
 }
 extension Published: PublishedProtocol {}
 
-private let globalObjectWillChangeCache = NSMapTable<AnyObject, ObservableObjectPublisher>(keyOptions: [.weakMemory, .objectPointerPersonality])
+private let globalObjectWillChangeCache = NSMapTable<AnyObject, ObservableObjectPublisher>(keyOptions: [.weakMemory, .objectPointerPersonality], valueOptions: [.weakMemory])
 
 extension ObservableObject where Self.ObjectWillChangePublisher == ObservableObjectPublisher {
     
