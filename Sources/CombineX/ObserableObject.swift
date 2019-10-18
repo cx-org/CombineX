@@ -43,7 +43,7 @@ private protocol PublishedProtocol {
 }
 extension Published: PublishedProtocol {}
 
-private let globalObjectWillChangeCache = NSMapTable<AnyObject, ObservableObjectPublisher>(keyOptions: [.weakMemory, .objectPointerPersonality], valueOptions: [.weakMemory])
+private let globalObjectWillChangeCache = WeakCache<AnyObject, ObservableObjectPublisher>()
 
 extension ObservableObject where Self.ObjectWillChangePublisher == ObservableObjectPublisher {
     
@@ -65,14 +65,14 @@ extension ObservableObject where Self.ObjectWillChangePublisher == ObservableObj
     
     /// A publisher that emits before the object has changed.
     public var objectWillChange: ObservableObjectPublisher {
-        if let pub = globalObjectWillChangeCache.object(forKey: self) {
+        if let pub = globalObjectWillChangeCache[self] {
             return pub
         }
         do {
             let publishedProperties = try type(of: self).publishedProperties()
             let pub = ObservableObjectPublisher()
             try publishedProperties.forEach { try set(objectWillChange: pub, for: $0) }
-            globalObjectWillChangeCache.setObject(pub, forKey: self)
+            globalObjectWillChangeCache[self] = pub
             return pub
         } catch {
             fatalError(error.localizedDescription)
