@@ -2,6 +2,7 @@
 #if swift(>=5.1)
 
 import Runtime
+import Foundation
 
 /// A type of object with a publisher that emits before the object has changed.
 ///
@@ -42,6 +43,8 @@ private protocol PublishedProtocol {
 }
 extension Published: PublishedProtocol {}
 
+private let globalObjectWillChangeCache = NSMapTable<AnyObject, ObservableObjectPublisher>(keyOptions: [.weakMemory, .objectPointerPersonality])
+
 extension ObservableObject where Self.ObjectWillChangePublisher == ObservableObjectPublisher {
     
     private static func publishedProperties() throws -> [PropertyInfo] {
@@ -62,17 +65,14 @@ extension ObservableObject where Self.ObjectWillChangePublisher == ObservableObj
     
     /// A publisher that emits before the object has changed.
     public var objectWillChange: ObservableObjectPublisher {
+        if let pub = globalObjectWillChangeCache.object(forKey: self) {
+            return pub
+        }
         do {
             let publishedProperties = try type(of: self).publishedProperties()
-            guard !publishedProperties.isEmpty else {
-                // TODO: cache
-                return ObservableObjectPublisher()
-            }
-            if let pub = (try publishedProperties[0].get(from: self) as! PublishedProtocol).objectWillChange {
-                return pub
-            }
             let pub = ObservableObjectPublisher()
             try publishedProperties.forEach { try set(objectWillChange: pub, for: $0) }
+            globalObjectWillChangeCache.setObject(pub, forKey: self)
             return pub
         } catch {
             fatalError(error.localizedDescription)
