@@ -4,24 +4,37 @@ class WeakCache<Key: AnyObject, Value: AnyObject> {
     
     private var storage: [WeakHashBox<Key>: WeakHashBox<Value>] = [:]
     
-    private func reap() {
-        // FIXME: Lock
+    private var lock = ReadWriteLock()
+    
+    private func faseReap() {
         storage = storage.filter { key, value in
             return key.value != nil && value.value != nil
         }
     }
     
-    public subscript(key: Key) -> Value? {
+    subscript(key: Key) -> Value? {
         get {
+            lock.lockRead()
+            defer { lock.unlockRead() }
             return storage[WeakHashBox(key)]?.value
         }
         set {
-            reap()
+            lock.lockWrite()
+            defer { lock.unlockWrite() }
             guard let value = newValue else {
-                storage[WeakHashBox(key)] = nil
+                storage.removeValue(forKey: WeakHashBox(key))
                 return
+            }
+            if (storage.count + 1) >= storage.capacity {
+                faseReap()
             }
             storage[WeakHashBox(key)] = WeakHashBox(value)
         }
+    }
+    
+    func reap() {
+        lock.lockWrite()
+        defer { lock.unlockWrite() }
+        faseReap()
     }
 }
