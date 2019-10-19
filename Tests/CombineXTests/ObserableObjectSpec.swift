@@ -22,7 +22,7 @@ class ObserableObjectSpec: QuickSpec {
         }
         
         // MARK: - Publish
-        describe("Obserable") {
+        describe("Observable") {
             
             // MARK: 1.1 should publish value's change
             it("Observable") {
@@ -74,16 +74,6 @@ class ObserableObjectSpec: QuickSpec {
                     
                     weakPub = y.objectWillChange
                     expect(weakPub).to(beNil())
-                    
-                    let pubId1: ObjectIdentifier
-                    do {
-                        pubId1 = ObjectIdentifier(y.objectWillChange)
-                    }
-                    let pubId2: ObjectIdentifier
-                    do {
-                        pubId2 = ObjectIdentifier(y.objectWillChange)
-                    }
-                    expect(pubId1).toNot(equal(pubId2))
                     
                     let strongPub = y.objectWillChange
                     weakPub = strongPub
