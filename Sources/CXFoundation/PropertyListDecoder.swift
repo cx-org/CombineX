@@ -1,17 +1,17 @@
-#if !os(Linux)
+#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
 
 import CombineX
 import Foundation
 
 extension CXWrappers {
     
-    open class PropertyListDecoder: CXWrapper {
+    public final class PropertyListDecoder: CXWrapper {
         
         public typealias Base = Foundation.PropertyListDecoder
         
-        public var base: Base
+        public let base: Base
         
-        public required init(_ base: Base) {
+        public init(_ base: Base) {
             self.base = base
         }
     }

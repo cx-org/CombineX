@@ -20,7 +20,7 @@ class CoderSpec: QuickSpec {
             expect(b.name).to(equal(a.name))
         }
         
-        #if !os(Linux)
+        #if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
         // MARK: 1.2 should encode/decode plist as expected
         it("should encode/decode plist as expected") {
             struct User: Codable {

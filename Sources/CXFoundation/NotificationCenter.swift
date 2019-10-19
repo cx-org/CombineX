@@ -3,7 +3,7 @@ import Foundation
 
 extension CXWrappers {
     
-    public class NotificationCenter: NSObject<Foundation.NotificationCenter> {}
+    public final class NotificationCenter: NSObject<Foundation.NotificationCenter> {}
 }
 
 extension NotificationCenter {

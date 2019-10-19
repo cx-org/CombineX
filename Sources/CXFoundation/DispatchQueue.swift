@@ -4,19 +4,23 @@ import Dispatch
 
 extension CXWrappers {
     
-    #if os(Linux)
-    public class DispatchQueue: CXWrapper {
+    #if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
+    
+    public final class DispatchQueue: NSObject<Dispatch.DispatchQueue> {}
+    
+    #else
+    
+    public final class DispatchQueue: CXWrapper {
         
         public typealias Base = Dispatch.DispatchQueue
         
-        public var base: Base
+        public let base: Base
         
-        public required init(_ base: Base) {
+        public init(_ base: Base) {
             self.base = base
         }
     }
-    #else
-    public class DispatchQueue: NSObject<Dispatch.DispatchQueue> {}
+    
     #endif
 }
 

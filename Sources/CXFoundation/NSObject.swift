@@ -5,7 +5,7 @@ extension CXWrappers {
     
     open class NSObject<Base: Foundation.NSObject>: CXWrapper {
         
-        public var base: Base
+        public let base: Base
         
         public required init(_ base: Base) {
             self.base = base

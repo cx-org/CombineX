@@ -24,7 +24,7 @@ extension CXWrappers {
     #endif
 }
 
-#if !os(Linux)
+#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
 
 extension PropertyListEncoder: CXWrappable, CXWrapper {}
 extension PropertyListDecoder: CXWrappable, CXWrapper {}

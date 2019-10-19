@@ -9,7 +9,7 @@ extension Optional: CXWrappable {
         
         public typealias Base = Optional<Wrapped>
         
-        public var base: Base
+        public let base: Base
         
         public init(_ base: Base) {
             self.base = base

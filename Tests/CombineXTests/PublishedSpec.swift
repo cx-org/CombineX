@@ -6,12 +6,6 @@ class PublishedSpec: QuickSpec {
     
     #if swift(>=5.1)
     
-    #if USE_COMBINE
-    typealias Published = Combine.Published
-    #else
-    typealias Published = CombineX.Published
-    #endif
-    
     override func spec() {
         
         afterEach {

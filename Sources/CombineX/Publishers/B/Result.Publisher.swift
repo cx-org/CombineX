@@ -11,7 +11,7 @@ extension Result: CXWrappable {
         
         public typealias Base = Result<Success, Failure>
         
-        public var base: Base
+        public let base: Base
         
         public init(_ base: Base) {
             self.base = base

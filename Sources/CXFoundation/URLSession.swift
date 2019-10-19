@@ -8,9 +8,9 @@ import FoundationNetworking
 extension CXWrappers {
     
     #if canImport(FoundationNetworking)
-    public class URLSession: NSObject<FoundationNetworking.URLSession> {}
+    public final class URLSession: NSObject<FoundationNetworking.URLSession> {}
     #else
-    public class URLSession: NSObject<Foundation.URLSession> {}
+    public final class URLSession: NSObject<Foundation.URLSession> {}
     #endif
     
 }
