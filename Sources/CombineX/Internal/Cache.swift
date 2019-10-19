@@ -1,5 +1,29 @@
 import CXUtility
 
+class Cache<Key: Hashable, Value> {
+    
+    private var storage: [Key: Value] = [:]
+    
+    private var lock = ReadWriteLock()
+    
+    subscript(key: Key) -> Value? {
+        get {
+            lock.lockRead()
+            defer { lock.unlockRead() }
+            return storage[key]
+        }
+        set {
+            lock.lockWrite()
+            defer { lock.unlockWrite() }
+            guard let value = newValue else {
+                storage.removeValue(forKey: key)
+                return
+            }
+            storage[key] = value
+        }
+    }
+}
+
 class WeakCache<Key: AnyObject, Value: AnyObject> {
     
     private var storage: [WeakHashBox<Key>: WeakHashBox<Value>] = [:]
@@ -16,7 +40,16 @@ class WeakCache<Key: AnyObject, Value: AnyObject> {
         get {
             lock.lockRead()
             defer { lock.unlockRead() }
-            return storage[WeakHashBox(key)]?.value
+            let wkey = WeakHashBox(key)
+            guard let valueBox = storage[wkey] else {
+                return nil
+            }
+            if let boxedValue = valueBox.value {
+                return boxedValue
+            } else {
+                storage.removeValue(forKey: wkey)
+                return nil
+            }
         }
         set {
             lock.lockWrite()

@@ -43,17 +43,23 @@ private protocol PublishedProtocol {
 }
 extension Published: PublishedProtocol {}
 
+private let publishedPropertiesCache = Cache<UnsafeRawPointer, [PropertyInfo]>()
 private let globalObjectWillChangeCache = WeakCache<AnyObject, ObservableObjectPublisher>()
 
 extension ObservableObject where Self.ObjectWillChangePublisher == ObservableObjectPublisher {
     
     private static func publishedProperties() throws -> [PropertyInfo] {
-        // TODO: cache
+        let key = unsafeBitCast(self, to: UnsafeRawPointer.self)
+        if let prop = publishedPropertiesCache[key] {
+            return prop
+        }
         let info = try typeInfo(of: self)
-        return info.properties.filter { $0.type is PublishedProtocol.Type }
+        let prop = info.properties.filter { $0.type is PublishedProtocol.Type }
+        publishedPropertiesCache[key] = prop
+        return prop
     }
     
-    private func set(objectWillChange: ObservableObjectPublisher, for publishedProperty: PropertyInfo) throws {
+    private func setObservableObjectPublisher(_ objectWillChange: ObservableObjectPublisher, for publishedProperty: PropertyInfo) throws {
         // TODO: mutate in place
         var published = try publishedProperty.get(from: self) as! PublishedProtocol
         published.objectWillChange = objectWillChange
@@ -71,7 +77,7 @@ extension ObservableObject where Self.ObjectWillChangePublisher == ObservableObj
         do {
             let publishedProperties = try type(of: self).publishedProperties()
             let pub = ObservableObjectPublisher()
-            try publishedProperties.forEach { try set(objectWillChange: pub, for: $0) }
+            try publishedProperties.forEach { try setObservableObjectPublisher(pub, for: $0) }
             globalObjectWillChangeCache[self] = pub
             return pub
         } catch {
