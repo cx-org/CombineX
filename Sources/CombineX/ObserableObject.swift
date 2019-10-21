@@ -2,7 +2,6 @@
 #if swift(>=5.1)
 
 import Runtime
-import Foundation
 
 /// A type of object with a publisher that emits before the object has changed.
 ///

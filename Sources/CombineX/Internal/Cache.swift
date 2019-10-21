@@ -54,14 +54,15 @@ class WeakCache<Key: AnyObject, Value: AnyObject> {
         set {
             lock.lockWrite()
             defer { lock.unlockWrite() }
+            let wkey = WeakHashBox(key)
             guard let value = newValue else {
-                storage.removeValue(forKey: WeakHashBox(key))
+                storage.removeValue(forKey: wkey)
                 return
             }
-            if (storage.count + 1) >= storage.capacity {
+            if storage[wkey] == nil, (storage.count + 1) >= storage.capacity {
                 faseReap()
             }
-            storage[WeakHashBox(key)] = WeakHashBox(value)
+            storage[wkey] = WeakHashBox(value)
         }
     }
     
