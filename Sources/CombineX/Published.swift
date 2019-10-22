@@ -17,6 +17,7 @@
     public var wrappedValue: Value {
         get { return self.value }
         set {
+            self.objectWillChange?.send()
             self.publisher?.subject.send(newValue)
             self.value = newValue
         }
@@ -25,6 +26,8 @@
     private var value: Value
     
     private var publisher: Publisher?
+    
+    var objectWillChange: ObservableObjectPublisher?
     
     public struct Publisher : __Publisher {
 

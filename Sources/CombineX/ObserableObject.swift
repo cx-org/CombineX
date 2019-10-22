@@ -6,7 +6,7 @@
 /// By default an `ObservableObject` will synthesize an `objectWillChange`
 /// publisher that emits before any of its `@Published` properties changes:
 ///
-///     class Contact : ObservableObject {
+///     class Contact: ObservableObject {
 ///         @Published var name: String
 ///         @Published var age: Int
 ///
@@ -17,13 +17,14 @@
 ///
 ///         func haveBirthday() -> Int {
 ///             age += 1
+///             return age
 ///         }
 ///     }
 ///
 ///     let john = Contact(name: "John Appleseed", age: 24)
-///     john.objectWillChange.sink { _ in print("will change") }
-///     print(john.haveBirthday)
-///     // Prints "will change"
+///     john.objectWillChange.sink { _ in print("\(john.age) will change") }
+///     print(john.haveBirthday())
+///     // Prints "24 will change"
 ///     // Prints "25"
 ///
 public protocol ObservableObject : AnyObject {
@@ -35,18 +36,61 @@ public protocol ObservableObject : AnyObject {
     var objectWillChange: Self.ObjectWillChangePublisher { get }
 }
 
-extension ObservableObject where Self.ObjectWillChangePublisher == ObservableObjectPublisher {
+#if EXPERIMENTAL_OBSERVABLE_OBJECT
 
+import Runtime
+
+private protocol PublishedProtocol {
+    var objectWillChange: ObservableObjectPublisher? { get set }
+}
+extension Published: PublishedProtocol {}
+
+private let publishedPropertiesCache = TypeInfoCache<UnsafeRawPointer, [PropertyInfo]>()
+private let globalObjectWillChangeCache = ObservableObjectPublisherCache<AnyObject, ObservableObjectPublisher>()
+
+#endif
+
+extension ObservableObject where Self.ObjectWillChangePublisher == ObservableObjectPublisher {
+    
+    #if EXPERIMENTAL_OBSERVABLE_OBJECT
+    
+    private static func publishedProperties() throws -> [PropertyInfo] {
+        let key = unsafeBitCast(self, to: UnsafeRawPointer.self)
+        return try publishedPropertiesCache.value(for: key) {
+            let info = try typeInfo(of: self)
+            let props = info.properties.filter { $0.type is PublishedProtocol.Type }
+            return props
+        }
+    }
+    
+    private func setObservableObjectPublisher(_ objectWillChange: ObservableObjectPublisher, for publishedProperty: PropertyInfo) throws {
+        // TODO: mutate in place
+        var published = try publishedProperty.get(from: self) as! PublishedProtocol
+        published.objectWillChange = objectWillChange
+        try withUnsafePointer(to: self) { ptr in
+            let mptr = UnsafeMutablePointer(mutating: ptr)
+            try publishedProperty.set(value: published, on: &(mptr.pointee))
+        }
+    }
+    
+    #endif
+    
     /// A publisher that emits before the object has changed.
     public var objectWillChange: ObservableObjectPublisher {
-        /*
-         TODO: How to create a default publisher?
-         
-            1: All @Published properties hold this object and send changes.
-            2: This object gets all @Published properties and subscribes to them.
-         https://github.com/apple/swift-evolution/blob/master/proposals/0258-property-wrappers.md#referencing-the-enclosing-self-in-a-wrapper-type
-         */
+        #if EXPERIMENTAL_OBSERVABLE_OBJECT
+        return globalObjectWillChangeCache.value(for: self) {
+            do {
+                let publishedProperties = try type(of: self).publishedProperties()
+                let pub = ObservableObjectPublisher()
+                try publishedProperties.forEach { try setObservableObjectPublisher(pub, for: $0) }
+                return pub
+            } catch {
+                fatalError(error.localizedDescription)
+            }
+        }
+        #else
         Global.RequiresImplementation()
+        #endif
     }
 }
 
@@ -64,7 +108,7 @@ final public class ObservableObjectPublisher : Publisher {
     private let subject = PassthroughSubject<Output, Failure>()
 
     public init() {
-        Global.RequiresImplementation()
+        // Do nothing
     }
 
     /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`

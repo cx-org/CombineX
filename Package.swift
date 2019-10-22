@@ -61,7 +61,58 @@ func selectCombineImpl() -> CombineImplementation {
     } ?? defaultCombineImpl
 }
 
+struct ExperimentalFeature: OptionSet, CaseIterable {
+    
+    let rawValue: Int
+    
+    static let observableObject = ExperimentalFeature(rawValue: 1)
+    
+    static var allCases: [ExperimentalFeature] {
+        return [.observableObject]
+    }
+    
+    var environmentFlag: String? {
+        switch self {
+        case .observableObject: return "COMBINEX_EXPERIMENTAL_OBSERVABLE_OBJECT"
+        default: return nil
+        }
+    }
+    
+    var packageDependencies: [Package.Dependency] {
+        var result: [Package.Dependency] = []
+        if contains(.observableObject) {
+            result += [.package(url: "https://github.com/wickwirew/Runtime", from: "2.0.0")]
+        }
+        return result
+    }
+    
+    var targetDependencies: [Target.Dependency] {
+        var result: [Target.Dependency] = []
+        if contains(.observableObject) {
+            result += ["Runtime"]
+        }
+        return result
+    }
+    
+    var swiftSettings: [SwiftSetting]? {
+        var result: [SwiftSetting] = []
+        if contains(.observableObject) {
+            result += [.define("EXPERIMENTAL_OBSERVABLE_OBJECT")]
+        }
+        return result.isEmpty ? nil : result
+    }
+}
+
+func configExperimentalFeatures() -> ExperimentalFeature {
+    let env = ProcessInfo.processInfo.environment
+    let featureSet = ExperimentalFeature.allCases.filter { env.keys.contains($0.environmentFlag!) }
+    return ExperimentalFeature(featureSet)
+}
+
 let combineImpl: CombineImplementation = selectCombineImpl()
+let experimentalFeatures: ExperimentalFeature = configExperimentalFeatures()
+
+let testSwiftSettings: [SwiftSetting] = [.define(combineImpl.swiftFlag)] + (experimentalFeatures.swiftSettings ?? [])
 
 // MARK: - Package
 
@@ -87,13 +138,14 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/Quick/Quick.git", from: "2.0.0"),
         .package(url: "https://github.com/Quick/Nimble.git", from: "8.0.0"),
-    ] + combineImpl.packageDependencies,
+    ] + combineImpl.packageDependencies + experimentalFeatures.packageDependencies,
     targets: [
         .target(
             name: "CXUtility"),
         .target(
             name: "CombineX",
-            dependencies: ["CXUtility"]),
+            dependencies: ["CXUtility"] + experimentalFeatures.targetDependencies,
+            swiftSettings: experimentalFeatures.swiftSettings),
         .target(
             name: "CXFoundation",
             dependencies: ["CXUtility", "CombineX"]),
@@ -108,10 +160,12 @@ let package = Package(
         // MARK: Tests
         .testTarget(
             name: "CombineXTests",
-            dependencies: ["CXUtility", "CXShim", "Quick", "Nimble"]),
+            dependencies: ["CXUtility", "CXShim", "Quick", "Nimble"],
+            swiftSettings: testSwiftSettings),
         .testTarget(
             name: "CXFoundationTests",
-            dependencies: ["CXShim", "Quick", "Nimble"]),
+            dependencies: ["CXShim", "Quick", "Nimble"],
+            swiftSettings: testSwiftSettings),
     ],
     swiftLanguageVersions: [
         .v5
