@@ -1,8 +1,6 @@
 // `ObservableObject` depends on property wrapper(`@Published`), which is only available since Swift 5.1.
 #if swift(>=5.1)
 
-import Runtime
-
 /// A type of object with a publisher that emits before the object has changed.
 ///
 /// By default an `ObservableObject` will synthesize an `objectWillChange`
@@ -37,6 +35,10 @@ public protocol ObservableObject : AnyObject {
     var objectWillChange: Self.ObjectWillChangePublisher { get }
 }
 
+#if EXPERIMENTAL_OBSERVABLE_OBJECT
+
+import Runtime
+
 private protocol PublishedProtocol {
     var objectWillChange: ObservableObjectPublisher? { get set }
 }
@@ -44,6 +46,8 @@ extension Published: PublishedProtocol {}
 
 private let publishedPropertiesCache = Cache<UnsafeRawPointer, [PropertyInfo]>()
 private let globalObjectWillChangeCache = WeakCache<AnyObject, ObservableObjectPublisher>()
+
+#endif
 
 extension ObservableObject where Self.ObjectWillChangePublisher == ObservableObjectPublisher {
     
