@@ -89,15 +89,30 @@ class SinkSpec: QuickSpec {
                 })
                 pub.subscribe(sink)
                 pub.send(1)
+                pub.send(completion: .finished)
 
-                expect(events).to(equal([.value(1)]))
+                expect(events).to(equal([.value(1), .completion(.finished)]))
 
                 // Try to start a new one
                 let pub2 = PassthroughSubject<Int, Never>()
                 pub2.subscribe(sink)
                 pub2.send(2)
+                pub2.send(completion: .finished)
 
-                expect(events).to(equal([.value(1)]))
+                expect(events).to(equal([.value(1), .completion(.finished)]))
+            }
+
+            // MARK: 1.5 should not receive vaules if it was cancelled
+            it("should not receive vaules if it was cancelled") {
+                let pub = PassthroughSubject<Int, Never>()
+                var events = [TestSubscriberEvent<Int, Never>]()
+
+                let cancellable = pub.sink { events.append(.value($0)) }
+
+                cancellable.cancel()
+                expect(events).to(equal([]))
+                pub.send(1)
+                expect(events).to(equal([]))
             }
         }
         
