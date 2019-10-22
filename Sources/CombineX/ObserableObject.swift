@@ -47,6 +47,8 @@ private let globalObjectWillChangeCache = WeakCache<AnyObject, ObservableObjectP
 
 extension ObservableObject where Self.ObjectWillChangePublisher == ObservableObjectPublisher {
     
+    #if EXPERIMENTAL_OBSERVABLE_OBJECT
+    
     private static func publishedProperties() throws -> [PropertyInfo] {
         let key = unsafeBitCast(self, to: UnsafeRawPointer.self)
         return try publishedPropertiesCache.value(for: key) {
@@ -66,8 +68,11 @@ extension ObservableObject where Self.ObjectWillChangePublisher == ObservableObj
         }
     }
     
+    #endif
+    
     /// A publisher that emits before the object has changed.
     public var objectWillChange: ObservableObjectPublisher {
+        #if EXPERIMENTAL_OBSERVABLE_OBJECT
         return globalObjectWillChangeCache.value(for: self) {
             do {
                 let publishedProperties = try type(of: self).publishedProperties()
@@ -78,6 +83,9 @@ extension ObservableObject where Self.ObjectWillChangePublisher == ObservableObj
                 fatalError(error.localizedDescription)
             }
         }
+        #else
+        Global.RequiresImplementation()
+        #endif
     }
 }
 
