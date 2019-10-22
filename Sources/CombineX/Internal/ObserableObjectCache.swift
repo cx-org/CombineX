@@ -1,6 +1,10 @@
 import CXUtility
 
-class Cache<Key: Hashable, Value> {
+// Ad-hoc cache for ObservableObject that works on following assumption:
+//
+// - Once the value is added, it will not be (manually) removed or modified.
+
+class TypeInfoCache<Key: Hashable, Value> {
     
     private var storage: [Key: Value] = [:]
     
@@ -26,7 +30,7 @@ class Cache<Key: Hashable, Value> {
     }
 }
 
-class WeakCache<Key: AnyObject, Value: AnyObject> {
+class ObservableObjectPublisherCache<Key: AnyObject, Value: AnyObject> {
     
     private var storage: [WeakHashBox<Key>: WeakHashBox<Value>] = [:]
     

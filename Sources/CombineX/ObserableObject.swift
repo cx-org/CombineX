@@ -45,8 +45,8 @@ private protocol PublishedProtocol {
 }
 extension Published: PublishedProtocol {}
 
-private let publishedPropertiesCache = Cache<UnsafeRawPointer, [PropertyInfo]>()
-private let globalObjectWillChangeCache = WeakCache<AnyObject, ObservableObjectPublisher>()
+private let publishedPropertiesCache = TypeInfoCache<UnsafeRawPointer, [PropertyInfo]>()
+private let globalObjectWillChangeCache = ObservableObjectPublisherCache<AnyObject, ObservableObjectPublisher>()
 
 #endif
 
