@@ -17,10 +17,10 @@ extension Optional: OptionalProtocol {
     }
 }
 
-extension OptionalProtocol {
+extension Optional {
     
     var isNil: Bool {
-        return self.optional == nil
+        return self == nil
     }
     
     var isNotNil: Bool {
@@ -28,13 +28,20 @@ extension OptionalProtocol {
     }
     
     mutating func setIfNil(_ value: Wrapped) -> Bool {
-        switch self.optional {
+        switch self {
         case .none:
-            self.optional = .some(value)
+            self = .some(value)
             return true
         default:
             return false
         }
+    }
+    
+    func filter(_ isIncluded: (Wrapped) -> Bool) -> Optional<Wrapped> {
+        guard let val = self, isIncluded(val) else {
+            return nil
+        }
+        return val
     }
 }
 
@@ -50,7 +57,7 @@ extension Atom where Val: OptionalProtocol {
 
     func setIfNil(_ value: Val.Wrapped) -> Bool {
         return self.withLockMutating {
-            $0.setIfNil(value)
+            $0.optional.setIfNil(value)
         }
     }
 }
