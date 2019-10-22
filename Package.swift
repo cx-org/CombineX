@@ -73,7 +73,7 @@ struct ExperimentalFeature: OptionSet, CaseIterable {
     
     var environmentFlag: String? {
         switch self {
-        case .observableObject: return "COMBINE_EXPERIMENTAL_OBSERVABLE_OBJECT"
+        case .observableObject: return "COMBINEX_EXPERIMENTAL_OBSERVABLE_OBJECT"
         default: return nil
         }
     }

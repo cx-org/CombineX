@@ -15,7 +15,7 @@ matrix:
       sudo: required
       env: 
         - SWIFT_VERSION="5.1"
-        - COMBINE_EXPERIMENTAL_OBSERVABLE_OBJECT = YES
+        - COMBINEX_EXPERIMENTAL_OBSERVABLE_OBJECT = YES
     - os: osx
       language: swift
       osx_image: xcode11.1
@@ -25,7 +25,7 @@ matrix:
       osx_image: xcode11.1
       env: 
         - SWIFT_PACKAGE_USE_COMBINEX="YES"
-        - COMBINE_EXPERIMENTAL_OBSERVABLE_OBJECT = YES
+        - COMBINEX_EXPERIMENTAL_OBSERVABLE_OBJECT = YES
     - os: osx
       language: swift
       osx_image: xcode11.1
