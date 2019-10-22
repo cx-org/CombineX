@@ -6,7 +6,7 @@
 /// By default an `ObservableObject` will synthesize an `objectWillChange`
 /// publisher that emits before any of its `@Published` properties changes:
 ///
-///     class Contact : ObservableObject {
+///     class Contact: ObservableObject {
 ///         @Published var name: String
 ///         @Published var age: Int
 ///
@@ -17,13 +17,14 @@
 ///
 ///         func haveBirthday() -> Int {
 ///             age += 1
+///             return age
 ///         }
 ///     }
 ///
 ///     let john = Contact(name: "John Appleseed", age: 24)
-///     john.objectWillChange.sink { _ in print("will change") }
-///     print(john.haveBirthday)
-///     // Prints "will change"
+///     john.objectWillChange.sink { _ in print("\(john.age) will change") }
+///     print(john.haveBirthday())
+///     // Prints "24 will change"
 ///     // Prints "25"
 ///
 public protocol ObservableObject : AnyObject {
