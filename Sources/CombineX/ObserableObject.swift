@@ -49,13 +49,11 @@ extension ObservableObject where Self.ObjectWillChangePublisher == ObservableObj
     
     private static func publishedProperties() throws -> [PropertyInfo] {
         let key = unsafeBitCast(self, to: UnsafeRawPointer.self)
-        if let prop = publishedPropertiesCache[key] {
-            return prop
+        return try publishedPropertiesCache.value(for: key) {
+            let info = try typeInfo(of: self)
+            let props = info.properties.filter { $0.type is PublishedProtocol.Type }
+            return props
         }
-        let info = try typeInfo(of: self)
-        let prop = info.properties.filter { $0.type is PublishedProtocol.Type }
-        publishedPropertiesCache[key] = prop
-        return prop
     }
     
     private func setObservableObjectPublisher(_ objectWillChange: ObservableObjectPublisher, for publishedProperty: PropertyInfo) throws {
@@ -70,17 +68,15 @@ extension ObservableObject where Self.ObjectWillChangePublisher == ObservableObj
     
     /// A publisher that emits before the object has changed.
     public var objectWillChange: ObservableObjectPublisher {
-        if let pub = globalObjectWillChangeCache[self] {
-            return pub
-        }
-        do {
-            let publishedProperties = try type(of: self).publishedProperties()
-            let pub = ObservableObjectPublisher()
-            try publishedProperties.forEach { try setObservableObjectPublisher(pub, for: $0) }
-            globalObjectWillChangeCache[self] = pub
-            return pub
-        } catch {
-            fatalError(error.localizedDescription)
+        return globalObjectWillChangeCache.value(for: self) {
+            do {
+                let publishedProperties = try type(of: self).publishedProperties()
+                let pub = ObservableObjectPublisher()
+                try publishedProperties.forEach { try setObservableObjectPublisher(pub, for: $0) }
+                return pub
+            } catch {
+                fatalError(error.localizedDescription)
+            }
         }
     }
 }
