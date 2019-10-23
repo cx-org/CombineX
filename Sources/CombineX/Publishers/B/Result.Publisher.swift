@@ -145,9 +145,136 @@ extension Result.CX.Publisher {
     }
 }
 
-extension Result.CX.Publisher: Equatable where Success: Equatable, Failure: Equatable {
-    
-    public static func == (lhs: Result.CX.Publisher, rhs: Result.CX.Publisher) -> Bool {
-        return lhs.result == rhs.result
+extension Result.CX.Publisher: Equatable where Success: Equatable, Failure: Equatable {}
+
+extension Result.CX.Publisher where Output: Equatable {
+
+    public func contains(_ output: Output) -> Result<Bool, Failure>.CX.Publisher {
+        return .init(result.map { $0 == output })
+    }
+
+    public func removeDuplicates() -> Result<Output, Failure>.CX.Publisher {
+        return self
+    }
+}
+
+extension Result.CX.Publisher where Output: Comparable {
+
+    public func min() -> Result<Output, Failure>.CX.Publisher {
+        return self
+    }
+
+    public func max() -> Result<Output, Failure>.CX.Publisher {
+        return self
+    }
+}
+
+extension Result.CX.Publisher {
+
+    public func allSatisfy(_ predicate: (Output) -> Bool) -> Result<Bool, Failure>.CX.Publisher {
+        return .init(result.map(predicate))
+    }
+
+    public func tryAllSatisfy(_ predicate: (Output) throws -> Bool) -> Result<Bool, Error>.CX.Publisher {
+        return .init(result.tryMap(predicate))
+    }
+
+    public func contains(where predicate: (Output) -> Bool) -> Result<Bool, Failure>.CX.Publisher {
+        return .init(result.map(predicate))
+    }
+
+    public func tryContains(where predicate: (Output) throws -> Bool) -> Result<Bool, Error>.CX.Publisher {
+        return .init(result.tryMap(predicate))
+    }
+
+    public func collect() -> Result<[Output], Failure>.CX.Publisher {
+        return .init(result.map { [$0] })
+    }
+
+    public func min(by areInIncreasingOrder: (Output, Output) -> Bool) -> Result<Output, Failure>.CX.Publisher {
+        return self
+    }
+
+    public func tryMin(by areInIncreasingOrder: (Output, Output) throws -> Bool) -> Result<Output, Error>.CX.Publisher {
+        return .init(result.erasedError)
+    }
+
+    public func max(by areInIncreasingOrder: (Output, Output) -> Bool) -> Result<Output, Failure>.CX.Publisher {
+        return self
+    }
+
+    public func tryMax(by areInIncreasingOrder: (Output, Output) throws -> Bool) -> Result<Output, Error>.CX.Publisher {
+        return .init(result.erasedError)
+    }
+
+    public func count() -> Result<Int, Failure>.CX.Publisher {
+        return .init(result.map { _ in 1 })
+    }
+
+    public func first() -> Result<Output, Failure>.CX.Publisher {
+        return self
+    }
+
+    public func last() -> Result<Output, Failure>.CX.Publisher {
+        return self
+    }
+
+    public func ignoreOutput() -> Empty<Output, Failure> {
+        return .init()
+    }
+
+    public func map<ElementOfResult>(_ transform: (Output) -> ElementOfResult) -> Result<ElementOfResult, Failure>.CX.Publisher {
+        return .init(result.map(transform))
+    }
+
+    public func tryMap<ElementOfResult>(_ transform: (Output) throws -> ElementOfResult) -> Result<ElementOfResult, Error>.CX.Publisher {
+        return .init(result.tryMap(transform))
+    }
+
+    public func mapError<TransformedFailure: Error>(_ transform: (Failure) -> TransformedFailure) -> Result<Output, TransformedFailure>.CX.Publisher {
+        return .init(result.mapError(transform))
+    }
+
+    public func removeDuplicates(by predicate: (Output, Output) -> Bool) -> Result<Output, Failure>.CX.Publisher {
+        return self
+    }
+
+    public func tryRemoveDuplicates(by predicate: (Output, Output) throws -> Bool) -> Result<Output, Error>.CX.Publisher {
+        return .init(result.erasedError)
+    }
+
+    public func replaceError(with output: Output) -> Result<Output, Never>.CX.Publisher {
+        return .init(result.replaceError(with: output))
+    }
+
+    public func replaceEmpty(with output: Output) -> Result<Output, Failure>.CX.Publisher {
+        return self
+    }
+
+    public func retry(_ times: Int) -> Result<Output, Failure>.CX.Publisher {
+        return self
+    }
+
+    public func reduce<Accumulator>(_ initialResult: Accumulator, _ nextPartialResult: (Accumulator, Output) -> Accumulator) -> Result<Accumulator, Failure>.CX.Publisher {
+        return .init(result.map { nextPartialResult(initialResult, $0) })
+    }
+
+    public func tryReduce<Accumulator>(_ initialResult: Accumulator, _ nextPartialResult: (Accumulator, Output) throws -> Accumulator) -> Result<Accumulator, Error>.CX.Publisher{
+        return .init(result.tryMap { try nextPartialResult(initialResult, $0) })
+    }
+
+    public func scan<ElementOfResult>(_ initialResult: ElementOfResult, _ nextPartialResult: (ElementOfResult, Output) -> ElementOfResult) -> Result<ElementOfResult, Failure>.CX.Publisher {
+        return .init(result.map { nextPartialResult(initialResult, $0) })
+    }
+
+    public func tryScan<ElementOfResult>(_ initialResult: ElementOfResult, _ nextPartialResult: (ElementOfResult, Output) throws -> ElementOfResult) -> Result<ElementOfResult, Error>.CX.Publisher {
+        return .init(result.tryMap { try nextPartialResult(initialResult, $0) })
+    }
+}
+
+extension Result.CX.Publisher where Failure == Never {
+
+    public func setFailureType<Failure: Error>(to failureType: Failure.Type) -> Result<Output, Failure>.CX.Publisher {
+        return .init(.success(result.success))
     }
 }
