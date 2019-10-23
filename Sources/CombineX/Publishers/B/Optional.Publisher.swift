@@ -22,7 +22,7 @@ extension Optional.CX {
     /// A publisher that publishes an optional value to each subscriber exactly once, if the optional has a value.
     ///
     /// In contrast with `Just`, an `Optional` publisher may send no value before completion.
-    public struct Publisher: __Publisher {
+    public struct Publisher: CombineX.Publisher {
 
         /// The kind of values published by this publisher.
         public typealias Output = Wrapped

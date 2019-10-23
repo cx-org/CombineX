@@ -34,7 +34,7 @@ extension Result.CX {
     ///
     /// In contrast with `Just`, a `Once` publisher can terminate with an error instead of sending a value.
     /// In contrast with `Optional`, a `Once` publisher always sends one value (unless it terminates with an error).
-    public struct Publisher: __Publisher {
+    public struct Publisher: CombineX.Publisher {
 
         /// The kind of values published by this publisher.
         public typealias Output = Success
