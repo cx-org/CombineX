@@ -100,17 +100,13 @@ extension Publishers {
     }
 }
 
-private enum Signal {
+private struct Signal: RawRepresentable {
     
-    case sigtrap
+    let rawValue: Int32
     
-    var code: Int32 {
-        switch self {
-        case .sigtrap:  return Int32(SIGTRAP)
-        }
-    }
+    static let sigtrap = Signal(rawValue: SIGTRAP)
     
     func raise() {
-        cxlibc.raise(self.code)
+        cxlibc.raise(self.rawValue)
     }
 }
