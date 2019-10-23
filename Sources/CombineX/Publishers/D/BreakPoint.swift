@@ -1,8 +1,4 @@
-#if canImport(Darwin)
-import Darwin
-#elseif canImport(Glibc)
-import Glibc
-#endif
+import cxlibc
 
 extension Publisher {
     
@@ -115,12 +111,6 @@ private enum Signal {
     }
     
     func raise() {
-        #if canImport(Darwin)
-        Darwin.raise(self.code)
-        #elseif canImport(Glibc)
-        Glibc.raise(self.code)
-        #else
-        Global.Unsupported()
-        #endif
+        cxlibc.raise(self.code)
     }
 }
