@@ -29,7 +29,7 @@
     
     var objectWillChange: ObservableObjectPublisher?
     
-    public struct Publisher : __Publisher {
+    public struct Publisher : CombineX.Publisher {
 
         /// The kind of values published by this publisher.
         public typealias Output = Value
