@@ -1,8 +1,4 @@
-#if canImport(Darwin)
-import Darwin
-#elseif canImport(Glibc)
-import Glibc
-#endif
+import cxlibc
 
 extension Publisher {
     
@@ -104,23 +100,13 @@ extension Publishers {
     }
 }
 
-private enum Signal {
+private struct Signal: RawRepresentable {
     
-    case sigtrap
+    let rawValue: Int32
     
-    var code: Int32 {
-        switch self {
-        case .sigtrap:  return Int32(SIGTRAP)
-        }
-    }
+    static let sigtrap = Signal(rawValue: SIGTRAP)
     
     func raise() {
-        #if canImport(Darwin)
-        Darwin.raise(self.code)
-        #elseif canImport(Glibc)
-        Glibc.raise(self.code)
-        #else
-        Global.Unsupported()
-        #endif
+        cxlibc.raise(self.rawValue)
     }
 }
