@@ -43,20 +43,10 @@ This library is still in beta, so **do not use it in production!**
 
 ### 3. Extensions
 
-`CombineX` provides a number of related extensions, including but not limited to:
-
-- [CXFoundation](https://github.com/cx-org/CXFoundation): provides `Foundation` extension implementations, built on top of `CombineX`. Such as `URLSession`, `NotificationCenter`, `Timer`, `DispatchQueue/RunLoop/OperationQueue+Scheduler`, `JSON/Plist+Coder`, etc.
-- [CXCompatible](https://github.com/cx-org/CXCompatible): provides API Shims for `CombineX` to help you resolve migration concerns that may arise. With this library, you can easily switch all code that depends on `CombineX` to `Combine` at any time.
-
-With `CombineX`, you are free to develop `Combine` related frameworks without worrying about system version and platform limitations, such as:
+With `CombineX`, you are free to develop `Combine` related frameworks without worrying about system version and platform limitations:
 
 - [CXCocoa](https://github.com/cx-org/CXCocoa): provides `Combine` extensions to `Cocoa`, such as `KVO+Publisher`, `Method Interception`, `UIBinding`, `Delegate Proxy`, etc. Based on `CombineX` by default, you are free to switch to `Combine`.
 - [CXExtensions](https://github.com/cx-org/CXExtensions): provides a collection of useful extensions for `Combine`, such as `IgnoreError`, `DelayedAutoCancellable`, etc. Based on `CombineX` by default, you are free to switch to `Combine`.
-
-<p align="center">
-<img src="demo.1.gif" height="500">
-<img src="demo.2.gif" height="500">
-</p>
 
 ## Participation (｡◕‿◕｡✿)
 
