@@ -1,4 +1,5 @@
 import Foundation
+import CXNamespace
 import CombineX
 
 #if canImport(FoundationNetworking)
@@ -20,7 +21,7 @@ extension URLSession {
     typealias CX = CXWrappers.URLSession
     
     public var cx: CXWrappers.URLSession {
-        return CXWrappers.URLSession(self)
+        return CXWrappers.URLSession(wrapping: self)
     }
 }
 

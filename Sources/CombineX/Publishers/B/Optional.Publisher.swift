@@ -1,3 +1,5 @@
+import CXNamespace
+
 extension CXWrappers {
     
     typealias Optional<Wrapped> = Swift.Optional<Wrapped>.CX
@@ -11,7 +13,7 @@ extension Optional: CXWrappable {
         
         public let base: Base
         
-        public init(_ base: Base) {
+        public init(wrapping base: Base) {
             self.base = base
         }
     }

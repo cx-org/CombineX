@@ -1,13 +1,15 @@
 #if canImport(Foundation)
+
+import CXNamespace
 import Foundation
 
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
 
-extension NSObject: CXWrappable, CXWrapper {}
-extension JSONEncoder: CXWrappable, CXWrapper {}
-extension JSONDecoder: CXWrappable, CXWrapper {}
+extension NSObject: CXSelfWrapping {}
+extension JSONEncoder: CXSelfWrapping {}
+extension JSONDecoder: CXSelfWrapping {}
 
 extension CXWrappers {
     public typealias NSObject = Foundation.NSObject
@@ -26,8 +28,8 @@ extension CXWrappers {
 
 #if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
 
-extension PropertyListEncoder: CXWrappable, CXWrapper {}
-extension PropertyListDecoder: CXWrappable, CXWrapper {}
+extension PropertyListEncoder: CXSelfWrapping {}
+extension PropertyListDecoder: CXSelfWrapping {}
 
 extension CXWrappers {
     public typealias PropertyListEncoder = Foundation.PropertyListEncoder

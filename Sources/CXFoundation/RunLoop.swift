@@ -1,5 +1,6 @@
 import CombineX
 import CXUtility
+import CXNamespace
 import Foundation
 
 extension CXWrappers {
@@ -12,7 +13,7 @@ extension RunLoop {
     public typealias CX = CXWrappers.RunLoop
     
     public var cx: CXWrappers.RunLoop {
-        return CXWrappers.RunLoop(self)
+        return CXWrappers.RunLoop(wrapping: self)
     }
 }
     

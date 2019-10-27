@@ -1,6 +1,7 @@
 #if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
 
 import CombineX
+import CXNamespace
 import Foundation
 
 extension CXWrappers {
@@ -11,7 +12,7 @@ extension CXWrappers {
         
         public let base: Base
         
-        public init(_ base: Base) {
+        public init(wrapping base: Base) {
             self.base = base
         }
     }

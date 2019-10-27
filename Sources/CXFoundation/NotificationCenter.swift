@@ -1,4 +1,5 @@
 import CombineX
+import CXNamespace
 import Foundation
 
 extension CXWrappers {
@@ -11,7 +12,7 @@ extension NotificationCenter {
     public typealias CX = CXWrappers.NotificationCenter
     
     public var cx: CXWrappers.NotificationCenter {
-        return CXWrappers.NotificationCenter(self)
+        return CXWrappers.NotificationCenter(wrapping: self)
     }
 }
 

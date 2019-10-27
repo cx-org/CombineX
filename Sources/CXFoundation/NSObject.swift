@@ -1,4 +1,5 @@
 import CombineX
+import CXNamespace
 import Foundation
 
 extension CXWrappers {
@@ -7,7 +8,7 @@ extension CXWrappers {
         
         public let base: Base
         
-        public required init(_ base: Base) {
+        public required init(wrapping base: Base) {
             self.base = base
         }
     }

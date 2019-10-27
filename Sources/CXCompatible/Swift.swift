@@ -1,5 +1,7 @@
-extension Optional: CXWrappable, CXWrapper {}
-extension Result: CXWrappable, CXWrapper {}
+import CXNamespace
+
+extension Optional: CXSelfWrapping {}
+extension Result: CXSelfWrapping {}
 
 extension CXWrappers {
     public typealias Optional = Swift.Optional

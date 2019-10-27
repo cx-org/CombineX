@@ -1,4 +1,5 @@
 import CombineX
+import CXNamespace
 import Foundation
 
 extension CXWrappers {
@@ -11,7 +12,7 @@ extension Timer {
     public typealias CX = CXWrappers.Timer
     
     public var cx: CXWrappers.Timer {
-        return CXWrappers.Timer(self)
+        return CXWrappers.Timer(wrapping: self)
     }
 }
 

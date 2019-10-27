@@ -1,4 +1,5 @@
 import CXUtility
+import CXNamespace
 
 extension Publishers.Sequence where Failure == Never {
 
@@ -407,7 +408,7 @@ extension CXWrappers {
         
         public let base: Base
         
-        public init(_ base: Base) {
+        public init(wrapping base: Base) {
             self.base = base
         }
     }
@@ -416,7 +417,7 @@ extension CXWrappers {
 extension Sequence {
 
     public var cx: CXWrappers.Sequence<Self> {
-        return CXWrappers.Sequence<Self>(self)
+        return CXWrappers.Sequence<Self>(wrapping: self)
     }
 }
 
