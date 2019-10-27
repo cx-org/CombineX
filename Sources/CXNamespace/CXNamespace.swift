@@ -25,15 +25,21 @@ public enum CXWrappers {}
 
 // MARK: - Compatible
 
-public protocol CXSelfWrapping: CXWrappable, CXWrapper where Base == Self {}
+// Expected Warning: Redundant conformance constraint 'Self': 'CXWrapper'
+// https://bugs.swift.org/browse/SR-11670
+public protocol CXSelfWrapping: CXWrappable, CXWrapper where Base == Self, CX == Self {}
 
 public extension CXSelfWrapping {
     
-    var base: Base {
+    var cx: Self {
         return self
     }
     
-    init(_ base: Base) {
+    var base: Self {
+        return self
+    }
+    
+    init(_ base: Self) {
         self = base
     }
 }
