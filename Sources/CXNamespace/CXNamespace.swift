@@ -4,7 +4,7 @@ public protocol CXWrapper {
     
     var base: Base { get }
     
-    init(_ base: Base)
+    init(wrapping base: Base)
 }
 
 public protocol CXWrappable {
@@ -17,7 +17,7 @@ public protocol CXWrappable {
 public extension CXWrappable {
     
     var cx: CX {
-        return CX(self)
+        return CX(wrapping: self)
     }
 }
 
@@ -39,7 +39,7 @@ public extension CXSelfWrapping {
         return self
     }
     
-    init(_ base: Self) {
+    init(wrapping base: Self) {
         self = base
     }
 }

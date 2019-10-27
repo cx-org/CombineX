@@ -12,7 +12,7 @@ extension OperationQueue {
     public typealias CX = CXWrappers.OperationQueue
     
     public var cx: CXWrappers.OperationQueue {
-        return CXWrappers.OperationQueue(self)
+        return CXWrappers.OperationQueue(wrapping: self)
     }
 }
 

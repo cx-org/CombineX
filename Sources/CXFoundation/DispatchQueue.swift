@@ -17,7 +17,7 @@ extension CXWrappers {
         
         public let base: Base
         
-        public init(_ base: Base) {
+        public init(wrapping base: Base) {
             self.base = base
         }
     }
@@ -30,7 +30,7 @@ extension DispatchQueue {
     public typealias CX = CXWrappers.DispatchQueue
     
     public var cx: CXWrappers.DispatchQueue {
-        return CXWrappers.DispatchQueue(self)
+        return CXWrappers.DispatchQueue(wrapping: self)
     }
 }
     

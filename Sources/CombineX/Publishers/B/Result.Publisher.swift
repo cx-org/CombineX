@@ -14,7 +14,7 @@ extension Result: CXWrappable {
         
         public let base: Base
         
-        public init(_ base: Base) {
+        public init(wrapping base: Base) {
             self.base = base
         }
     }
