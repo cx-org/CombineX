@@ -137,7 +137,8 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/Quick/Quick.git", from: "2.0.0"),
-        .package(url: "https://github.com/Quick/Nimble.git", from: "8.0.0"),
+        // TODO: Use "8.0.2" until https://github.com/Quick/Nimble/issues/705 is fixed.
+        .package(url: "https://github.com/Quick/Nimble.git", .exact("8.0.2")),
     ] + combineImpl.packageDependencies + experimentalFeatures.packageDependencies,
     targets: [
         .target(
