@@ -14,7 +14,7 @@ extension CXWrappers {
     }
 }
 
-extension NSObject: CXWrappable {
+extension NSObject: CXWrapping {
     
     public typealias CX = CXWrappers.NSObject<NSObject>
 }

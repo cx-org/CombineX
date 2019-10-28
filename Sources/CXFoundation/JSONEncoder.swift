@@ -16,7 +16,7 @@ extension CXWrappers {
     }
 }
 
-extension JSONEncoder: CXWrappable {
+extension JSONEncoder: CXWrapping {
     
     public typealias CX = CXWrappers.JSONEncoder
 }

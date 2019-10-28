@@ -7,14 +7,14 @@ public protocol CXWrapper {
     init(wrapping base: Base)
 }
 
-public protocol CXWrappable {
+public protocol CXWrapping {
     
     associatedtype CX: CXWrapper where CX.Base == Self
     
     var cx: CX { get }
 }
 
-public extension CXWrappable {
+public extension CXWrapping {
     
     var cx: CX {
         return CX(wrapping: self)
@@ -27,7 +27,7 @@ public enum CXWrappers {}
 
 // Expected Warning: Redundant conformance constraint 'Self': 'CXWrapper'
 // https://bugs.swift.org/browse/SR-11670
-public protocol CXSelfWrapping: CXWrappable, CXWrapper where Base == Self, CX == Self {}
+public protocol CXSelfWrapping: CXWrapping, CXWrapper where Base == Self, CX == Self {}
 
 public extension CXSelfWrapping {
     
