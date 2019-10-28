@@ -142,14 +142,14 @@ let package = Package(
     ] + combineImpl.packageDependencies + experimentalFeatures.packageDependencies,
     targets: [
         .target(
-            name: "cxlibc"),
+            name: "CXLibc"),
         .target(
             name: "CXUtility"),
         .target(
             name: "CXNamespace"),
         .target(
             name: "CombineX",
-            dependencies: ["cxlibc", "CXUtility", "CXNamespace"] + experimentalFeatures.targetDependencies,
+            dependencies: ["CXLibc", "CXUtility", "CXNamespace"] + experimentalFeatures.targetDependencies,
             swiftSettings: experimentalFeatures.swiftSettings),
         .target(
             name: "CXFoundation",
