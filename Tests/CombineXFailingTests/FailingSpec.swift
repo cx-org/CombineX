@@ -8,7 +8,7 @@ class FailingSpec: QuickSpec {
     
     override func spec() {
         
-        xdescribe("failing") {
+        xdescribe("failing", flags: [:]) {
             
             it("should failing") {
                 
