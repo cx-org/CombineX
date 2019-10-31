@@ -47,7 +47,7 @@ let package = Package(
         .testTarget(name: "CombineXFailingTests", dependencies: ["CXShim", "Quick", "Nimble"]),
     ],
     swiftLanguageVersions: [
-        .v5, .version("5.1")
+        .v5,
     ]
 )
 
