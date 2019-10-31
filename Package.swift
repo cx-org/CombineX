@@ -64,10 +64,13 @@ struct CXExperimentalFeatures: OptionSet, CaseIterable {
         return [.observableObject]
     }
     
+    static var all: CXExperimentalFeatures {
+        return .init(self.allCases)
+    }
+    
     var isEnabled: Bool {
-        let prefix = "CX_EXPERIMENTAL"
         switch self {
-        case .observableObject: return env[prefix + "_OBSERVABLE_OBJECT"] != nil
+        case .observableObject: return env["CX_EXPERIMENTAL_OBSERVABLE_OBJECT"] != nil
         default:                return false
         }
     }
@@ -173,15 +176,14 @@ func selectCombineImp() -> CombineImplementation {
 let currentCombineImp = selectCombineImp()
 currentCombineImp.configure(package)
 
-// MARK: Test
-let testSwiftSettings = currentCombineImp.shimTargetSwiftSettings + enabledCXExperimentalFeatures.extraSwiftSettings
+// Pass the swift settings of current combine implementation and all experimental features to all test targets.
+let testSwiftSettings = currentCombineImp.shimTargetSwiftSettings + CXExperimentalFeatures.all.extraSwiftSettings
 package.targets.forEach {
     if $0.isTest {
         $0.swiftSettings.append(contentsOf: testSwiftSettings)
     }
 }
 
-// MARK: CI
 // Travis does not yet support macOS 10.15, so we have to generate an iOS project to test against `Combine`.
 if currentCombineImp == .combine && ProcessInfo.processInfo.environment["TRAVIS"] != nil {
     package.platforms = [.iOS("13.0")]
