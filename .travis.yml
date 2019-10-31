@@ -15,21 +15,21 @@ matrix:
       sudo: required
       env: 
         - SWIFT_VERSION="5.1"
-        - COMBINEX_EXPERIMENTAL_OBSERVABLE_OBJECT = YES
+        - CX_EXPERIMENTAL_OBSERVABLE_OBJECT="YES"
     - os: osx
       language: swift
       osx_image: xcode11.1
-      env: SWIFT_PACKAGE_USE_COMBINEX="YES"
+      env: CX_IMPLEMENTATION="CombineX"
     - os: osx
       language: swift
       osx_image: xcode11.1
       env: 
-        - SWIFT_PACKAGE_USE_COMBINEX="YES"
-        - COMBINEX_EXPERIMENTAL_OBSERVABLE_OBJECT = YES
+        - CX_IMPLEMENTATION="CombineX"
+        - CX_EXPERIMENTAL_OBSERVABLE_OBJECT="YES"
     - os: osx
       language: swift
       osx_image: xcode11.1
-      env: TEST_COMBINE="YES"
+      env: CX_IMPLEMENTATION="Combine"
 
 env:
   global:
@@ -43,7 +43,7 @@ before_install:
     fi
 
 script:
-  - if [[ $TEST_COMBINE == 'YES' ]]; then
+  - if [[ $CX_IMPLEMENTATION == 'Combine' ]]; then
       gem install xcpretty;
       swift package generate-xcodeproj;
       xcodebuild test -project "$PROJECT" -scheme "$SCHEME" -destination "$DESTINATION" | xcpretty;

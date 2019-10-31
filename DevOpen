@@ -5,6 +5,6 @@
 
 
 export CX_IMPLEMENTATION="CombineX"
-export CX_EXPERIMENTAL_OBSERVABLE_OBJECT="true"
+export CX_EXPERIMENTAL_OBSERVABLE_OBJECT="YES"
 killall Xcode || true
 open $(dirname $0)/Package.swift
