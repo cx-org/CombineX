@@ -43,8 +43,7 @@ let package = Package(
         .target(name: "CXCompatible", dependencies: ["CXNamespace"]),
         .target(name: "CXShim", dependencies: [/* depends on combine implementation */]),
         .testTarget(name: "CombineXTests", dependencies: ["CXUtility", "CXShim", "Quick", "Nimble"]),
-        .testTarget(name: "CXFoundationTests", dependencies: ["CXShim", "Quick", "Nimble"]),
-        .testTarget(name: "CombineXFailingTests", dependencies: ["CXShim", "Quick", "Nimble"]),
+        .testTarget(name: "CXFoundationTests", dependencies: ["CXShim", "Quick", "Nimble"])
     ],
     swiftLanguageVersions: [
         .v5,
@@ -177,7 +176,7 @@ let currentCombineImp = selectCombineImp()
 currentCombineImp.configure(package)
 
 // Pass the swift settings of current combine implementation and all experimental features to all test targets.
-let testSwiftSettings = currentCombineImp.shimTargetSwiftSettings + CXExperimentalFeatures.all.extraSwiftSettings
+let testSwiftSettings = currentCombineImp.shimTargetSwiftSettings + CXExperimentalFeatures.enabled.extraSwiftSettings
 package.targets.forEach {
     if $0.isTest {
         $0.swiftSettings.append(contentsOf: testSwiftSettings)
