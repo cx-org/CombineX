@@ -21,18 +21,18 @@ matrix:
       language: swift
       osx_image: xcode11.1
       env: 
-        - CX_IMPLEMENTATION="CombineX"
+        - CX_COMBINE_IMPLEMENTATION="CombineX"
     - os: osx
       language: swift
       osx_image: xcode11.1
       env: 
-        - CX_IMPLEMENTATION="CombineX"
+        - CX_COMBINE_IMPLEMENTATION="CombineX"
         - CX_EXPERIMENTAL_OBSERVABLE_OBJECT="YES"
     - os: osx
       language: swift
       osx_image: xcode11.1
       env: 
-        - CX_IMPLEMENTATION="Combine"
+        - CX_COMBINE_IMPLEMENTATION="Combine"
 
 env:
   global:
@@ -46,7 +46,7 @@ before_install:
     fi
 
 script:
-  - if [[ $CX_IMPLEMENTATION == 'Combine' ]]; then
+  - if [[ $CX_COMBINE_IMPLEMENTATION == 'Combine' ]]; then
       gem install xcpretty;
       swift package generate-xcodeproj;
       xcodebuild test -project "$PROJECT" -scheme "$SCHEME" -destination "$DESTINATION" | xcpretty;

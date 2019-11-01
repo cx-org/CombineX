@@ -3,21 +3,7 @@
 import Foundation
 import PackageDescription
 
-// MARK: Helpers
 let env = ProcessInfo.processInfo.environment
-
-extension Optional where Wrapped: RangeReplaceableCollection {
-    
-    mutating func append(contentsOf newElements: [Wrapped.Element]) {
-        if newElements.isEmpty { return }
-        
-        if let wrapped = self {
-            self = wrapped + newElements
-        } else {
-            self = .init(newElements)
-        }
-    }
-}
 
 // MARK: Package
 let package = Package(
@@ -50,6 +36,20 @@ let package = Package(
     ]
 )
 
+// MARK: Helpers
+extension Optional where Wrapped: RangeReplaceableCollection {
+    
+    mutating func append(contentsOf newElements: [Wrapped.Element]) {
+        if newElements.isEmpty { return }
+        
+        if let wrapped = self {
+            self = wrapped + newElements
+        } else {
+            self = .init(newElements)
+        }
+    }
+}
+
 // MARK: CombineX Experimental Features
 
 /// Some of the implementations in CombineX are experimental.
@@ -63,19 +63,12 @@ struct CXExperimentalFeatures: OptionSet, CaseIterable {
         return [.observableObject]
     }
     
-    static var all: CXExperimentalFeatures {
-        return .init(self.allCases)
-    }
-    
-    var isEnabled: Bool {
-        switch self {
-        case .observableObject: return env["CX_EXPERIMENTAL_OBSERVABLE_OBJECT"] != nil
-        default:                return false
+    var flags: [String] {
+        var result: [String] = []
+        if contains(.observableObject) {
+            result += ["EXPERIMENTAL_OBSERVABLE_OBJECT"]
         }
-    }
-    
-    static var enabled: CXExperimentalFeatures {
-        return .init(self.allCases.filter { $0.isEnabled })
+        return result
     }
     
     func configure(_ package: Package) {
@@ -101,9 +94,7 @@ struct CXExperimentalFeatures: OptionSet, CaseIterable {
     
     var extraSwiftSettings: [SwiftSetting] {
         var settings: [SwiftSetting] = []
-        if contains(.observableObject) {
-            settings += [.define("EXPERIMENTAL_OBSERVABLE_OBJECT")]
-        }
+        settings += self.flags.map { .define($0) }
         return settings
     }
     
@@ -116,11 +107,19 @@ struct CXExperimentalFeatures: OptionSet, CaseIterable {
     }
 }
 
-let enabledCXExperimentalFeatures = CXExperimentalFeatures.enabled
+func getEnabledCXExperimentalFeatures() -> CXExperimentalFeatures {
+    let enabledFeatures = CXExperimentalFeatures.allCases.filter {
+        guard let flag = $0.flags.first else { return false }
+        return env["CX_\(flag)"] != nil
+    }
+    return .init(enabledFeatures)
+}
+
+let enabledCXExperimentalFeatures = getEnabledCXExperimentalFeatures()
 enabledCXExperimentalFeatures.configure(package)
 
 // MARK: Combine Implementations
-enum CombineImplementation: CaseIterable {
+enum CombineImplementation {
     
     case combine, combineX, openCombine
     
@@ -158,7 +157,10 @@ enum CombineImplementation: CaseIterable {
 }
 
 func selectCombineImp() -> CombineImplementation {
-    let imp = env["CX_IMPLEMENTATION"]?.lowercased()
+    let key = "CX_COMBINE_IMPLEMENTATION"
+    // CombineX -> combinex
+    // OPEN_COMBINE -> opencombine
+    let imp = env[key]?.lowercased().filter { $0.isLetter }
     switch imp {
     case "combine":         return .combine
     case "combinex":        return .combineX
@@ -175,8 +177,8 @@ func selectCombineImp() -> CombineImplementation {
 let currentCombineImp = selectCombineImp()
 currentCombineImp.configure(package)
 
-// Pass the swift settings of current combine implementation and all experimental features to all test targets.
-let testSwiftSettings = currentCombineImp.shimTargetSwiftSettings + CXExperimentalFeatures.enabled.extraSwiftSettings
+// Pass the swift settings of current combine implementation and enabled experimental features to all test targets.
+let testSwiftSettings = currentCombineImp.shimTargetSwiftSettings + enabledCXExperimentalFeatures.extraSwiftSettings
 package.targets.forEach {
     if $0.isTest {
         $0.swiftSettings.append(contentsOf: testSwiftSettings)
@@ -187,3 +189,4 @@ package.targets.forEach {
 if currentCombineImp == .combine && ProcessInfo.processInfo.environment["TRAVIS"] != nil {
     package.platforms = [.iOS("13.0")]
 }
+
