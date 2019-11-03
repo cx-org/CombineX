@@ -3,183 +3,190 @@
 import Foundation
 import PackageDescription
 
-enum CombineImplementation: CaseIterable {
-    
-    case combine
-    case combineX
-    case openCombine
-    
-    var environmentFlag: String {
-        switch self {
-        case .combine: return "SWIFT_PACKAGE_USE_COMBINE"
-        case .combineX: return "SWIFT_PACKAGE_USE_COMBINEX"
-        case .openCombine: return "SWIFT_PACKAGE_USE_OPEN_COMBINE"
-        }
-    }
-    
-    var packageDependencies: [Package.Dependency] {
-        switch self {
-        case .combine, .combineX:
-            return []
-        case .openCombine:
-            return [
-                .package(url: "https://github.com/broadwaylamb/OpenCombine", .branch("master")),
-            ]
-        }
-    }
-    
-    var targetDependencies: [Target.Dependency] {
-        switch self {
-        case .combine:
-            return ["CXCompatible"]
-        case .combineX:
-            return ["CombineX", "CXFoundation"]
-        case .openCombine:
-            return ["OpenCombine", "OpenCombineDispatch"]
-        }
-    }
-    
-    var swiftFlag: String {
-        switch self {
-        case .combine: return "USE_COMBINE"
-        case .combineX: return "USE_COMBINEX"
-        case .openCombine: return "USE_OPEN_COMBINE"
-        }
-    }
-}
+let env = ProcessInfo.processInfo.environment
 
-func selectCombineImpl() -> CombineImplementation {
-    #if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
-    let defaultCombineImpl = CombineImplementation.combine
-    #else
-    let defaultCombineImpl = CombineImplementation.combineX
-    #endif
-    
-    let env = ProcessInfo.processInfo.environment
-    return CombineImplementation.allCases.first { impl in
-        env[impl.environmentFlag] != nil
-    } ?? defaultCombineImpl
-}
-
-struct ExperimentalFeature: OptionSet, CaseIterable {
-    
-    let rawValue: Int
-    
-    static let observableObject = ExperimentalFeature(rawValue: 1)
-    
-    static var allCases: [ExperimentalFeature] {
-        return [.observableObject]
-    }
-    
-    var environmentFlag: String? {
-        switch self {
-        case .observableObject: return "COMBINEX_EXPERIMENTAL_OBSERVABLE_OBJECT"
-        default: return nil
-        }
-    }
-    
-    var packageDependencies: [Package.Dependency] {
-        var result: [Package.Dependency] = []
-        if contains(.observableObject) {
-            result += [.package(url: "https://github.com/wickwirew/Runtime", from: "2.0.0")]
-        }
-        return result
-    }
-    
-    var targetDependencies: [Target.Dependency] {
-        var result: [Target.Dependency] = []
-        if contains(.observableObject) {
-            result += ["Runtime"]
-        }
-        return result
-    }
-    
-    var swiftSettings: [SwiftSetting]? {
-        var result: [SwiftSetting] = []
-        if contains(.observableObject) {
-            result += [.define("EXPERIMENTAL_OBSERVABLE_OBJECT")]
-        }
-        return result.isEmpty ? nil : result
-    }
-}
-
-func configExperimentalFeatures() -> ExperimentalFeature {
-    let env = ProcessInfo.processInfo.environment
-    let featureSet = ExperimentalFeature.allCases.filter { env.keys.contains($0.environmentFlag!) }
-    return ExperimentalFeature(featureSet)
-}
-
-let combineImpl: CombineImplementation = selectCombineImpl()
-let experimentalFeatures: ExperimentalFeature = configExperimentalFeatures()
-
-let testSwiftSettings: [SwiftSetting] = [.define(combineImpl.swiftFlag)] + (experimentalFeatures.swiftSettings ?? [])
-
-// MARK: - Package
-
+// MARK: Package
 let package = Package(
     name: "CombineX",
     platforms: [
-        .macOS(.v10_10),
-        .iOS(.v8),
-        .tvOS(.v9),
-        .watchOS(.v2),
+        .macOS(.v10_10), .iOS(.v8), .tvOS(.v9), .watchOS(.v2),
     ],
     products: [
-        .library(
-            name: "CombineX",
-            targets: ["CombineX", "CXFoundation"]),
-        .library(
-            name: "CXCompatible",
-            targets: ["CXCompatible"]),
-        .library(
-            name: "CXShim",
-            targets: ["CXShim"]),
+        .library(name: "CombineX", targets: ["CombineX", "CXFoundation"]),
+        .library(name: "CXShim", targets: ["CXShim"]),
     ],
     dependencies: [
         .package(url: "https://github.com/Quick/Quick.git", from: "2.0.0"),
-        .package(url: "https://github.com/Quick/Nimble.git", from: "8.0.0"),
-    ] + combineImpl.packageDependencies + experimentalFeatures.packageDependencies,
+        // TODO: Use "8.0.2" until https://github.com/Quick/Nimble/issues/705 is fixed.
+        .package(url: "https://github.com/Quick/Nimble.git", .exact("8.0.2")),
+    ],
     targets: [
-        .target(
-            name: "cxlibc"),
-        .target(
-            name: "CXUtility"),
-        .target(
-            name: "CXNamespace"),
-        .target(
-            name: "CombineX",
-            dependencies: ["cxlibc", "CXUtility", "CXNamespace"] + experimentalFeatures.targetDependencies,
-            swiftSettings: experimentalFeatures.swiftSettings),
-        .target(
-            name: "CXFoundation",
-            dependencies: ["CXUtility", "CXNamespace", "CombineX"]),
-        .target(
-            name: "CXCompatible",
-            dependencies: ["CXNamespace"]),
-        .target(
-            name: "CXShim",
-            dependencies: combineImpl.targetDependencies,
-            swiftSettings: [.define(combineImpl.swiftFlag)]),
-        
-        // MARK: Tests
-        .testTarget(
-            name: "CombineXTests",
-            dependencies: ["CXUtility", "CXShim", "Quick", "Nimble"],
-            swiftSettings: testSwiftSettings),
-        .testTarget(
-            name: "CXFoundationTests",
-            dependencies: ["CXShim", "Quick", "Nimble"],
-            swiftSettings: testSwiftSettings),
+        .target(name: "CXLibc"),
+        .target(name: "CXUtility"),
+        .target(name: "CXNamespace"),
+        .target(name: "CombineX", dependencies: ["CXLibc", "CXUtility", "CXNamespace"]),
+        .target(name: "CXFoundation", dependencies: ["CXUtility", "CXNamespace", "CombineX"]),
+        .target(name: "CXCompatible", dependencies: ["CXNamespace"]),
+        .target(name: "CXShim", dependencies: [/* depends on combine implementation */]),
+        .testTarget(name: "CombineXTests", dependencies: ["CXUtility", "CXShim", "Quick", "Nimble"]),
+        .testTarget(name: "CXFoundationTests", dependencies: ["CXShim", "Quick", "Nimble"])
     ],
     swiftLanguageVersions: [
-        .v5
+        .v5,
     ]
 )
 
+// MARK: Helpers
+extension Optional where Wrapped: RangeReplaceableCollection {
+    
+    mutating func append(contentsOf newElements: [Wrapped.Element]) {
+        if newElements.isEmpty { return }
+        
+        if let wrapped = self {
+            self = wrapped + newElements
+        } else {
+            self = .init(newElements)
+        }
+    }
+}
 
-/**
- for ci test
- */
-if combineImpl == .combine && ProcessInfo.processInfo.environment["TRAVIS"] != nil {
+// MARK: CombineX Experimental Features
+
+/// Some of the implementations in CombineX are experimental.
+struct CXExperimentalFeatures: OptionSet, CaseIterable {
+    
+    let rawValue: Int
+    
+    static let observableObject = CXExperimentalFeatures(rawValue: 1)
+    
+    static var allCases: [CXExperimentalFeatures] {
+        return [.observableObject]
+    }
+    
+    var flags: [String] {
+        var result: [String] = []
+        if contains(.observableObject) {
+            result += ["EXPERIMENTAL_OBSERVABLE_OBJECT"]
+        }
+        return result
+    }
+    
+    func configure(_ package: Package) {
+        guard let cxTarget = package.targets.first(where: { $0.name == "CombineX" }) else { return }
+        
+        // extra package dependencies
+        package.dependencies.append(contentsOf: self.extraPackageDependencies)
+        
+        // extra swift settings
+        cxTarget.swiftSettings.append(contentsOf: self.extraSwiftSettings)
+        
+        // extra target dependencies
+        cxTarget.dependencies.append(contentsOf: self.extraTargetDependencies)
+    }
+    
+    var extraPackageDependencies: [Package.Dependency] {
+        var deps: [Package.Dependency] = []
+        if contains(.observableObject) {
+            deps += [.package(url: "https://github.com/wickwirew/Runtime", from: "2.0.0")]
+        }
+        return deps
+    }
+    
+    var extraSwiftSettings: [SwiftSetting] {
+        var settings: [SwiftSetting] = []
+        settings += self.flags.map { .define($0) }
+        return settings
+    }
+    
+    var extraTargetDependencies: [Target.Dependency] {
+        var deps: [Target.Dependency] = []
+        if contains(.observableObject) {
+            deps += ["Runtime"]
+        }
+        return deps
+    }
+}
+
+func getEnabledCXExperimentalFeatures() -> CXExperimentalFeatures {
+    let enabledFeatures = CXExperimentalFeatures.allCases.filter {
+        guard let flag = $0.flags.first else { return false }
+        return env["CX_\(flag)"] != nil
+    }
+    return .init(enabledFeatures)
+}
+
+let enabledCXExperimentalFeatures = getEnabledCXExperimentalFeatures()
+enabledCXExperimentalFeatures.configure(package)
+
+// MARK: Combine Implementations
+enum CombineImplementation {
+    
+    case combine, combineX, openCombine
+    
+    func configure(_ package: Package) {
+        package.dependencies.append(contentsOf: self.extraPackageDependencies)
+        
+        guard let shimTarget = package.targets.first(where: { $0.name == "CXShim" }) else { return }
+        
+        shimTarget.dependencies = shimTargetDependencies
+        shimTarget.swiftSettings.append(contentsOf: shimTargetSwiftSettings)
+    }
+    
+    var extraPackageDependencies: [Package.Dependency] {
+        switch self {
+        case .openCombine:  return [.package(url: "https://github.com/broadwaylamb/OpenCombine", .branch("master"))]
+        default:            return []
+        }
+    }
+    
+    var shimTargetDependencies: [Target.Dependency] {
+        switch self {
+        case .combine:      return ["CXCompatible"]
+        case .combineX:     return ["CombineX", "CXFoundation"]
+        case .openCombine:  return ["OpenCombine", "OpenCombineDispatch"]
+        }
+    }
+    
+    var shimTargetSwiftSettings: [SwiftSetting] {
+        switch self {
+        case .combine:      return [.define("USE_COMBINE")]
+        case .combineX:     return [.define("USE_COMBINEX")]
+        case .openCombine:  return [.define("USE_OPEN_COMBINE")]
+        }
+    }
+}
+
+func selectCombineImp() -> CombineImplementation {
+    let key = "CX_COMBINE_IMPLEMENTATION"
+    // CombineX -> combinex
+    // OPEN_COMBINE -> opencombine
+    let imp = env[key]?.lowercased().filter { $0.isLetter }
+    switch imp {
+    case "combine":         return .combine
+    case "combinex":        return .combineX
+    case "opencombine":     return .openCombine
+    default:
+        #if canImport(Combine)
+        return .combine
+        #else
+        return .combineX
+        #endif
+    }
+}
+
+let currentCombineImp = selectCombineImp()
+currentCombineImp.configure(package)
+
+// Pass the swift settings of current combine implementation and enabled experimental features to all test targets.
+let testSwiftSettings = currentCombineImp.shimTargetSwiftSettings + enabledCXExperimentalFeatures.extraSwiftSettings
+package.targets.forEach {
+    if $0.isTest {
+        $0.swiftSettings.append(contentsOf: testSwiftSettings)
+    }
+}
+
+// Travis does not yet support macOS 10.15, so we have to generate an iOS project to test against `Combine`.
+if currentCombineImp == .combine && ProcessInfo.processInfo.environment["TRAVIS"] != nil {
     package.platforms = [.iOS("13.0")]
 }
+

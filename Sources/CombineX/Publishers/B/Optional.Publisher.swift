@@ -5,7 +5,7 @@ extension CXWrappers {
     typealias Optional<Wrapped> = Swift.Optional<Wrapped>.CX
 }
 
-extension Optional: CXWrappable {
+extension Optional: CXWrapping {
     
     public struct CX: CXWrapper {
         

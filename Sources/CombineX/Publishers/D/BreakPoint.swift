@@ -1,4 +1,4 @@
-import cxlibc
+import CXLibc
 
 extension Publisher {
     
@@ -107,6 +107,6 @@ private struct Signal: RawRepresentable {
     static let sigtrap = Signal(rawValue: SIGTRAP)
     
     func raise() {
-        cxlibc.raise(self.rawValue)
+        CXLibc.raise(self.rawValue)
     }
 }
