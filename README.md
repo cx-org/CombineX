@@ -9,16 +9,12 @@
 
 `CombineX` is an open source implementation for Apple's [Combine](https://developer.apple.com/documentation/combine). Its API is consistent with `Combine`, which can be used as a `Combine` polyfill on iOS 8, macOS 10.10 and Linux to help you get rid of system limitations and platform limitations.
 
-## Notice
-
-This library is still in beta, so **do not use it in production!**
-
 🐱
 
 ## Support
 
 - iOS 8+ / macOS 10.10+ / tvOS 9+ / watchOS 2+
-- Linux - Ubuntu 16.04
+- Linux
 
 ## What is Combine
 
@@ -48,27 +44,27 @@ With `CombineX`, you are free to develop `Combine` related frameworks without wo
 - [CXCocoa](https://github.com/cx-org/CXCocoa): provides `Combine` extensions to `Cocoa`, such as `KVO+Publisher`, `Method Interception`, `UIBinding`, `Delegate Proxy`, etc. Based on `CombineX` by default, you are free to switch to `Combine`.
 - [CXExtensions](https://github.com/cx-org/CXExtensions): provides a collection of useful extensions for `Combine`, such as `IgnoreError`, `DelayedAutoCancellable`, etc. Based on `CombineX` by default, you are free to switch to `Combine`.
 
-## Participation (｡◕‿◕｡✿)
+## Join Us
 
 Want to get involved? Awesome! **`CombineX` really needs your help now**! 🆘🆘🆘
 
-#### 📈 Project Management
+#### Project Management
 
 We need help with project management!
 
-`CombineX` is the first time I organize such a large open source project. It is based on a whim, driven by my enthusiasm for Swift and open source. I like writing code and implementing things, but now, I spend more time on organizing and deploying than writing code. `CombineX` is not just a project anymore. It now has four associated repositories in addition to the main repository, amd I have a lot of new ideas waiting for verification. So we really need someone to help manage the entire project, including [cx-org] (https://github.com/cx-org) and [cx-community] (https://github.com/cx-community).
+`CombineX` is the first time I organize such a large open source project. It is based on a whim, driven by my enthusiasm for Swift and open source. I like writing code and implementing things, but now, I spend more time on organizing and deploying than writing code. We really need someone to help manage the entire project, including [cx-org] (https://github.com/cx-org) and [cx-community] (https://github.com/cx-community).
 
-#### 🔨 Looking for bugs
+#### Looking for bugs
 
 You can help `CombineX` find bugs.
 
 `CombineX` uses tests to ensure that it is consistent with the behavior of `Combine`. But at the moment, the number of tests is far from enough, and there are still many edge cases that are not considered. You can add more tests to improve the quality of `CombineX`. First, make sure the `Specs` scheme passes your test. If the `CombineX` scheme doesn't pass, you've found a `CombineX` bug! You can give us feedback via issue, or - fix it directly!
 
-#### 💯 Improving implementation
+#### Improving implementation
 
 `CombineX` was originally a side project of me. Due to time, there are a lot of things that can be done better. Currently, only the implementation of the functions is guaranteed. You can improve them, whether it is about performance, security, or readability. I will also focus on this part next.
 
-#### 💬 Participating in the discussion of issue and pr
+#### Participating in the discussion of issue and pr
 
 You can also participate in the discussion of the issue and pr, answer other people's questions, and review the code.
 
@@ -80,7 +76,7 @@ Open `Package.swift` directly with xcode 11, don't use `CombineX.xcodeproj`, it 
 
 ## Installation
 
-### Swift Package Manager
+### Swift Package Manager(Recommended)
 
 ```swift
 dependencies.append(
@@ -99,7 +95,3 @@ pod 'CombineX', :git => 'https://github.com/cx-org/CombineX.git', :branch => 'ma
 ```carthage
 github "cx-org/CombineX" "master"
 ```
-
-## Bugs in Combine
-
-Since `Combine` is still in beta, it is inevitable that it has bugs. If you find something strange, open an issue and discuss it with us!
