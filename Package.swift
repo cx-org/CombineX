@@ -110,8 +110,8 @@ struct CXExperimentalFeatures: OptionSet, CaseIterable {
 
 func getEnabledCXExperimentalFeatures() -> CXExperimentalFeatures {
     let enabledFeatures = CXExperimentalFeatures.allCases.filter {
-        guard let flag = $0.flags.first else { return false }
-        return env["CX_\(flag)"] != nil
+        guard let flag = $0.flags.first, let value = env["CX_\(flag)"] else { return false }
+        return NSString(string: value).boolValue
     }
     return .init(enabledFeatures)
 }
