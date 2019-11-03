@@ -73,4 +73,8 @@ QCKMain([
     SchedulerSpec.self,
     TimerSpec.self,
     URLSessionSpec.self,
+    
+    // MARK: - CXInconsistentTests
+    
+    SuspiciousDemandSpec.self,
 ])

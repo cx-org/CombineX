@@ -58,19 +58,6 @@ class DemandSpec: QuickSpec {
                 expect(d).to(equal(.max(1)))
                 
                 expect(Demand.max(1) - 1).to(equal(.max(0)))
-                
-                #if !SWIFT_PACKAGE
-                
-                #if USE_COMBINE
-                // FIXME: In combine, This behaves differently than the doc, doc says "any operation that would result in a negative value is clamped to .max(0)", but it will actually crash.
-                expect {
-                    _ = Demand.max(1) - .max(2)
-                }.to(throwAssertion())
-                #else
-                expect(Demand.max(1) - .max(2)).to(equal(.max(0)))
-                #endif
-                
-                #endif
             }
             
             // MARK: 2.3 should multiply as expected
