@@ -3,6 +3,7 @@ import Quick
 
 @testable import CombineXTests
 @testable import CXFoundationTests
+@testable import CXInconsistentTests
 
 QCKMain([
     AnyCancellableSpec.self,
