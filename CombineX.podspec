@@ -5,7 +5,7 @@ Pod::Spec.new do |s|
   s.summary      = "Open source implementation for Apple's Combine."
   s.homepage     = "https://github.com/cx-org/CombineX"
   s.license      = { :type => "MIT", :file => "LICENSE" }
-  s.author       = { "Quentin Jin" => "luoxiustm@gmail.com" }
+  s.authors      = { "Quentin Jin" => "luoxiustm@gmail.com", "ddddxxx" => "dengxiang2010@gmail.com" }
 
   s.swift_versions              = ['5.0']
   s.osx.deployment_target       = "10.10"
@@ -14,6 +14,36 @@ Pod::Spec.new do |s|
   s.watchos.deployment_target   = "2.0"
 
   s.source = { :git => "https://github.com/cx-org/CombineX.git", :tag => "#{s.version}" }
-  s.source_files  = "Sources/CombineX/**/*.swift"
+
+  s.subspec "CXLibc" do |ss|
+    ss.source_files = "Sources/CXLibc/**/*.swift"
+  end
+
+  s.subspec "CXUtility" do |ss|
+    ss.source_files = "Sources/CXUtility/**/*.swift"
+  end
+
+  s.subspec "CXNamespace" do |ss|
+    ss.source_files = "Sources/CXNamespace/**/*.swift"
+  end
+
+  s.subspec "Core" do |ss|
+    ss.source_files = "Sources/CombineX/**/*.swift"
+    ss.dependency "CombineX/CXLibc"
+    ss.dependency "CombineX/CXUtility"
+    ss.dependency "CombineX/CXNamespace"
+    ss.dependency "Runtime"
+
+    ss.xcconfig = { "OTHER_SWIFT_FLAGS" => "$(inherited) -DEXPERIMENTAL_OBSERVABLE_OBJECT" }
+  end
+
+  s.subspec "CXFoundation" do |ss|
+    ss.source_files = "Sources/CXFoundation/**/*.swift"
+    ss.dependency "CombineX/CXUtility"
+    ss.dependency "CombineX/CXNamespace"
+    ss.dependency "CombineX/Core"
+  end
+
+  spec.default_subspecs = 'Core', "CXFoundation"
 
 end
