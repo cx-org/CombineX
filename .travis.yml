@@ -10,29 +10,29 @@ matrix:
       sudo: required
       env: 
         - SWIFT_VERSION="5.1"
-    - os: linux
-      language: generic
-      dist: xenial
-      sudo: required
-      env: 
-        - SWIFT_VERSION="5.1"
-        - CX_EXPERIMENTAL_OBSERVABLE_OBJECT="YES"
-    - os: osx
-      language: swift
-      osx_image: xcode11.1
-      env: 
-        - CX_COMBINE_IMPLEMENTATION="CombineX"
-    - os: osx
-      language: swift
-      osx_image: xcode11.1
-      env: 
-        - CX_COMBINE_IMPLEMENTATION="CombineX"
-        - CX_EXPERIMENTAL_OBSERVABLE_OBJECT="YES"
-    - os: osx
-      language: swift
-      osx_image: xcode11.1
-      env: 
-        - CX_COMBINE_IMPLEMENTATION="Combine"
+    # - os: linux
+    #   language: generic
+    #   dist: xenial
+    #   sudo: required
+    #   env: 
+    #     - SWIFT_VERSION="5.1"
+    #     - CX_EXPERIMENTAL_OBSERVABLE_OBJECT="YES"
+    # - os: osx
+    #   language: swift
+    #   osx_image: xcode11.1
+    #   env: 
+    #     - CX_COMBINE_IMPLEMENTATION="CombineX"
+    # - os: osx
+    #   language: swift
+    #   osx_image: xcode11.1
+    #   env: 
+    #     - CX_COMBINE_IMPLEMENTATION="CombineX"
+    #     - CX_EXPERIMENTAL_OBSERVABLE_OBJECT="YES"
+    # - os: osx
+    #   language: swift
+    #   osx_image: xcode11.1
+    #   env: 
+    #     - CX_COMBINE_IMPLEMENTATION="Combine"
 
 env:
   global:

@@ -453,9 +453,10 @@ class PassthroughSubjectSpec: QuickSpec {
                 subject.subscribe(sub)
                 
                 let g = DispatchGroup()
+                let q = DispatchQueue(label: UUID().uuidString, attributes: .concurrent)
                 
                 15.times { i in
-                    DispatchQueue.global().async(group: g) {
+                    q.async(group: g) {
                         subject.send(i)
                     }
                 }

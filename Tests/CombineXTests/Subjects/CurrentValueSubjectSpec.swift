@@ -366,7 +366,7 @@ class CurrentValueSubjectSpec: QuickSpec {
             }
             
             // MARK: 4.3 no guarantee of synchronous backpressure
-            it("no guarantee of synchronous backpressure") {
+            fit("no guarantee of synchronous backpressure") {
                 let subject = CurrentValueSubject<Int, Never>(-1)
                 
                 let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
@@ -383,9 +383,10 @@ class CurrentValueSubjectSpec: QuickSpec {
                 subject.subscribe(sub)
                 
                 let g = DispatchGroup()
+                let q = DispatchQueue(label: UUID().uuidString, attributes: .concurrent)
                 
                 15.times { i in
-                    DispatchQueue.global().async(group: g) {
+                    q.async(group: g) {
                         subject.send(i)
                     }
                 }
