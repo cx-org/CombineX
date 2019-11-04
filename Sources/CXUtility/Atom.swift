@@ -2,6 +2,14 @@ public final class Atom<Val> {
     
     private let lock = Lock()
     private var val: Val
+
+    public var isMutating: Bool {
+        if lock.try() {
+            lock.unlock()
+            return false
+        }
+        return true
+    }
     
     public init(val: Val) {
         self.val = val

@@ -1,9 +1,17 @@
 import Foundation
 
+@usableFromInline
+protocol NSTryLocking: NSLocking {
+    func `try`() -> Bool
+}
+
+extension NSRecursiveLock: NSTryLocking {}
+extension NSLock: NSTryLocking {}
+
 public final class Lock {
 
     @usableFromInline
-    let locking: NSLocking
+    let locking: NSTryLocking
     
     @inlinable
     public init(recursive: Bool = false) {
@@ -13,6 +21,11 @@ public final class Lock {
     @inlinable
     public func lock(file: StaticString = #file, line: UInt = #line) {
         self.locking.lock()
+    }
+    
+    @inlinable
+    public func `try`() -> Bool {
+        return self.locking.try()
     }
     
     @inlinable
