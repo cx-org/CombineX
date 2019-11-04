@@ -1,5 +1,4 @@
 import CXUtility
-import Foundation
 
 /// A subject that passes along values and completion.
 ///
@@ -133,7 +132,6 @@ extension PassthroughSubject {
         func receive(_ value: Output) {
             self.lock.lock()
             
-            Swift.print("[Thread: \(Thread.current)] demand: \(self.state.demand)")
             guard let demand = self.state.demand, demand > 0 else {
                 self.lock.unlock()
                 return
