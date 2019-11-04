@@ -144,7 +144,6 @@ extension PassthroughSubject {
             let sub = self.sub!
             self.lock.unlock()
             
-            // FIXME: Yes, no guarantee of synchronous backpressure. See PassthroughSubjectSpec#4.3 for more information.
             self.downstreamLock.lock()
             let more = sub.receive(value)
             self.downstreamLock.unlock()

@@ -385,7 +385,7 @@ class CurrentValueSubjectSpec: QuickSpec {
                 
                 let g = DispatchGroup()
                 
-                100.times { i in
+                15.times { i in
                     DispatchQueue.global().async(group: g) {
                         subject.send(i)
                     }
@@ -393,7 +393,45 @@ class CurrentValueSubjectSpec: QuickSpec {
                 
                 g.wait()
                 
-                expect(sub.events.count).to(equal(10))
+                expect(sub.events.count).toNot(equal(15))
+            }
+            
+            // MARK: 4.4 should not invoke receiveValue on multiple threads at the same time
+            it("should not invoke receiveValue on multiple threads at the same time") {
+                let sequenceLength = 100
+                let subject = CurrentValueSubject<Int, Never>(0)
+                let semaphore = DispatchSemaphore(value: 0)
+                
+                let total = Atom<Int>(val: 0)
+                var collision = false
+                let c = subject
+                   .sink(receiveValue: { value in
+                    if total.isMutating {
+                         // Check to see if this closure is concurrently invoked
+                         collision = true
+                      }
+                    total.withLockMutating { total in
+                         // Make sure we're in the handler for enough time to get a concurrent invocation
+                         Thread.sleep(forTimeInterval: 0.001)
+                         total += value
+                         if total == sequenceLength {
+                            semaphore.signal()
+                         }
+                      }
+                   })
+                
+                // Try to send from a hundred different threads at once
+                for _ in 1...sequenceLength {
+                   DispatchQueue.global().async {
+                      subject.send(1)
+                   }
+                }
+                
+                semaphore.wait()
+                c.cancel()
+                expect(total.get()).to(equal(sequenceLength))
+                
+                expect(collision).to(beFalse())
             }
         }
         
@@ -436,44 +474,6 @@ class CurrentValueSubjectSpec: QuickSpec {
                 
                 sub.subscription?.request(.max(1))
                 expect(sub.events).to(equal([.value(1)]))
-            }
-            
-            // MARK: 5.3 should not invoke receiveValue on multiple threads at the same time
-            it("should not invoke receiveValue on multiple threads at the same time") {
-                let sequenceLength = 100
-                let subject = CurrentValueSubject<Int, Never>(0)
-                let semaphore = DispatchSemaphore(value: 0)
-                
-                let total = Atom<Int>(val: 0)
-                var collision = false
-                let c = subject
-                   .sink(receiveValue: { value in
-                    if total.isMutating {
-                         // Check to see if this closure is concurrently invoked
-                         collision = true
-                      }
-                    total.withLockMutating { total in
-                         // Make sure we're in the handler for enough time to get a concurrent invocation
-                         Thread.sleep(forTimeInterval: 0.001)
-                         total += value
-                         if total == sequenceLength {
-                            semaphore.signal()
-                         }
-                      }
-                   })
-                
-                // Try to send from a hundred different threads at once
-                for _ in 1...sequenceLength {
-                   DispatchQueue.global().async {
-                      subject.send(1)
-                   }
-                }
-                
-                semaphore.wait()
-                c.cancel()
-                expect(total.get()).to(equal(sequenceLength))
-                
-                expect(collision).to(beFalse())
             }
         }
         
