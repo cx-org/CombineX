@@ -442,7 +442,7 @@ class PassthroughSubjectSpec: QuickSpec {
                 let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
                     s.request(.max(10))
                 }, receiveValue: { v in
-                    if v == 1 {
+                    if v == 9 {
                         Thread.sleep(forTimeInterval: 0.5)
                         return .max(5)
                     }
