@@ -77,5 +77,7 @@ QCKMain([
     
     // MARK: - CXInconsistentTests
     
+    FailingSubjectSpec.self,
+    
     SuspiciousDemandSpec.self,
 ])
