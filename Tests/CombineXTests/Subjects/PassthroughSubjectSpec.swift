@@ -436,7 +436,7 @@ class PassthroughSubjectSpec: QuickSpec {
             }
             
             // MARK: 4.3 no guarantee of synchronous backpressure
-            fit("no guarantee of synchronous backpressure") {
+            it("no guarantee of synchronous backpressure") {
                 let subject = PassthroughSubject<Int, Never>()
                 
                 let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
