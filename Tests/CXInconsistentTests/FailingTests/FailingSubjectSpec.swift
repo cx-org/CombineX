@@ -14,7 +14,7 @@ class FailingSubjectSpec: QuickSpec {
         
         describe("Subject should not invoke receiveValue on multiple threads at the same time") {
             
-            it("PassthroughSubject") {
+            xit("PassthroughSubject") {
                 let sequenceLength = 100
                 let subject = PassthroughSubject<Int, Never>()
                 let semaphore = DispatchSemaphore(value: 0)
@@ -52,7 +52,7 @@ class FailingSubjectSpec: QuickSpec {
                 expect(collision).toFail(beFalse())
             }
             
-            it("CurrentValueSubject") {
+            xit("CurrentValueSubject") {
                 let sequenceLength = 100
                 let subject = CurrentValueSubject<Int, Never>(0)
                 let semaphore = DispatchSemaphore(value: 0)
