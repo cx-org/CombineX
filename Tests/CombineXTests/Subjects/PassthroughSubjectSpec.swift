@@ -444,7 +444,7 @@ class PassthroughSubjectSpec: QuickSpec {
                     s.request(.max(10))
                 }, receiveValue: { v in
                     if v == 1 {
-                        Thread.sleep(forTimeInterval: 0.1)
+                        Thread.sleep(forTimeInterval: 0.5)
                         return .max(5)
                     }
                     return .none
