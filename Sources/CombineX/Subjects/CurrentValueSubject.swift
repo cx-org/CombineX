@@ -151,6 +151,7 @@ extension CurrentValueSubject {
         typealias Sub = AnySubscriber<Output, Failure>
         
         let lock = Lock()
+        let downstreamLock = Lock(recursive: true)
         
         var pub: Pub?
         var sub: Sub?
@@ -176,7 +177,9 @@ extension CurrentValueSubject {
             self.lock.unlock()
             
             // FIXME: Yes, no guarantee of synchronous backpressure. See CurrentValueSubjectSpec#4.3 for more information.
+            self.downstreamLock.lock()
             let more = sub.receive(value)
+            self.downstreamLock.unlock()
             
             self.lock.withLock {
                 _ = self.state.add(more)
@@ -195,7 +198,9 @@ extension CurrentValueSubject {
             self.sub = nil
             self.lock.unlock()
             
+            self.downstreamLock.lock()
             sub.receive(completion: completion)
+            self.downstreamLock.unlock()
         }
         
         func request(_ demand: Subscribers.Demand) {
@@ -213,7 +218,9 @@ extension CurrentValueSubject {
                 let current = self.pub!.value
                 self.lock.unlock()
                 
+                self.downstreamLock.lock()
                 let more = sub.receive(current)
+                self.downstreamLock.unlock()
                 
                 self.lock.withLock {
                     _ = self.state.add(more)
