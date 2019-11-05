@@ -12,7 +12,7 @@
       },
       {
         "package": "Nimble",
-        "repositoryURL": "https://github.com/Quick/Nimble",
+        "repositoryURL": "https://github.com/Quick/Nimble.git",
         "state": {
           "branch": null,
           "revision": "f8657642dfdec9973efc79cc68bcef43a653a2bc",
@@ -21,7 +21,7 @@
       },
       {
         "package": "Quick",
-        "repositoryURL": "https://github.com/Quick/Quick",
+        "repositoryURL": "https://github.com/Quick/Quick.git",
         "state": {
           "branch": null,
           "revision": "33682c2f6230c60614861dfc61df267e11a1602f",
@@ -30,7 +30,7 @@
       },
       {
         "package": "Runtime",
-        "repositoryURL": "https://github.com/wickwirew/Runtime",
+        "repositoryURL": "https://github.com/wickwirew/Runtime.git",
         "state": {
           "branch": null,
           "revision": "61c9776f47d2951bdc562486ad348e5e1ca2e180",
