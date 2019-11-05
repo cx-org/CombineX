@@ -12,7 +12,7 @@
       },
       {
         "package": "Nimble",
-        "repositoryURL": "https://github.com/Quick/Nimble.git",
+        "repositoryURL": "https://github.com/Quick/Nimble",
         "state": {
           "branch": null,
           "revision": "f8657642dfdec9973efc79cc68bcef43a653a2bc",
@@ -21,7 +21,7 @@
       },
       {
         "package": "Quick",
-        "repositoryURL": "https://github.com/Quick/Quick.git",
+        "repositoryURL": "https://github.com/Quick/Quick",
         "state": {
           "branch": null,
           "revision": "33682c2f6230c60614861dfc61df267e11a1602f",
