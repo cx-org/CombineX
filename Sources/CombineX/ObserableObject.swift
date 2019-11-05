@@ -36,6 +36,7 @@ public protocol ObservableObject : AnyObject {
     var objectWillChange: Self.ObjectWillChangePublisher { get }
 }
 
+#if canImport(Runtime)
 import Runtime
 
 private protocol PublishedProtocol {
@@ -45,9 +46,11 @@ extension Published: PublishedProtocol {}
 
 private let publishedPropertiesCache = TypeInfoCache<UnsafeRawPointer, [PropertyInfo]>()
 private let globalObjectWillChangeCache = ObservableObjectPublisherCache<AnyObject, ObservableObjectPublisher>()
+#endif
 
 extension ObservableObject where Self.ObjectWillChangePublisher == ObservableObjectPublisher {
     
+    #if canImport(Runtime)
     private static func publishedProperties() throws -> [PropertyInfo] {
         let key = unsafeBitCast(self, to: UnsafeRawPointer.self)
         return try publishedPropertiesCache.value(for: key) {
@@ -66,9 +69,11 @@ extension ObservableObject where Self.ObjectWillChangePublisher == ObservableObj
             try publishedProperty.set(value: published, on: &(mptr.pointee))
         }
     }
+    #endif
     
     /// A publisher that emits before the object has changed.
     public var objectWillChange: ObservableObjectPublisher {
+        #if canImport(Runtime)
         return globalObjectWillChangeCache.value(for: self) {
             do {
                 let publishedProperties = try type(of: self).publishedProperties()
@@ -79,6 +84,9 @@ extension ObservableObject where Self.ObjectWillChangePublisher == ObservableObj
                 fatalError(error.localizedDescription)
             }
         }
+        #else
+        Global.RequiresImplementation()
+        #endif
     }
 }
 

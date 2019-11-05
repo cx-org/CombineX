@@ -5,7 +5,7 @@ import Nimble
 
 class ObserableObjectSpec: QuickSpec {
 
-    #if swift(>=5.1)
+    #if swift(>=5.1) && (!USE_COMBINEX || canImport(Runtime))
     
     override func spec() {
         
