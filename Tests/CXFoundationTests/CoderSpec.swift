@@ -1,11 +1,16 @@
 import Foundation
 import CXShim
+import CXTestUtility
 import Quick
 import Nimble
 
 class CoderSpec: QuickSpec {
     
     override func spec() {
+        
+        afterEach {
+            TestResources.release()
+        }
         
         // MARK: 1.1 should encode/decode json as expected
         it("should encode/decode json as expected") {

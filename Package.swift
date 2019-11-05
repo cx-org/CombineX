@@ -31,7 +31,7 @@ let package = Package(
         .target(name: "CXShim", dependencies: [/* depends on combine implementation */]),
         .target(name: "CXTestUtility", dependencies: ["CXUtility", "CXShim", "Nimble"]),
         .testTarget(name: "CombineXTests", dependencies: ["CXTestUtility", "CXUtility", "CXShim", "Quick", "Nimble"]),
-        .testTarget(name: "CXFoundationTests", dependencies: ["CXShim", "Quick", "Nimble"]),
+        .testTarget(name: "CXFoundationTests", dependencies: ["CXTestUtility", "CXShim", "Quick", "Nimble"]),
         .testTarget(name: "CXInconsistentTests", dependencies: ["CXTestUtility", "CXUtility", "CXShim", "Quick", "Nimble"]),
     ],
     swiftLanguageVersions: [
