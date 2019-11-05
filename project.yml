@@ -1,0 +1,31 @@
+name: CombineX-Carthage
+targets:
+  CXLibc:
+    templates: [Framework]
+  CXUtility:
+    templates: [Framework]
+  CXNamespace:
+    templates: [Framework]
+  CombineX:
+    templates: [Framework]
+    dependencies:
+      - target: CXLibc_${platform}
+      - target: CXUtility_${platform}
+      - target: CXNamespace_${platform}
+  CXFoundation:
+    templates: [Framework]
+    dependencies:
+      - target: CXUtility_${platform}
+      - target: CXNamespace_${platform}
+      - target: CombineX_${platform}
+targetTemplates:
+  Framework:
+    type: framework
+    platform: [iOS, macOS, tvOS, watchOS]
+    deploymentTarget:
+        iOS: 8.0
+        macOS: !!str '10.10'
+        tvOS: 8.0
+        watchOS: 2.0
+    sources:
+      - Sources/${target_name}
