@@ -1,13 +1,18 @@
 import Foundation
+import CXShim
+import CXTestUtility
 import Quick
 import Nimble
-import CXShim
 
 class SuspiciousDemandSpec: QuickSpec {
     
     typealias Demand = Subscribers.Demand
     
     override func spec() {
+        
+        afterEach {
+            TestResources.release()
+        }
         
         // MARK: - Calculate
         describe("Calculate") {

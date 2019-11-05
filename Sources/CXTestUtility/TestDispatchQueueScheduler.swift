@@ -2,28 +2,28 @@ import Foundation
 import CXUtility
 import CXShim
 
-class TestDispatchQueueScheduler: Scheduler {
+public class TestDispatchQueueScheduler: Scheduler {
     
-    typealias SchedulerTimeType = TestSchedulerTime
-    typealias SchedulerOptions = Never
+    public typealias SchedulerTimeType = TestSchedulerTime
+    public typealias SchedulerOptions = Never
     
-    let dispatchQueue: DispatchQueue
+    public let dispatchQueue: DispatchQueue
     
-    init(dispatchQueue: DispatchQueue) {
+    public init(dispatchQueue: DispatchQueue) {
         self.dispatchQueue = dispatchQueue
     }
     
-    let minimumTolerance: SchedulerTimeType.Stride = .seconds(0)
+    public let minimumTolerance: SchedulerTimeType.Stride = .seconds(0)
     
-    var now: SchedulerTimeType {
+    public var now: SchedulerTimeType {
         return SchedulerTimeType.now
     }
     
-    func schedule(options: SchedulerOptions?, _ action: @escaping () -> Void) {
+    public func schedule(options: SchedulerOptions?, _ action: @escaping () -> Void) {
         self.dispatchQueue.async(execute: action)
     }
     
-    func schedule(after date: SchedulerTimeType, tolerance: SchedulerTimeType.Stride, options: SchedulerOptions?, _ action: @escaping () -> Void) {
+    public func schedule(after date: SchedulerTimeType, tolerance: SchedulerTimeType.Stride, options: SchedulerOptions?, _ action: @escaping () -> Void) {
         let timer = DispatchSource.makeTimerSource(queue: self.dispatchQueue)
         
         var hold: DispatchSourceTimer? = timer
@@ -40,7 +40,7 @@ class TestDispatchQueueScheduler: Scheduler {
         timer.resume()
     }
     
-    func schedule(after date: SchedulerTimeType, interval: SchedulerTimeType.Stride, tolerance: SchedulerTimeType.Stride, options: SchedulerOptions?, _ action: @escaping () -> Void) -> Cancellable {
+    public func schedule(after date: SchedulerTimeType, interval: SchedulerTimeType.Stride, tolerance: SchedulerTimeType.Stride, options: SchedulerOptions?, _ action: @escaping () -> Void) -> Cancellable {
         
         let timer = DispatchSource.makeTimerSource(queue: self.dispatchQueue)
         
@@ -59,7 +59,7 @@ class TestDispatchQueueScheduler: Scheduler {
     }
 }
 
-extension TestDispatchQueueScheduler {
+public extension TestDispatchQueueScheduler {
     
     class var main: TestDispatchQueueScheduler {
         return TestDispatchQueueScheduler(dispatchQueue: .main)
@@ -75,7 +75,7 @@ extension TestDispatchQueueScheduler {
 }
 
 
-extension TestDispatchQueueScheduler {
+public extension TestDispatchQueueScheduler {
     
     var isCurrent: Bool {
         return self.dispatchQueue.isCurrent

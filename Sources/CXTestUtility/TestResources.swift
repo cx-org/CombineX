@@ -1,11 +1,11 @@
 import CXUtility
 
-protocol TestResourceProtocol: AnyObject {
+public protocol TestResourceProtocol: AnyObject {
     
     func release()
 }
 
-enum TestResources {
+public enum TestResources {
     
     private class Box: TestResourceProtocol {
         weak var obj: TestResourceProtocol?
@@ -20,14 +20,14 @@ enum TestResources {
     
     private static let global = Atom<[TestResourceProtocol]>(val: [])
     
-    static func resgiter(_ resource: TestResourceProtocol) {
+    public static func resgiter(_ resource: TestResourceProtocol) {
         let box = Box(resource)
         self.global.withLockMutating {
             $0.append(box)
         }
     }
     
-    static func release() {
+    public static func release() {
         let resources = self.global.exchange(with: [])
         resources.forEach {
             $0.release()

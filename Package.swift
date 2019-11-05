@@ -29,9 +29,10 @@ let package = Package(
         .target(name: "CXFoundation", dependencies: ["CXUtility", "CXNamespace", "CombineX"]),
         .target(name: "CXCompatible", dependencies: ["CXNamespace"]),
         .target(name: "CXShim", dependencies: [/* depends on combine implementation */]),
-        .testTarget(name: "CombineXTests", dependencies: ["CXUtility", "CXShim", "Quick", "Nimble"]),
-        .testTarget(name: "CXFoundationTests", dependencies: ["CXShim", "Quick", "Nimble"]),
-        .testTarget(name: "CXInconsistentTests", dependencies: ["CXUtility", "CXShim", "Quick", "Nimble"]),
+        .target(name: "CXTestUtility", dependencies: ["CXUtility", "CXShim", "Nimble"]),
+        .testTarget(name: "CombineXTests", dependencies: ["CXTestUtility", "CXUtility", "CXShim", "Quick", "Nimble"]),
+        .testTarget(name: "CXFoundationTests", dependencies: ["CXTestUtility", "CXShim", "Quick", "Nimble"]),
+        .testTarget(name: "CXInconsistentTests", dependencies: ["CXTestUtility", "CXUtility", "CXShim", "Quick", "Nimble"]),
     ],
     swiftLanguageVersions: [
         .v5,

@@ -1,7 +1,7 @@
 import Foundation
 import CXShim
 
-extension Array {
+public extension Array {
     
     static func make(count: Int, make: @autoclosure () -> Element) -> [Element] {
         var elements: [Element] = []
@@ -12,7 +12,7 @@ extension Array {
     }
 }
 
-extension Array where Element: Equatable {
+public extension Array where Element: Equatable {
     
     func count(of e: Element) -> Int {
         return self.filter { $0 == e }.count
@@ -20,7 +20,7 @@ extension Array where Element: Equatable {
 }
 
 
-extension DispatchQueue {
+public extension DispatchQueue {
     
     var isCurrent: Bool {
         let key = DispatchSpecificKey<Void>()
@@ -33,7 +33,7 @@ extension DispatchQueue {
 }
 
 
-extension Double {
+public extension Double {
     
     var clampedToInt: Int {
         switch self {
@@ -47,7 +47,7 @@ extension Double {
     }
 }
 
-extension Int {
+public extension Int {
     
     func times(_ body: (Int) -> Void) {
         guard self > 0 else {
@@ -66,7 +66,7 @@ extension Int {
 }
 
 
-extension Optional {
+public extension Optional {
     
     var isNil: Bool {
         return self == nil
@@ -76,25 +76,3 @@ extension Optional {
         return self != nil
     }
 }
-
-extension Subscribers.Completion {
-    
-    var isFinished: Bool {
-        switch self {
-        case .finished:
-            return true
-        case .failure:
-            return false
-        }
-    }
-    
-    var isFailure: Bool {
-        switch self {
-        case .failure:
-            return true
-        case .finished:
-            return false
-        }
-    }
-}
-

@@ -4,10 +4,10 @@ import CXShim
 
 private let counter = Atom<Int>(val: 0)
 
-final class TestScheduler: Scheduler {
+public final class TestScheduler: Scheduler {
 
-    typealias SchedulerTimeType = TestSchedulerTime
-    typealias SchedulerOptions = Never
+    public typealias SchedulerTimeType = TestSchedulerTime
+    public typealias SchedulerOptions = Never
     
     private final class ScheduledAction {
         let time: SchedulerTimeType
@@ -33,17 +33,17 @@ final class TestScheduler: Scheduler {
     
     private var _now: SchedulerTimeType
     
-    var now: SchedulerTimeType {
+    public var now: SchedulerTimeType {
         return self.lock.withLockGet(self._now)
     }
     
-    let minimumTolerance: TestSchedulerTime.Stride = .seconds(0)
+    public let minimumTolerance: TestSchedulerTime.Stride = .seconds(0)
     
-    init() {
+    public init() {
         self._now = SchedulerTimeType(time: Date())
     }
     
-    func schedule(options: TestScheduler.SchedulerOptions?, _ action: @escaping () -> Void) {
+    public func schedule(options: TestScheduler.SchedulerOptions?, _ action: @escaping () -> Void) {
         self.lock.lock()
         let scheduledAction = ScheduledAction(time: self._now, action: action)
         self.scheduledActions.append(scheduledAction)
@@ -51,7 +51,7 @@ final class TestScheduler: Scheduler {
         self.lock.unlock()
     }
     
-    func schedule(after date: SchedulerTimeType, tolerance: SchedulerTimeType.Stride, options: SchedulerOptions?, _ action: @escaping () -> Void) {
+    public func schedule(after date: SchedulerTimeType, tolerance: SchedulerTimeType.Stride, options: SchedulerOptions?, _ action: @escaping () -> Void) {
         self.lock.lock()
         let scheduledAction = ScheduledAction(time: date, action: action)
         self.scheduledActions.append(scheduledAction)
@@ -59,7 +59,7 @@ final class TestScheduler: Scheduler {
         self.lock.unlock()
     }
     
-    func schedule(after date: SchedulerTimeType, interval: SchedulerTimeType.Stride, tolerance: SchedulerTimeType.Stride, options: SchedulerOptions?, _ action: @escaping () -> Void) -> Cancellable {
+    public func schedule(after date: SchedulerTimeType, interval: SchedulerTimeType.Stride, tolerance: SchedulerTimeType.Stride, options: SchedulerOptions?, _ action: @escaping () -> Void) -> Cancellable {
         self.lock.lock()
         
         class Box: Cancellable {
@@ -96,7 +96,7 @@ final class TestScheduler: Scheduler {
         return box
     }
     
-    func advance(to time: SchedulerTimeType) {
+    public func advance(to time: SchedulerTimeType) {
         self.lock.lock()
         defer {
             self.lock.unlock()
@@ -113,7 +113,7 @@ final class TestScheduler: Scheduler {
         self._now = time
     }
     
-    func advance(by interval: SchedulerTimeType.Stride) {
+    public func advance(by interval: SchedulerTimeType.Stride) {
         self.lock.lock()
         defer {
             self.lock.unlock()

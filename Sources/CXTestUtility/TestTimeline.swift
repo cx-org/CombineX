@@ -1,9 +1,9 @@
 import CXUtility
 import CXShim
 
-class TestTimeline<Context: Scheduler>: CustomStringConvertible {
+public class TestTimeline<Context: Scheduler>: CustomStringConvertible {
     
-    class var tolerance: Context.SchedulerTimeType.Stride {
+    public class var tolerance: Context.SchedulerTimeType.Stride {
         return .seconds(0.01)
     }
     
@@ -15,26 +15,26 @@ class TestTimeline<Context: Scheduler>: CustomStringConvertible {
         self._records = Atom(val: records)
     }
     
-    convenience init(context: Context) {
+    public convenience init(context: Context) {
         self.init(context: context, records: [])
     }
     
-    var records: [Context.SchedulerTimeType] {
+    public var records: [Context.SchedulerTimeType] {
         return self._records.get()
     }
     
-    func record() {
+    public func record() {
         self._records.withLockMutating {
             $0.append(self.context.now)
         }
     }
     
-    var description: String {
+    public var description: String {
         return self.records.description
     }
 }
 
-extension TestTimeline {
+public extension TestTimeline {
     
     func delayed(_ interval: Context.SchedulerTimeType.Stride) -> TestTimeline {
         return .init(

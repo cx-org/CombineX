@@ -1,12 +1,11 @@
 import CXShim
+import CXTestUtility
 import Quick
 import Nimble
 
 class ObserableObjectSpec: QuickSpec {
 
     #if swift(>=5.1)
-    
-    typealias Published = CXShim.Published
     
     override func spec() {
         

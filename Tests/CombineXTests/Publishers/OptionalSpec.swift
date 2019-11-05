@@ -1,4 +1,5 @@
 import CXShim
+import CXTestUtility
 import Quick
 import Nimble
 

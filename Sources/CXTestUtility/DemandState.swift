@@ -1,6 +1,6 @@
 import CXShim
 
-enum DemandState {
+public enum DemandState {
     
     case waiting
     
@@ -9,7 +9,7 @@ enum DemandState {
     case completed
 }
 
-extension DemandState {
+public extension DemandState {
     
     var isWaiting: Bool {
         switch self {
@@ -40,7 +40,7 @@ extension DemandState {
     }
 }
 
-extension DemandState {
+public extension DemandState {
     
     /// - Returns: `true` if the previous state is not `completed`.
     mutating func complete() -> Bool {
@@ -51,7 +51,7 @@ extension DemandState {
     }
 }
 
-extension DemandState {
+public extension DemandState {
     
     typealias Demands = (old: Subscribers.Demand, new: Subscribers.Demand)
     

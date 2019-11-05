@@ -4,21 +4,21 @@
 
 import CXUtility
 
-protocol TestLogging: AnyObject {
+public protocol TestLogging: AnyObject {
     
     var name: String? {
         get
     }
 }
 
-extension TestLogging {
+public extension TestLogging {
     
     var name: String? {
         return nil
     }
 }
 
-extension TestLogging {
+public extension TestLogging {
     
     func trace(_ items: Any...) {
         logger._output(.trace, items, object: self)
@@ -50,22 +50,22 @@ extension TestLogging {
 
 }
 
-let logger = Logger.shared
+public let logger = Logger.shared
 
-class Logger {
+public class Logger {
     
-    static let shared = Logger()
+    public static let shared = Logger()
     
     private let enabledList = Atom<Set<ObjectIdentifier>>(val: [])
     
     private init() {
     }
 
-    enum Level: Int {
+    public enum Level: Int {
         case trace, debug, info, notice, warning, error, critical
     }
     
-    func output(_ level: Level, _ items: Any..., object: TestLogging? = nil) {
+    public func output(_ level: Level, _ items: Any..., object: TestLogging? = nil) {
         self._output(level, items, object: object)
     }
     
@@ -91,21 +91,21 @@ class Logger {
         print(symbol, "[\(prefix)]:", str)
     }
     
-    func enable(_ object: TestLogging) {
+    public func enable(_ object: TestLogging) {
         self.enabledList.withLockMutating {
             let id = ObjectIdentifier(object)
             $0.insert(id)
         }
     }
     
-    func disable(_ object: TestLogging) {
+    public func disable(_ object: TestLogging) {
         self.enabledList.withLockMutating {
             let id = ObjectIdentifier(object)
             $0.remove(id)
         }
     }
     
-    func reset() {
+    public func reset() {
         _ = self.enabledList.exchange(with: [])
     }
 }

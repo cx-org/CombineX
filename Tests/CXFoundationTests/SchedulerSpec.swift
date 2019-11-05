@@ -1,11 +1,16 @@
 import Foundation
 import CXShim
+import CXTestUtility
 import Quick
 import Nimble
 
 class SchedulerSpec: QuickSpec {
     
     override func spec() {
+        
+        afterEach {
+            TestResources.release()
+        }
         
         // MARK: 1.1 should schedule, (we just need it to compile now, and yes! we did it! 🤣)
         it("should schedule") {

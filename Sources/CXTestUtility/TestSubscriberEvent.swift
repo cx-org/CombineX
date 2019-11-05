@@ -1,11 +1,11 @@
 import CXShim
 
-enum TestSubscriberEvent<Input, Failure: Error> {
+public enum TestSubscriberEvent<Input, Failure: Error> {
     case value(Input)
     case completion(Subscribers.Completion<Failure>)
 }
 
-extension TestSubscriberEvent {
+public extension TestSubscriberEvent {
     
     func isFinished() -> Bool {
         switch self {
@@ -29,7 +29,7 @@ extension TestSubscriberEvent {
     }
 }
 
-extension TestSubscriberEvent where Input: Equatable {
+public extension TestSubscriberEvent where Input: Equatable {
     
     func isValue(_ value: Input) -> Bool {
         switch self {
@@ -41,7 +41,7 @@ extension TestSubscriberEvent where Input: Equatable {
 
 extension TestSubscriberEvent: Equatable where Input: Equatable, Failure: Equatable {
     
-    static func == (lhs: TestSubscriberEvent, rhs: TestSubscriberEvent) -> Bool {
+    public static func == (lhs: TestSubscriberEvent, rhs: TestSubscriberEvent) -> Bool {
         switch (lhs, rhs) {
         case (.value(let a), .value(let b)):            return a == b
         case (.completion(let a), .completion(let b)):
@@ -57,7 +57,7 @@ extension TestSubscriberEvent: Equatable where Input: Equatable, Failure: Equata
 
 extension TestSubscriberEvent: CustomStringConvertible {
     
-    var description: String {
+    public var description: String {
         switch self {
         case .value(let v):
             return "\(v)"
@@ -67,7 +67,7 @@ extension TestSubscriberEvent: CustomStringConvertible {
     }
 }
 
-protocol TestEventProtocol {
+public protocol TestEventProtocol {
     associatedtype Input
     associatedtype Failure: Error
     
@@ -78,7 +78,7 @@ protocol TestEventProtocol {
 
 extension TestSubscriberEvent: TestEventProtocol {
     
-    var testEvent: TestSubscriberEvent<Input, Failure> {
+    public var testEvent: TestSubscriberEvent<Input, Failure> {
         get {
             return self
         }
@@ -90,7 +90,7 @@ extension TestSubscriberEvent: TestEventProtocol {
 
 extension Collection where Element: TestEventProtocol {
     
-    func mapError<NewFailure: Error>(_ transform: (Element.Failure) -> NewFailure) -> [TestSubscriberEvent<Element.Input, NewFailure>] {
+    public func mapError<NewFailure: Error>(_ transform: (Element.Failure) -> NewFailure) -> [TestSubscriberEvent<Element.Input, NewFailure>] {
         return self.map {
             $0.testEvent.mapError(transform)
         }
