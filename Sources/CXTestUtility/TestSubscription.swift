@@ -1,33 +1,33 @@
 import CXUtility
 import CXShim
 
-enum TestSubscriptionEvent {
+public enum TestSubscriptionEvent {
     case request(demand: Subscribers.Demand)
     case cancel
 }
 
-class TestSubscription: Subscription, TestLogging {
+public class TestSubscription: Subscription, TestLogging {
     
-    typealias Event = TestSubscriptionEvent
+    public typealias Event = TestSubscriptionEvent
     
-    let name: String?
+    public let name: String?
     let requestBody: ((Subscribers.Demand) -> Void)?
     let cancelBody: (() -> Void)?
     
     private let lock = Lock()
     private var _events: [Event] = []
     
-    var events: [Event] {
+    public var events: [Event] {
         return self.lock.withLockGet(self._events)
     }
     
-    init(name: String? = nil, request: ((Subscribers.Demand) -> Void)? = nil, cancel: (() -> Void)? = nil) {
+    public init(name: String? = nil, request: ((Subscribers.Demand) -> Void)? = nil, cancel: (() -> Void)? = nil) {
         self.name = name
         self.requestBody = request
         self.cancelBody = cancel
     }
     
-    func request(_ demand: Subscribers.Demand) {
+    public func request(_ demand: Subscribers.Demand) {
         self.trace("request demand", demand)
         self.lock.withLock {
             self._events.append(.request(demand: demand))
@@ -35,7 +35,7 @@ class TestSubscription: Subscription, TestLogging {
         self.requestBody?(demand)
     }
     
-    func cancel() {
+    public func cancel() {
         self.trace("cancel")
         self.lock.withLock {
             self._events.append(.cancel)
@@ -51,7 +51,7 @@ class TestSubscription: Subscription, TestLogging {
 
 extension TestSubscriptionEvent: Equatable {
     
-    static func == (a: TestSubscriptionEvent, b: TestSubscriptionEvent) -> Bool {
+    public static func == (a: TestSubscriptionEvent, b: TestSubscriptionEvent) -> Bool {
         switch (a, b) {
         case (.request(let d0), .request(let d1)):
             return d0 == d1

@@ -1,6 +1,7 @@
 import Foundation
 import CXUtility
 import CXShim
+import CXTestUtility
 import Quick
 import Nimble
 
@@ -8,9 +9,9 @@ class FailingSubjectSpec: QuickSpec {
 
     override func spec() {
     
-//        afterEach {
-//            TestResources.release()
-//        }
+        afterEach {
+            TestResources.release()
+        }
         
         describe("Subject should not invoke receiveValue on multiple threads at the same time") {
             

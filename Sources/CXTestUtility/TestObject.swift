@@ -1,14 +1,14 @@
-class TestObject {
+public class TestObject {
     
     let runBody: (() -> Void)?
     let deinitBody: (() -> Void)?
     
-    init(run: (() -> Void)? = nil, deinit: (() -> Void)? = nil) {
+    public init(run: (() -> Void)? = nil, deinit: (() -> Void)? = nil) {
         self.runBody = run
         self.deinitBody = `deinit`
     }
     
-    func run() {
+    public func run() {
         self.runBody?()
     }
     

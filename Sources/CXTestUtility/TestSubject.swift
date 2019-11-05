@@ -1,7 +1,7 @@
 import CXUtility
 import CXShim
 
-class TestSubject<Output, Failure>: Subject, TestLogging where Failure : Error {
+public class TestSubject<Output, Failure>: Subject, TestLogging where Failure : Error {
     
     private let downstreamLock = Lock()
     private var completion: Subscribers.Completion<Failure>?
@@ -11,21 +11,21 @@ class TestSubject<Output, Failure>: Subject, TestLogging where Failure : Error {
     private var isRequested = false
     private var upstreamSubscriptions: [Subscription] = []
     
-    let name: String?
+    public let name: String?
     
-    init(name: String? = nil) {
+    public init(name: String? = nil) {
         self.name = name
     }
     
-    var subscriptions: [Inner] {
+    public var subscriptions: [Inner] {
         return self.downstreamLock.withLockGet(self.downstreamSubscriptions)
     }
     
-    var subscription: Inner {
+    public var subscription: Inner {
         return self.subscriptions[0]
     }
     
-    func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
+    public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
         self.downstreamLock.lock()
         
         if let completion = self.completion {
@@ -42,7 +42,7 @@ class TestSubject<Output, Failure>: Subject, TestLogging where Failure : Error {
         subscriber.receive(subscription: subscription)
     }
     
-    func send(_ input: Output) {
+    public func send(_ input: Output) {
         self.downstreamLock.lock()
         guard self.completion == nil else {
             self.downstreamLock.unlock()
@@ -56,7 +56,7 @@ class TestSubject<Output, Failure>: Subject, TestLogging where Failure : Error {
         }
     }
     
-    func send(completion: Subscribers.Completion<Failure>) {
+    public func send(completion: Subscribers.Completion<Failure>) {
         self.downstreamLock.lock()
         guard self.completion == nil else {
             self.downstreamLock.unlock()
@@ -78,7 +78,7 @@ class TestSubject<Output, Failure>: Subject, TestLogging where Failure : Error {
         self.downstreamLock.unlock()
     }
     
-    func send(subscription: Subscription) {
+    public func send(subscription: Subscription) {
         self.upstreamLock.lock()
         self.upstreamSubscriptions.append(subscription)
         let isRequested = self.isRequested
@@ -108,14 +108,14 @@ class TestSubject<Output, Failure>: Subject, TestLogging where Failure : Error {
 
 extension TestSubject {
     
-    final class Inner: Subscription, CustomStringConvertible, CustomDebugStringConvertible, TestLogging {
+    public final class Inner: Subscription, CustomStringConvertible, CustomDebugStringConvertible, TestLogging {
         
         typealias Pub = TestSubject<Output, Failure>
         typealias Sub = AnySubscriber<Output, Failure>
         
         let lock = Lock(recursive: true)
         
-        var name: String?
+        public var name: String?
        
         var pub: Pub?
         var sub: Sub?
@@ -128,17 +128,17 @@ extension TestSubject {
         }
         private let _demandRecords = Atom<[(DemandType, Subscribers.Demand)]>(val: [])
         
-        var demandRecords: [Subscribers.Demand] {
+        public var demandRecords: [Subscribers.Demand] {
             return self._demandRecords.get().map { $0.1 }
         }
         
-        var requestDemandRecords: [Subscribers.Demand] {
+        public var requestDemandRecords: [Subscribers.Demand] {
             return self._demandRecords.get().compactMap { (type, demand) in
                 type == .request ? demand : nil
             }
         }
         
-        var syncDemandRecords: [Subscribers.Demand] {
+        public var syncDemandRecords: [Subscribers.Demand] {
             return self._demandRecords.get().compactMap { (type, demand) in
                 type == .sync ? demand : nil
             }
@@ -188,7 +188,7 @@ extension TestSubject {
             sub.receive(completion: completion)
         }
         
-        func request(_ demand: Subscribers.Demand) {
+        public func request(_ demand: Subscribers.Demand) {
             precondition(demand > 0)
             self._demandRecords.withLockMutating { $0.append((.request, demand))}
             self.trace("request more", demand)
@@ -210,7 +210,7 @@ extension TestSubject {
             pub?.requestDemandUpstream()
         }
         
-        func cancel() {
+        public func cancel() {
             self.lock.lock()
             
             guard self.state.complete() else {
@@ -226,11 +226,11 @@ extension TestSubject {
             pub?.removeDownstreamSubscription(self)
         }
         
-        var description: String {
+        public var description: String {
             return "TestSubject"
         }
         
-        var debugDescription: String {
+        public var debugDescription: String {
             return "TestSubject"
         }
     }

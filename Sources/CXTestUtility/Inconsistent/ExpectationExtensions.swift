@@ -1,8 +1,7 @@
 import Foundation
-import Quick
 import Nimble
 
-extension Expectation {
+public extension Expectation {
     
     func toFail(_ predicate: Predicate<T>, description: String? = nil) {
         #if USE_COMBINE
