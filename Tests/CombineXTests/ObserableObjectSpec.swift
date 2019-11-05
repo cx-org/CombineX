@@ -4,7 +4,7 @@ import Nimble
 
 class ObserableObjectSpec: QuickSpec {
 
-    #if swift(>=5.1) && (!USE_COMBINEX || EXPERIMENTAL_OBSERVABLE_OBJECT)
+    #if swift(>=5.1)
     
     typealias Published = CXShim.Published
     

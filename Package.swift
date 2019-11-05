@@ -16,15 +16,16 @@ let package = Package(
         .library(name: "CXShim", targets: ["CXShim"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/Quick/Quick.git", from: "2.0.0"),
+        .package(url: "https://github.com/wickwirew/Runtime", from: "2.0.0"),
+        .package(url: "https://github.com/Quick/Quick", from: "2.0.0"),
         // TODO: Use "8.0.2" until https://github.com/Quick/Nimble/issues/705 is fixed.
-        .package(url: "https://github.com/Quick/Nimble.git", .exact("8.0.2")),
+        .package(url: "https://github.com/Quick/Nimble", .exact("8.0.2")),
     ],
     targets: [
         .target(name: "CXLibc"),
         .target(name: "CXUtility"),
         .target(name: "CXNamespace"),
-        .target(name: "CombineX", dependencies: ["CXLibc", "CXUtility", "CXNamespace"]),
+        .target(name: "CombineX", dependencies: ["CXLibc", "CXUtility", "CXNamespace", "Runtime"]),
         .target(name: "CXFoundation", dependencies: ["CXUtility", "CXNamespace", "CombineX"]),
         .target(name: "CXCompatible", dependencies: ["CXNamespace"]),
         .target(name: "CXShim", dependencies: [/* depends on combine implementation */]),
@@ -51,88 +52,11 @@ extension Optional where Wrapped: RangeReplaceableCollection {
     }
 }
 
-// MARK: CombineX Experimental Features
-
-/// Some of the implementations in CombineX are experimental.
-struct CXExperimentalFeatures: OptionSet, CaseIterable {
-    
-    let rawValue: Int
-    
-    static let observableObject = CXExperimentalFeatures(rawValue: 1)
-    
-    static var allCases: [CXExperimentalFeatures] {
-        return [.observableObject]
-    }
-    
-    var flags: [String] {
-        var result: [String] = []
-        if contains(.observableObject) {
-            result += ["EXPERIMENTAL_OBSERVABLE_OBJECT"]
-        }
-        return result
-    }
-    
-    func configure(_ package: Package) {
-        guard let cxTarget = package.targets.first(where: { $0.name == "CombineX" }) else { return }
-        
-        // extra package dependencies
-        package.dependencies.append(contentsOf: self.extraPackageDependencies)
-        
-        // extra swift settings
-        cxTarget.swiftSettings.append(contentsOf: self.extraSwiftSettings)
-        
-        // extra target dependencies
-        cxTarget.dependencies.append(contentsOf: self.extraTargetDependencies)
-    }
-    
-    var extraPackageDependencies: [Package.Dependency] {
-        var deps: [Package.Dependency] = []
-        if contains(.observableObject) {
-            deps += [.package(url: "https://github.com/wickwirew/Runtime", from: "2.0.0")]
-        }
-        return deps
-    }
-    
-    var extraSwiftSettings: [SwiftSetting] {
-        var settings: [SwiftSetting] = []
-        settings += self.flags.map { .define($0) }
-        return settings
-    }
-    
-    var extraTargetDependencies: [Target.Dependency] {
-        var deps: [Target.Dependency] = []
-        if contains(.observableObject) {
-            deps += ["Runtime"]
-        }
-        return deps
-    }
-}
-
-func getEnabledCXExperimentalFeatures() -> CXExperimentalFeatures {
-    let enabledFeatures = CXExperimentalFeatures.allCases.filter {
-        guard let flag = $0.flags.first, let value = env["CX_\(flag)"] else { return false }
-        return NSString(string: value).boolValue
-    }
-    return .init(enabledFeatures)
-}
-
-let enabledCXExperimentalFeatures = getEnabledCXExperimentalFeatures()
-enabledCXExperimentalFeatures.configure(package)
-
 // MARK: Combine Implementations
 enum CombineImplementation {
     
     case combine, combineX, openCombine
-    
-    func configure(_ package: Package) {
-        package.dependencies.append(contentsOf: self.extraPackageDependencies)
-        
-        guard let shimTarget = package.targets.first(where: { $0.name == "CXShim" }) else { return }
-        
-        shimTarget.dependencies = shimTargetDependencies
-        shimTarget.swiftSettings.append(contentsOf: shimTargetSwiftSettings)
-    }
-    
+
     var extraPackageDependencies: [Package.Dependency] {
         switch self {
         case .openCombine:  return [.package(url: "https://github.com/broadwaylamb/OpenCombine", .branch("master"))]
@@ -157,6 +81,22 @@ enum CombineImplementation {
     }
 }
 
+func configure(_ package: Package, with imp: CombineImplementation) {
+    package.dependencies.append(contentsOf: imp.extraPackageDependencies)
+    
+    guard let shimTarget = package.targets.first(where: { $0.name == "CXShim" }) else { return }
+    
+    shimTarget.dependencies = imp.shimTargetDependencies
+    shimTarget.swiftSettings.append(contentsOf: imp.shimTargetSwiftSettings)
+    
+    // Pass the swift settings of current combine implementation to all test targets.
+    package.targets
+        .filter { $0.isTest}
+        .forEach {
+            $0.swiftSettings.append(contentsOf: imp.shimTargetSwiftSettings)
+        }
+}
+
 func selectCombineImp() -> CombineImplementation {
     let key = "CX_COMBINE_IMPLEMENTATION"
     // CombineX -> combinex
@@ -176,15 +116,7 @@ func selectCombineImp() -> CombineImplementation {
 }
 
 let currentCombineImp = selectCombineImp()
-currentCombineImp.configure(package)
-
-// Pass the swift settings of current combine implementation and enabled experimental features to all test targets.
-let testSwiftSettings = currentCombineImp.shimTargetSwiftSettings + enabledCXExperimentalFeatures.extraSwiftSettings
-package.targets.forEach {
-    if $0.isTest {
-        $0.swiftSettings.append(contentsOf: testSwiftSettings)
-    }
-}
+configure(package, with: currentCombineImp)
 
 // Travis does not yet support macOS 10.15, so we have to generate an iOS project to test against `Combine`.
 if currentCombineImp == .combine && ProcessInfo.processInfo.environment["TRAVIS"] != nil {

@@ -1,10 +1,7 @@
 #!/bin/sh
 
 # Open the project in Xcode with env variables.
-# Enable all experimental features and test against CombineX.
-
 
 export CX_COMBINE_IMPLEMENTATION="CombineX"
-export CX_EXPERIMENTAL_OBSERVABLE_OBJECT="YES"
 killall Xcode || true
 open $(dirname $0)/Package.swift
