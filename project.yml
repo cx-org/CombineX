@@ -1,4 +1,10 @@
 name: CombineX-Carthage
+options:
+  deploymentTarget:
+    iOS: 8.0
+    macOS: !!str '10.10'
+    tvOS: 9.0
+    watchOS: 2.0
 targets:
   CXLibc:
     templates: [Framework]
@@ -22,10 +28,6 @@ targetTemplates:
   Framework:
     type: framework
     platform: [iOS, macOS, tvOS, watchOS]
-    deploymentTarget:
-        iOS: 8.0
-        macOS: !!str '10.10'
-        tvOS: 8.0
-        watchOS: 2.0
+    scheme: {}
     sources:
       - Sources/${target_name}

@@ -2,3 +2,5 @@
 .build
 
 xcuserdata/
+
+Carthage/Build/
