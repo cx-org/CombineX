@@ -2,5 +2,8 @@
 
 # Generate "xcodeproj" for Carthage
 
-export CX_COMBINE_IMPLEMENTATION="CombineX"
-swift package generate-xcodeproj
+if which xcodegen >/dev/null; then
+  xcodegen generate
+else
+  echo "ERROR: [XcodeGen](https://github.com/yonaskolb/XcodeGen) is not installed."
+fi
