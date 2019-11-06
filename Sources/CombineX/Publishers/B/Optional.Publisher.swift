@@ -1,4 +1,6 @@
+#if !COCOAPODS
 import CXNamespace
+#endif
 
 extension CXWrappers {
     

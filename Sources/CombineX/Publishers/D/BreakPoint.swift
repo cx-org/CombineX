@@ -1,4 +1,6 @@
+#if !COCOAPODS
 import CXLibc
+#endif
 
 extension Publisher {
     
@@ -100,6 +102,8 @@ extension Publishers {
     }
 }
 
+private let c_raise = raise
+
 private struct Signal: RawRepresentable {
     
     let rawValue: Int32
@@ -107,6 +111,6 @@ private struct Signal: RawRepresentable {
     static let sigtrap = Signal(rawValue: SIGTRAP)
     
     func raise() {
-        CXLibc.raise(self.rawValue)
+        _ = c_raise(self.rawValue)
     }
 }

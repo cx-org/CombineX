@@ -1,4 +1,6 @@
+#if !COCOAPODS
 import CXUtility
+#endif
 
 /// A subject that passes along values and completion.
 ///

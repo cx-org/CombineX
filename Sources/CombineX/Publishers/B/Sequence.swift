@@ -1,5 +1,7 @@
+#if !COCOAPODS
 import CXUtility
 import CXNamespace
+#endif
 
 extension Publishers.Sequence where Failure == Never {
 

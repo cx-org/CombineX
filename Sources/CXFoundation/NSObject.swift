@@ -1,6 +1,9 @@
 import CombineX
-import CXNamespace
 import Foundation
+
+#if !COCOAPODS
+import CXNamespace
+#endif
 
 extension CXWrappers {
     
