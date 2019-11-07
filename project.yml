@@ -36,3 +36,4 @@ targetTemplates:
       path: Info-carthage.plist
     sources:
       - Sources/${target_name}
+      
