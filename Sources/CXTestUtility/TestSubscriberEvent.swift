@@ -14,6 +14,13 @@ public extension TestSubscriberEvent {
         }
     }
     
+    var value: Input? {
+        switch self {
+        case .value(let v): return v
+        case .completion:   return nil
+        }
+    }
+    
     var error: Failure? {
         guard case .completion(let c) = self, case .failure(let e) = c else {
             return nil

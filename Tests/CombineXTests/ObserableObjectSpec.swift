@@ -47,11 +47,6 @@ class ObserableObjectSpec: QuickSpec {
                 let xPub1 = x.objectWillChange
                 let xPub2 = x.objectWillChange
                 expect(xPub1).to(beIdenticalTo(xPub2))
-                
-                let y = Y()
-                let yPub1 = y.objectWillChange
-                let yPub2 = y.objectWillChange
-                expect(yPub1).to(beIdenticalTo(yPub2))
             }
             
             // MARK: 2.2 object with @Published property should hold objectWillChange

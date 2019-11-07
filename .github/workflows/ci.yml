@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    paths:
+      - '.github/workflows/ci.yml'
+      - 'Package*'
+      - 'Sources/**'
+      - 'Tests/**'
+  pull_request:
+    paths:
+      - '.github/workflows/ci.yml'
+      - 'Package*'
+      - 'Sources/**'
+      - 'Tests/**'
+
+jobs:
+  mac:
+    strategy:
+      matrix:
+        xcode_version: ['11', '11.1']
+        combine_impl: ['CombineX', 'Combine']
+    runs-on: macOS-latest
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode_version }}.app/Contents/Developer
+      CX_COMBINE_IMPLEMENTATION: ${{ matrix.combine_impl }}
+      CX_CONTINUOUS_INTEGRATION: "YES"
+    steps:
+      - uses: actions/checkout@v1
+      - name: Swift Version
+        run: |
+          swift -version
+          swift package --version
+      - name: Build and Test
+        # FIXME: suppress warning for Nimble
+        run: swift test -Xswiftc -suppress-warnings
+
+  linux:
+    strategy:
+      matrix:
+        swift_version: ['5.1', 'latest']
+    runs-on: ubuntu-latest
+    container:
+      image: swift:${{ matrix.swift_version }}
+    steps:
+      - uses: actions/checkout@v1
+      - name: Swift Version
+        run: |
+          swift -version
+          swift package --version
+      # FIXME: suppress warning for Nimble
+      - name: Build and Test
+        run: swift test -Xswiftc -suppress-warnings
