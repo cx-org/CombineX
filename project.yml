@@ -1,5 +1,6 @@
 name: CombineX-Carthage
 options:
+  bundleIdPrefix: com.github.cx-org
   deploymentTarget:
     iOS: 8.0
     macOS: !!str '10.10'
