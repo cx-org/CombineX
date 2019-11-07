@@ -32,7 +32,8 @@ jobs:
           swift -version
           swift package --version
       - name: Build and Test
-        run: swift test
+        # FIXME: suppress warning for Nimble
+        run: swift test -Xswiftc -suppress-warnings
 
   linux:
     strategy:
@@ -47,4 +48,6 @@ jobs:
         run: |
           swift -version
           swift package --version
-      - run: swift test
+      # FIXME: suppress warning for Nimble
+      - name: Build and Test
+        run: swift test -Xswiftc -suppress-warnings
