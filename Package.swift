@@ -7,10 +7,11 @@ import PackageDescription
 let package = Package(
     name: "CombineX",
     platforms: [
-        .macOS(.v10_10), .iOS(.v8), .tvOS(.v9), .watchOS(.v2),
+        .macOS("10.15"), .iOS(.v8), .tvOS(.v9), .watchOS(.v2),
     ],
     products: [
         .library(name: "CombineX", targets: ["CombineX", "CXFoundation"]),
+        .library(name: "CXBridge", targets: ["CXBridge"]),
         .library(name: "CXShim", targets: ["CXShim"]),
     ],
     dependencies: [
@@ -26,6 +27,7 @@ let package = Package(
         .target(name: "CombineX", dependencies: ["CXLibc", "CXUtility", "CXNamespace", "Runtime"]),
         .target(name: "CXFoundation", dependencies: ["CXUtility", "CXNamespace", "CombineX"]),
         .target(name: "CXCompatible", dependencies: ["CXNamespace"]),
+        .target(name: "CXBridge", dependencies: ["CXNamespace", "CombineX", "Runtime"]),
         .target(name: "CXShim", dependencies: [/* depends on combine implementation */]),
         .target(name: "CXTestUtility", dependencies: ["CXUtility", "CXShim", "Nimble"]),
         .testTarget(name: "CombineXTests", dependencies: ["CXTestUtility", "CXUtility", "CXShim", "Quick", "Nimble"]),
