@@ -29,5 +29,9 @@ targetTemplates:
     type: framework
     platform: [iOS, macOS, tvOS, watchOS]
     scheme: {}
+    settings:
+      APPLICATION_EXTENSION_API_ONLY: true
+    info:
+      path: Info-carthage.plist
     sources:
       - Sources/${target_name}
