@@ -80,4 +80,6 @@ QCKMain([
     FailingSubjectSpec.self,
     
     SuspiciousDemandSpec.self,
+    
+    FixedSpec.self,
 ])

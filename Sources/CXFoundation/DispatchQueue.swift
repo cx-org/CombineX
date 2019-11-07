@@ -109,8 +109,21 @@ extension CXWrappers.DispatchQueue: CombineX.Scheduler {
             ///
             /// - Parameter timeInterval: A dispatch time interval.
             public init(_ timeInterval: DispatchTimeInterval) {
-                let now = DispatchTime.now()
-                self.magnitude = Int((now + timeInterval).uptimeNanoseconds - now.uptimeNanoseconds)
+                switch timeInterval {
+                case let .seconds(n):
+                    self.magnitude = n.multipliedClamping(by: Const.nsec_per_sec)
+                case let .milliseconds(n):
+                    self.magnitude = n.multipliedClamping(by: Const.nsec_per_msec)
+                case let .microseconds(n):
+                    self.magnitude = n.multipliedClamping(by: Const.nsec_per_usec)
+                case let .nanoseconds(n):
+                    self.magnitude = n
+                case .never:
+                    self.magnitude = .max
+                @unknown default:
+                    let now = DispatchTime.now()
+                    self.magnitude = Int((now + timeInterval).uptimeNanoseconds - now.uptimeNanoseconds)
+                }
             }
 
             /// Creates a dispatch queue time interval from a floating-point seconds value.
@@ -124,7 +137,7 @@ extension CXWrappers.DispatchQueue: CombineX.Scheduler {
             ///
             /// - Parameter value: The number of seconds, as an `Int`.
             public init(integerLiteral value: Int) {
-                self.magnitude = value * Const.nsec_per_sec
+                self.init(.seconds(value))
             }
 
             /// Creates a dispatch queue time interval from a binary integer type.
