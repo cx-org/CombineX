@@ -20,6 +20,7 @@ matrix:
       osx_image: xcode11.1
       env: 
         - CX_COMBINE_IMPLEMENTATION="Combine"
+        - CX_CONTINUOUS_INTEGRATION="YES"
 
 env:
   global:

@@ -1,11 +1,9 @@
 // swift-tools-version:5.0
 
-import Foundation
 import PackageDescription
 
-let env = ProcessInfo.processInfo.environment
+// MARK: - Package
 
-// MARK: Package
 let package = Package(
     name: "CombineX",
     platforms: [
@@ -39,24 +37,31 @@ let package = Package(
     ]
 )
 
-// MARK: Helpers
-extension Optional where Wrapped: RangeReplaceableCollection {
-    
-    mutating func append(contentsOf newElements: [Wrapped.Element]) {
-        if newElements.isEmpty { return }
-        
-        if let wrapped = self {
-            self = wrapped + newElements
-        } else {
-            self = .init(newElements)
-        }
-    }
-}
+// MARK: - Combine Implementations
 
-// MARK: Combine Implementations
 enum CombineImplementation {
     
-    case combine, combineX, openCombine
+    case combine
+    case combineX
+    case openCombine
+    
+    static var `default`: CombineImplementation {
+        #if canImport(Combine)
+        return .combine
+        #else
+        return .combineX
+        #endif
+    }
+    
+    init?(_ description: String) {
+        let desc = description.lowercased().filter { $0.isLetter }
+        switch desc {
+        case "combine":     self = .combine
+        case "combinex":    self = .combineX
+        case "opencombine": self = .openCombine
+        default:            return nil
+        }
+    }
 
     var extraPackageDependencies: [Package.Dependency] {
         switch self {
@@ -73,7 +78,7 @@ enum CombineImplementation {
         }
     }
     
-    var shimTargetSwiftSettings: [SwiftSetting] {
+    var swiftSettings: [SwiftSetting] {
         switch self {
         case .combine:      return [.define("USE_COMBINE")]
         case .combineX:     return [.define("USE_COMBINEX")]
@@ -82,45 +87,40 @@ enum CombineImplementation {
     }
 }
 
-func configure(_ package: Package, with imp: CombineImplementation) {
-    package.dependencies.append(contentsOf: imp.extraPackageDependencies)
-    
-    guard let shimTarget = package.targets.first(where: { $0.name == "CXShim" }) else { return }
-    
-    shimTarget.dependencies = imp.shimTargetDependencies
-    shimTarget.swiftSettings.append(contentsOf: imp.shimTargetSwiftSettings)
-    
-    // Pass the swift settings of current combine implementation to all test targets.
-    package.targets
-        .filter { $0.isTest}
-        .forEach {
-            $0.swiftSettings.append(contentsOf: imp.shimTargetSwiftSettings)
-        }
-}
+// MARK: - Helpers
 
-func selectCombineImp() -> CombineImplementation {
-    let key = "CX_COMBINE_IMPLEMENTATION"
-    // CombineX -> combinex
-    // OPEN_COMBINE -> opencombine
-    let imp = env[key]?.lowercased().filter { $0.isLetter }
-    switch imp {
-    case "combine":         return .combine
-    case "combinex":        return .combineX
-    case "opencombine":     return .openCombine
-    default:
-        #if canImport(Combine)
-        return .combine
-        #else
-        return .combineX
-        #endif
+extension Optional where Wrapped: RangeReplaceableCollection {
+    
+    mutating func append(contentsOf newElements: [Wrapped.Element]) {
+        if newElements.isEmpty { return }
+        
+        if let wrapped = self {
+            self = wrapped + newElements
+        } else {
+            self = .init(newElements)
+        }
     }
 }
 
-let currentCombineImp = selectCombineImp()
-configure(package, with: currentCombineImp)
+// MARK: - Config Package
 
-// Travis does not yet support macOS 10.15, so we have to generate an iOS project to test against `Combine`.
-if currentCombineImp == .combine && ProcessInfo.processInfo.environment["TRAVIS"] != nil {
-    package.platforms = [.iOS("13.0"), .macOS("10.15")]
+import Foundation
+
+let env = ProcessInfo.processInfo.environment
+let key = "CX_COMBINE_IMPLEMENTATION"
+let combineImp = env[key].flatMap(CombineImplementation.init) ?? .default
+
+package.dependencies.append(contentsOf: combineImp.extraPackageDependencies)
+
+let shimTarget = package.targets.first(where: { $0.name == "CXShim" })!
+shimTarget.dependencies = combineImp.shimTargetDependencies
+shimTarget.swiftSettings.append(contentsOf: combineImp.swiftSettings)
+
+for target in package.targets where target.isTest || target.name == "CXTestUtility" {
+    target.swiftSettings.append(contentsOf: combineImp.swiftSettings)
+}
+
+if combineImp == .combine && env["CX_CONTINUOUS_INTEGRATION"] != nil {
+    package.platforms = [.macOS("10.15"), .iOS("13.0"), .tvOS("13.0"), .watchOS("6.0")]
 }
 

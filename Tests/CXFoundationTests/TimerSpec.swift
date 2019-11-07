@@ -14,7 +14,7 @@ class TimerSpec: QuickSpec {
 
         // MARK: 1.1 should not send values before connect
         it("should not send values before connect") {
-            let pub = Timer.CX.publish(every: 0.1, on: RunLoop.main, in: .common)
+            let pub = CXWrappers.Timer.publish(every: 0.1, on: RunLoop.main, in: .common)
             let sub = makeTestSubscriber(Date.self, Never.self, .unlimited)
             pub.subscribe(sub)
             
@@ -28,7 +28,7 @@ class TimerSpec: QuickSpec {
         
         // MARK: 1.2 should send values repeatedly
         it("should send values repeatedly") {
-            let pub = Timer.CX.publish(every: 0.1, on: RunLoop.main, in: .common)
+            let pub = CXWrappers.Timer.publish(every: 0.1, on: RunLoop.main, in: .common)
             let sub = makeTestSubscriber(Date.self, Never.self, .unlimited)
             pub.subscribe(sub)
             

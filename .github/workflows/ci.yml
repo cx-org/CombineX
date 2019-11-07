@@ -24,7 +24,7 @@ jobs:
     env:
       DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode_version }}.app/Contents/Developer
       CX_COMBINE_IMPLEMENTATION: ${{ matrix.combine_impl }}
-      TRAVIS: "YES"
+      CX_CONTINUOUS_INTEGRATION: "YES"
     steps:
       - uses: actions/checkout@v1
       - name: Swift Version
