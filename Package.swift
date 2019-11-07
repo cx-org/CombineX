@@ -121,6 +121,6 @@ configure(package, with: currentCombineImp)
 
 // Travis does not yet support macOS 10.15, so we have to generate an iOS project to test against `Combine`.
 if currentCombineImp == .combine && ProcessInfo.processInfo.environment["TRAVIS"] != nil {
-    package.platforms = [.iOS("13.0")]
+    package.platforms = [.iOS("13.0"), .macOS("10.15")]
 }
 
