@@ -78,7 +78,7 @@ class SuspiciousSwitchToLatestSpec: QuickSpec {
             let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
                 s.request(.max(10))
             }, receiveValue: { v in
-                return [0, 10].contains(v) ? .max(1) : .none
+                return [1, 11].contains(v) ? .max(1) : .none
             }, receiveCompletion: { c in
             })
             pub.subscribe(sub)
