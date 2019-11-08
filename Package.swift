@@ -108,7 +108,10 @@ import Foundation
 
 let env = ProcessInfo.processInfo.environment
 let key = "CX_COMBINE_IMPLEMENTATION"
-let combineImp = env[key].flatMap(CombineImplementation.init) ?? .default
+var combineImp = env[key].flatMap(CombineImplementation.init) ?? .default
+
+// uncommenet the following line if you want to test against combine
+//combineImp = .combine
 
 package.dependencies.append(contentsOf: combineImp.extraPackageDependencies)
 
@@ -120,7 +123,7 @@ for target in package.targets where target.isTest || target.name == "CXTestUtili
     target.swiftSettings.append(contentsOf: combineImp.swiftSettings)
 }
 
-if combineImp == .combine && env["CX_CONTINUOUS_INTEGRATION"] != nil {
+if combineImp == .combine {
     package.platforms = [.macOS("10.15"), .iOS("13.0"), .tvOS("13.0"), .watchOS("6.0")]
 }
 

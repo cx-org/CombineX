@@ -58,9 +58,7 @@ class DebounceSpec: QuickSpec {
                 subject.send(1)
                 scheduler.advance(by: .seconds(10))
                 
-                // FIXME: Strange
-                let expected = Array(repeating: TestSubscriberEvent<Int, TestError>.value(1), count: 10)
-                expect(sub.events).to(equal(expected))
+                expect(sub.events).to(equal([.value(1)]))
             }
             
             // MARK: 1.3 should send as many values as demand
