@@ -44,7 +44,6 @@ extension Publishers {
         
         public let options: Context.SchedulerOptions?
         
-        // FIXME: Combine misses the `options` parameter.
         public init(upstream: Upstream, interval: Context.SchedulerTimeType.Stride, tolerance: Context.SchedulerTimeType.Stride, scheduler: Context, options: Context.SchedulerOptions? = nil) {
             self.upstream = upstream
             self.interval = interval

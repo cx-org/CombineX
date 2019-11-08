@@ -114,7 +114,6 @@ extension Subscribers {
             case (_, .unlimited):
                 return .max(0)
             default:
-                // FIXME: Doc says "any operation that would result in a negative value is clamped to .max(0)", but in Apple's Combine, it will actually crash. See "DemandSpec.swift#2.2" for more information.
                 let (v, overflow) = lhs.rawValue.subtractingReportingOverflow(rhs.rawValue)
                 return overflow ? .none : Demand(v)
             }
