@@ -93,7 +93,7 @@ public final class TestScheduler: Scheduler {
             self.lock.unlock()
         }
 
-        return box
+        return AnyCancellable(box)
     }
     
     public func advance(to time: SchedulerTimeType) {

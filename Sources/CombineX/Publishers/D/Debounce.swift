@@ -119,6 +119,7 @@ extension Publishers.Debounce {
                     self.lock.unlock()
                     return
                 }
+                self.last = nil
                 self.demand -= 1
                 self.lock.unlock()
                 

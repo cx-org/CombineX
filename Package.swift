@@ -107,8 +107,14 @@ extension Optional where Wrapped: RangeReplaceableCollection {
 import Foundation
 
 let env = ProcessInfo.processInfo.environment
-let key = "CX_COMBINE_IMPLEMENTATION"
-let combineImp = env[key].flatMap(CombineImplementation.init) ?? .default
+let impkey = "CX_COMBINE_IMPLEMENTATION"
+let isCIKey = "CX_CONTINUOUS_INTEGRATION"
+
+var combineImp = env[impkey].flatMap(CombineImplementation.init) ?? .default
+var isCI = env[isCIKey] != nil
+
+// uncommenet the following two lines if you want to test against combine
+//combineImp = .combine; isCI = true
 
 package.dependencies.append(contentsOf: combineImp.extraPackageDependencies)
 
@@ -120,7 +126,6 @@ for target in package.targets where target.isTest || target.name == "CXTestUtili
     target.swiftSettings.append(contentsOf: combineImp.swiftSettings)
 }
 
-if combineImp == .combine && env["CX_CONTINUOUS_INTEGRATION"] != nil {
+if combineImp == .combine && isCI {
     package.platforms = [.macOS("10.15"), .iOS("13.0"), .tvOS("13.0"), .watchOS("6.0")]
 }
-
