@@ -1,4 +1,6 @@
+#if !COCOAPODS
 import CXUtility
+#endif
 
 protocol OptionalProtocol {
     

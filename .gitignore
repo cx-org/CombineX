@@ -1,3 +1,6 @@
 .swiftpm
 .build
-/*.xcodeproj
+
+xcuserdata/
+
+Carthage/Build/

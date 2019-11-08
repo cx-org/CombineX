@@ -1,0 +1,39 @@
+name: CombineX-Carthage
+options:
+  bundleIdPrefix: com.github.cx-org
+  deploymentTarget:
+    iOS: 8.0
+    macOS: !!str '10.10'
+    tvOS: 9.0
+    watchOS: 2.0
+targets:
+  CXLibc:
+    templates: [Framework]
+  CXUtility:
+    templates: [Framework]
+  CXNamespace:
+    templates: [Framework]
+  CombineX:
+    templates: [Framework]
+    dependencies:
+      - target: CXLibc_${platform}
+      - target: CXUtility_${platform}
+      - target: CXNamespace_${platform}
+  CXFoundation:
+    templates: [Framework]
+    dependencies:
+      - target: CXUtility_${platform}
+      - target: CXNamespace_${platform}
+      - target: CombineX_${platform}
+targetTemplates:
+  Framework:
+    type: framework
+    platform: [iOS, macOS, tvOS, watchOS]
+    scheme: {}
+    settings:
+      APPLICATION_EXTENSION_API_ONLY: true
+    info:
+      path: Info-carthage.plist
+    sources:
+      - Sources/${target_name}
+      

@@ -1,4 +1,6 @@
+#if !COCOAPODS
 import CXUtility
+#endif
 
 extension Publisher where Self.Failure == Never {
     

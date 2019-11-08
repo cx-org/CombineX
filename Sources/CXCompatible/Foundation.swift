@@ -1,10 +1,13 @@
 #if canImport(Foundation)
 
-import CXNamespace
 import Foundation
 
 #if canImport(FoundationNetworking)
 import FoundationNetworking
+#endif
+
+#if !COCOAPODS
+import CXNamespace
 #endif
 
 extension NSObject: CXSelfWrapping {}

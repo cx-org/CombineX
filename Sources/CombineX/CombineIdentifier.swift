@@ -1,4 +1,6 @@
+#if !COCOAPODS
 import CXUtility
+#endif
 
 private let counter = Atom<UInt>(val: 0)
 

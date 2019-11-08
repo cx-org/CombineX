@@ -1,4 +1,6 @@
+#if !COCOAPODS
 import CXUtility
+#endif
 
 // Ad-hoc cache for ObservableObject that works on following assumption:
 //

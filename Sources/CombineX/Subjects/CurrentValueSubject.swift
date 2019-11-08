@@ -1,4 +1,6 @@
+#if !COCOAPODS
 import CXUtility
+#endif
 
 /// A subject that wraps a single value and publishes a new element whenever the value changes.
 final public class CurrentValueSubject<Output, Failure> : Subject where Failure : Error {
