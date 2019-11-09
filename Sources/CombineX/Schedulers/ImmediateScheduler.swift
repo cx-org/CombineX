@@ -263,9 +263,6 @@ public struct ImmediateScheduler : Scheduler {
         }
     }
     
-    /// A type that defines options accepted by the scheduler.
-    ///
-    /// This type is freely definable by each `Scheduler`. Typically, operations that take a `Scheduler` parameter will also take `SchedulerOptions`.
     public typealias SchedulerOptions = Never
     
     /// The shared instance of the immediate scheduler.
@@ -273,28 +270,22 @@ public struct ImmediateScheduler : Scheduler {
     /// You cannot create instances of the immediate scheduler yourself. Use only the shared instance.
     public static let shared: ImmediateScheduler = ImmediateScheduler()
     
-    /// Performs the action at the next possible opportunity.
     public func schedule(options: ImmediateScheduler.SchedulerOptions?, _ action: @escaping () -> Void) {
         action()
     }
     
-    /// Returns this scheduler's definition of the current moment in time.
     public var now: ImmediateScheduler.SchedulerTimeType {
         return SchedulerTimeType()
     }
     
-    /// Returns the minimum tolerance allowed by the scheduler.
     public var minimumTolerance: ImmediateScheduler.SchedulerTimeType.Stride {
         return ImmediateScheduler.SchedulerTimeType.Stride(0)
     }
     
-    /// Performs the action at some time after the specified date.
     public func schedule(after date: ImmediateScheduler.SchedulerTimeType, tolerance: ImmediateScheduler.SchedulerTimeType.Stride, options: ImmediateScheduler.SchedulerOptions?, _ action: @escaping () -> Void) {
         action()
     }
     
-    /// Performs the action at some time after the specified date, at the specified
-    /// frequency, optionally taking into account tolerance if possible.
     public func schedule(after date: ImmediateScheduler.SchedulerTimeType, interval: ImmediateScheduler.SchedulerTimeType.Stride, tolerance: ImmediateScheduler.SchedulerTimeType.Stride, options: ImmediateScheduler.SchedulerOptions?, _ action: @escaping () -> Void) -> Cancellable {
         action()
         return AnyCancellable { }
