@@ -206,14 +206,6 @@ extension Publishers.Merge8 : Equatable where A : Equatable, B : Equatable, C : 
 
 extension Publishers.MergeMany : Equatable where Upstream : Equatable {
     
-    /// Returns a Boolean value indicating whether two values are equal.
-    ///
-    /// Equality is the inverse of inequality. For any values `a` and `b`,
-    /// `a == b` implies that `a != b` is `false`.
-    ///
-    /// - Parameters:
-    ///   - lhs: A value to compare.
-    ///   - rhs: Another value to compare.
     public static func == (lhs: Publishers.MergeMany<Upstream>, rhs: Publishers.MergeMany<Upstream>) -> Bool {
         return lhs.publishers == rhs.publishers
     }

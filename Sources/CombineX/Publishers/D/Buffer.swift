@@ -43,12 +43,8 @@ extension Publishers {
     /// A publisher that buffers elements received from an upstream publisher.
     public struct Buffer<Upstream> : Publisher where Upstream : Publisher {
         
-        /// The kind of values published by this publisher.
         public typealias Output = Upstream.Output
         
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = Upstream.Failure
         
         public let upstream: Upstream
@@ -66,12 +62,6 @@ extension Publishers {
             self.whenFull = whenFull
         }
         
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             switch self.prefetch {
             case .keepFull:
@@ -86,6 +76,7 @@ extension Publishers {
 }
 
 // MARK: - KeepFull
+
 extension Publishers.Buffer {
     
     private final class KeepFull<S>:
@@ -254,6 +245,7 @@ extension Publishers.Buffer {
 }
 
 // MARK: - ByRequest
+
 extension Publishers.Buffer {
     
     private final class ByRequest<S>:

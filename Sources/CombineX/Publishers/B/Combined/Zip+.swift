@@ -70,14 +70,6 @@ extension Publisher {
 /// - Returns: `true` if the corresponding upstream publishers of each zip publisher are equal, `false` otherwise.
 extension Publishers.Zip3 : Equatable where A : Equatable, B : Equatable, C : Equatable {
     
-    /// Returns a Boolean value indicating whether two values are equal.
-    ///
-    /// Equality is the inverse of inequality. For any values `a` and `b`,
-    /// `a == b` implies that `a != b` is `false`.
-    ///
-    /// - Parameters:
-    ///   - lhs: A value to compare.
-    ///   - rhs: Another value to compare.
     public static func == (lhs: Publishers.Zip3<A, B, C>, rhs: Publishers.Zip3<A, B, C>) -> Bool {
         return lhs.a == rhs.a && lhs.b == rhs.b && lhs.c == rhs.c
     }
@@ -91,14 +83,6 @@ extension Publishers.Zip3 : Equatable where A : Equatable, B : Equatable, C : Eq
 /// - Returns: `true` if the corresponding upstream publishers of each zip publisher are equal, `false` otherwise.
 extension Publishers.Zip4 : Equatable where A : Equatable, B : Equatable, C : Equatable, D : Equatable {
     
-    /// Returns a Boolean value indicating whether two values are equal.
-    ///
-    /// Equality is the inverse of inequality. For any values `a` and `b`,
-    /// `a == b` implies that `a != b` is `false`.
-    ///
-    /// - Parameters:
-    ///   - lhs: A value to compare.
-    ///   - rhs: Another value to compare.
     public static func == (lhs: Publishers.Zip4<A, B, C, D>, rhs: Publishers.Zip4<A, B, C, D>) -> Bool {
         return lhs.a == rhs.a && lhs.b == rhs.b && lhs.c == rhs.c && lhs.d == rhs.d
     }

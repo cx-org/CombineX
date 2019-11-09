@@ -14,14 +14,6 @@ extension Subscribers {
 
 extension Subscribers.Completion : Equatable where Failure : Equatable {
     
-    /// Returns a Boolean value indicating whether two values are equal.
-    ///
-    /// Equality is the inverse of inequality. For any values `a` and `b`,
-    /// `a == b` implies that `a != b` is `false`.
-    ///
-    /// - Parameters:
-    ///   - lhs: A value to compare.
-    ///   - rhs: Another value to compare.
     public static func == (a: Subscribers.Completion<Failure>, b: Subscribers.Completion<Failure>) -> Bool {
         switch (a, b) {
         case (.finished, .finished):

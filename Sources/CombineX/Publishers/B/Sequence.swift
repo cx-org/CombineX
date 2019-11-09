@@ -226,14 +226,6 @@ extension Publishers.Sequence where Elements : RangeReplaceableCollection {
 
 extension Publishers.Sequence : Equatable where Elements : Equatable {
     
-    /// Returns a Boolean value indicating whether two values are equal.
-    ///
-    /// Equality is the inverse of inequality. For any values `a` and `b`,
-    /// `a == b` implies that `a != b` is `false`.
-    ///
-    /// - Parameters:
-    ///   - lhs: A value to compare.
-    ///   - rhs: Another value to compare.
     public static func == (lhs: Publishers.Sequence<Elements, Failure>, rhs: Publishers.Sequence<Elements, Failure>) -> Bool {
         return lhs.sequence == rhs.sequence
     }
