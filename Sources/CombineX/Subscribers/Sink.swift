@@ -139,7 +139,6 @@ extension Subscribers {
             _ = self.state.exchange(with: .closed)
         }
         
-        /// Cancel the activity.
         final public func cancel() {
             let oldState = self.state.exchange(with: .closed)
             if case let .subscribed(subscription) = oldState {

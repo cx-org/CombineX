@@ -122,7 +122,6 @@ extension Subscribers {
             self.cancel()
         }
         
-        /// Cancel the activity.
         final public func cancel() {
             self.lock.lock()
             guard let subscription = self.subscription else {

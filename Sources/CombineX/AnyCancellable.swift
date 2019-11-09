@@ -16,7 +16,6 @@ final public class AnyCancellable: Cancellable, Hashable {
         self.cancelBody = canceller.cancel
     }
     
-    /// Cancel the activity.
     final public func cancel() {
         self.cancelBody?()
         self.cancelBody = nil
