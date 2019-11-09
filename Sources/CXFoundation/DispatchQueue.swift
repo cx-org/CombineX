@@ -68,21 +68,6 @@ extension CXWrappers.DispatchQueue: CombineX.Scheduler {
             return .init(self.dispatchTime + n.timeInterval)
         }
 
-        /// Hashes the essential components of this value by feeding them into the
-        /// given hasher.
-        ///
-        /// Implement this method to conform to the `Hashable` protocol. The
-        /// components used for hashing must be the same as the components compared
-        /// in your type's `==` operator implementation. Call `hasher.combine(_:)`
-        /// with each of these components.
-        ///
-        /// - Important: Never call `finalize()` on `hasher`. Doing so may become a
-        ///   compile-time error in the future.
-        ///
-        /// - Parameter hasher: The hasher to use when combining the components
-        ///   of this instance.
-//        public func hash(into hasher: inout Hasher)
-
         /// A type that represents the distance between two values.
         public struct Stride : SchedulerTimeIntervalConvertible, Comparable, SignedNumeric, ExpressibleByFloatLiteral, Hashable, Codable {
 
@@ -288,69 +273,7 @@ extension CXWrappers.DispatchQueue: CombineX.Scheduler {
             public static func nanoseconds(_ ns: Int) -> SchedulerTimeType.Stride {
                 return .init(.nanoseconds(ns))
             }
-
-            /// The hash value.
-            ///
-            /// Hash values are not guaranteed to be equal across different executions of
-            /// your program. Do not save hash values to use during a future execution.
-            ///
-            /// - Important: `hashValue` is deprecated as a `Hashable` requirement. To
-            ///   conform to `Hashable`, implement the `hash(into:)` requirement instead.
-//            public var hashValue: Int { get }
-
-            /// Hashes the essential components of this value by feeding them into the
-            /// given hasher.
-            ///
-            /// Implement this method to conform to the `Hashable` protocol. The
-            /// components used for hashing must be the same as the components compared
-            /// in your type's `==` operator implementation. Call `hasher.combine(_:)`
-            /// with each of these components.
-            ///
-            /// - Important: Never call `finalize()` on `hasher`. Doing so may become a
-            ///   compile-time error in the future.
-            ///
-            /// - Parameter hasher: The hasher to use when combining the components
-            ///   of this instance.
-//            public func hash(into hasher: inout Hasher)
-
-            /// Creates a new instance by decoding from the given decoder.
-            ///
-            /// This initializer throws an error if reading from the decoder fails, or
-            /// if the data read is corrupted or otherwise invalid.
-            ///
-            /// - Parameter decoder: The decoder to read data from.
-//            public init(from decoder: Decoder) throws
-
-            /// Encodes this value into the given encoder.
-            ///
-            /// If the value fails to encode anything, `encoder` will encode an empty
-            /// keyed container in its place.
-            ///
-            /// This function throws an error if any values are invalid for the given
-            /// encoder's format.
-            ///
-            /// - Parameter encoder: The encoder to write data to.
-//            public func encode(to encoder: Encoder) throws
-
-            /// Returns a Boolean value indicating whether two values are equal.
-            ///
-            /// Equality is the inverse of inequality. For any values `a` and `b`,
-            /// `a == b` implies that `a != b` is `false`.
-            ///
-            /// - Parameters:
-            ///   - lhs: A value to compare.
-            ///   - rhs: Another value to compare.
-//            public static func == (a: SchedulerTimeType.Stride, b: SchedulerTimeType.Stride) -> Bool
         }
-
-        /// The hash value.
-        ///
-        /// Hash values are not guaranteed to be equal across different executions of
-        /// your program. Do not save hash values to use during a future execution.
-        ///
-        /// - Important: `hashValue` is deprecated as a `Hashable` requirement. To
-        ///   conform to `Hashable`, implement the `hash(into:)` requirement instead.
-//        public var hashValue: Int { get }
         
         public func hash(into hasher: inout Hasher) {
             hasher.combine(self.dispatchTime.uptimeNanoseconds)
