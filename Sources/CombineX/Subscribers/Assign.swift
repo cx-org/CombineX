@@ -21,9 +21,6 @@ extension Subscribers {
     
     final public class Assign<Root, Input> : Subscriber, Cancellable, CustomStringConvertible, CustomReflectable, CustomPlaygroundDisplayConvertible {
         
-        /// The kind of errors this subscriber might receive.
-        ///
-        /// Use `Never` if this `Subscriber` cannot receive errors.
         public typealias Failure = Never
         
         final public private(set) var object: Root?
@@ -82,10 +79,6 @@ extension Subscribers {
             self.keyPath = keyPath
         }
         
-        /// Tells the subscriber that it has successfully subscribed to the publisher and may request items.
-        ///
-        /// Use the received `Subscription` to request items from the publisher.
-        /// - Parameter subscription: A subscription that represents the connection between publisher and subscriber.
         final public func receive(subscription: Subscription) {
             self.lock.lock()
             if self.subscription == nil {
@@ -98,10 +91,6 @@ extension Subscribers {
             }
         }
         
-        /// Tells the subscriber that the publisher has produced an element.
-        ///
-        /// - Parameter input: The published element.
-        /// - Returns: A `Demand` instance indicating how many more elements the subcriber expects to receive.
         final public func receive(_ value: Input) -> Subscribers.Demand {
             self.lock.lock()
             if self.subscription.isNil {
@@ -115,9 +104,6 @@ extension Subscribers {
             return .none
         }
         
-        /// Tells the subscriber that the publisher has completed publishing, either normally or with an error.
-        ///
-        /// - Parameter completion: A `Completion` case indicating whether publishing completed normally or with an error.
         final public func receive(completion: Subscribers.Completion<Never>) {
             self.cancel()
         }

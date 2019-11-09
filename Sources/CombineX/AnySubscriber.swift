@@ -56,27 +56,16 @@ public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertibl
         self.combineIdentifier = CombineIdentifier()
     }
     
-    /// Tells the subscriber that it has successfully subscribed to the publisher and may request items.
-    ///
-    /// Use the received `Subscription` to request items from the publisher.
-    /// - Parameter subscription: A subscription that represents the connection between publisher and subscriber.
     @inlinable
     public func receive(subscription: Subscription) {
         self.box.receive(subscription: subscription)
     }
     
-    /// Tells the subscriber that the publisher has produced an element.
-    ///
-    /// - Parameter input: The published element.
-    /// - Returns: A `Demand` instance indicating how many more elements the subcriber expects to receive.
     @inlinable
     public func receive(_ value: Input) -> Subscribers.Demand {
         return self.box.receive(value)
     }
     
-    /// Tells the subscriber that the publisher has completed publishing, either normally or with an error.
-    ///
-    /// - Parameter completion: A `Completion` case indicating whether publishing completed normally or with an error.
     @inlinable
     public func receive(completion: Subscribers.Completion<Failure>) {
         self.box.receive(completion: completion)
