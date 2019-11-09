@@ -37,9 +37,6 @@ extension Publishers {
     /// A publisher that receives and combines the latest elements from three publishers, using a throwing closure.
     public struct TryCombineLatest3<A, B, C, Output> : Publisher where A : Publisher, B : Publisher, C : Publisher, A.Failure == Error, B.Failure == Error, C.Failure == Error {
         
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = Error
         
         public let a: A
@@ -58,12 +55,6 @@ extension Publishers {
         }
         
         
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, S.Failure == Publishers.TryCombineLatest3<A, B, C, Output>.Failure {
             self.a
                 .combineLatest(self.b)
@@ -78,9 +69,6 @@ extension Publishers {
     /// A publisher that receives and combines the latest elements from four publishers, using a throwing closure.
     public struct TryCombineLatest4<A, B, C, D, Output> : Publisher where A : Publisher, B : Publisher, C : Publisher, D : Publisher, A.Failure == Error, B.Failure == Error, C.Failure == Error, D.Failure == Error {
         
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = Error
         
         public let a: A
@@ -101,12 +89,6 @@ extension Publishers {
             self.transform = transform
         }
         
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, S.Failure == Publishers.TryCombineLatest4<A, B, C, D, Output>.Failure {
             self.a
                 .combineLatest(self.b)

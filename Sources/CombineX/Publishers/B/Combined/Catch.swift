@@ -30,12 +30,8 @@ extension Publishers {
     /// A publisher that handles errors from an upstream publisher by replacing the failed publisher with another publisher.
     public struct Catch<Upstream, NewPublisher> : Publisher where Upstream : Publisher, NewPublisher : Publisher, Upstream.Output == NewPublisher.Output {
         
-        /// The kind of values published by this publisher.
         public typealias Output = Upstream.Output
         
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = NewPublisher.Failure
         
         /// The publisher that this publisher receives elements from.
@@ -54,12 +50,6 @@ extension Publishers {
             self.handler = handler
         }
         
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, NewPublisher.Failure == S.Failure, NewPublisher.Output == S.Input {
             self.upstream
                 .tryCatch(self.handler)

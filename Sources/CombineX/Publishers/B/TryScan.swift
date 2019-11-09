@@ -20,9 +20,6 @@ extension Publishers {
     
     public struct TryScan<Upstream, Output> : Publisher where Upstream : Publisher {
         
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = Error
         
         public let upstream: Upstream
@@ -37,12 +34,6 @@ extension Publishers {
             self.nextPartialResult = nextPartialResult
         }
         
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, S.Failure == Publishers.TryScan<Upstream, Output>.Failure {
             let s = Inner(pub: self, sub: subscriber)
             self.upstream.receive(subscriber: s)

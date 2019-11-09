@@ -20,7 +20,6 @@ extension Publishers {
     /// A publisher that converts any failure from the upstream publisher into a new error.
     public struct MapError<Upstream, Failure> : Publisher where Upstream : Publisher, Failure : Error {
         
-        /// The kind of values published by this publisher.
         public typealias Output = Upstream.Output
         
         /// The publisher from which this publisher receives elements.
@@ -39,12 +38,6 @@ extension Publishers {
             self.transform = transform
         }
         
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Failure == S.Failure, S : Subscriber, Upstream.Output == S.Input {
             let s = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(s)

@@ -54,12 +54,8 @@ extension CXWrappers.URLSession {
     
     public struct DataTaskPublisher : Publisher {
 
-        /// The kind of values published by this publisher.
         public typealias Output = (data: Data, response: URLResponse)
 
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = URLError
 
         public let request: URLRequest
@@ -71,12 +67,6 @@ extension CXWrappers.URLSession {
             self.session = session
         }
 
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, S.Failure == Failure, S.Input == Output {
             let subject = PassthroughSubject<Output, Failure>()
             let task = self.session.dataTask(with: self.request) { (data, response, error) in

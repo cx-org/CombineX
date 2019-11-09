@@ -41,12 +41,8 @@ extension CXWrappers.Timer {
     /// A publisher that repeatedly emits the current date on a given interval.
     final public class TimerPublisher : ConnectablePublisher {
 
-        /// The kind of values published by this publisher.
         public typealias Output = Date
 
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = Never
 
         final public let interval: TimeInterval
@@ -93,12 +89,6 @@ extension CXWrappers.Timer {
             self.timer.invalidate()
         }
         
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
         final public func receive<S>(subscriber: S) where S : Subscriber, S.Failure == TimerPublisher.Failure, S.Input == TimerPublisher.Output {
             self.multicast.receive(subscriber: subscriber)
         }

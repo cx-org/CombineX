@@ -65,12 +65,8 @@ extension Publishers {
     /// A publisher that emits all of one publisher’s elements before those from another publisher.
     public struct Concatenate<Prefix, Suffix> : Publisher where Prefix : Publisher, Suffix : Publisher, Prefix.Failure == Suffix.Failure, Prefix.Output == Suffix.Output {
         
-        /// The kind of values published by this publisher.
         public typealias Output = Suffix.Output
         
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = Suffix.Failure
         
         /// The publisher to republish, in its entirety, before republishing elements from `suffix`.
@@ -84,12 +80,6 @@ extension Publishers {
             self.suffix = suffix
         }
         
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Suffix.Failure == S.Failure, Suffix.Output == S.Input {
             let s = Inner(pub: self, sub: subscriber)
             self.prefix.subscribe(s)

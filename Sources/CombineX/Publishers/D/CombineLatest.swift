@@ -49,12 +49,8 @@ extension Publishers {
     /// A publisher that receives and combines the latest elements from two publishers.
     public struct CombineLatest<A, B> : Publisher where A : Publisher, B : Publisher, A.Failure == B.Failure {
         
-        /// The kind of values published by this publisher.
         public typealias Output = (A.Output, B.Output)
         
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = A.Failure
         
         public let a: A
@@ -66,12 +62,6 @@ extension Publishers {
             self.b = b
         }
         
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, B.Failure == S.Failure, S.Input == (A.Output, B.Output) {
             let s = Inner(pub: self, sub: subscriber)
             subscriber.receive(subscription: s)

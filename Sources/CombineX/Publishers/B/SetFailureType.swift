@@ -25,7 +25,6 @@ extension Publishers {
     /// The publisher cannot actually fail with the specified type and instead just finishes normally. Use this publisher type when you need to match the error types for two mismatched publishers.
     public struct SetFailureType<Upstream, Failure> : Publisher where Upstream : Publisher, Failure : Error, Upstream.Failure == Never {
         
-        /// The kind of values published by this publisher.
         public typealias Output = Upstream.Output
         
         /// The publisher from which this publisher receives elements.
@@ -38,12 +37,6 @@ extension Publishers {
             self.upstream = upstream
         }
         
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Failure == S.Failure, S : Subscriber, Upstream.Output == S.Input {
             self.upstream
                 .mapError { $0 as! Failure }

@@ -28,12 +28,8 @@ extension Optional.CX {
     /// In contrast with `Just`, an `Optional` publisher may send no value before completion.
     public struct Publisher: CombineX.Publisher {
 
-        /// The kind of values published by this publisher.
         public typealias Output = Wrapped
 
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = Never
 
         /// The result to deliver to each subscriber.
@@ -46,12 +42,6 @@ extension Optional.CX {
             self.output = output
         }
 
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Wrapped == S.Input, S : Subscriber, S.Failure == Failure {
             guard let output = output else {
                 subscriber.receive(subscription: Subscriptions.empty)

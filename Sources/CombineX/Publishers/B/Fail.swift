@@ -28,12 +28,6 @@ public struct Fail<Output, Failure> : Publisher where Failure : Error {
     /// The failure to send when terminating the publisher.
     public let error: Failure
     
-    /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-    ///
-    /// - SeeAlso: `subscribe(_:)`
-    /// - Parameters:
-    ///     - subscriber: The subscriber to attach to this `Publisher`.
-    ///                   once attached it can begin to receive values.
     public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
         Result<Output, Failure>
             .failure(self.error)

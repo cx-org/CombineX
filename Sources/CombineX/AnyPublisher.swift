@@ -7,12 +7,6 @@ extension Publisher {
 
 extension AnyPublisher: Publisher {
     
-    /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-    ///
-    /// - SeeAlso: `subscribe(_:)`
-    /// - Parameters:
-    ///     - subscriber: The subscriber to attach to this `Publisher`.
-    ///                   once attached it can begin to receive values.
     @inlinable
     public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
         self.subscribeBody(subscriber.eraseToAnySubscriber())

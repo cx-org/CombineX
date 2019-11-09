@@ -21,12 +21,6 @@ public struct Record<Output, Failure> : Publisher where Failure : Error {
         self.recording = .init(output: output, completion: completion)
     }
 
-    /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-    ///
-    /// - SeeAlso: `subscribe(_:)`
-    /// - Parameters:
-    ///     - subscriber: The subscriber to attach to this `Publisher`.
-    ///                   once attached it can begin to receive values.
     public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
         let pub = self.recording.output.cx.publisher.setFailureType(to: Failure.self)
         switch self.recording.completion {

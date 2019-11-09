@@ -207,9 +207,6 @@ extension Just where Output : Equatable {
 /// In contrast with `Publishers.Once`, a `Just` publisher cannot fail with an error.
 public struct Just<Output> : Publisher {
     
-    /// The kind of errors this publisher might publish.
-    ///
-    /// Use `Never` if this `Publisher` does not publish errors.
     public typealias Failure = Never
     
     /// The one element that the publisher emits.
@@ -222,12 +219,6 @@ public struct Just<Output> : Publisher {
         self.output = output
     }
     
-    /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-    ///
-    /// - SeeAlso: `subscribe(_:)`
-    /// - Parameters:
-    ///     - subscriber: The subscriber to attach to this `Publisher`.
-    ///                   once attached it can begin to receive values.
     public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, S.Failure == Just<Output>.Failure {
         let s = Inner(pub: self, sub: subscriber)
         subscriber.receive(subscription: s)
