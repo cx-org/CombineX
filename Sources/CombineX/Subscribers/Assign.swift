@@ -54,10 +54,6 @@ extension Subscribers {
             return "Assign \(Root.self)"
         }
         
-        /// The custom mirror for this instance.
-        ///
-        /// If this type has value semantics, the mirror should be unaffected by
-        /// subsequent mutations of the instance.
         final public var customMirror: Mirror {
             return Mirror(self, children: [
                 "object": self.object as Any,
@@ -66,7 +62,6 @@ extension Subscribers {
             ])
         }
         
-        /// A custom playground description for this instance.
         final public var playgroundDescription: Any {
             return self.description
         }

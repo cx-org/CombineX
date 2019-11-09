@@ -17,15 +17,10 @@ public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertibl
         return "AnySubscriber"
     }
     
-    /// The custom mirror for this instance.
-    ///
-    /// If this type has value semantics, the mirror should be unaffected by
-    /// subsequent mutations of the instance.
     public var customMirror: Mirror {
         return Mirror(self, children: EmptyCollection())
     }
     
-    /// A custom playground description for this instance.
     public var playgroundDescription: Any {
         return self.description
     }
