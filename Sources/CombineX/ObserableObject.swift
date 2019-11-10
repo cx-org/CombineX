@@ -71,7 +71,6 @@ extension ObservableObject where Self.ObjectWillChangePublisher == ObservableObj
     }
     #endif
     
-    /// A publisher that emits before the object has changed.
     public var objectWillChange: ObservableObjectPublisher {
         #if canImport(Runtime)
         return globalObjectWillChangeCache.value(for: self) {
