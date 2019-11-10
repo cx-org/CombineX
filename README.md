@@ -11,7 +11,7 @@
 
 🐱
 
-> Disclaimer: we are doing our best to move toward the goal of "Exactly the Same", but we must admit that there is still a long way to go. Therefore, we do not recommend using 'CombineX' in a serious production environment. It is encouraged to use `CombineX` in experimental personal projects. Welcome to feedback your experience! Our plan is to release a trustable 0.9.0 by the end of 2019, when 1.0.0 will be just one step away.
+> Disclaimer: we are doing our best to move toward the goal of "Exactly the Same", but we must admit that there is still a long way to go. Therefore, we do not recommend using `CombineX` in a serious production environment **for the time being**. It is encouraged to use `CombineX` in experimental personal projects. Welcome to feedback your experience! Our plan is to release a trustable 0.9.0 by the end of 2019, when 1.0.0 will be just one step away.
 
 ## Support
 
