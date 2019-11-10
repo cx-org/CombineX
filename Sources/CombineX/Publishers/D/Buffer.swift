@@ -47,14 +47,23 @@ extension Publishers {
         
         public typealias Failure = Upstream.Failure
         
+        /// The publisher from which this publisher receives elements.
         public let upstream: Upstream
         
+        /// The maximum number of elements to store.
         public let size: Int
         
+        /// The strategy for initially populating the buffer.
         public let prefetch: Publishers.PrefetchStrategy
         
+        /// The action to take when the buffer becomes full.
         public let whenFull: Publishers.BufferingStrategy<Upstream.Failure>
         
+        /// Creates a publisher that buffers elements received from an upstream publisher.
+        /// - Parameter upstream: The publisher from which this publisher receives elements.
+        /// - Parameter size: The maximum number of elements to store.
+        /// - Parameter prefetch: The strategy for initially populating the buffer.
+        /// - Parameter whenFull: The action to take when the buffer becomes full.
         public init(upstream: Upstream, size: Int, prefetch: Publishers.PrefetchStrategy, whenFull: Publishers.BufferingStrategy<Publishers.Buffer<Upstream>.Failure>) {
             self.upstream = upstream
             self.size = size

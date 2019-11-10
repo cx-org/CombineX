@@ -1,5 +1,8 @@
 extension Publisher {
     
+    /// Wraps this publisher with a type eraser.
+    ///
+    /// Use `eraseToAnyPublisher()` to expose an instance of AnyPublisher to the downstream subscriber, rather than this publisher’s actual type.
     public func eraseToAnyPublisher() -> AnyPublisher<Self.Output, Self.Failure> {
         return AnyPublisher(self)
     }
