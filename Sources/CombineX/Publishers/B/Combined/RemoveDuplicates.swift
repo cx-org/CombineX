@@ -10,6 +10,8 @@ extension Publisher where Self.Output : Equatable {
 
 extension Publisher {
     
+    /// Publishes only elements that don’t match the previous element, as evaluated by a provided closure.
+    /// - Parameter predicate: A closure to evaluate whether two elements are equivalent, for purposes of filtering. Return `true` from this closure to indicate that the second element is a duplicate of the first.
     public func removeDuplicates(by predicate: @escaping (Self.Output, Self.Output) -> Bool) -> Publishers.RemoveDuplicates<Self> {
         return .init(upstream: self, predicate: predicate)
     }
@@ -17,31 +19,27 @@ extension Publisher {
 
 extension Publishers {
     
+    /// A publisher that publishes only elements that don’t match the previous element.
     public struct RemoveDuplicates<Upstream> : Publisher where Upstream : Publisher {
         
-        /// The kind of values published by this publisher.
         public typealias Output = Upstream.Output
         
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = Upstream.Failure
         
+        /// The publisher from which this publisher receives elements.
         public let upstream: Upstream
         
+        /// A closure to evaluate whether two elements are equivalent, for purposes of filtering.
         public let predicate: (Upstream.Output, Upstream.Output) -> Bool
         
+        /// Creates a publisher that publishes only elements that don’t match the previous element, as evaluated by a provided closure.
+        /// - Parameter upstream: The publisher from which this publisher receives elements.
+        /// - Parameter predicate: A closure to evaluate whether two elements are equivalent, for purposes of filtering. Return `true` from this closure to indicate that the second element is a duplicate of the first.
         public init(upstream: Upstream, predicate: @escaping (Publishers.RemoveDuplicates<Upstream>.Output, Publishers.RemoveDuplicates<Upstream>.Output) -> Bool) {
             self.upstream = upstream
             self.predicate = predicate
         }
         
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             self.upstream
                 .tryRemoveDuplicates(by: self.predicate)

@@ -39,7 +39,6 @@ extension Result.CX {
     /// In contrast with `Optional`, a `Once` publisher always sends one value (unless it terminates with an error).
     public struct Publisher: CombineX.Publisher {
 
-        /// The kind of values published by this publisher.
         public typealias Output = Success
 
         /// The result to deliver to each subscriber.
@@ -67,12 +66,6 @@ extension Result.CX {
             self.result = .failure(failure)
         }
 
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Success == S.Input, Failure == S.Failure, S : Subscriber {
             switch result {
             case .failure(let e):

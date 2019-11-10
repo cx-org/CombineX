@@ -71,7 +71,6 @@ extension ObservableObject where Self.ObjectWillChangePublisher == ObservableObj
     }
     #endif
     
-    /// A publisher that emits before the object has changed.
     public var objectWillChange: ObservableObjectPublisher {
         #if canImport(Runtime)
         return globalObjectWillChangeCache.value(for: self) {
@@ -92,13 +91,9 @@ extension ObservableObject where Self.ObjectWillChangePublisher == ObservableObj
 
 /// The default publisher of an `ObservableObject`.
 final public class ObservableObjectPublisher : Publisher {
-
-    /// The kind of values published by this publisher.
+    
     public typealias Output = Void
-
-    /// The kind of errors this publisher might publish.
-    ///
-    /// Use `Never` if this `Publisher` does not publish errors.
+    
     public typealias Failure = Never
     
     private let subject = PassthroughSubject<Output, Failure>()
@@ -107,12 +102,6 @@ final public class ObservableObjectPublisher : Publisher {
         // Do nothing
     }
 
-    /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-    ///
-    /// - SeeAlso: `subscribe(_:)`
-    /// - Parameters:
-    ///     - subscriber: The subscriber to attach to this `Publisher`.
-    ///                   once attached it can begin to receive values.
     final public func receive<S>(subscriber: S) where S : Subscriber, S.Failure == ObservableObjectPublisher.Failure, S.Input == ObservableObjectPublisher.Output {
         self.subject.receive(subscriber: subscriber)
     }

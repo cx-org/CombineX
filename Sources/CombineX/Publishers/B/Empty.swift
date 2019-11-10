@@ -26,12 +26,6 @@ public struct Empty<Output, Failure> : Publisher, Equatable where Failure : Erro
     /// If `true`, the publisher finishes immediately after sending a subscription to the subscriber. If `false`, it never completes.
     public let completeImmediately: Bool
     
-    /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-    ///
-    /// - SeeAlso: `subscribe(_:)`
-    /// - Parameters:
-    ///     - subscriber: The subscriber to attach to this `Publisher`.
-    ///                   once attached it can begin to receive values.
     public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
         subscriber.receive(subscription: Subscriptions.empty)
         if completeImmediately {
@@ -39,14 +33,6 @@ public struct Empty<Output, Failure> : Publisher, Equatable where Failure : Erro
         }
     }
     
-    /// Returns a Boolean value indicating whether two values are equal.
-    ///
-    /// Equality is the inverse of inequality. For any values `a` and `b`,
-    /// `a == b` implies that `a != b` is `false`.
-    ///
-    /// - Parameters:
-    ///   - lhs: A value to compare.
-    ///   - rhs: Another value to compare.
     public static func == (lhs: Empty<Output, Failure>, rhs: Empty<Output, Failure>) -> Bool {
         return lhs.completeImmediately == rhs.completeImmediately
     }

@@ -1,13 +1,5 @@
 extension Fail : Equatable where Failure : Equatable {
     
-    /// Returns a Boolean value indicating whether two values are equal.
-    ///
-    /// Equality is the inverse of inequality. For any values `a` and `b`,
-    /// `a == b` implies that `a != b` is `false`.
-    ///
-    /// - Parameters:
-    ///   - lhs: A value to compare.
-    ///   - rhs: Another value to compare.
     public static func == (lhs: Fail<Output, Failure>, rhs: Fail<Output, Failure>) -> Bool {
         return lhs.error == rhs.error
     }
@@ -36,12 +28,6 @@ public struct Fail<Output, Failure> : Publisher where Failure : Error {
     /// The failure to send when terminating the publisher.
     public let error: Failure
     
-    /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-    ///
-    /// - SeeAlso: `subscribe(_:)`
-    /// - Parameters:
-    ///     - subscriber: The subscriber to attach to this `Publisher`.
-    ///                   once attached it can begin to receive values.
     public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
         Result<Output, Failure>
             .failure(self.error)

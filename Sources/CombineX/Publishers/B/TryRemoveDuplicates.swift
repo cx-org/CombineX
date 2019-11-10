@@ -4,6 +4,8 @@ import CXUtility
 
 extension Publisher {
     
+    /// Publishes only elements that don’t match the previous element, as evaluated by a provided error-throwing closure.
+    /// - Parameter predicate: A closure to evaluate whether two elements are equivalent, for purposes of filtering. Return `true` from this closure to indicate that the second element is a duplicate of the first. If this closure throws an error, the publisher terminates with the thrown error.
     public func tryRemoveDuplicates(by predicate: @escaping (Self.Output, Self.Output) throws -> Bool) -> Publishers.TryRemoveDuplicates<Self> {
         return .init(upstream: self, predicate: predicate)
     }
@@ -11,31 +13,27 @@ extension Publisher {
 
 extension Publishers {
     
+    /// A publisher that publishes only elements that don’t match the previous element, as evaluated by a provided error-throwing closure.
     public struct TryRemoveDuplicates<Upstream> : Publisher where Upstream : Publisher {
         
-        /// The kind of values published by this publisher.
         public typealias Output = Upstream.Output
         
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = Error
         
+        /// The publisher from which this publisher receives elements.
         public let upstream: Upstream
         
+        /// An error-throwing closure to evaluate whether two elements are equivalent, for purposes of filtering.
         public let predicate: (Upstream.Output, Upstream.Output) throws -> Bool
         
+        /// Creates a publisher that publishes only elements that don’t match the previous element, as evaluated by a provided error-throwing closure.
+        /// - Parameter upstream: The publisher from which this publisher receives elements.
+        /// - Parameter predicate: An error-throwing closure to evaluate whether two elements are equivalent, for purposes of filtering. Return `true` from this closure to indicate that the second element is a duplicate of the first. If this closure throws an error, the publisher terminates with the thrown error.
         public init(upstream: Upstream, predicate: @escaping (Publishers.TryRemoveDuplicates<Upstream>.Output, Publishers.TryRemoveDuplicates<Upstream>.Output) throws -> Bool) {
             self.upstream = upstream
             self.predicate = predicate
         }
         
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, S.Failure == Publishers.TryRemoveDuplicates<Upstream>.Failure {
             let s = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(s)

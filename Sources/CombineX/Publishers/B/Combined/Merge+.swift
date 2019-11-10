@@ -206,14 +206,6 @@ extension Publishers.Merge8 : Equatable where A : Equatable, B : Equatable, C : 
 
 extension Publishers.MergeMany : Equatable where Upstream : Equatable {
     
-    /// Returns a Boolean value indicating whether two values are equal.
-    ///
-    /// Equality is the inverse of inequality. For any values `a` and `b`,
-    /// `a == b` implies that `a != b` is `false`.
-    ///
-    /// - Parameters:
-    ///   - lhs: A value to compare.
-    ///   - rhs: Another value to compare.
     public static func == (lhs: Publishers.MergeMany<Upstream>, rhs: Publishers.MergeMany<Upstream>) -> Bool {
         return lhs.publishers == rhs.publishers
     }
@@ -224,12 +216,8 @@ extension Publishers {
     /// A publisher created by applying the merge function to three upstream publishers.
     public struct Merge3<A, B, C> : Publisher where A : Publisher, B : Publisher, C : Publisher, A.Failure == B.Failure, A.Output == B.Output, B.Failure == C.Failure, B.Output == C.Output {
         
-        /// The kind of values published by this publisher.
         public typealias Output = A.Output
         
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = A.Failure
         
         public let a: A
@@ -255,12 +243,6 @@ extension Publishers {
                 .eraseToAnyPublisher()
         }
         
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, C.Failure == S.Failure, C.Output == S.Input {
             self.pub.subscribe(subscriber)
         }
@@ -289,12 +271,8 @@ extension Publishers {
     /// A publisher created by applying the merge function to four upstream publishers.
     public struct Merge4<A, B, C, D> : Publisher where A : Publisher, B : Publisher, C : Publisher, D : Publisher, A.Failure == B.Failure, A.Output == B.Output, B.Failure == C.Failure, B.Output == C.Output, C.Failure == D.Failure, C.Output == D.Output {
         
-        /// The kind of values published by this publisher.
         public typealias Output = A.Output
         
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = A.Failure
         
         public let a: A
@@ -324,12 +302,6 @@ extension Publishers {
                 .eraseToAnyPublisher()
         }
         
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, D.Failure == S.Failure, D.Output == S.Input {
             self.pub.subscribe(subscriber)
         }
@@ -354,12 +326,8 @@ extension Publishers {
     /// A publisher created by applying the merge function to five upstream publishers.
     public struct Merge5<A, B, C, D, E> : Publisher where A : Publisher, B : Publisher, C : Publisher, D : Publisher, E : Publisher, A.Failure == B.Failure, A.Output == B.Output, B.Failure == C.Failure, B.Output == C.Output, C.Failure == D.Failure, C.Output == D.Output, D.Failure == E.Failure, D.Output == E.Output {
         
-        /// The kind of values published by this publisher.
         public typealias Output = A.Output
         
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = A.Failure
         
         public let a: A
@@ -393,12 +361,6 @@ extension Publishers {
                 .eraseToAnyPublisher()
         }
         
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, E.Failure == S.Failure, E.Output == S.Input {
             self.pub.subscribe(subscriber)
         }
@@ -419,12 +381,8 @@ extension Publishers {
     /// A publisher created by applying the merge function to six upstream publishers.
     public struct Merge6<A, B, C, D, E, F> : Publisher where A : Publisher, B : Publisher, C : Publisher, D : Publisher, E : Publisher, F : Publisher, A.Failure == B.Failure, A.Output == B.Output, B.Failure == C.Failure, B.Output == C.Output, C.Failure == D.Failure, C.Output == D.Output, D.Failure == E.Failure, D.Output == E.Output, E.Failure == F.Failure, E.Output == F.Output {
         
-        /// The kind of values published by this publisher.
         public typealias Output = A.Output
         
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = A.Failure
         
         public let a: A
@@ -462,12 +420,6 @@ extension Publishers {
                 .eraseToAnyPublisher()
         }
         
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, F.Failure == S.Failure, F.Output == S.Input {
             self.pub.subscribe(subscriber)
         }
@@ -484,12 +436,8 @@ extension Publishers {
     /// A publisher created by applying the merge function to seven upstream publishers.
     public struct Merge7<A, B, C, D, E, F, G> : Publisher where A : Publisher, B : Publisher, C : Publisher, D : Publisher, E : Publisher, F : Publisher, G : Publisher, A.Failure == B.Failure, A.Output == B.Output, B.Failure == C.Failure, B.Output == C.Output, C.Failure == D.Failure, C.Output == D.Output, D.Failure == E.Failure, D.Output == E.Output, E.Failure == F.Failure, E.Output == F.Output, F.Failure == G.Failure, F.Output == G.Output {
         
-        /// The kind of values published by this publisher.
         public typealias Output = A.Output
         
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = A.Failure
         
         public let a: A
@@ -531,12 +479,6 @@ extension Publishers {
                 .eraseToAnyPublisher()
         }
         
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, G.Failure == S.Failure, G.Output == S.Input {
             self.pub.subscribe(subscriber)
         }
@@ -549,12 +491,8 @@ extension Publishers {
     /// A publisher created by applying the merge function to eight upstream publishers.
     public struct Merge8<A, B, C, D, E, F, G, H> : Publisher where A : Publisher, B : Publisher, C : Publisher, D : Publisher, E : Publisher, F : Publisher, G : Publisher, H : Publisher, A.Failure == B.Failure, A.Output == B.Output, B.Failure == C.Failure, B.Output == C.Output, C.Failure == D.Failure, C.Output == D.Output, D.Failure == E.Failure, D.Output == E.Output, E.Failure == F.Failure, E.Output == F.Output, F.Failure == G.Failure, F.Output == G.Output, G.Failure == H.Failure, G.Output == H.Output {
         
-        /// The kind of values published by this publisher.
         public typealias Output = A.Output
         
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = A.Failure
         
         public let a: A
@@ -600,12 +538,6 @@ extension Publishers {
                 .eraseToAnyPublisher()
         }
         
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, H.Failure == S.Failure, H.Output == S.Input {
             self.pub.subscribe(subscriber)
         }
@@ -613,12 +545,8 @@ extension Publishers {
     
     public struct MergeMany<Upstream> : Publisher where Upstream : Publisher {
         
-        /// The kind of values published by this publisher.
         public typealias Output = Upstream.Output
         
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = Upstream.Failure
         
         public let publishers: [Upstream]
@@ -643,12 +571,6 @@ extension Publishers {
                 .eraseToAnyPublisher()
         }
         
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             
             self.pub.subscribe(subscriber)

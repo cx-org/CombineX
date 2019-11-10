@@ -37,12 +37,8 @@ extension CXWrappers.NotificationCenter {
     /// A publisher that emits elements when broadcasting notifications.
     public struct NotificationPublisher : CombineX.Publisher {
 
-        /// The kind of values published by this publisher.
         public typealias Output = Notification
 
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = Never
 
         /// The notification center this publisher uses as a source.
@@ -66,12 +62,6 @@ extension CXWrappers.NotificationCenter {
             self.object = object
         }
 
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, S.Failure == NotificationPublisher.Failure, S.Input == NotificationPublisher.Output {
             let subject = PassthroughSubject<Output, Failure>()
             let observer = self.center.addObserver(forName: self.name, object: self.object, queue: nil) { (n) in

@@ -52,42 +52,14 @@ extension Subscribers {
             self.receiveValue = receiveValue
         }
         
-        /// A textual representation of this instance.
-        ///
-        /// Calling this property directly is discouraged. Instead, convert an
-        /// instance of any type to a string by using the `String(describing:)`
-        /// initializer. This initializer works with any type, and uses the custom
-        /// `description` property for types that conform to
-        /// `CustomStringConvertible`:
-        ///
-        ///     struct Point: CustomStringConvertible {
-        ///         let x: Int, y: Int
-        ///
-        ///         var description: String {
-        ///             return "(\(x), \(y))"
-        ///         }
-        ///     }
-        ///
-        ///     let p = Point(x: 21, y: 30)
-        ///     let s = String(describing: p)
-        ///     print(s)
-        ///     // Prints "(21, 30)"
-        ///
-        /// The conversion of `p` to a string in the assignment to `s` uses the
-        /// `Point` type's `description` property.
         final public var description: String {
             return "Sink"
         }
         
-        /// The custom mirror for this instance.
-        ///
-        /// If this type has value semantics, the mirror should be unaffected by
-        /// subsequent mutations of the instance.
         final public var customMirror: Mirror {
             return Mirror(self, children: EmptyCollection())
         }
         
-        /// A custom playground description for this instance.
         final public var playgroundDescription: Any {
             return self.description
         }
@@ -100,10 +72,6 @@ extension Subscribers {
 
         private let state = Atom<State>(val: .unsubscribed)
         
-        /// Tells the subscriber that it has successfully subscribed to the publisher and may request items.
-        ///
-        /// Use the received `Subscription` to request items from the publisher.
-        /// - Parameter subscription: A subscription that represents the connection between publisher and subscriber.
         final public func receive(subscription: Subscription) {
             var didSet = false
             self.state.withLockMutating { state in
@@ -122,24 +90,16 @@ extension Subscribers {
             }
         }
         
-        /// Tells the subscriber that the publisher has produced an element.
-        ///
-        /// - Parameter input: The published element.
-        /// - Returns: A `Demand` instance indicating how many more elements the subcriber expects to receive.
         final public func receive(_ value: Input) -> Subscribers.Demand {
             self.receiveValue(value)
             return .none
         }
         
-        /// Tells the subscriber that the publisher has completed publishing, either normally or with an error.
-        ///
-        /// - Parameter completion: A `Completion` case indicating whether publishing completed normally or with an error.
         final public func receive(completion: Subscribers.Completion<Failure>) {
             self.receiveCompletion(completion)
             _ = self.state.exchange(with: .closed)
         }
         
-        /// Cancel the activity.
         final public func cancel() {
             let oldState = self.state.exchange(with: .closed)
             if case let .subscribed(subscription) = oldState {

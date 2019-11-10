@@ -18,14 +18,6 @@ extension Publisher {
 
 extension Publishers.CollectByCount : Equatable where Upstream : Equatable {
     
-    /// Returns a Boolean value indicating whether two values are equal.
-    ///
-    /// Equality is the inverse of inequality. For any values `a` and `b`,
-    /// `a == b` implies that `a != b` is `false`.
-    ///
-    /// - Parameters:
-    ///   - lhs: A value to compare.
-    ///   - rhs: Another value to compare.
     public static func == (lhs: Publishers.CollectByCount<Upstream>, rhs: Publishers.CollectByCount<Upstream>) -> Bool {
         return lhs.upstream == rhs.upstream && lhs.count == rhs.count
     }
@@ -36,12 +28,8 @@ extension Publishers {
     /// A publisher that buffers a maximum number of items.
     public struct CollectByCount<Upstream> : Publisher where Upstream : Publisher {
         
-        /// The kind of values published by this publisher.
         public typealias Output = [Upstream.Output]
         
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = Upstream.Failure
         
         /// The publisher from which this publisher receives elements.
@@ -55,12 +43,6 @@ extension Publishers {
             self.count = count
         }
         
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, S.Input == [Upstream.Output] {
             let s = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(s)

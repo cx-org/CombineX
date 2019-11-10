@@ -13,42 +13,14 @@ public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertibl
     @usableFromInline
     let box: SubscriberBox<Input, Failure>
     
-    /// A textual representation of this instance.
-    ///
-    /// Calling this property directly is discouraged. Instead, convert an
-    /// instance of any type to a string by using the `String(describing:)`
-    /// initializer. This initializer works with any type, and uses the custom
-    /// `description` property for types that conform to
-    /// `CustomStringConvertible`:
-    ///
-    ///     struct Point: CustomStringConvertible {
-    ///         let x: Int, y: Int
-    ///
-    ///         var description: String {
-    ///             return "(\(x), \(y))"
-    ///         }
-    ///     }
-    ///
-    ///     let p = Point(x: 21, y: 30)
-    ///     let s = String(describing: p)
-    ///     print(s)
-    ///     // Prints "(21, 30)"
-    ///
-    /// The conversion of `p` to a string in the assignment to `s` uses the
-    /// `Point` type's `description` property.
     public var description: String {
         return "AnySubscriber"
     }
     
-    /// The custom mirror for this instance.
-    ///
-    /// If this type has value semantics, the mirror should be unaffected by
-    /// subsequent mutations of the instance.
     public var customMirror: Mirror {
         return Mirror(self, children: EmptyCollection())
     }
     
-    /// A custom playground description for this instance.
     public var playgroundDescription: Any {
         return self.description
     }
@@ -79,27 +51,16 @@ public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertibl
         self.combineIdentifier = CombineIdentifier()
     }
     
-    /// Tells the subscriber that it has successfully subscribed to the publisher and may request items.
-    ///
-    /// Use the received `Subscription` to request items from the publisher.
-    /// - Parameter subscription: A subscription that represents the connection between publisher and subscriber.
     @inlinable
     public func receive(subscription: Subscription) {
         self.box.receive(subscription: subscription)
     }
     
-    /// Tells the subscriber that the publisher has produced an element.
-    ///
-    /// - Parameter input: The published element.
-    /// - Returns: A `Demand` instance indicating how many more elements the subcriber expects to receive.
     @inlinable
     public func receive(_ value: Input) -> Subscribers.Demand {
         return self.box.receive(value)
     }
     
-    /// Tells the subscriber that the publisher has completed publishing, either normally or with an error.
-    ///
-    /// - Parameter completion: A `Completion` case indicating whether publishing completed normally or with an error.
     @inlinable
     public func receive(completion: Subscribers.Completion<Failure>) {
         self.box.receive(completion: completion)

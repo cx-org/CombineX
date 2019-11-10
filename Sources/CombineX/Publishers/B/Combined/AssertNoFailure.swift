@@ -21,12 +21,8 @@ extension Publishers {
     /// Use this function for internal sanity checks that are active during testing but do not impact performance of shipping code.
     public struct AssertNoFailure<Upstream> : Publisher where Upstream : Publisher {
         
-        /// The kind of values published by this publisher.
         public typealias Output = Upstream.Output
         
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = Never
         
         /// The publisher from which this publisher receives elements.
@@ -48,12 +44,6 @@ extension Publishers {
             self.line = line
         }
         
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, S.Failure == Publishers.AssertNoFailure<Upstream>.Failure {
             self.upstream
                 .mapError {

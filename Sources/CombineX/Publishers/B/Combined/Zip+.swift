@@ -70,14 +70,6 @@ extension Publisher {
 /// - Returns: `true` if the corresponding upstream publishers of each zip publisher are equal, `false` otherwise.
 extension Publishers.Zip3 : Equatable where A : Equatable, B : Equatable, C : Equatable {
     
-    /// Returns a Boolean value indicating whether two values are equal.
-    ///
-    /// Equality is the inverse of inequality. For any values `a` and `b`,
-    /// `a == b` implies that `a != b` is `false`.
-    ///
-    /// - Parameters:
-    ///   - lhs: A value to compare.
-    ///   - rhs: Another value to compare.
     public static func == (lhs: Publishers.Zip3<A, B, C>, rhs: Publishers.Zip3<A, B, C>) -> Bool {
         return lhs.a == rhs.a && lhs.b == rhs.b && lhs.c == rhs.c
     }
@@ -91,14 +83,6 @@ extension Publishers.Zip3 : Equatable where A : Equatable, B : Equatable, C : Eq
 /// - Returns: `true` if the corresponding upstream publishers of each zip publisher are equal, `false` otherwise.
 extension Publishers.Zip4 : Equatable where A : Equatable, B : Equatable, C : Equatable, D : Equatable {
     
-    /// Returns a Boolean value indicating whether two values are equal.
-    ///
-    /// Equality is the inverse of inequality. For any values `a` and `b`,
-    /// `a == b` implies that `a != b` is `false`.
-    ///
-    /// - Parameters:
-    ///   - lhs: A value to compare.
-    ///   - rhs: Another value to compare.
     public static func == (lhs: Publishers.Zip4<A, B, C, D>, rhs: Publishers.Zip4<A, B, C, D>) -> Bool {
         return lhs.a == rhs.a && lhs.b == rhs.b && lhs.c == rhs.c && lhs.d == rhs.d
     }
@@ -110,12 +94,8 @@ extension Publishers {
     /// A publisher created by applying the zip function to three upstream publishers.
     public struct Zip3<A, B, C> : Publisher where A : Publisher, B : Publisher, C : Publisher, A.Failure == B.Failure, B.Failure == C.Failure {
         
-        /// The kind of values published by this publisher.
         public typealias Output = (A.Output, B.Output, C.Output)
         
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = A.Failure
         
         public let a: A
@@ -130,12 +110,6 @@ extension Publishers {
             self.c = c
         }
         
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, C.Failure == S.Failure, S.Input == (A.Output, B.Output, C.Output) {
             self.a.zip(self.b).zip(self.c)
                 .map {
@@ -148,12 +122,8 @@ extension Publishers {
     /// A publisher created by applying the zip function to four upstream publishers.
     public struct Zip4<A, B, C, D> : Publisher where A : Publisher, B : Publisher, C : Publisher, D : Publisher, A.Failure == B.Failure, B.Failure == C.Failure, C.Failure == D.Failure {
         
-        /// The kind of values published by this publisher.
         public typealias Output = (A.Output, B.Output, C.Output, D.Output)
         
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = A.Failure
         
         public let a: A
@@ -171,12 +141,6 @@ extension Publishers {
             self.d = d
         }
         
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, D.Failure == S.Failure, S.Input == (A.Output, B.Output, C.Output, D.Output) {
             self.a.zip(self.b).zip(self.c).zip(self.d)
                 .map {

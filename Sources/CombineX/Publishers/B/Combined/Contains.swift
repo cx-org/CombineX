@@ -28,12 +28,8 @@ extension Publishers {
     /// A publisher that emits a Boolean value when a specified element is received from its upstream publisher.
     public struct Contains<Upstream> : Publisher where Upstream : Publisher, Upstream.Output : Equatable {
         
-        /// The kind of values published by this publisher.
         public typealias Output = Bool
         
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = Upstream.Failure
         
         /// The publisher from which this publisher receives elements.
@@ -47,12 +43,6 @@ extension Publishers {
             self.output = output
         }
         
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, S.Input == Publishers.Contains<Upstream>.Output {
             self.upstream
                 .contains {

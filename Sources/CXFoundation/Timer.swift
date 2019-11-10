@@ -33,30 +33,25 @@ extension CXWrappers.Timer {
     public static func publish(every interval: TimeInterval, tolerance: TimeInterval? = nil, on runLoop: RunLoop, in mode: RunLoop.Mode, options: CXWrappers.RunLoop.SchedulerOptions? = nil) -> TimerPublisher {
         return .init(interval: interval, tolerance: tolerance, runLoop: runLoop, mode: mode, options: options)
     }
-    
 }
 
 extension CXWrappers.Timer {
     
     /// A publisher that repeatedly emits the current date on a given interval.
     final public class TimerPublisher : ConnectablePublisher {
-
-        /// The kind of values published by this publisher.
+        
         public typealias Output = Date
-
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
+        
         public typealias Failure = Never
-
+        
         final public let interval: TimeInterval
-
+        
         final public let tolerance: TimeInterval?
-
+        
         final public let runLoop: RunLoop
-
+        
         final public let mode: RunLoop.Mode
-
+        
         final public let options: CXWrappers.RunLoop.SchedulerOptions?
         
         private typealias Subject = PassthroughSubject<Date, Never>
@@ -64,7 +59,7 @@ extension CXWrappers.Timer {
         private let multicast: Multicast
         
         let timer: Timer
-
+        
         /// Creates a publisher that repeatedly emits the current date on the given interval.
         ///
         /// - Parameters:
@@ -88,24 +83,15 @@ extension CXWrappers.Timer {
             }
             self.runLoop.add(self.timer, forMode: self.mode)
         }
-
+        
         deinit {
             self.timer.invalidate()
         }
         
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
         final public func receive<S>(subscriber: S) where S : Subscriber, S.Failure == TimerPublisher.Failure, S.Input == TimerPublisher.Output {
             self.multicast.receive(subscriber: subscriber)
         }
-
-        /// Connects to the publisher and returns a `Cancellable` instance with which to cancel publishing.
-        ///
-        /// - Returns: A `Cancellable` instance that can be used to cancel publishing.
+        
         final public func connect() -> Cancellable {
             return self.multicast.connect()
         }

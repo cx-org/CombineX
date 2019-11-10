@@ -32,12 +32,8 @@ extension Publishers {
     /// A publisher that replaces any errors in the stream with a provided element.
     public struct ReplaceError<Upstream> : Publisher where Upstream : Publisher {
         
-        /// The kind of values published by this publisher.
         public typealias Output = Upstream.Output
         
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = Never
         
         /// The element with which to replace errors from the upstream publisher.
@@ -51,12 +47,6 @@ extension Publishers {
             self.output = output
         }
         
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, S.Failure == Publishers.ReplaceError<Upstream>.Failure {
             let s = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(s)

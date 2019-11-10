@@ -16,9 +16,6 @@ extension Publishers {
     /// A publisher that applies a closure to all received elements and produces an accumulated value when the upstream publisher finishes.
     public struct Reduce<Upstream, Output> : Publisher where Upstream : Publisher {
         
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = Upstream.Failure
         
         /// The publisher from which this publisher receives elements.
@@ -36,12 +33,6 @@ extension Publishers {
             self.nextPartialResult = nextPartialResult
         }
         
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, Upstream.Failure == S.Failure {
             self.upstream
                 .tryReduce(self.initial, self.nextPartialResult)

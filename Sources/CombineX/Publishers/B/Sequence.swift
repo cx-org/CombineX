@@ -226,14 +226,6 @@ extension Publishers.Sequence where Elements : RangeReplaceableCollection {
 
 extension Publishers.Sequence : Equatable where Elements : Equatable {
     
-    /// Returns a Boolean value indicating whether two values are equal.
-    ///
-    /// Equality is the inverse of inequality. For any values `a` and `b`,
-    /// `a == b` implies that `a != b` is `false`.
-    ///
-    /// - Parameters:
-    ///   - lhs: A value to compare.
-    ///   - rhs: Another value to compare.
     public static func == (lhs: Publishers.Sequence<Elements, Failure>, rhs: Publishers.Sequence<Elements, Failure>) -> Bool {
         return lhs.sequence == rhs.sequence
     }
@@ -246,7 +238,6 @@ extension Publishers {
     /// When the publisher exhausts the elements in the sequence, the next request causes the publisher to finish.
     public struct Sequence<Elements, Failure> : Publisher where Elements : Swift.Sequence, Failure : Error {
         
-        /// The kind of values published by this publisher.
         public typealias Output = Elements.Element
         
         /// The sequence of elements to publish.
@@ -259,12 +250,6 @@ extension Publishers {
             self.sequence = sequence
         }
         
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where Failure == S.Failure, S : Subscriber, Elements.Element == S.Input {
             let s = Inner(sequence: self.sequence, sub: subscriber)
             subscriber.receive(subscription: s)

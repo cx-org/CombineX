@@ -33,12 +33,6 @@ final public class CurrentValueSubject<Output, Failure> : Subject where Failure 
         self.current = value
     }
     
-    /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-    ///
-    /// - SeeAlso: `subscribe(_:)`
-    /// - Parameters:
-    ///     - subscriber: The subscriber to attach to this `Publisher`.
-    ///                   once attached it can begin to receive values.
     final public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
         self.downstreamLock.lock()
         
@@ -73,9 +67,6 @@ final public class CurrentValueSubject<Output, Failure> : Subject where Failure 
         }
     }
     
-    /// Sends a value to the subscriber.
-    ///
-    /// - Parameter value: The value to send.
     final public func send(_ input: Output) {
         self.downstreamLock.lock()
         guard self.completion == nil else {
@@ -91,9 +82,6 @@ final public class CurrentValueSubject<Output, Failure> : Subject where Failure 
         }
     }
     
-    /// Sends a completion signal to the subscriber.
-    ///
-    /// - Parameter completion: A `Completion` instance which indicates whether publishing has finished normally or failed with an error.
     final public func send(completion: Subscribers.Completion<Failure>) {
         self.downstreamLock.lock()
         guard self.completion == nil else {
@@ -116,7 +104,6 @@ final public class CurrentValueSubject<Output, Failure> : Subject where Failure 
         self.downstreamLock.unlock()
     }
     
-    /// Provides this Subject an opportunity to establish demand for any new upstream subscriptions (say via, ```Publisher.subscribe<S: Subject>(_: Subject)`
     final public func send(subscription: Subscription) {
         self.upstreamLock.lock()
         self.upstreamSubscriptions.append(subscription)

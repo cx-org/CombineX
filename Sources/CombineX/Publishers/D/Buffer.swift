@@ -4,74 +4,33 @@ import CXUtility
 
 extension Publisher {
     
+    /// Buffers elements received from an upstream publisher.
+    /// - Parameter size: The maximum number of elements to store.
+    /// - Parameter prefetch: The strategy for initially populating the buffer.
+    /// - Parameter whenFull: The action to take when the buffer becomes full.
     public func buffer(size: Int, prefetch: Publishers.PrefetchStrategy, whenFull: Publishers.BufferingStrategy<Self.Failure>) -> Publishers.Buffer<Self> {
         return .init(upstream: self, size: size, prefetch: prefetch, whenFull: whenFull)
     }
 }
 
-extension Publishers.PrefetchStrategy : Equatable { }
-
-extension Publishers.PrefetchStrategy : Hashable { }
-
 extension Publishers {
     
-    public enum PrefetchStrategy {
+    /// A strategy for filling a buffer.
+    ///
+    /// * keepFull: A strategy to fill the buffer at subscription time, and keep it full thereafter.
+    /// * byRequest: A strategy that avoids prefetching and instead performs requests on demand.
+    public enum PrefetchStrategy: Equatable, Hashable {
         
         case keepFull
         
         case byRequest
-        
-        /// Returns a Boolean value indicating whether two values are equal.
-        ///
-        /// Equality is the inverse of inequality. For any values `a` and `b`,
-        /// `a == b` implies that `a != b` is `false`.
-        ///
-        /// - Parameters:
-        ///   - lhs: A value to compare.
-        ///   - rhs: Another value to compare.
-        public static func == (a: Publishers.PrefetchStrategy, b: Publishers.PrefetchStrategy) -> Bool {
-            switch (a, b) {
-            case (.keepFull, .keepFull):
-                return true
-            case (.byRequest, .byRequest):
-                return true
-            default:
-                return false
-            }
-        }
-        
-        /// The hash value.
-        ///
-        /// Hash values are not guaranteed to be equal across different executions of
-        /// your program. Do not save hash values to use during a future execution.
-        ///
-        /// - Important: `hashValue` is deprecated as a `Hashable` requirement. To
-        ///   conform to `Hashable`, implement the `hash(into:)` requirement instead.
-//        public var hashValue: Int { get }
-        
-        /// Hashes the essential components of this value by feeding them into the
-        /// given hasher.
-        ///
-        /// Implement this method to conform to the `Hashable` protocol. The
-        /// components used for hashing must be the same as the components compared
-        /// in your type's `==` operator implementation. Call `hasher.combine(_:)`
-        /// with each of these components.
-        ///
-        /// - Important: Never call `finalize()` on `hasher`. Doing so may become a
-        ///   compile-time error in the future.
-        ///
-        /// - Parameter hasher: The hasher to use when combining the components
-        ///   of this instance.
-        public func hash(into hasher: inout Hasher) {
-            switch self {
-            case .keepFull:
-                hasher.combine(0)
-            case .byRequest:
-                hasher.combine(1)
-            }
-        }
     }
     
+    /// A strategy for handling exhaustion of a buffer’s capacity.
+    ///
+    /// * dropNewest: When full, discard the newly-received element without buffering it.
+    /// * dropOldest: When full, remove the least recently-received element from the buffer.
+    /// * customError: When full, execute the closure to provide a custom error.
     public enum BufferingStrategy<Failure> where Failure : Error {
         
         case dropNewest
@@ -81,24 +40,30 @@ extension Publishers {
         case customError(() -> Failure)
     }
     
+    /// A publisher that buffers elements received from an upstream publisher.
     public struct Buffer<Upstream> : Publisher where Upstream : Publisher {
         
-        /// The kind of values published by this publisher.
         public typealias Output = Upstream.Output
         
-        /// The kind of errors this publisher might publish.
-        ///
-        /// Use `Never` if this `Publisher` does not publish errors.
         public typealias Failure = Upstream.Failure
         
+        /// The publisher from which this publisher receives elements.
         public let upstream: Upstream
         
+        /// The maximum number of elements to store.
         public let size: Int
         
+        /// The strategy for initially populating the buffer.
         public let prefetch: Publishers.PrefetchStrategy
         
+        /// The action to take when the buffer becomes full.
         public let whenFull: Publishers.BufferingStrategy<Upstream.Failure>
         
+        /// Creates a publisher that buffers elements received from an upstream publisher.
+        /// - Parameter upstream: The publisher from which this publisher receives elements.
+        /// - Parameter size: The maximum number of elements to store.
+        /// - Parameter prefetch: The strategy for initially populating the buffer.
+        /// - Parameter whenFull: The action to take when the buffer becomes full.
         public init(upstream: Upstream, size: Int, prefetch: Publishers.PrefetchStrategy, whenFull: Publishers.BufferingStrategy<Publishers.Buffer<Upstream>.Failure>) {
             self.upstream = upstream
             self.size = size
@@ -106,12 +71,6 @@ extension Publishers {
             self.whenFull = whenFull
         }
         
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
         public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             switch self.prefetch {
             case .keepFull:
@@ -126,6 +85,7 @@ extension Publishers {
 }
 
 // MARK: - KeepFull
+
 extension Publishers.Buffer {
     
     private final class KeepFull<S>:
@@ -294,6 +254,7 @@ extension Publishers.Buffer {
 }
 
 // MARK: - ByRequest
+
 extension Publishers.Buffer {
     
     private final class ByRequest<S>:
