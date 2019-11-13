@@ -46,10 +46,10 @@ github "cx-org/CombineX" "master"
 
 部分特性在某些安装方式下不可用。
 
- | Swift PM | CocoaPods | Carthage
---- | --- | --- | ---
-CXShim | Yes | No | No
-ObserableObject | Yes | No | No
+| Swift PM | CocoaPods | Carthage |
+| --- | --- | --- | --- |
+| CXShim | Yes | No | No |
+| ObserableObject | Yes | No | No |
 
 ## 相关项目
 

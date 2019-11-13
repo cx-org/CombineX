@@ -48,10 +48,10 @@ github "cx-org/CombineX" "master"
 
 Some features are not available with specific PM.
 
- | Swift PM | CocoaPods | Carthage
---- | --- | --- | ---
-CXShim | Yes | No | No
-ObserableObject | Yes | No | No
+| Swift PM | CocoaPods | Carthage |
+| --- | --- | --- | --- |
+| CXShim | Yes | No | No |
+| ObserableObject | Yes | No | No |
 
 ## Related Projects
 
