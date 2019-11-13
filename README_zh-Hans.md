@@ -4,7 +4,7 @@
 [![Release](https://img.shields.io/github/release-pre/cx-org/combinex)](https://github.com/cx-org/CombineX/releases)
 ![Install](https://img.shields.io/badge/install-Swift_PM%20%7C%20CocoaPods%20%7C%20Carthage-ff69b4)
 ![Supported Platform](https://img.shields.io/badge/platform-Linux%20%7C%20macOS%20%7C%20iOS%20%7C%20watchOS%20%7C%20tvOS-lightgrey)
-[![Dicord](https://img.shields.io/badge/chat-discord-9cf)](https://discord.gg/9vzqgZx)
+[![Discord](https://img.shields.io/badge/chat-discord-9cf)](https://discord.gg/9vzqgZx)
 
 对 Apple [Combine](https://developer.apple.com/documentation/combine) 的开源实现。
 
