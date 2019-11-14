@@ -65,7 +65,7 @@ enum CombineImplementation {
 
     var extraPackageDependencies: [Package.Dependency] {
         switch self {
-        case .openCombine:  return [.package(url: "https://github.com/broadwaylamb/OpenCombine", .branch("master"))]
+        case .openCombine:  return [.package(url: "https://github.com/broadwaylamb/OpenCombine", .exact("0.5.0"))]
         default:            return []
         }
     }
