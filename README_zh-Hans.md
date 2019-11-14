@@ -28,25 +28,25 @@
 
 ```swift
 dependencies.append(
-    .package(url: "https://github.com/cx-org/CombineX", .branch("master"))
+    .package(url: "https://github.com/cx-org/CombineX", from: "0.1.0")
 )
 ```
 
 #### CocoaPods
 
 ```ruby
-pod 'CombineX', :git => 'https://github.com/cx-org/CombineX.git', :branch => 'master'
+pod 'CombineX', "~> 0.1.0"
 ```
 
 #### Carthage
 
 ```carthage
-github "cx-org/CombineX" "master"
+github "cx-org/CombineX" ~> 0.1.0
 ```
 
 部分特性在某些安装方式下不可用。
 
-| Swift PM | CocoaPods | Carthage |
+| | Swift PM | CocoaPods | Carthage |
 | --- | --- | --- | --- |
 | CXShim | Yes | No | No |
 | ObserableObject | Yes | No | No |

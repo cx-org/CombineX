@@ -30,25 +30,25 @@ Open-source implementation of Apple's [Combine](https://developer.apple.com/docu
 
 ```swift
 dependencies.append(
-    .package(url: "https://github.com/cx-org/CombineX", .branch("master"))
+    .package(url: "https://github.com/cx-org/CombineX", from: "0.1.0")
 )
 ```
 
 #### CocoaPods
 
 ```ruby
-pod 'CombineX', :git => 'https://github.com/cx-org/CombineX.git', :branch => 'master'
+pod 'CombineX', "~> 0.1.0"
 ```
 
 #### Carthage
 
 ```carthage
-github "cx-org/CombineX" "master"
+github "cx-org/CombineX" ~> 0.1.0
 ```
 
 Some features are not available with specific PM.
 
-| Swift PM | CocoaPods | Carthage |
+| | Swift PM | CocoaPods | Carthage |
 | --- | --- | --- | --- |
 | CXShim | Yes | No | No |
 | ObserableObject | Yes | No | No |
