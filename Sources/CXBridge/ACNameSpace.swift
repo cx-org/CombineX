@@ -20,3 +20,5 @@ extension ACWrapping where AC: ACWrapper, AC.Base == Self {
         return AC(wrapping: self)
     }
 }
+
+public enum ACWrappers {}
