@@ -1,10 +1,11 @@
 import Combine
 import CombineX
+import CXNamespace
 import Runtime
 
 // MARK: - From Combine
 
-extension Combine.CombineIdentifier {
+extension Combine.CombineIdentifier: CXWrapping {
     
     public var cx: CombineX.CombineIdentifier {
         assert(combineCombineIdentifierTypeInfo.properties.count == 1)
@@ -19,9 +20,9 @@ private let combineCombineIdentifierTypeInfo = try! typeInfo(of: Combine.Combine
 
 // MARK: - To Combine
 
-extension CombineX.CombineIdentifier {
+extension CombineX.CombineIdentifier: ACWrapping {
     
-    public var combine: Combine.CombineIdentifier {
+    public var ac: Combine.CombineIdentifier {
         assert(cxCombineIdentifierTypeInfo.properties.count == 1)
         let raw = try! cxCombineIdentifierTypeInfo.properties[0].get(from: self) as! UInt
         return try! createInstance { _ in

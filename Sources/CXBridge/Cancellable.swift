@@ -1,5 +1,6 @@
 import Combine
 import CombineX
+import CXNamespace
 
 // MARK: - From Combine
 
@@ -14,7 +15,7 @@ extension Combine.Cancellable {
 
 extension CombineX.Cancellable {
     
-    public var combine: Combine.AnyCancellable {
+    public var ac: Combine.AnyCancellable {
         return Combine.AnyCancellable(cancel)
     }
 }

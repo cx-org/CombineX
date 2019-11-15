@@ -1,9 +1,10 @@
 import Combine
 import CombineX
+import CXNamespace
 
 // MARK: - From Combine
 
-extension Combine.Subscribers.Completion {
+extension Combine.Subscribers.Completion: CXWrapping {
     
     public var cx: CombineX.Subscribers.Completion<Failure> {
         switch self {
@@ -15,9 +16,9 @@ extension Combine.Subscribers.Completion {
 
 // MARK: - To Combine
 
-extension CombineX.Subscribers.Completion {
+extension CombineX.Subscribers.Completion: ACWrapping {
     
-    public var combine: Combine.Subscribers.Completion<Failure> {
+    public var ac: Combine.Subscribers.Completion<Failure> {
         switch self {
         case .finished:             return .finished
         case let .failure(error):   return .failure(error)

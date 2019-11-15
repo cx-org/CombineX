@@ -1,29 +1,34 @@
 import Combine
 import CombineX
+import CXNamespace
 
 // MARK: - From Combine
 
 extension Combine.Subscription {
     
     var cx: AnyCombineSubscription {
-        return AnyCombineSubscription(subscription: self)
+        return AnyCombineSubscription(wrapping: self)
     }
 }
 
-struct AnyCombineSubscription: CombineX.Subscription {
+struct AnyCombineSubscription: CXWrapper, CombineX.Subscription {
     
-    public var subscription: Combine.Subscription
+    public var base: Combine.Subscription
+    
+    public init(wrapping base: Self.Base) {
+        self.base = base
+    }
     
     public func request(_ demand: CombineX.Subscribers.Demand) {
-        subscription.request(demand.combine)
+        base.request(demand.ac)
     }
     
     public func cancel() {
-        subscription.cancel()
+        base.cancel()
     }
     
     public var combineIdentifier: CombineX.CombineIdentifier {
-        return subscription.combineIdentifier.cx
+        return base.combineIdentifier.cx
     }
 }
 
@@ -31,24 +36,28 @@ struct AnyCombineSubscription: CombineX.Subscription {
 
 extension CombineX.Subscription {
     
-    var combine: AnyCXSubscription {
-        return AnyCXSubscription(subscription: self)
+    var ac: AnyCXSubscription {
+        return AnyCXSubscription(wrapping: self)
     }
 }
 
-struct AnyCXSubscription: Combine.Subscription {
+struct AnyCXSubscription: ACWrapper, Combine.Subscription {
     
-    public var subscription: CombineX.Subscription
+    public var base: CombineX.Subscription
+    
+    public init(wrapping base: Base) {
+        self.base = base
+    }
     
     public func request(_ demand: Combine.Subscribers.Demand) {
-        subscription.request(demand.cx)
+        base.request(demand.cx)
     }
     
     public func cancel() {
-        subscription.cancel()
+        base.cancel()
     }
     
     public var combineIdentifier: Combine.CombineIdentifier {
-        return subscription.combineIdentifier.combine
+        return base.combineIdentifier.ac
     }
 }

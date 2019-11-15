@@ -8,9 +8,9 @@ extension Combine.Subscriber {
     
     public var cx: CombineX.AnySubscriber<Input, Failure> {
         return CombineX.AnySubscriber(
-            receiveSubscription: { self.receive(subscription: $0.combine) },
+            receiveSubscription: { self.receive(subscription: $0.ac) },
             receiveValue: { self.receive($0).cx },
-            receiveCompletion: { self.receive(completion: $0.combine) })
+            receiveCompletion: { self.receive(completion: $0.ac) })
     }
 }
 
@@ -18,10 +18,10 @@ extension Combine.Subscriber {
 
 extension CombineX.Subscriber {
     
-    public var combine: Combine.AnySubscriber<Input, Failure> {
+    public var ac: Combine.AnySubscriber<Input, Failure> {
         return Combine.AnySubscriber(
             receiveSubscription: { self.receive(subscription: $0.cx) },
-            receiveValue: { self.receive($0).combine },
+            receiveValue: { self.receive($0).ac },
             receiveCompletion: { self.receive(completion: $0.cx) })
     }
 }

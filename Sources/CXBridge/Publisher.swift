@@ -25,7 +25,7 @@ extension CombineX.Publishers {
         }
         
         func receive<S: CombineX.Subscriber>(subscriber: S) where Failure == S.Failure, Output == S.Input {
-            self.base.receive(subscriber: subscriber.combine)
+            self.base.receive(subscriber: subscriber.ac)
         }
     }
 }
@@ -41,21 +41,21 @@ extension CombineX.Publishers.Bridge: CombineX.ConnectablePublisher where Base: 
 
 extension CombineX.Publisher {
     
-    public var combine: Combine.AnyPublisher<Output, Failure> {
+    public var ac: Combine.AnyPublisher<Output, Failure> {
         return Combine.Publishers.Bridge(wrapping: self).eraseToAnyPublisher()
     }
 }
 
 extension Combine.Publishers {
 
-    struct Bridge<CXBase: CombineX.Publisher>: CXReversedWrapper, Combine.Publisher {
+    struct Bridge<Base: CombineX.Publisher>: ACWrapper, Combine.Publisher {
         
-        typealias Output = CXBase.Output
-        typealias Failure = CXBase.Failure
+        typealias Output = Base.Output
+        typealias Failure = Base.Failure
         
-        var base: CXBase
+        var base: Base
         
-        init(wrapping base: CXBase) {
+        init(wrapping base: Base) {
             self.base = base
         }
         
@@ -65,9 +65,9 @@ extension Combine.Publishers {
     }
 }
 
-extension Combine.Publishers.Bridge: Combine.ConnectablePublisher where CXBase: CombineX.ConnectablePublisher {
+extension Combine.Publishers.Bridge: Combine.ConnectablePublisher where Base: CombineX.ConnectablePublisher {
     
     func connect() -> Combine.Cancellable {
-        return base.connect().combine
+        return base.connect().ac
     }
 }

@@ -1,9 +1,10 @@
 import Combine
 import CombineX
+import CXNamespace
 
 // MARK: - From Combine
 
-extension Combine.Subscribers.Demand {
+extension Combine.Subscribers.Demand: CXWrapping {
     
     public var cx: CombineX.Subscribers.Demand {
         if let max = max {
@@ -16,9 +17,9 @@ extension Combine.Subscribers.Demand {
 
 // MARK: - To Combine
 
-extension CombineX.Subscribers.Demand {
+extension CombineX.Subscribers.Demand: ACWrapping {
     
-    public var combine: Combine.Subscribers.Demand {
+    public var ac: Combine.Subscribers.Demand {
         if let max = max {
             return .max(max)
         } else {
