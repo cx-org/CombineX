@@ -10,7 +10,7 @@ import CXNamespace
 extension Combine.Cancellable {
     
     public var cx: CombineX.AnyCancellable {
-        return CombineX.AnyCancellable(cancel)
+        return .init(cancel)
     }
 }
 
@@ -20,7 +20,7 @@ extension Combine.Cancellable {
 extension CombineX.Cancellable {
     
     public var ac: Combine.AnyCancellable {
-        return Combine.AnyCancellable(cancel)
+        return .init(cancel)
     }
 }
 

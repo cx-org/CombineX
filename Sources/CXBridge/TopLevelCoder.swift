@@ -10,7 +10,7 @@ import CXNamespace
 extension Combine.TopLevelEncoder {
     
     public var cx: CXWrappers.AnyTopLevelEncoder<Self> {
-        return CXWrappers.AnyTopLevelEncoder(wrapping: self)
+        return .init(wrapping: self)
     }
 }
 
@@ -18,7 +18,7 @@ extension Combine.TopLevelEncoder {
 extension Combine.TopLevelDecoder {
     
     public var cx: CXWrappers.AnyTopLevelDecoder<Self> {
-        return CXWrappers.AnyTopLevelDecoder(wrapping: self)
+        return .init(wrapping: self)
     }
 }
 
@@ -62,7 +62,7 @@ extension CXWrappers {
 extension CombineX.TopLevelEncoder {
     
     public var ac: ACWrappers.AnyTopLevelEncoder<Self> {
-        return ACWrappers.AnyTopLevelEncoder(wrapping: self)
+        return .init(wrapping: self)
     }
 }
 
@@ -70,7 +70,7 @@ extension CombineX.TopLevelEncoder {
 extension CombineX.TopLevelDecoder {
     
     public var ac: ACWrappers.AnyTopLevelDecoder<Self> {
-        return ACWrappers.AnyTopLevelDecoder(wrapping: self)
+        return .init(wrapping: self)
     }
 }
 

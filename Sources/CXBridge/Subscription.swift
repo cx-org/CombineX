@@ -10,7 +10,7 @@ import CXNamespace
 extension Combine.Subscription {
     
     public var cx: CXWrappers.AnySubscription {
-        return CXWrappers.AnySubscription(wrapping: self)
+        return .init(wrapping: self)
     }
 }
 
@@ -45,7 +45,7 @@ extension CXWrappers {
 extension CombineX.Subscription {
     
     public var ac: ACWrappers.AnySubscription {
-        return ACWrappers.AnySubscription(wrapping: self)
+        return .init(wrapping: self)
     }
 }
 

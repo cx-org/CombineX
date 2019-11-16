@@ -29,7 +29,7 @@ extension CombineX.Publishers {
         }
         
         func receive<S: CombineX.Subscriber>(subscriber: S) where Failure == S.Failure, Output == S.Input {
-            self.base.receive(subscriber: subscriber.ac)
+            base.receive(subscriber: subscriber.ac)
         }
     }
 }
@@ -67,7 +67,7 @@ extension Combine.Publishers {
         }
         
         func receive<S: Combine.Subscriber>(subscriber: S) where Failure == S.Failure, Output == S.Input {
-            self.base.receive(subscriber: subscriber.cx)
+            base.receive(subscriber: subscriber.cx)
         }
     }
 }
