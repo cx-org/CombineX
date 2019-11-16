@@ -1,3 +1,4 @@
+@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 public protocol ACWrapper {
     
     associatedtype Base
@@ -7,6 +8,7 @@ public protocol ACWrapper {
     init(wrapping base: Base)
 }
 
+@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 public protocol ACWrapping {
     
     associatedtype AC
@@ -14,6 +16,7 @@ public protocol ACWrapping {
     var ac: AC { get }
 }
 
+@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 public extension ACWrapping where AC: ACWrapper, AC.Base == Self {
     
     var ac: AC {
@@ -21,4 +24,5 @@ public extension ACWrapping where AC: ACWrapper, AC.Base == Self {
     }
 }
 
+@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 public enum ACWrappers {}

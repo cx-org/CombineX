@@ -1,9 +1,12 @@
+#if canImport(Combine)
+
 import Combine
 import CombineX
 import CXNamespace
 
 // MARK: - From Combine
 
+@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 extension Combine.TopLevelEncoder {
     
     public var cx: CXWrappers.AnyTopLevelEncoder<Self> {
@@ -11,6 +14,7 @@ extension Combine.TopLevelEncoder {
     }
 }
 
+@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 extension Combine.TopLevelDecoder {
     
     public var cx: CXWrappers.AnyTopLevelDecoder<Self> {
@@ -18,6 +22,7 @@ extension Combine.TopLevelDecoder {
     }
 }
 
+@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 extension CXWrappers {
     
     public struct AnyTopLevelEncoder<Base: Combine.TopLevelEncoder>: CXWrapper, CombineX.TopLevelEncoder {
@@ -53,6 +58,7 @@ extension CXWrappers {
 
 // MARK: - To Combine
 
+@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 extension CombineX.TopLevelEncoder {
     
     public var ac: ACWrappers.AnyTopLevelEncoder<Self> {
@@ -60,6 +66,7 @@ extension CombineX.TopLevelEncoder {
     }
 }
 
+@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 extension CombineX.TopLevelDecoder {
     
     public var ac: ACWrappers.AnyTopLevelDecoder<Self> {
@@ -67,6 +74,7 @@ extension CombineX.TopLevelDecoder {
     }
 }
 
+@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 extension ACWrappers {
     
     public struct AnyTopLevelEncoder<Base: CombineX.TopLevelEncoder>: ACWrapper, Combine.TopLevelEncoder {
@@ -99,3 +107,5 @@ extension ACWrappers {
         }
     }
 }
+
+#endif

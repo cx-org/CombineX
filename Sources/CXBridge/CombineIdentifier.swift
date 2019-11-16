@@ -1,3 +1,5 @@
+#if canImport(Combine)
+
 import Combine
 import CombineX
 import CXNamespace
@@ -5,6 +7,7 @@ import Runtime
 
 // MARK: - From Combine
 
+@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 extension Combine.CombineIdentifier: CXWrapping {
     
     public var cx: CombineX.CombineIdentifier {
@@ -16,10 +19,12 @@ extension Combine.CombineIdentifier: CXWrapping {
     }
 }
 
+@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 private let combineCombineIdentifierTypeInfo = try! typeInfo(of: Combine.CombineIdentifier.self)
 
 // MARK: - To Combine
 
+@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 extension CombineX.CombineIdentifier: ACWrapping {
     
     public var ac: Combine.CombineIdentifier {
@@ -31,4 +36,7 @@ extension CombineX.CombineIdentifier: ACWrapping {
     }
 }
 
+@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 private let cxCombineIdentifierTypeInfo = try! typeInfo(of: CombineX.CombineIdentifier.self)
+
+#endif

@@ -1,9 +1,12 @@
+#if canImport(Combine)
+
 import Combine
 import CombineX
 import CXNamespace
 
 // MARK: - From Combine
 
+@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 extension Combine.Subscription {
     
     public var cx: CXWrappers.AnySubscription {
@@ -11,6 +14,7 @@ extension Combine.Subscription {
     }
 }
 
+@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 extension CXWrappers {
     
     public struct AnySubscription: CXWrapper, CombineX.Subscription {
@@ -37,6 +41,7 @@ extension CXWrappers {
 
 // MARK: - To Combine
 
+@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 extension CombineX.Subscription {
     
     public var ac: ACWrappers.AnySubscription {
@@ -44,6 +49,7 @@ extension CombineX.Subscription {
     }
 }
 
+@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 extension ACWrappers {
     
     public struct AnySubscription: ACWrapper, Combine.Subscription {
@@ -67,3 +73,5 @@ extension ACWrappers {
         }
     }
 }
+
+#endif
