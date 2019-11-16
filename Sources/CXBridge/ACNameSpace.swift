@@ -1,4 +1,4 @@
-protocol ACWrapper {
+public protocol ACWrapper {
     
     associatedtype Base
     
@@ -7,14 +7,14 @@ protocol ACWrapper {
     init(wrapping base: Base)
 }
 
-protocol ACWrapping {
+public protocol ACWrapping {
     
     associatedtype AC
     
     var ac: AC { get }
 }
 
-extension ACWrapping where AC: ACWrapper, AC.Base == Self {
+public extension ACWrapping where AC: ACWrapper, AC.Base == Self {
     
     var ac: AC {
         return AC(wrapping: self)
