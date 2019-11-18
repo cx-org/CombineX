@@ -9,7 +9,9 @@ import CXNamespace
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 extension Combine.Subscription {
     
-    public var cx: CXWrappers.AnySubscription {
+    public typealias CX = CXWrappers.AnySubscription
+    
+    public var cx: CX {
         return .init(wrapping: self)
     }
 }
@@ -44,7 +46,9 @@ extension CXWrappers {
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 extension CombineX.Subscription {
     
-    public var ac: ACWrappers.AnySubscription {
+    public typealias AC = ACWrappers.AnySubscription
+    
+    public var ac: AC {
         return .init(wrapping: self)
     }
 }

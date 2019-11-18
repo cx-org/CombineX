@@ -9,7 +9,9 @@ import CXNamespace
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 extension Combine.TopLevelEncoder {
     
-    public var cx: CXWrappers.AnyTopLevelEncoder<Self> {
+    public typealias CX = CXWrappers.AnyTopLevelEncoder<Self>
+    
+    public var cx: CX {
         return .init(wrapping: self)
     }
 }
@@ -17,7 +19,9 @@ extension Combine.TopLevelEncoder {
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 extension Combine.TopLevelDecoder {
     
-    public var cx: CXWrappers.AnyTopLevelDecoder<Self> {
+    public typealias CX = CXWrappers.AnyTopLevelDecoder<Self>
+    
+    public var cx: CX {
         return .init(wrapping: self)
     }
 }
@@ -61,7 +65,9 @@ extension CXWrappers {
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 extension CombineX.TopLevelEncoder {
     
-    public var ac: ACWrappers.AnyTopLevelEncoder<Self> {
+    public typealias AC = ACWrappers.AnyTopLevelEncoder<Self>
+    
+    public var ac: AC {
         return .init(wrapping: self)
     }
 }
@@ -69,7 +75,9 @@ extension CombineX.TopLevelEncoder {
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 extension CombineX.TopLevelDecoder {
     
-    public var ac: ACWrappers.AnyTopLevelDecoder<Self> {
+    public typealias AC = ACWrappers.AnyTopLevelDecoder<Self>
+    
+    public var ac: AC {
         return .init(wrapping: self)
     }
 }
