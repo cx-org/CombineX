@@ -20,7 +20,7 @@ extension Publisher {
     /// Backpressure note: This publisher passes through `request` and `cancel` to the upstream. After receiving an error, the publisher sends sends any unfulfilled demand to the new `Publisher`.
     /// - Parameter handler: A closure that accepts the upstream failure as input and returns a publisher to replace the upstream publisher.
     /// - Returns: A publisher that handles errors from an upstream publisher by replacing the failed publisher with another publisher.
-    public func `catch`<P>(_ handler: @escaping (Self.Failure) -> P) -> Publishers.Catch<Self, P> where P : Publisher, Self.Output == P.Output {
+    public func `catch`<P: Publisher>(_ handler: @escaping (Failure) -> P) -> Publishers.Catch<Self, P> where Output == P.Output {
         return .init(upstream: self, handler: handler)
     }
 }
@@ -50,7 +50,7 @@ extension Publishers {
             self.handler = handler
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, NewPublisher.Failure == S.Failure, NewPublisher.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where NewPublisher.Failure == S.Failure, NewPublisher.Output == S.Input {
             self.upstream
                 .tryCatch(self.handler)
                 .mapError {

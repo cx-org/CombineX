@@ -8,7 +8,7 @@ extension Publisher {
     /// - Parameter size: The maximum number of elements to store.
     /// - Parameter prefetch: The strategy for initially populating the buffer.
     /// - Parameter whenFull: The action to take when the buffer becomes full.
-    public func buffer(size: Int, prefetch: Publishers.PrefetchStrategy, whenFull: Publishers.BufferingStrategy<Self.Failure>) -> Publishers.Buffer<Self> {
+    public func buffer(size: Int, prefetch: Publishers.PrefetchStrategy, whenFull: Publishers.BufferingStrategy<Failure>) -> Publishers.Buffer<Self> {
         return .init(upstream: self, size: size, prefetch: prefetch, whenFull: whenFull)
     }
 }
@@ -71,7 +71,7 @@ extension Publishers {
             self.whenFull = whenFull
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             switch self.prefetch {
             case .keepFull:
                 let subscription = KeepFull(pub: self, sub: subscriber)

@@ -13,7 +13,7 @@ extension Publisher {
     ///   - strategy: The strategy with which to collect and publish elements.
     ///   - options: `Scheduler` options to use for the strategy.
     /// - Returns: A publisher that collects elements by a given strategy, and emits a single array of the collection.
-    public func collect<S>(_ strategy: Publishers.TimeGroupingStrategy<S>, options: S.SchedulerOptions? = nil) -> Publishers.CollectByTime<Self, S> where S : Scheduler {
+    public func collect<S: Scheduler>(_ strategy: Publishers.TimeGroupingStrategy<S>, options: S.SchedulerOptions? = nil) -> Publishers.CollectByTime<Self, S> {
         return .init(upstream: self, strategy: strategy, options: options)
     }
 }
@@ -53,7 +53,7 @@ extension Publishers {
             self.options = options
         }
 
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, S.Input == [Upstream.Output] {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, S.Input == [Upstream.Output] {
             switch self.strategy {
             case .byTime:
                 let s = ByTime(pub: self, sub: subscriber)

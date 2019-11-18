@@ -16,7 +16,7 @@ final public class Future<Output, Failure> : Publisher where Failure : Error {
         attemptToFulfill(self.complete)
     }
     
-    final public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
+    final public func receive<S: Subscriber>(subscriber: S) where Output == S.Input, Failure == S.Failure {
         self.lock.lock()
         if let result = self.result {
             self.lock.unlock()

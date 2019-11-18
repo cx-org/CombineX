@@ -42,7 +42,7 @@ extension Optional.CX {
             self.output = output
         }
 
-        public func receive<S>(subscriber: S) where Wrapped == S.Input, S : Subscriber, S.Failure == Failure {
+        public func receive<S: Subscriber>(subscriber: S) where Wrapped == S.Input, S.Failure == Failure {
             guard let output = output else {
                 subscriber.receive(subscription: Subscriptions.empty)
                 subscriber.receive(completion: .finished)

@@ -21,7 +21,7 @@ public struct Record<Output, Failure> : Publisher where Failure : Error {
         self.recording = .init(output: output, completion: completion)
     }
     
-    public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
+    public func receive<S: Subscriber>(subscriber: S) where Output == S.Input, Failure == S.Failure {
         let pub = self.recording.output.cx.publisher.setFailureType(to: Failure.self)
         switch self.recording.completion {
         case .finished:

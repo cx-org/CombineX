@@ -9,7 +9,7 @@ extension Publisher {
     /// If the upstream publisher fails with an error, this publisher emits the provided element, then finishes normally.
     /// - Parameter output: An element to emit when the upstream publisher fails.
     /// - Returns: A publisher that replaces an error from the upstream publisher with the provided output element.
-    public func replaceError(with output: Self.Output) -> Publishers.ReplaceError<Self> {
+    public func replaceError(with output: Output) -> Publishers.ReplaceError<Self> {
         return .init(upstream: self, output: output)
     }
 }
@@ -47,7 +47,7 @@ extension Publishers {
             self.output = output
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, S.Failure == Publishers.ReplaceError<Upstream>.Failure {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Output == S.Input, S.Failure == Publishers.ReplaceError<Upstream>.Failure {
             let s = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(s)
         }

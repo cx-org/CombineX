@@ -203,7 +203,7 @@ extension Publishers.Sequence where Elements : RangeReplaceableCollection {
         return .init(sequence: elements + self.sequence)
     }
     
-    public func prepend<S>(_ elements: S) -> Publishers.Sequence<Elements, Failure> where S : Sequence, Elements.Element == S.Element {
+    public func prepend<S: Sequence>(_ elements: S) -> Publishers.Sequence<Elements, Failure> where Elements.Element == S.Element {
         return .init(sequence: elements + self.sequence)
     }
     
@@ -215,7 +215,7 @@ extension Publishers.Sequence where Elements : RangeReplaceableCollection {
         return .init(sequence: self.sequence + elements)
     }
     
-    public func append<S>(_ elements: S) -> Publishers.Sequence<Elements, Failure> where S : Sequence, Elements.Element == S.Element {
+    public func append<S: Sequence>(_ elements: S) -> Publishers.Sequence<Elements, Failure> where Elements.Element == S.Element {
         return .init(sequence: self.sequence + elements)
     }
     
@@ -250,7 +250,7 @@ extension Publishers {
             self.sequence = sequence
         }
         
-        public func receive<S>(subscriber: S) where Failure == S.Failure, S : Subscriber, Elements.Element == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where Failure == S.Failure, Elements.Element == S.Input {
             let s = Inner(sequence: self.sequence, sub: subscriber)
             subscriber.receive(subscription: s)
         }

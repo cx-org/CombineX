@@ -7,14 +7,14 @@ extension Publisher {
     /// Prefixes a `Publisher`'s output with the specified sequence.
     /// - Parameter elements: The elements to publish before this publisher’s elements.
     /// - Returns: A publisher that prefixes the specified elements prior to this publisher’s elements.
-    public func prepend(_ elements: Self.Output...) -> Publishers.Concatenate<Publishers.Sequence<[Self.Output], Self.Failure>, Self> {
+    public func prepend(_ elements: Output...) -> Publishers.Concatenate<Publishers.Sequence<[Output], Failure>, Self> {
         return .init(prefix: .init(sequence: elements), suffix: self)
     }
     
     /// Prefixes a `Publisher`'s output with the specified sequence.
     /// - Parameter elements: A sequence of elements to publish before this publisher’s elements.
     /// - Returns: A publisher that prefixes the sequence of elements prior to this publisher’s elements.
-    public func prepend<S>(_ elements: S) -> Publishers.Concatenate<Publishers.Sequence<S, Self.Failure>, Self> where S : Sequence, Self.Output == S.Element {
+    public func prepend<S: Sequence>(_ elements: S) -> Publishers.Concatenate<Publishers.Sequence<S, Failure>, Self> where Output == S.Element {
         return .init(prefix: .init(sequence: elements), suffix: self)
     }
     
@@ -23,17 +23,17 @@ extension Publisher {
     /// The resulting publisher doesn’t emit any elements until the prefixing publisher finishes.
     /// - Parameter publisher: The prefixing publisher.
     /// - Returns: A publisher that prefixes the prefixing publisher’s elements prior to this publisher’s elements.
-    public func prepend<P>(_ publisher: P) -> Publishers.Concatenate<P, Self> where P : Publisher, Self.Failure == P.Failure, Self.Output == P.Output {
+    public func prepend<P: Publisher>(_ publisher: P) -> Publishers.Concatenate<P, Self> where Failure == P.Failure, Output == P.Output {
         return .init(prefix: publisher, suffix: self)
     }
     
     /// Append a `Publisher`'s output with the specified sequence.
-    public func append(_ elements: Self.Output...) -> Publishers.Concatenate<Self, Publishers.Sequence<[Self.Output], Self.Failure>> {
+    public func append(_ elements: Output...) -> Publishers.Concatenate<Self, Publishers.Sequence<[Output], Failure>> {
         return .init(prefix: self, suffix: .init(sequence: elements))
     }
     
     /// Appends a `Publisher`'s output with the specified sequence.
-    public func append<S>(_ elements: S) -> Publishers.Concatenate<Self, Publishers.Sequence<S, Self.Failure>> where S : Sequence, Self.Output == S.Element {
+    public func append<S: Sequence>(_ elements: S) -> Publishers.Concatenate<Self, Publishers.Sequence<S, Failure>> where Output == S.Element {
         return .init(prefix: self, suffix: .init(sequence: elements))
     }
     
@@ -42,7 +42,7 @@ extension Publisher {
     /// This operator produces no elements until this publisher finishes. It then produces this publisher’s elements, followed by the given publisher’s elements. If this publisher fails with an error, the prefixing publisher does not publish the provided publisher’s elements.
     /// - Parameter publisher: The appending publisher.
     /// - Returns: A publisher that appends the appending publisher’s elements after this publisher’s elements.
-    public func append<P>(_ publisher: P) -> Publishers.Concatenate<Self, P> where P : Publisher, Self.Failure == P.Failure, Self.Output == P.Output {
+    public func append<P: Publisher>(_ publisher: P) -> Publishers.Concatenate<Self, P> where Failure == P.Failure, Output == P.Output {
         return .init(prefix: self, suffix: publisher)
     }
 }
@@ -80,7 +80,7 @@ extension Publishers {
             self.suffix = suffix
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Suffix.Failure == S.Failure, Suffix.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where Suffix.Failure == S.Failure, Suffix.Output == S.Input {
             let s = Inner(pub: self, sub: subscriber)
             self.prefix.subscribe(s)
         }

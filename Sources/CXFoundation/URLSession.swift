@@ -67,7 +67,7 @@ extension CXWrappers.URLSession {
             self.session = session
         }
 
-        public func receive<S>(subscriber: S) where S : Subscriber, S.Failure == Failure, S.Input == Output {
+        public func receive<S: Subscriber>(subscriber: S) where S.Failure == Failure, S.Input == Output {
             let subject = PassthroughSubject<Output, Failure>()
             let task = self.session.dataTask(with: self.request) { (data, response, error) in
                 if let e = error as? URLError {

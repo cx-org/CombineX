@@ -5,7 +5,7 @@ extension Publisher {
     /// After this publisher receives a request for more than 0 items, it requests unlimited items from its upstream publisher.
     /// - Parameter areInIncreasingOrder: A closure that receives two elements and returns `true` if they are in increasing order.
     /// - Returns: A publisher that publishes the minimum value received from the upstream publisher, after the upstream publisher finishes.
-    public func min(by areInIncreasingOrder: @escaping (Self.Output, Self.Output) -> Bool) -> Publishers.Comparison<Self> {
+    public func min(by areInIncreasingOrder: @escaping (Output, Output) -> Bool) -> Publishers.Comparison<Self> {
         return .init(upstream: self) {
             !areInIncreasingOrder($0, $1)
         }
@@ -16,12 +16,12 @@ extension Publisher {
     /// After this publisher receives a request for more than 0 items, it requests unlimited items from its upstream publisher.
     /// - Parameter areInIncreasingOrder: A closure that receives two elements and returns `true` if they are in increasing order.
     /// - Returns: A publisher that publishes the maximum value received from the upstream publisher, after the upstream publisher finishes.
-    public func max(by areInIncreasingOrder: @escaping (Self.Output, Self.Output) -> Bool) -> Publishers.Comparison<Self> {
+    public func max(by areInIncreasingOrder: @escaping (Output, Output) -> Bool) -> Publishers.Comparison<Self> {
         return .init(upstream: self, areInIncreasingOrder: areInIncreasingOrder)
     }
 }
 
-extension Publisher where Self.Output : Comparable {
+extension Publisher where Output : Comparable {
     
     /// Publishes the minimum value received from the upstream publisher, after it finishes.
     ///
@@ -61,7 +61,7 @@ extension Publishers {
             self.areInIncreasingOrder = areInIncreasingOrder
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             self.upstream
                 .tryMax(by: self.areInIncreasingOrder)
                 .mapError {

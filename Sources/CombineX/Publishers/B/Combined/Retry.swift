@@ -44,7 +44,7 @@ extension Publishers {
             self.retries = retries
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             
             guard let retries = self.retries else {
                 self.upstream

@@ -35,7 +35,7 @@ extension Publishers {
             self.upstream = upstream
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, S.Input == [Upstream.Output] {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, S.Input == [Upstream.Output] {
             self.upstream
                 .collect(.max)
                 .receive(subscriber: subscriber)

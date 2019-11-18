@@ -88,7 +88,7 @@ extension CXWrappers.Timer {
             self.timer.invalidate()
         }
         
-        final public func receive<S>(subscriber: S) where S : Subscriber, S.Failure == TimerPublisher.Failure, S.Input == TimerPublisher.Output {
+        final public func receive<S: Subscriber>(subscriber: S) where S.Failure == TimerPublisher.Failure, S.Input == TimerPublisher.Output {
             self.multicast.receive(subscriber: subscriber)
         }
         

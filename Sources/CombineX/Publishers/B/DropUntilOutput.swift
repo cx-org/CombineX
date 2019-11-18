@@ -11,7 +11,7 @@ extension Publisher {
     ///
     /// - Parameter publisher: A publisher to monitor for its first emitted element.
     /// - Returns: A publisher that drops elements from the upstream publisher until the `other` publisher produces a value.
-    public func drop<P>(untilOutputFrom publisher: P) -> Publishers.DropUntilOutput<Self, P> where P : Publisher, Self.Failure == P.Failure {
+    public func drop<P: Publisher>(untilOutputFrom publisher: P) -> Publishers.DropUntilOutput<Self, P> where Failure == P.Failure {
         return .init(upstream: self, other: publisher)
     }
 }
@@ -48,7 +48,7 @@ extension Publishers {
             self.other = other
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, Other.Failure == S.Failure {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Output == S.Input, Other.Failure == S.Failure {
             let s = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(s)
         }

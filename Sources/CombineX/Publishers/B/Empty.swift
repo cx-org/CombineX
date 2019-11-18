@@ -26,7 +26,7 @@ public struct Empty<Output, Failure> : Publisher, Equatable where Failure : Erro
     /// If `true`, the publisher finishes immediately after sending a subscription to the subscriber. If `false`, it never completes.
     public let completeImmediately: Bool
     
-    public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
+    public func receive<S: Subscriber>(subscriber: S) where Output == S.Input, Failure == S.Failure {
         subscriber.receive(subscription: Subscriptions.empty)
         if completeImmediately {
             subscriber.receive(completion: .finished)

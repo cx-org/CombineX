@@ -34,7 +34,7 @@ extension Just {
         return .init(sequence: elements + [self.output])
     }
     
-    public func prepend<S>(_ elements: S) -> Publishers.Sequence<[Output], Failure> where Output == S.Element, S : Sequence {
+    public func prepend<S: Sequence>(_ elements: S) -> Publishers.Sequence<[Output], Failure> where Output == S.Element {
         return .init(sequence: elements + [self.output])
     }
     
@@ -42,7 +42,7 @@ extension Just {
         return .init(sequence: [self.output] + elements)
     }
     
-    public func append<S>(_ elements: S) -> Publishers.Sequence<[Output], Failure> where Output == S.Element, S : Sequence {
+    public func append<S: Sequence>(_ elements: S) -> Publishers.Sequence<[Output], Failure> where Output == S.Element {
         return .init(sequence: [self.output] + elements)
     }
     
@@ -219,7 +219,7 @@ public struct Just<Output> : Publisher {
         self.output = output
     }
     
-    public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, S.Failure == Just<Output>.Failure {
+    public func receive<S: Subscriber>(subscriber: S) where Output == S.Input, S.Failure == Just<Output>.Failure {
         let s = Inner(pub: self, sub: subscriber)
         subscriber.receive(subscription: s)
     }

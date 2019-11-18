@@ -1,4 +1,4 @@
-extension Publisher where Self.Failure == Never {
+extension Publisher where Failure == Never {
     
     /// Changes the failure type declared by the upstream publisher.
     ///
@@ -37,7 +37,7 @@ extension Publishers {
             self.upstream = upstream
         }
         
-        public func receive<S>(subscriber: S) where Failure == S.Failure, S : Subscriber, Upstream.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where Failure == S.Failure, Upstream.Output == S.Input {
             self.upstream
                 .mapError { $0 as! Failure }
                 .receive(subscriber: subscriber)

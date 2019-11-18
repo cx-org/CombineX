@@ -13,7 +13,7 @@ extension Publisher {
     ///   - initialResult: The previous result returned by the `nextPartialResult` closure.
     ///   - nextPartialResult: A closure that takes as its arguments the previous value returned by the closure and the next element emitted from the upstream publisher.
     /// - Returns: A publisher that transforms elements by applying a closure that receives its previous return value and the next element from the upstream publisher.
-    public func scan<T>(_ initialResult: T, _ nextPartialResult: @escaping (T, Self.Output) -> T) -> Publishers.Scan<Self, T> {
+    public func scan<T>(_ initialResult: T, _ nextPartialResult: @escaping (T, Output) -> T) -> Publishers.Scan<Self, T> {
         return .init(upstream: self, initialResult: initialResult, nextPartialResult: nextPartialResult)
     }
     
@@ -37,7 +37,7 @@ extension Publishers {
             self.nextPartialResult = nextPartialResult
         }
         
-        public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, Upstream.Failure == S.Failure {
+        public func receive<S: Subscriber>(subscriber: S) where Output == S.Input, Upstream.Failure == S.Failure {
             self.upstream
                 .tryScan(self.initialResult, self.nextPartialResult)
                 .mapError {

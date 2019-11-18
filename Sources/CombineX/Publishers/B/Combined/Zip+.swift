@@ -10,7 +10,7 @@ extension Publisher {
     ///   - publisher1: A second publisher.
     ///   - publisher2: A third publisher.
     /// - Returns: A publisher that emits groups of elements from the upstream publishers as tuples.
-    public func zip<P, Q>(_ publisher1: P, _ publisher2: Q) -> Publishers.Zip3<Self, P, Q> where P : Publisher, Q : Publisher, Self.Failure == P.Failure, P.Failure == Q.Failure {
+    public func zip<P, Q>(_ publisher1: P, _ publisher2: Q) -> Publishers.Zip3<Self, P, Q> where P : Publisher, Q : Publisher, Failure == P.Failure, P.Failure == Q.Failure {
         return .init(self, publisher1, publisher2)
     }
     
@@ -25,7 +25,7 @@ extension Publisher {
     ///   - publisher2: A third publisher.
     ///   - transform: A closure that receives the most recent value from each publisher and returns a new value to publish.
     /// - Returns: A publisher that emits groups of elements from the upstream publishers as tuples.
-    public func zip<P, Q, T>(_ publisher1: P, _ publisher2: Q, _ transform: @escaping (Self.Output, P.Output, Q.Output) -> T) -> Publishers.Map<Publishers.Zip3<Self, P, Q>, T> where P : Publisher, Q : Publisher, Self.Failure == P.Failure, P.Failure == Q.Failure {
+    public func zip<P, Q, T>(_ publisher1: P, _ publisher2: Q, _ transform: @escaping (Output, P.Output, Q.Output) -> T) -> Publishers.Map<Publishers.Zip3<Self, P, Q>, T> where P : Publisher, Q : Publisher, Failure == P.Failure, P.Failure == Q.Failure {
         return self.zip(publisher1, publisher2).map(transform)
     }
     
@@ -40,7 +40,7 @@ extension Publisher {
     ///   - publisher2: A third publisher.
     ///   - publisher3: A fourth publisher.
     /// - Returns: A publisher that emits groups of elements from the upstream publishers as tuples.
-    public func zip<P, Q, R>(_ publisher1: P, _ publisher2: Q, _ publisher3: R) -> Publishers.Zip4<Self, P, Q, R> where P : Publisher, Q : Publisher, R : Publisher, Self.Failure == P.Failure, P.Failure == Q.Failure, Q.Failure == R.Failure {
+    public func zip<P, Q, R>(_ publisher1: P, _ publisher2: Q, _ publisher3: R) -> Publishers.Zip4<Self, P, Q, R> where P : Publisher, Q : Publisher, R : Publisher, Failure == P.Failure, P.Failure == Q.Failure, Q.Failure == R.Failure {
         return .init(self, publisher1, publisher2, publisher3)
     }
     
@@ -56,7 +56,7 @@ extension Publisher {
     ///   - publisher3: A fourth publisher.
     ///   - transform: A closure that receives the most recent value from each publisher and returns a new value to publish.
     /// - Returns: A publisher that emits groups of elements from the upstream publishers as tuples.
-    public func zip<P, Q, R, T>(_ publisher1: P, _ publisher2: Q, _ publisher3: R, _ transform: @escaping (Self.Output, P.Output, Q.Output, R.Output) -> T) -> Publishers.Map<Publishers.Zip4<Self, P, Q, R>, T> where P : Publisher, Q : Publisher, R : Publisher, Self.Failure == P.Failure, P.Failure == Q.Failure, Q.Failure == R.Failure {
+    public func zip<P, Q, R, T>(_ publisher1: P, _ publisher2: Q, _ publisher3: R, _ transform: @escaping (Output, P.Output, Q.Output, R.Output) -> T) -> Publishers.Map<Publishers.Zip4<Self, P, Q, R>, T> where P : Publisher, Q : Publisher, R : Publisher, Failure == P.Failure, P.Failure == Q.Failure, Q.Failure == R.Failure {
         return self.zip(publisher1, publisher2, publisher3).map(transform)
     }
     
@@ -110,7 +110,7 @@ extension Publishers {
             self.c = c
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, C.Failure == S.Failure, S.Input == (A.Output, B.Output, C.Output) {
+        public func receive<S: Subscriber>(subscriber: S) where C.Failure == S.Failure, S.Input == (A.Output, B.Output, C.Output) {
             self.a.zip(self.b).zip(self.c)
                 .map {
                     ($0.0, $0.1, $1)
@@ -141,7 +141,7 @@ extension Publishers {
             self.d = d
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, D.Failure == S.Failure, S.Input == (A.Output, B.Output, C.Output, D.Output) {
+        public func receive<S: Subscriber>(subscriber: S) where D.Failure == S.Failure, S.Input == (A.Output, B.Output, C.Output, D.Output) {
             self.a.zip(self.b).zip(self.c).zip(self.d)
                 .map {
                     ($0.0.0, $0.0.1, $0.1, $1)

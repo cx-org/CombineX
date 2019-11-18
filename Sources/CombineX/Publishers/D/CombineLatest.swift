@@ -12,7 +12,7 @@ extension Publisher {
     /// - Parameters:
     ///   - other: Another publisher to combine with this one.
     /// - Returns: A publisher that receives and combines elements from this and another publisher.
-    public func combineLatest<P>(_ other: P) -> Publishers.CombineLatest<Self, P> where P : Publisher, Self.Failure == P.Failure {
+    public func combineLatest<P: Publisher>(_ other: P) -> Publishers.CombineLatest<Self, P> where Failure == P.Failure {
         return .init(self, other)
     }
     
@@ -25,7 +25,7 @@ extension Publisher {
     ///   - other: Another publisher to combine with this one.
     ///   - transform: A closure that receives the most recent value from each publisher and returns a new value to publish.
     /// - Returns: A publisher that receives and combines elements from this and another publisher.
-    public func combineLatest<P, T>(_ other: P, _ transform: @escaping (Self.Output, P.Output) -> T) -> Publishers.Map<Publishers.CombineLatest<Self, P>, T> where P : Publisher, Self.Failure == P.Failure {
+    public func combineLatest<P: Publisher, T>(_ other: P, _ transform: @escaping (Output, P.Output) -> T) -> Publishers.Map<Publishers.CombineLatest<Self, P>, T> where Failure == P.Failure {
         return self.combineLatest(other).map(transform)
     }
     
@@ -62,7 +62,7 @@ extension Publishers {
             self.b = b
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, B.Failure == S.Failure, S.Input == (A.Output, B.Output) {
+        public func receive<S: Subscriber>(subscriber: S) where B.Failure == S.Failure, S.Input == (A.Output, B.Output) {
             let s = Inner(pub: self, sub: subscriber)
             subscriber.receive(subscription: s)
         }

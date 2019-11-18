@@ -2,7 +2,7 @@
 import CXUtility
 #endif
 
-extension Publisher where Self.Failure == Never {
+extension Publisher where Failure == Never {
     
     /// Assigns each element from a Publisher to a property on an object.
     ///
@@ -10,7 +10,7 @@ extension Publisher where Self.Failure == Never {
     ///   - keyPath: The key path of the property to assign.
     ///   - object: The object on which to assign the value.
     /// - Returns: A cancellable instance; used when you end assignment of the received value. Deallocation of the result will tear down the subscription stream.
-    public func assign<Root>(to keyPath: ReferenceWritableKeyPath<Root, Self.Output>, on object: Root) -> AnyCancellable {
+    public func assign<Root>(to keyPath: ReferenceWritableKeyPath<Root, Output>, on object: Root) -> AnyCancellable {
         let assign = Subscribers.Assign(object: object, keyPath: keyPath)
         self.subscribe(assign)
         return AnyCancellable(assign)

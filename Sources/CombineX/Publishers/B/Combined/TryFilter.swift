@@ -6,7 +6,7 @@ extension Publisher {
     ///
     /// - Parameter isIncluded:  A closure that takes one element and returns a Boolean value indicating whether to republish the element.
     /// - Returns:  A publisher that republishes all elements that satisfy the closure.
-    public func tryFilter(_ isIncluded: @escaping (Self.Output) throws -> Bool) -> Publishers.TryFilter<Self> {
+    public func tryFilter(_ isIncluded: @escaping (Output) throws -> Bool) -> Publishers.TryFilter<Self> {
         return .init(upstream: self, isIncluded: isIncluded)
     }
 }
@@ -53,7 +53,7 @@ extension Publishers {
             self.isIncluded = isIncluded
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, S.Failure == Publishers.TryFilter<Upstream>.Failure {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Output == S.Input, S.Failure == Publishers.TryFilter<Upstream>.Failure {
             self.upstream
                 .tryCompactMap {
                     try self.isIncluded($0) ? $0 : nil    

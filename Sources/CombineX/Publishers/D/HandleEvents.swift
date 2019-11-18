@@ -13,7 +13,7 @@ extension Publisher {
     ///   - receiveCancel: A closure that executes when the downstream receiver cancels publishing. Defaults to `nil`.
     ///   - receiveRequest: A closure that executes when the publisher receives a request for more elements. Defaults to `nil`.
     /// - Returns: A publisher that performs the specified closures when publisher events occur.
-    public func handleEvents(receiveSubscription: ((Subscription) -> Void)? = nil, receiveOutput: ((Self.Output) -> Void)? = nil, receiveCompletion: ((Subscribers.Completion<Self.Failure>) -> Void)? = nil, receiveCancel: (() -> Void)? = nil, receiveRequest: ((Subscribers.Demand) -> Void)? = nil) -> Publishers.HandleEvents<Self> {
+    public func handleEvents(receiveSubscription: ((Subscription) -> Void)? = nil, receiveOutput: ((Output) -> Void)? = nil, receiveCompletion: ((Subscribers.Completion<Failure>) -> Void)? = nil, receiveCancel: (() -> Void)? = nil, receiveRequest: ((Subscribers.Demand) -> Void)? = nil) -> Publishers.HandleEvents<Self> {
         return .init(upstream: self, receiveSubscription: receiveSubscription, receiveOutput: receiveOutput, receiveCompletion: receiveCompletion, receiveCancel: receiveCancel, receiveRequest: receiveRequest)
     }
 }
@@ -54,7 +54,7 @@ extension Publishers {
             self.receiveRequest = receiveRequest
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             let subscription = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(subscription)
         }

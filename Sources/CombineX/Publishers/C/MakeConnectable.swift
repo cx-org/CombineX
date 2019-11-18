@@ -1,4 +1,4 @@
-extension Publisher where Self.Failure == Never {
+extension Publisher where Failure == Never {
     
     /// Creates a connectable wrapper around the publisher.
     ///
@@ -21,7 +21,7 @@ extension Publishers {
             self.multicase = upstream.multicast(subject: PassthroughSubject<Output, Failure>())
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             self.multicase.receive(subscriber: subscriber)
         }
         

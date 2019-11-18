@@ -12,7 +12,7 @@ extension Publisher {
     ///
     /// - Parameter other: Another publisher.
     /// - Returns: A publisher that emits pairs of elements from the upstream publishers as tuples.
-    public func zip<P>(_ other: P) -> Publishers.Zip<Self, P> where P : Publisher, Self.Failure == P.Failure {
+    public func zip<P: Publisher>(_ other: P) -> Publishers.Zip<Self, P> where Failure == P.Failure {
         return .init(self, other)
     }
     
@@ -25,7 +25,7 @@ extension Publisher {
     /// - Parameter other: Another publisher.
     ///   - transform: A closure that receives the most recent value from each publisher and returns a new value to publish.
     /// - Returns: A publisher that emits pairs of elements from the upstream publishers as tuples.
-    public func zip<P, T>(_ other: P, _ transform: @escaping (Self.Output, P.Output) -> T) -> Publishers.Map<Publishers.Zip<Self, P>, T> where P : Publisher, Self.Failure == P.Failure {
+    public func zip<P: Publisher, T>(_ other: P, _ transform: @escaping (Output, P.Output) -> T) -> Publishers.Map<Publishers.Zip<Self, P>, T> where Failure == P.Failure {
         return self.zip(other).map(transform)
     }
 }
@@ -61,7 +61,7 @@ extension Publishers {
             self.b = b
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, B.Failure == S.Failure, S.Input == (A.Output, B.Output) {
+        public func receive<S: Subscriber>(subscriber: S) where B.Failure == S.Failure, S.Input == (A.Output, B.Output) {
             let s = Inner(pub: self, sub: subscriber)
             subscriber.receive(subscription: s)
         }

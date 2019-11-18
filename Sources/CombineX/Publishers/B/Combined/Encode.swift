@@ -1,4 +1,4 @@
-extension Publisher where Self.Output : Encodable {
+extension Publisher where Output : Encodable {
 
     /// Encodes the output from upstream using a specified `TopLevelEncoder`.
     /// For example, use `JSONEncoder`.
@@ -24,7 +24,7 @@ extension Publishers {
             self.encoder = encoder
         }
 
-        public func receive<S>(subscriber: S) where S : Subscriber, Coder.Output == S.Input, S.Failure == Publishers.Encode<Upstream, Coder>.Failure {
+        public func receive<S: Subscriber>(subscriber: S) where Coder.Output == S.Input, S.Failure == Publishers.Encode<Upstream, Coder>.Failure {
             self.upstream
                 .tryMap {
                     try self.encoder.encode($0)

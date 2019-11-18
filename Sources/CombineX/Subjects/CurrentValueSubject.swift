@@ -33,7 +33,7 @@ final public class CurrentValueSubject<Output, Failure> : Subject where Failure 
         self.current = value
     }
     
-    final public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
+    final public func receive<S: Subscriber>(subscriber: S) where Output == S.Input, Failure == S.Failure {
         self.downstreamLock.lock()
         
         if let completion = self.completion {

@@ -11,7 +11,7 @@ extension Publisher {
     /// Backpressure note: Upon receiving any request greater than zero, this publisher requests unlimited elements from the upstream publisher.
     /// - Parameter predicate:  A closure that evaluates each received element. Return `true` to continue, or `false` to cancel the upstream and complete. The closure may throw, in which case the publisher cancels the upstream publisher and fails with the thrown error.
     /// - Returns:  A publisher that publishes a Boolean value that indicates whether all received elements pass a given predicate.
-    public func tryAllSatisfy(_ predicate: @escaping (Self.Output) throws -> Bool) -> Publishers.TryAllSatisfy<Self> {
+    public func tryAllSatisfy(_ predicate: @escaping (Output) throws -> Bool) -> Publishers.TryAllSatisfy<Self> {
         return .init(upstream: self, predicate: predicate)
     }
 }
@@ -38,7 +38,7 @@ extension Publishers {
             self.predicate = predicate
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, S.Failure == Publishers.TryAllSatisfy<Upstream>.Failure, S.Input == Publishers.TryAllSatisfy<Upstream>.Output {
+        public func receive<S: Subscriber>(subscriber: S) where S.Failure == Publishers.TryAllSatisfy<Upstream>.Failure, S.Input == Publishers.TryAllSatisfy<Upstream>.Output {
             let s = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(s)
         }

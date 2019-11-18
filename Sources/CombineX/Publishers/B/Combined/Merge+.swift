@@ -9,7 +9,7 @@ extension Publisher {
     ///   - c: A third publisher.
     /// - Returns:  A publisher that emits an event when any upstream publisher emits
     /// an event.
-    public func merge<B, C>(with b: B, _ c: C) -> Publishers.Merge3<Self, B, C> where B : Publisher, C : Publisher, Self.Failure == B.Failure, Self.Output == B.Output, B.Failure == C.Failure, B.Output == C.Output {
+    public func merge<B, C>(with b: B, _ c: C) -> Publishers.Merge3<Self, B, C> where B : Publisher, C : Publisher, Failure == B.Failure, Output == B.Output, B.Failure == C.Failure, B.Output == C.Output {
         return .init(self, b, c)
     }
     
@@ -23,7 +23,7 @@ extension Publisher {
     ///   - c: A third publisher.
     ///   - d: A fourth publisher.
     /// - Returns: A publisher that emits an event when any upstream publisher emits an event.
-    public func merge<B, C, D>(with b: B, _ c: C, _ d: D) -> Publishers.Merge4<Self, B, C, D> where B : Publisher, C : Publisher, D : Publisher, Self.Failure == B.Failure, Self.Output == B.Output, B.Failure == C.Failure, B.Output == C.Output, C.Failure == D.Failure, C.Output == D.Output {
+    public func merge<B, C, D>(with b: B, _ c: C, _ d: D) -> Publishers.Merge4<Self, B, C, D> where B : Publisher, C : Publisher, D : Publisher, Failure == B.Failure, Output == B.Output, B.Failure == C.Failure, B.Output == C.Output, C.Failure == D.Failure, C.Output == D.Output {
         return .init(self, b, c, d)
     }
     
@@ -37,7 +37,7 @@ extension Publisher {
     ///   - d: A fourth publisher.
     ///   - e: A fifth publisher.
     /// - Returns: A publisher that emits an event when any upstream publisher emits an event.
-    public func merge<B, C, D, E>(with b: B, _ c: C, _ d: D, _ e: E) -> Publishers.Merge5<Self, B, C, D, E> where B : Publisher, C : Publisher, D : Publisher, E : Publisher, Self.Failure == B.Failure, Self.Output == B.Output, B.Failure == C.Failure, B.Output == C.Output, C.Failure == D.Failure, C.Output == D.Output, D.Failure == E.Failure, D.Output == E.Output {
+    public func merge<B, C, D, E>(with b: B, _ c: C, _ d: D, _ e: E) -> Publishers.Merge5<Self, B, C, D, E> where B : Publisher, C : Publisher, D : Publisher, E : Publisher, Failure == B.Failure, Output == B.Output, B.Failure == C.Failure, B.Output == C.Output, C.Failure == D.Failure, C.Output == D.Output, D.Failure == E.Failure, D.Output == E.Output {
         return .init(self, b, c, d, e)
     }
     
@@ -52,7 +52,7 @@ extension Publisher {
     ///   - e: A fifth publisher.
     ///   - f: A sixth publisher.
     /// - Returns: A publisher that emits an event when any upstream publisher emits an event.
-    public func merge<B, C, D, E, F>(with b: B, _ c: C, _ d: D, _ e: E, _ f: F) -> Publishers.Merge6<Self, B, C, D, E, F> where B : Publisher, C : Publisher, D : Publisher, E : Publisher, F : Publisher, Self.Failure == B.Failure, Self.Output == B.Output, B.Failure == C.Failure, B.Output == C.Output, C.Failure == D.Failure, C.Output == D.Output, D.Failure == E.Failure, D.Output == E.Output, E.Failure == F.Failure, E.Output == F.Output {
+    public func merge<B, C, D, E, F>(with b: B, _ c: C, _ d: D, _ e: E, _ f: F) -> Publishers.Merge6<Self, B, C, D, E, F> where B : Publisher, C : Publisher, D : Publisher, E : Publisher, F : Publisher, Failure == B.Failure, Output == B.Output, B.Failure == C.Failure, B.Output == C.Output, C.Failure == D.Failure, C.Output == D.Output, D.Failure == E.Failure, D.Output == E.Output, E.Failure == F.Failure, E.Output == F.Output {
         return .init(self, b, c, d, e, f)
     }
     
@@ -68,7 +68,7 @@ extension Publisher {
     ///   - f: A sixth publisher.
     ///   - g: A seventh publisher.
     /// - Returns: A publisher that emits an event when any upstream publisher emits an event.
-    public func merge<B, C, D, E, F, G>(with b: B, _ c: C, _ d: D, _ e: E, _ f: F, _ g: G) -> Publishers.Merge7<Self, B, C, D, E, F, G> where B : Publisher, C : Publisher, D : Publisher, E : Publisher, F : Publisher, G : Publisher, Self.Failure == B.Failure, Self.Output == B.Output, B.Failure == C.Failure, B.Output == C.Output, C.Failure == D.Failure, C.Output == D.Output, D.Failure == E.Failure, D.Output == E.Output, E.Failure == F.Failure, E.Output == F.Output, F.Failure == G.Failure, F.Output == G.Output {
+    public func merge<B, C, D, E, F, G>(with b: B, _ c: C, _ d: D, _ e: E, _ f: F, _ g: G) -> Publishers.Merge7<Self, B, C, D, E, F, G> where B : Publisher, C : Publisher, D : Publisher, E : Publisher, F : Publisher, G : Publisher, Failure == B.Failure, Output == B.Output, B.Failure == C.Failure, B.Output == C.Output, C.Failure == D.Failure, C.Output == D.Output, D.Failure == E.Failure, D.Output == E.Output, E.Failure == F.Failure, E.Output == F.Output, F.Failure == G.Failure, F.Output == G.Output {
         return .init(self, b, c, d, e, f, g)
     }
     
@@ -85,7 +85,7 @@ extension Publisher {
     ///   - g: A seventh publisher.
     ///   - h: An eighth publisher.
     /// - Returns: A publisher that emits an event when any upstream publisher emits an event.
-    public func merge<B, C, D, E, F, G, H>(with b: B, _ c: C, _ d: D, _ e: E, _ f: F, _ g: G, _ h: H) -> Publishers.Merge8<Self, B, C, D, E, F, G, H> where B : Publisher, C : Publisher, D : Publisher, E : Publisher, F : Publisher, G : Publisher, H : Publisher, Self.Failure == B.Failure, Self.Output == B.Output, B.Failure == C.Failure, B.Output == C.Output, C.Failure == D.Failure, C.Output == D.Output, D.Failure == E.Failure, D.Output == E.Output, E.Failure == F.Failure, E.Output == F.Output, F.Failure == G.Failure, F.Output == G.Output, G.Failure == H.Failure, G.Output == H.Output {
+    public func merge<B, C, D, E, F, G, H>(with b: B, _ c: C, _ d: D, _ e: E, _ f: F, _ g: G, _ h: H) -> Publishers.Merge8<Self, B, C, D, E, F, G, H> where B : Publisher, C : Publisher, D : Publisher, E : Publisher, F : Publisher, G : Publisher, H : Publisher, Failure == B.Failure, Output == B.Output, B.Failure == C.Failure, B.Output == C.Output, C.Failure == D.Failure, C.Output == D.Output, D.Failure == E.Failure, D.Output == E.Output, E.Failure == F.Failure, E.Output == F.Output, F.Failure == G.Failure, F.Output == G.Output, G.Failure == H.Failure, G.Output == H.Output {
         return .init(self, b, c, d, e, f, g, h)
     }
     
@@ -243,11 +243,11 @@ extension Publishers {
                 .eraseToAnyPublisher()
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, C.Failure == S.Failure, C.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where C.Failure == S.Failure, C.Output == S.Input {
             self.pub.subscribe(subscriber)
         }
         
-        public func merge<P>(with other: P) -> Publishers.Merge4<A, B, C, P> where P : Publisher, C.Failure == P.Failure, C.Output == P.Output {
+        public func merge<P: Publisher>(with other: P) -> Publishers.Merge4<A, B, C, P> where C.Failure == P.Failure, C.Output == P.Output {
             return .init(a, b, c, other)
         }
         
@@ -302,11 +302,11 @@ extension Publishers {
                 .eraseToAnyPublisher()
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, D.Failure == S.Failure, D.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where D.Failure == S.Failure, D.Output == S.Input {
             self.pub.subscribe(subscriber)
         }
         
-        public func merge<P>(with other: P) -> Publishers.Merge5<A, B, C, D, P> where P : Publisher, D.Failure == P.Failure, D.Output == P.Output {
+        public func merge<P: Publisher>(with other: P) -> Publishers.Merge5<A, B, C, D, P> where D.Failure == P.Failure, D.Output == P.Output {
             return .init(a, b, c, d, other)
         }
         
@@ -361,11 +361,11 @@ extension Publishers {
                 .eraseToAnyPublisher()
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, E.Failure == S.Failure, E.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where E.Failure == S.Failure, E.Output == S.Input {
             self.pub.subscribe(subscriber)
         }
         
-        public func merge<P>(with other: P) -> Publishers.Merge6<A, B, C, D, E, P> where P : Publisher, E.Failure == P.Failure, E.Output == P.Output {
+        public func merge<P: Publisher>(with other: P) -> Publishers.Merge6<A, B, C, D, E, P> where E.Failure == P.Failure, E.Output == P.Output {
             return .init(a, b, c, d, e, other)
         }
         
@@ -420,11 +420,11 @@ extension Publishers {
                 .eraseToAnyPublisher()
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, F.Failure == S.Failure, F.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where F.Failure == S.Failure, F.Output == S.Input {
             self.pub.subscribe(subscriber)
         }
         
-        public func merge<P>(with other: P) -> Publishers.Merge7<A, B, C, D, E, F, P> where P : Publisher, F.Failure == P.Failure, F.Output == P.Output {
+        public func merge<P: Publisher>(with other: P) -> Publishers.Merge7<A, B, C, D, E, F, P> where F.Failure == P.Failure, F.Output == P.Output {
             return .init(a, b, c, d, e, f, other)
         }
         
@@ -479,11 +479,11 @@ extension Publishers {
                 .eraseToAnyPublisher()
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, G.Failure == S.Failure, G.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where G.Failure == S.Failure, G.Output == S.Input {
             self.pub.subscribe(subscriber)
         }
         
-        public func merge<P>(with other: P) -> Publishers.Merge8<A, B, C, D, E, F, G, P> where P : Publisher, G.Failure == P.Failure, G.Output == P.Output {
+        public func merge<P: Publisher>(with other: P) -> Publishers.Merge8<A, B, C, D, E, F, G, P> where G.Failure == P.Failure, G.Output == P.Output {
             return .init(a, b, c, d, e, f, g, other)
         }
     }
@@ -538,7 +538,7 @@ extension Publishers {
                 .eraseToAnyPublisher()
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, H.Failure == S.Failure, H.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where H.Failure == S.Failure, H.Output == S.Input {
             self.pub.subscribe(subscriber)
         }
     }
@@ -562,7 +562,7 @@ extension Publishers {
                 .eraseToAnyPublisher()
         }
         
-        public init<S>(_ upstream: S) where Upstream == S.Element, S : Swift.Sequence {
+        public init<S: Swift.Sequence>(_ upstream: S) where Upstream == S.Element {
             self.publishers = Array(upstream)
             
             self.pub = Publishers
@@ -571,7 +571,7 @@ extension Publishers {
                 .eraseToAnyPublisher()
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             
             self.pub.subscribe(subscriber)
         }

@@ -17,7 +17,7 @@ final public class PassthroughSubject<Output, Failure> : Subject where Failure :
     
     public init() { }
     
-    final public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
+    final public func receive<S: Subscriber>(subscriber: S) where Output == S.Input, Failure == S.Failure {
         self.downstreamLock.lock()
         
         if let completion = self.completion {

@@ -25,7 +25,7 @@ public class TestSubject<Output, Failure>: Subject, TestLogging where Failure : 
         return self.subscriptions[0]
     }
     
-    public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
+    public func receive<S: Subscriber>(subscriber: S) where Output == S.Input, Failure == S.Failure {
         self.downstreamLock.lock()
         
         if let completion = self.completion {

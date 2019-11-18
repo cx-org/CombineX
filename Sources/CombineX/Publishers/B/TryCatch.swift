@@ -8,7 +8,7 @@ extension Publisher {
     ///
     /// - Parameter handler: A `throw`ing closure that accepts the upstream failure as input and returns a publisher to replace the upstream publisher or if an error is thrown will send the error downstream.
     /// - Returns: A publisher that handles errors from an upstream publisher by replacing the failed publisher with another publisher.
-    public func tryCatch<P>(_ handler: @escaping (Self.Failure) throws -> P) -> Publishers.TryCatch<Self, P> where P : Publisher, Self.Output == P.Output {
+    public func tryCatch<P: Publisher>(_ handler: @escaping (Failure) throws -> P) -> Publishers.TryCatch<Self, P> where Output == P.Output {
         return .init(upstream: self, handler: handler)
     }
     
@@ -32,7 +32,7 @@ extension Publishers {
             self.handler = handler
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, NewPublisher.Output == S.Input, S.Failure == Publishers.TryCatch<Upstream, NewPublisher>.Failure {
+        public func receive<S: Subscriber>(subscriber: S) where NewPublisher.Output == S.Input, S.Failure == Publishers.TryCatch<Upstream, NewPublisher>.Failure {
             let s = Inner(pub: self, sub: subscriber)
             self.upstream
                 .mapError { $0 }

@@ -20,7 +20,7 @@ extension Publisher {
     ///   - scheduler: The scheduler on which to receive upstream messages.
     ///   - options: Options that customize the delivery of elements.
     /// - Returns: A publisher which performs upstream operations on the specified scheduler.
-    public func subscribe<S>(on scheduler: S, options: S.SchedulerOptions? = nil) -> Publishers.SubscribeOn<Self, S> where S : Scheduler {
+    public func subscribe<S: Scheduler>(on scheduler: S, options: S.SchedulerOptions? = nil) -> Publishers.SubscribeOn<Self, S> {
         return .init(upstream: self, scheduler: scheduler, options: options)
     }
 }
@@ -49,7 +49,7 @@ extension Publishers {
             self.options = options
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             let s = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(s)
         }

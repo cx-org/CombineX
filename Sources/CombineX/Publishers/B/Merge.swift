@@ -5,7 +5,7 @@ extension Publisher {
     /// The merged publisher continues to emit elements until all upstream publishers finish. If an upstream publisher produces an error, the merged publisher fails with that error.
     /// - Parameter other: Another publisher.
     /// - Returns: A publisher that emits an event when either upstream publisher emits an event.
-    public func merge<P>(with other: P) -> Publishers.Merge<Self, P> where P : Publisher, Self.Failure == P.Failure, Self.Output == P.Output {
+    public func merge<P: Publisher>(with other: P) -> Publishers.Merge<Self, P> where Failure == P.Failure, Output == P.Output {
         return .init(self, other)
     }
 }
@@ -49,11 +49,11 @@ extension Publishers {
                 .eraseToAnyPublisher()
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, B.Failure == S.Failure, B.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where B.Failure == S.Failure, B.Output == S.Input {
             self.pub.subscribe(subscriber)
         }
         
-        public func merge<P>(with other: P) -> Publishers.Merge3<A, B, P> where P : Publisher, B.Failure == P.Failure, B.Output == P.Output {
+        public func merge<P: Publisher>(with other: P) -> Publishers.Merge3<A, B, P> where B.Failure == P.Failure, B.Output == P.Output {
             return .init(self.a, self.b, other)
         }
         

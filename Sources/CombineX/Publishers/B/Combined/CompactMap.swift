@@ -4,7 +4,7 @@ extension Publisher {
     ///
     /// - Parameter transform: A closure that receives a value and returns an optional value.
     /// - Returns: A publisher that republishes all non-`nil` results of calling the transform closure.
-    public func compactMap<T>(_ transform: @escaping (Self.Output) -> T?) -> Publishers.CompactMap<Self, T> {
+    public func compactMap<T>(_ transform: @escaping (Output) -> T?) -> Publishers.CompactMap<Self, T> {
         return .init(upstream: self, transform: transform)
     }
 }
@@ -48,7 +48,7 @@ extension Publishers {
             self.transform = transform
         }
         
-        public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, Upstream.Failure == S.Failure {
+        public func receive<S: Subscriber>(subscriber: S) where Output == S.Input, Upstream.Failure == S.Failure {
             self.upstream
                 .tryCompactMap(self.transform)
                 .mapError {

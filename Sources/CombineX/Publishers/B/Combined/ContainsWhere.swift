@@ -5,7 +5,7 @@ extension Publisher {
     /// This operator consumes elements produced from the upstream publisher until the upstream publisher produces a matching element.
     /// - Parameter predicate: A closure that takes an element as its parameter and returns a Boolean value indicating whether the element satisfies the closure’s comparison logic.
     /// - Returns: A publisher that emits the Boolean value `true` when the upstream  publisher emits a matching value.
-    public func contains(where predicate: @escaping (Self.Output) -> Bool) -> Publishers.ContainsWhere<Self> {
+    public func contains(where predicate: @escaping (Output) -> Bool) -> Publishers.ContainsWhere<Self> {
         return .init(upstream: self, predicate: predicate)
     }
 }
@@ -31,7 +31,7 @@ extension Publishers {
             self.predicate = predicate
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, S.Input == Publishers.ContainsWhere<Upstream>.Output {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, S.Input == Publishers.ContainsWhere<Upstream>.Output {
             self.upstream
                 .first(where: self.predicate)
                 .map { _ in true }

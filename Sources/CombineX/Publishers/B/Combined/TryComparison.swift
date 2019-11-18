@@ -5,7 +5,7 @@ extension Publisher {
     /// After this publisher receives a request for more than 0 items, it requests unlimited items from its upstream publisher.
     /// - Parameter areInIncreasingOrder: A throwing closure that receives two elements and returns `true` if they are in increasing order. If this closure throws, the publisher terminates with a `Failure`.
     /// - Returns: A publisher that publishes the minimum value received from the upstream publisher, after the upstream publisher finishes.
-    public func tryMin(by areInIncreasingOrder: @escaping (Self.Output, Self.Output) throws -> Bool) -> Publishers.TryComparison<Self> {
+    public func tryMin(by areInIncreasingOrder: @escaping (Output, Output) throws -> Bool) -> Publishers.TryComparison<Self> {
         return .init(upstream: self) {
             try !areInIncreasingOrder($0, $1)
         }
@@ -16,7 +16,7 @@ extension Publisher {
     /// After this publisher receives a request for more than 0 items, it requests unlimited items from its upstream publisher.
     /// - Parameter areInIncreasingOrder: A throwing closure that receives two elements and returns `true` if they are in increasing order. If this closure throws, the publisher terminates with a `Failure`.
     /// - Returns: A publisher that publishes the maximum value received from the upstream publisher, after the upstream publisher finishes.
-    public func tryMax(by areInIncreasingOrder: @escaping (Self.Output, Self.Output) throws -> Bool) -> Publishers.TryComparison<Self> {
+    public func tryMax(by areInIncreasingOrder: @escaping (Output, Output) throws -> Bool) -> Publishers.TryComparison<Self> {
         return .init(upstream: self, areInIncreasingOrder: areInIncreasingOrder)
     }
     
@@ -43,7 +43,7 @@ extension Publishers {
             self.areInIncreasingOrder = areInIncreasingOrder
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, S.Failure == Publishers.TryComparison<Upstream>.Failure {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Output == S.Input, S.Failure == Publishers.TryComparison<Upstream>.Failure {
             
             self.upstream
                 .tryReduce(nil as Output?) {

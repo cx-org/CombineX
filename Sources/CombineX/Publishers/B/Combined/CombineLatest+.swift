@@ -9,7 +9,7 @@ extension Publisher {
     ///   - publisher1: A second publisher to combine with this one.
     ///   - publisher2: A third publisher to combine with this one.
     /// - Returns: A publisher that receives and combines elements from this publisher and two other publishers.
-    public func combineLatest<P, Q>(_ publisher1: P, _ publisher2: Q) -> Publishers.CombineLatest3<Self, P, Q> where P : Publisher, Q : Publisher, Self.Failure == P.Failure, P.Failure == Q.Failure {
+    public func combineLatest<P, Q>(_ publisher1: P, _ publisher2: Q) -> Publishers.CombineLatest3<Self, P, Q> where P : Publisher, Q : Publisher, Failure == P.Failure, P.Failure == Q.Failure {
         return .init(self, publisher1, publisher2)
     }
     
@@ -23,7 +23,7 @@ extension Publisher {
     ///   - publisher2: A third publisher to combine with this one.
     ///   - transform: A closure that receives the most recent value from each publisher and returns a new value to publish.
     /// - Returns: A publisher that receives and combines elements from this publisher and two other publishers.
-    public func combineLatest<P, Q, T>(_ publisher1: P, _ publisher2: Q, _ transform: @escaping (Self.Output, P.Output, Q.Output) -> T) -> Publishers.Map<Publishers.CombineLatest3<Self, P, Q>, T> where P : Publisher, Q : Publisher, Self.Failure == P.Failure, P.Failure == Q.Failure {
+    public func combineLatest<P, Q, T>(_ publisher1: P, _ publisher2: Q, _ transform: @escaping (Output, P.Output, Q.Output) -> T) -> Publishers.Map<Publishers.CombineLatest3<Self, P, Q>, T> where P : Publisher, Q : Publisher, Failure == P.Failure, P.Failure == Q.Failure {
         return self.combineLatest(publisher1, publisher2).map(transform)
     }
     
@@ -37,7 +37,7 @@ extension Publisher {
     ///   - publisher2: A third publisher to combine with this one.
     ///   - publisher3: A fourth publisher to combine with this one.
     /// - Returns: A publisher that receives and combines elements from this publisher and three other publishers.
-    public func combineLatest<P, Q, R>(_ publisher1: P, _ publisher2: Q, _ publisher3: R) -> Publishers.CombineLatest4<Self, P, Q, R> where P : Publisher, Q : Publisher, R : Publisher, Self.Failure == P.Failure, P.Failure == Q.Failure, Q.Failure == R.Failure {
+    public func combineLatest<P, Q, R>(_ publisher1: P, _ publisher2: Q, _ publisher3: R) -> Publishers.CombineLatest4<Self, P, Q, R> where P : Publisher, Q : Publisher, R : Publisher, Failure == P.Failure, P.Failure == Q.Failure, Q.Failure == R.Failure {
         return .init(self, publisher1, publisher2, publisher3)
     }
     
@@ -52,7 +52,7 @@ extension Publisher {
     ///   - publisher3: A fourth publisher to combine with this one.
     ///   - transform: A closure that receives the most recent value from each publisher and returns a new value to publish.
     /// - Returns: A publisher that receives and combines elements from this publisher and three other publishers.
-    public func combineLatest<P, Q, R, T>(_ publisher1: P, _ publisher2: Q, _ publisher3: R, _ transform: @escaping (Self.Output, P.Output, Q.Output, R.Output) -> T) -> Publishers.Map<Publishers.CombineLatest4<Self, P, Q, R>, T> where P : Publisher, Q : Publisher, R : Publisher, Self.Failure == P.Failure, P.Failure == Q.Failure, Q.Failure == R.Failure {
+    public func combineLatest<P, Q, R, T>(_ publisher1: P, _ publisher2: Q, _ publisher3: R, _ transform: @escaping (Output, P.Output, Q.Output, R.Output) -> T) -> Publishers.Map<Publishers.CombineLatest4<Self, P, Q, R>, T> where P : Publisher, Q : Publisher, R : Publisher, Failure == P.Failure, P.Failure == Q.Failure, Q.Failure == R.Failure {
         return self.combineLatest(publisher1, publisher2, publisher3).map(transform)
     }
 }
@@ -106,7 +106,7 @@ extension Publishers {
             self.c = c
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, C.Failure == S.Failure, S.Input == (A.Output, B.Output, C.Output) {
+        public func receive<S: Subscriber>(subscriber: S) where C.Failure == S.Failure, S.Input == (A.Output, B.Output, C.Output) {
             self.a
                 .combineLatest(self.b)
                 .combineLatest(self.c)
@@ -139,7 +139,7 @@ extension Publishers {
             self.d = d
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, D.Failure == S.Failure, S.Input == (A.Output, B.Output, C.Output, D.Output) {
+        public func receive<S: Subscriber>(subscriber: S) where D.Failure == S.Failure, S.Input == (A.Output, B.Output, C.Output, D.Output) {
             self.a
                 .combineLatest(self.b)
                 .combineLatest(self.c)

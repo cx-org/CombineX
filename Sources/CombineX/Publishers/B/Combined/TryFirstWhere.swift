@@ -5,7 +5,7 @@ extension Publisher {
     /// The publisher ignores all elements after the first. If this publisher doesn’t receive any elements, it finishes without publishing. If the predicate closure throws, the publisher fails with an error.
     /// - Parameter predicate: A closure that takes an element as a parameter and returns a Boolean value that indicates whether to publish the element.
     /// - Returns: A publisher that only publishes the first element of a stream that satifies the predicate.
-    public func tryFirst(where predicate: @escaping (Self.Output) throws -> Bool) -> Publishers.TryFirstWhere<Self> {
+    public func tryFirst(where predicate: @escaping (Output) throws -> Bool) -> Publishers.TryFirstWhere<Self> {
         return .init(upstream: self, predicate: predicate)
     }
 }
@@ -30,7 +30,7 @@ extension Publishers {
             self.predicate = predicate
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, S.Failure == Publishers.TryFirstWhere<Upstream>.Failure {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Output == S.Input, S.Failure == Publishers.TryFirstWhere<Upstream>.Failure {
             return self.upstream
                 .tryFilter(self.predicate)
                 .output(at: 0)

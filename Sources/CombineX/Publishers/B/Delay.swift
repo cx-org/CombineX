@@ -12,7 +12,7 @@ extension Publisher {
     ///   - tolerance: The allowed tolerance in firing delayed events.
     ///   - scheduler: The scheduler to deliver the delayed events.
     /// - Returns: A publisher that delays delivery of elements and completion to the downstream receiver.
-    public func delay<S>(for interval: S.SchedulerTimeType.Stride, tolerance: S.SchedulerTimeType.Stride? = nil, scheduler: S, options: S.SchedulerOptions? = nil) -> Publishers.Delay<Self, S> where S : Scheduler {
+    public func delay<S: Scheduler>(for interval: S.SchedulerTimeType.Stride, tolerance: S.SchedulerTimeType.Stride? = nil, scheduler: S, options: S.SchedulerOptions? = nil) -> Publishers.Delay<Self, S> {
         return .init(upstream: self, interval: interval, tolerance: tolerance ?? scheduler.minimumTolerance, scheduler: scheduler, options: options)
     }
 }
@@ -48,7 +48,7 @@ extension Publishers {
             self.options = options
         }
 
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             let s = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(s)
         }

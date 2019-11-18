@@ -11,7 +11,7 @@ extension Publisher {
     ///   - scheduler: The scheduler on which to publish elements.
     ///   - latest: A Boolean value that indicates whether to publish the most recent element. If `false`, the publisher emits the first element received during the interval.
     /// - Returns: A publisher that emits either the most-recent or first element received during the specified interval.
-    public func throttle<S>(for interval: S.SchedulerTimeType.Stride, scheduler: S, latest: Bool) -> Publishers.Throttle<Self, S> where S : Scheduler {
+    public func throttle<S: Scheduler>(for interval: S.SchedulerTimeType.Stride, scheduler: S, latest: Bool) -> Publishers.Throttle<Self, S> {
         return .init(upstream: self, interval: interval, scheduler: scheduler, latest: latest)
     }
 }
@@ -46,7 +46,7 @@ extension Publishers {
             self.latest = latest
         }
 
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             if self.latest {
                 let s = Latest(pub: self, sub: subscriber)
                 self.upstream.subscribe(s)

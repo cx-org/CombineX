@@ -36,7 +36,7 @@ extension Publishers {
             self.upstream = upstream
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, S.Input == Publishers.Count<Upstream>.Output {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, S.Input == Publishers.Count<Upstream>.Output {
             self.upstream
                 .reduce(Atom(val: 0)) { (counter, _) in
                     _ = counter.add(1)

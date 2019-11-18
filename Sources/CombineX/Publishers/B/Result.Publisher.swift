@@ -66,7 +66,7 @@ extension Result.CX {
             self.result = .failure(failure)
         }
 
-        public func receive<S>(subscriber: S) where Success == S.Input, Failure == S.Failure, S : Subscriber {
+        public func receive<S: Subscriber>(subscriber: S) where Success == S.Input, Failure == S.Failure {
             switch result {
             case .failure(let e):
                 subscriber.receive(subscription: Subscriptions.empty)

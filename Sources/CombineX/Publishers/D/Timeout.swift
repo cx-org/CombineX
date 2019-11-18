@@ -12,7 +12,7 @@ extension Publisher {
     ///   - options: Scheduler options that customize the delivery of elements.
     ///   - customError: A closure that executes if the publisher times out. The publisher sends the failure returned by this closure to the subscriber as the reason for termination.
     /// - Returns: A publisher that terminates if the specified interval elapses with no events received from the upstream publisher.
-    public func timeout<S>(_ interval: S.SchedulerTimeType.Stride, scheduler: S, options: S.SchedulerOptions? = nil, customError: (() -> Self.Failure)? = nil) -> Publishers.Timeout<Self, S> where S : Scheduler {
+    public func timeout<S: Scheduler>(_ interval: S.SchedulerTimeType.Stride, scheduler: S, options: S.SchedulerOptions? = nil, customError: (() -> Failure)? = nil) -> Publishers.Timeout<Self, S> {
         return .init(upstream: self, interval: interval, scheduler: scheduler, options: options, customError: customError)
     }
 }
@@ -43,7 +43,7 @@ extension Publishers {
             self.customError = customError
         }
 
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             let s = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(s)
         }

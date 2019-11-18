@@ -44,7 +44,7 @@ extension Publishers {
             self.line = line
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, S.Failure == Publishers.AssertNoFailure<Upstream>.Failure {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Output == S.Input, S.Failure == Publishers.AssertNoFailure<Upstream>.Failure {
             self.upstream
                 .mapError {
                     fatalError(self.prefix + ": Assert no failure, but got \($0)", file: self.file, line: self.line)

@@ -62,7 +62,7 @@ extension CXWrappers.NotificationCenter {
             self.object = object
         }
 
-        public func receive<S>(subscriber: S) where S : Subscriber, S.Failure == NotificationPublisher.Failure, S.Input == NotificationPublisher.Output {
+        public func receive<S: Subscriber>(subscriber: S) where S.Failure == NotificationPublisher.Failure, S.Input == NotificationPublisher.Output {
             let subject = PassthroughSubject<Output, Failure>()
             let observer = self.center.addObserver(forName: self.name, object: self.object, queue: nil) { (n) in
                 subject.send(n)

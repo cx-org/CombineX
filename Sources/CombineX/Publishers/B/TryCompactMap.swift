@@ -9,7 +9,7 @@ extension Publisher {
     /// If the closure throws an error, the publisher cancels the upstream and sends the thrown error to the downstream receiver as a `Failure`.
     /// - Parameter transform: an error-throwing closure that receives a value and returns an optional value.
     /// - Returns: A publisher that republishes all non-`nil` results of calling the transform closure.
-    public func tryCompactMap<T>(_ transform: @escaping (Self.Output) throws -> T?) -> Publishers.TryCompactMap<Self, T> {
+    public func tryCompactMap<T>(_ transform: @escaping (Output) throws -> T?) -> Publishers.TryCompactMap<Self, T> {
         return .init(upstream: self, transform: transform)
     }
 }
@@ -43,7 +43,7 @@ extension Publishers {
             self.transform = transform
         }
         
-        public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, S.Failure == Publishers.TryCompactMap<Upstream, Output>.Failure {
+        public func receive<S: Subscriber>(subscriber: S) where Output == S.Input, S.Failure == Publishers.TryCompactMap<Upstream, Output>.Failure {
             let s = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(s)
         }
