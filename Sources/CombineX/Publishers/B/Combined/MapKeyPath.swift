@@ -34,7 +34,7 @@ extension Publisher {
 extension Publishers {
 
     /// A publisher that publishes the value of a key path.
-    public struct MapKeyPath<Upstream, Output> : Publisher where Upstream : Publisher {
+    public struct MapKeyPath<Upstream: Publisher, Output>: Publisher {
 
         public typealias Failure = Upstream.Failure
 
@@ -54,7 +54,7 @@ extension Publishers {
     }
 
     /// A publisher that publishes the values of two key paths as a tuple.
-    public struct MapKeyPath2<Upstream, Output0, Output1> : Publisher where Upstream : Publisher {
+    public struct MapKeyPath2<Upstream: Publisher, Output0, Output1>: Publisher {
 
         public typealias Output = (Output0, Output1)
 
@@ -79,7 +79,7 @@ extension Publishers {
     }
 
     /// A publisher that publishes the values of three key paths as a tuple.
-    public struct MapKeyPath3<Upstream, Output0, Output1, Output2> : Publisher where Upstream : Publisher {
+    public struct MapKeyPath3<Upstream: Publisher, Output0, Output1, Output2>: Publisher {
 
         public typealias Output = (Output0, Output1, Output2)
 

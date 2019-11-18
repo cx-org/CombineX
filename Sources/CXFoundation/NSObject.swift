@@ -35,7 +35,7 @@ extension NSObject.CX {
 extension NSObject.CX {
     
     /// A publisher that emits events when the value of a KVO-compliant property changes.
-    public struct KeyValueObservingPublisher<Subject, Value> : Equatable where Subject : NSObject {
+    public struct KeyValueObservingPublisher<Subject, Value>: Equatable where Subject: NSObject {
 
         public let object: Subject
 

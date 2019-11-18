@@ -14,7 +14,7 @@ extension Publisher {
 extension Publishers {
     
     /// A publisher that republishes elements while a predicate closure indicates publishing should continue.
-    public struct PrefixWhile<Upstream> : Publisher where Upstream : Publisher {
+    public struct PrefixWhile<Upstream: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         

@@ -39,7 +39,7 @@ extension Publishers {
     ///
     /// When any of the provided closures returns `true`, this publisher raises the `SIGTRAP` signal to stop the process in the debugger.
     /// Otherwise, this publisher passes through values and completions as-is.
-    public struct Breakpoint<Upstream> : Publisher where Upstream : Publisher {
+    public struct Breakpoint<Upstream: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         

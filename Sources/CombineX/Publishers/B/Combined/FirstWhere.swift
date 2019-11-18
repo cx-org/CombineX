@@ -14,7 +14,7 @@ extension Publisher {
 extension Publishers {
     
     /// A publisher that only publishes the first element of a stream to satisfy a predicate closure.
-    public struct FirstWhere<Upstream> : Publisher where Upstream : Publisher {
+    public struct FirstWhere<Upstream: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         

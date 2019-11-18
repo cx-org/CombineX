@@ -2,14 +2,14 @@ extension Publisher {
 
     /// Decodes the output from upstream using a specified `TopLevelDecoder`.
     /// For example, use `JSONDecoder`.
-    public func decode<Item, Coder>(type: Item.Type, decoder: Coder) -> Publishers.Decode<Self, Item, Coder> where Item : Decodable, Coder : TopLevelDecoder, Output == Coder.Input {
+    public func decode<Item, Coder>(type: Item.Type, decoder: Coder) -> Publishers.Decode<Self, Item, Coder> where Item: Decodable, Coder: TopLevelDecoder, Output == Coder.Input {
         return .init(upstream: self, decoder: decoder)
     }
 }
 
 extension Publishers {
     
-    public struct Decode<Upstream, Output, Coder> : Publisher where Upstream : Publisher, Output : Decodable, Coder : TopLevelDecoder, Upstream.Output == Coder.Input {
+    public struct Decode<Upstream: Publisher, Output: Decodable, Coder: TopLevelDecoder>: Publisher where Upstream.Output == Coder.Input {
 
         public typealias Failure = Error
 

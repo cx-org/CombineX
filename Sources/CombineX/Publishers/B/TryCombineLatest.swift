@@ -18,7 +18,7 @@ extension Publisher {
 extension Publishers {
     
     /// A publisher that receives and combines the latest elements from two publishers, using a throwing closure.
-    public struct TryCombineLatest<A, B, Output> : Publisher where A : Publisher, B : Publisher, A.Failure == Error, B.Failure == Error {
+    public struct TryCombineLatest<A, B, Output>: Publisher where A: Publisher, B: Publisher, A.Failure == Error, B.Failure == Error {
         
         public typealias Failure = Error
         

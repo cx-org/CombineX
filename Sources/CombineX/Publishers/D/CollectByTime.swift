@@ -24,7 +24,7 @@ extension Publishers {
     ///
     /// - byTime: Collect and periodically publish items.
     /// - byTimeOrCount: Collect and publish items, either periodically or when a buffer reaches its maximum size.
-    public enum TimeGroupingStrategy<Context> where Context : Scheduler {
+    public enum TimeGroupingStrategy<Context> where Context: Scheduler {
 
         case byTime(Context, Context.SchedulerTimeType.Stride)
 
@@ -32,7 +32,7 @@ extension Publishers {
     }
 
     /// A publisher that buffers and periodically publishes its items.
-    public struct CollectByTime<Upstream, Context> : Publisher where Upstream : Publisher, Context : Scheduler {
+    public struct CollectByTime<Upstream: Publisher, Context: Scheduler>: Publisher {
 
         public typealias Output = [Upstream.Output]
 

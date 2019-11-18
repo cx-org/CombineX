@@ -30,7 +30,7 @@ extension Publisher {
     }
 }
 
-extension Publishers.Zip : Equatable where A : Equatable, B : Equatable {
+extension Publishers.Zip: Equatable where A: Equatable, B: Equatable {
     
     /// Returns a Boolean value that indicates whether two publishers are equivalent.
     ///
@@ -46,7 +46,7 @@ extension Publishers.Zip : Equatable where A : Equatable, B : Equatable {
 extension Publishers {
     
     /// A publisher created by applying the zip function to two upstream publishers.
-    public struct Zip<A, B> : Publisher where A : Publisher, B : Publisher, A.Failure == B.Failure {
+    public struct Zip<A, B>: Publisher where A: Publisher, B: Publisher, A.Failure == B.Failure {
         
         public typealias Output = (A.Output, B.Output)
         

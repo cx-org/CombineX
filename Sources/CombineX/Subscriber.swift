@@ -1,5 +1,5 @@
 /// A protocol that declares a type that can receive input from a publisher.
-public protocol Subscriber : CustomCombineIdentifierConvertible {
+public protocol Subscriber: CustomCombineIdentifierConvertible {
     
     /// The kind of values this subscriber receives.
     associatedtype Input
@@ -7,7 +7,7 @@ public protocol Subscriber : CustomCombineIdentifierConvertible {
     /// The kind of errors this subscriber might receive.
     ///
     /// Use `Never` if this `Subscriber` cannot receive errors.
-    associatedtype Failure : Error
+    associatedtype Failure: Error
     
     /// Tells the subscriber that it has successfully subscribed to the publisher and may request items.
     ///

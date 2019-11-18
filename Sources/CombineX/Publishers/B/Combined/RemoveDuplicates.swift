@@ -1,4 +1,4 @@
-extension Publisher where Output : Equatable {
+extension Publisher where Output: Equatable {
     
     /// Publishes only elements that don’t match the previous element.
     ///
@@ -20,7 +20,7 @@ extension Publisher {
 extension Publishers {
     
     /// A publisher that publishes only elements that don’t match the previous element.
-    public struct RemoveDuplicates<Upstream> : Publisher where Upstream : Publisher {
+    public struct RemoveDuplicates<Upstream: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         

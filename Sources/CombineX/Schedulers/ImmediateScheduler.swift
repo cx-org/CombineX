@@ -1,10 +1,10 @@
 /// A scheduler for performing synchronous actions.
 ///
 /// You can use this scheduler for immediate actions. If you attempt to schedule actions after a specific date, the scheduler ignores the date and executes synchronously.
-public struct ImmediateScheduler : Scheduler {
+public struct ImmediateScheduler: Scheduler {
     
     /// The time type used by the immediate scheduler.
-    public struct SchedulerTimeType : Strideable {
+    public struct SchedulerTimeType: Strideable {
         
         /// Returns the distance to another immediate scheduler time; this distance is always `0` in the context of an immediate scheduler.
         ///
@@ -23,7 +23,7 @@ public struct ImmediateScheduler : Scheduler {
         }
         
         /// The increment by which the immediate scheduler counts time.
-        public struct Stride : ExpressibleByFloatLiteral, Comparable, SignedNumeric, Codable, SchedulerTimeIntervalConvertible {
+        public struct Stride: ExpressibleByFloatLiteral, Comparable, SignedNumeric, Codable, SchedulerTimeIntervalConvertible {
             
             public var magnitude: Int
 

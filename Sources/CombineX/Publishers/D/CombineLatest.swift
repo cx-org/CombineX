@@ -31,7 +31,7 @@ extension Publisher {
     
 }
 
-extension Publishers.CombineLatest : Equatable where A : Equatable, B : Equatable {
+extension Publishers.CombineLatest: Equatable where A: Equatable, B: Equatable {
     
     /// Returns a Boolean value that indicates whether two publishers are equivalent.
     ///
@@ -47,7 +47,7 @@ extension Publishers.CombineLatest : Equatable where A : Equatable, B : Equatabl
 extension Publishers {
     
     /// A publisher that receives and combines the latest elements from two publishers.
-    public struct CombineLatest<A, B> : Publisher where A : Publisher, B : Publisher, A.Failure == B.Failure {
+    public struct CombineLatest<A, B>: Publisher where A: Publisher, B: Publisher, A.Failure == B.Failure {
         
         public typealias Output = (A.Output, B.Output)
         

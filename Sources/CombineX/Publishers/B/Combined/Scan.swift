@@ -21,7 +21,7 @@ extension Publisher {
 
 extension Publishers {
     
-    public struct Scan<Upstream, Output> : Publisher where Upstream : Publisher {
+    public struct Scan<Upstream: Publisher, Output>: Publisher {
         
         public typealias Failure = Upstream.Failure
         

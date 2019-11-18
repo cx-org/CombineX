@@ -26,7 +26,7 @@ extension Publishers {
     
     // FIXME: The doc from Apple seems to be wrong, should be: A publisher that only publishes the maximum value received from the upstream publisher, after the upstream publisher finishes.
     /// A publisher that republishes items from another publisher only if each new item is in increasing order from the previously-published item, and fails if the ordering logic throws an error.
-    public struct TryComparison<Upstream> : Publisher where Upstream : Publisher {
+    public struct TryComparison<Upstream: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         

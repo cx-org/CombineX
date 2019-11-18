@@ -1,5 +1,5 @@
 /// A publisher that awaits subscription before running the supplied closure to create a publisher for the new subscriber.
-public struct Deferred<DeferredPublisher> : Publisher where DeferredPublisher : Publisher {
+public struct Deferred<DeferredPublisher>: Publisher where DeferredPublisher: Publisher {
     
     public typealias Output = DeferredPublisher.Output
     

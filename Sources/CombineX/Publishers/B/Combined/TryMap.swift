@@ -40,7 +40,7 @@ extension Publishers.TryMap {
 extension Publishers {
     
     /// A publisher that transforms all elements from the upstream publisher with a provided error-throwing closure.
-    public struct TryMap<Upstream, Output> : Publisher where Upstream : Publisher {
+    public struct TryMap<Upstream: Publisher, Output>: Publisher {
         
         public typealias Failure = Error
         

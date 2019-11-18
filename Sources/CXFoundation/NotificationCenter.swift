@@ -35,7 +35,7 @@ extension CXWrappers.NotificationCenter {
 extension CXWrappers.NotificationCenter {
     
     /// A publisher that emits elements when broadcasting notifications.
-    public struct NotificationPublisher : CombineX.Publisher {
+    public struct NotificationPublisher: CombineX.Publisher {
 
         public typealias Output = Notification
 

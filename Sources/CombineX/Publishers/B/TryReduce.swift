@@ -20,7 +20,7 @@ extension Publishers {
     
     
     /// A publisher that applies an error-throwing closure to all received elements and produces an accumulated value when the upstream publisher finishes.
-    public struct TryReduce<Upstream, Output> : Publisher where Upstream : Publisher {
+    public struct TryReduce<Upstream: Publisher, Output>: Publisher {
         
         public typealias Failure = Error
         

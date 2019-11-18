@@ -11,7 +11,7 @@ extension Publisher {
     ///   - publisher2: A third publisher to combine with this one.
     ///   - transform: A closure that receives the most recent value from each publisher and returns a new value to publish.
     /// - Returns: A publisher that receives and combines elements from this publisher and two other publishers.
-    public func tryCombineLatest<P, Q, T>(_ publisher1: P, _ publisher2: Q, _ transform: @escaping (Output, P.Output, Q.Output) throws -> T) -> Publishers.TryCombineLatest3<Self, P, Q, T> where P : Publisher, Q : Publisher, P.Failure == Error, Q.Failure == Error {
+    public func tryCombineLatest<P, Q, T>(_ publisher1: P, _ publisher2: Q, _ transform: @escaping (Output, P.Output, Q.Output) throws -> T) -> Publishers.TryCombineLatest3<Self, P, Q, T> where P: Publisher, Q: Publisher, P.Failure == Error, Q.Failure == Error {
         return .init(self, publisher1, publisher2, transform: transform)
     }
     
@@ -27,7 +27,7 @@ extension Publisher {
     ///   - publisher3: A fourth publisher to combine with this one.
     ///   - transform: A closure that receives the most recent value from each publisher and returns a new value to publish.
     /// - Returns: A publisher that receives and combines elements from this publisher and three other publishers.
-    public func tryCombineLatest<P, Q, R, T>(_ publisher1: P, _ publisher2: Q, _ publisher3: R, _ transform: @escaping (Output, P.Output, Q.Output, R.Output) throws -> T) -> Publishers.TryCombineLatest4<Self, P, Q, R, T> where P : Publisher, Q : Publisher, R : Publisher, P.Failure == Error, Q.Failure == Error, R.Failure == Error {
+    public func tryCombineLatest<P, Q, R, T>(_ publisher1: P, _ publisher2: Q, _ publisher3: R, _ transform: @escaping (Output, P.Output, Q.Output, R.Output) throws -> T) -> Publishers.TryCombineLatest4<Self, P, Q, R, T> where P: Publisher, Q: Publisher, R: Publisher, P.Failure == Error, Q.Failure == Error, R.Failure == Error {
         return .init(self, publisher1, publisher2, publisher3, transform: transform)
     }
 }
@@ -35,7 +35,7 @@ extension Publisher {
 extension Publishers {
     
     /// A publisher that receives and combines the latest elements from three publishers, using a throwing closure.
-    public struct TryCombineLatest3<A, B, C, Output> : Publisher where A : Publisher, B : Publisher, C : Publisher, A.Failure == Error, B.Failure == Error, C.Failure == Error {
+    public struct TryCombineLatest3<A, B, C, Output>: Publisher where A: Publisher, B: Publisher, C: Publisher, A.Failure == Error, B.Failure == Error, C.Failure == Error {
         
         public typealias Failure = Error
         
@@ -67,7 +67,7 @@ extension Publishers {
     }
     
     /// A publisher that receives and combines the latest elements from four publishers, using a throwing closure.
-    public struct TryCombineLatest4<A, B, C, D, Output> : Publisher where A : Publisher, B : Publisher, C : Publisher, D : Publisher, A.Failure == Error, B.Failure == Error, C.Failure == Error, D.Failure == Error {
+    public struct TryCombineLatest4<A, B, C, D, Output>: Publisher where A: Publisher, B: Publisher, C: Publisher, D: Publisher, A.Failure == Error, B.Failure == Error, C.Failure == Error, D.Failure == Error {
         
         public typealias Failure = Error
         

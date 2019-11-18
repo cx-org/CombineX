@@ -3,7 +3,7 @@ import CXUtility
 #endif
 
 /// A publisher that eventually produces one value and then finishes or fails.
-final public class Future<Output, Failure> : Publisher where Failure : Error {
+final public class Future<Output, Failure: Error>: Publisher {
     
     public typealias Promise = (Result<Output, Failure>) -> Void
     

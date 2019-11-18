@@ -20,7 +20,7 @@ extension Publishers.Filter {
 extension Publishers {
     
     /// A publisher that republishes all elements that match a provided closure.
-    public struct Filter<Upstream> : Publisher where Upstream : Publisher {
+    public struct Filter<Upstream: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         

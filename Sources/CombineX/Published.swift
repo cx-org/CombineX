@@ -31,7 +31,7 @@
     var objectWillChange: ObservableObjectPublisher?
     
     /// A publisher for properties marked with the `@Published` attribute.
-    public struct Publisher : CombineX.Publisher {
+    public struct Publisher: CombineX.Publisher {
 
         public typealias Output = Value
 

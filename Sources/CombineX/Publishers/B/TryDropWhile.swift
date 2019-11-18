@@ -18,7 +18,7 @@ extension Publisher {
 extension Publishers {
     
     /// A publisher that omits elements from an upstream publisher until a given error-throwing closure returns false.
-    public struct TryDropWhile<Upstream> : Publisher where Upstream : Publisher {
+    public struct TryDropWhile<Upstream: Publisher>: Publisher {
 
         public typealias Output = Upstream.Output
 

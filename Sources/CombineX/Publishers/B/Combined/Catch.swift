@@ -28,7 +28,7 @@ extension Publisher {
 extension Publishers {
     
     /// A publisher that handles errors from an upstream publisher by replacing the failed publisher with another publisher.
-    public struct Catch<Upstream, NewPublisher> : Publisher where Upstream : Publisher, NewPublisher : Publisher, Upstream.Output == NewPublisher.Output {
+    public struct Catch<Upstream: Publisher, NewPublisher: Publisher>: Publisher where Upstream.Output == NewPublisher.Output {
         
         public typealias Output = Upstream.Output
         

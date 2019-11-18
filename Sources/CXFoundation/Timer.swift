@@ -38,7 +38,7 @@ extension CXWrappers.Timer {
 extension CXWrappers.Timer {
     
     /// A publisher that repeatedly emits the current date on a given interval.
-    final public class TimerPublisher : ConnectablePublisher {
+    final public class TimerPublisher: ConnectablePublisher {
         
         public typealias Output = Date
         

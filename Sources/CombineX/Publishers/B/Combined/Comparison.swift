@@ -21,7 +21,7 @@ extension Publisher {
     }
 }
 
-extension Publisher where Output : Comparable {
+extension Publisher where Output: Comparable {
     
     /// Publishes the minimum value received from the upstream publisher, after it finishes.
     ///
@@ -44,7 +44,7 @@ extension Publisher where Output : Comparable {
 extension Publishers {
     
     /// A publisher that republishes items from another publisher only if each new item is in increasing order from the previously-published item.
-    public struct Comparison<Upstream> : Publisher where Upstream : Publisher {
+    public struct Comparison<Upstream: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         

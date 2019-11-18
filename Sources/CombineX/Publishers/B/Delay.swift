@@ -20,7 +20,7 @@ extension Publisher {
 extension Publishers {
 
     /// A publisher that delays delivery of elements and completion to the downstream receiver.
-    public struct Delay<Upstream, Context> : Publisher where Upstream : Publisher, Context : Scheduler {
+    public struct Delay<Upstream: Publisher, Context: Scheduler>: Publisher {
 
         public typealias Output = Upstream.Output
 

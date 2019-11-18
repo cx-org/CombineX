@@ -11,7 +11,7 @@ extension Publisher {
 extension Publishers {
     
     /// A publisher that only publishes the last element of a stream that satisfies a predicate closure, once the stream finishes.
-    public struct LastWhere<Upstream> : Publisher where Upstream : Publisher {
+    public struct LastWhere<Upstream: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         

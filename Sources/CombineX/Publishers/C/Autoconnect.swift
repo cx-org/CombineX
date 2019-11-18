@@ -18,7 +18,7 @@ extension ConnectablePublisher {
 extension Publishers {
     
     /// A publisher that automatically connects and disconnects from this connectable publisher.
-    public class Autoconnect<Upstream> : Publisher where Upstream : ConnectablePublisher {
+    public class Autoconnect<Upstream>: Publisher where Upstream: ConnectablePublisher {
         
         public typealias Output = Upstream.Output
         

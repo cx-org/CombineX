@@ -19,7 +19,7 @@ extension Publisher where Failure == Never {
 
 extension Subscribers {
     
-    final public class Assign<Root, Input> : Subscriber, Cancellable, CustomStringConvertible, CustomReflectable, CustomPlaygroundDisplayConvertible {
+    final public class Assign<Root, Input>: Subscriber, Cancellable, CustomStringConvertible, CustomReflectable, CustomPlaygroundDisplayConvertible {
         
         public typealias Failure = Never
         

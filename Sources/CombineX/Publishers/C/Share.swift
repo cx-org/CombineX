@@ -13,7 +13,7 @@ extension Publisher {
 extension Publishers {
     
     /// A publisher implemented as a class, which otherwise behaves like its upstream publisher.
-    final public class Share<Upstream> : Publisher, Equatable where Upstream : Publisher {
+    final public class Share<Upstream>: Publisher, Equatable where Upstream: Publisher {
         
         public typealias Output = Upstream.Output
         

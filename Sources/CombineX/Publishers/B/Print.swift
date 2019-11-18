@@ -23,7 +23,7 @@ extension Publishers {
     /// * normal completion
     /// * failure
     /// * cancellation
-    public struct Print<Upstream> : Publisher where Upstream : Publisher {
+    public struct Print<Upstream: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         

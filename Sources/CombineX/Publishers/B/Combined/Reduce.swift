@@ -14,7 +14,7 @@ extension Publisher {
 extension Publishers {
     
     /// A publisher that applies a closure to all received elements and produces an accumulated value when the upstream publisher finishes.
-    public struct Reduce<Upstream, Output> : Publisher where Upstream : Publisher {
+    public struct Reduce<Upstream: Publisher, Output>: Publisher {
         
         public typealias Failure = Upstream.Failure
         

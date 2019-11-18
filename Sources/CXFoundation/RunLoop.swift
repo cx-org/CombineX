@@ -23,7 +23,7 @@ extension RunLoop {
 extension CXWrappers.RunLoop: CombineX.Scheduler {
         
     /// The scheduler time type used by the run loop.
-    public struct SchedulerTimeType : Strideable, Codable, Hashable {
+    public struct SchedulerTimeType: Strideable, Codable, Hashable {
         
         /// The date represented by this type.
         public var date: Date
@@ -52,7 +52,7 @@ extension CXWrappers.RunLoop: CombineX.Scheduler {
         }
         
         /// The interval by which run loop times advance.
-        public struct Stride : ExpressibleByFloatLiteral, Comparable, SignedNumeric, Codable, SchedulerTimeIntervalConvertible {
+        public struct Stride: ExpressibleByFloatLiteral, Comparable, SignedNumeric, Codable, SchedulerTimeIntervalConvertible {
             
             /// The value of this time interval in seconds.
             public var magnitude: TimeInterval

@@ -1,7 +1,7 @@
 import CXUtility
 import CXShim
 
-public class TestSubject<Output, Failure>: Subject, TestLogging where Failure : Error {
+public class TestSubject<Output, Failure: Error>: Subject, TestLogging {
     
     private let downstreamLock = Lock()
     private var completion: Subscribers.Completion<Failure>?

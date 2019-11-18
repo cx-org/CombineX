@@ -27,10 +27,10 @@
 ///     // Prints "24 will change"
 ///     // Prints "25"
 ///
-public protocol ObservableObject : AnyObject {
+public protocol ObservableObject: AnyObject {
 
     /// The type of publisher that emits before the object has changed.
-    associatedtype ObjectWillChangePublisher : Publisher = ObservableObjectPublisher where ObjectWillChangePublisher.Failure == Never
+    associatedtype ObjectWillChangePublisher: Publisher = ObservableObjectPublisher where ObjectWillChangePublisher.Failure == Never
 
     /// A publisher that emits before the object has changed.
     var objectWillChange: ObjectWillChangePublisher { get }
@@ -90,7 +90,7 @@ extension ObservableObject where ObjectWillChangePublisher == ObservableObjectPu
 }
 
 /// The default publisher of an `ObservableObject`.
-final public class ObservableObjectPublisher : Publisher {
+final public class ObservableObjectPublisher: Publisher {
     
     public typealias Output = Void
     

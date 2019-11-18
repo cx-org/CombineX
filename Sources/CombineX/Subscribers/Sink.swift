@@ -34,7 +34,7 @@ extension Publisher where Failure == Never {
 extension Subscribers {
     
     /// A simple subscriber that requests an unlimited number of values upon subscription.
-    final public class Sink<Input, Failure> : Subscriber, Cancellable, CustomStringConvertible, CustomReflectable, CustomPlaygroundDisplayConvertible where Failure : Error {
+    final public class Sink<Input, Failure: Error>: Subscriber, Cancellable, CustomStringConvertible, CustomReflectable, CustomPlaygroundDisplayConvertible {
         
         /// The closure to execute on receipt of a value.
         final public let receiveValue: (Input) -> Void

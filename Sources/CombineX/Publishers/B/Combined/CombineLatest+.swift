@@ -9,7 +9,7 @@ extension Publisher {
     ///   - publisher1: A second publisher to combine with this one.
     ///   - publisher2: A third publisher to combine with this one.
     /// - Returns: A publisher that receives and combines elements from this publisher and two other publishers.
-    public func combineLatest<P, Q>(_ publisher1: P, _ publisher2: Q) -> Publishers.CombineLatest3<Self, P, Q> where P : Publisher, Q : Publisher, Failure == P.Failure, P.Failure == Q.Failure {
+    public func combineLatest<P, Q>(_ publisher1: P, _ publisher2: Q) -> Publishers.CombineLatest3<Self, P, Q> where P: Publisher, Q: Publisher, Failure == P.Failure, P.Failure == Q.Failure {
         return .init(self, publisher1, publisher2)
     }
     
@@ -23,7 +23,7 @@ extension Publisher {
     ///   - publisher2: A third publisher to combine with this one.
     ///   - transform: A closure that receives the most recent value from each publisher and returns a new value to publish.
     /// - Returns: A publisher that receives and combines elements from this publisher and two other publishers.
-    public func combineLatest<P, Q, T>(_ publisher1: P, _ publisher2: Q, _ transform: @escaping (Output, P.Output, Q.Output) -> T) -> Publishers.Map<Publishers.CombineLatest3<Self, P, Q>, T> where P : Publisher, Q : Publisher, Failure == P.Failure, P.Failure == Q.Failure {
+    public func combineLatest<P, Q, T>(_ publisher1: P, _ publisher2: Q, _ transform: @escaping (Output, P.Output, Q.Output) -> T) -> Publishers.Map<Publishers.CombineLatest3<Self, P, Q>, T> where P: Publisher, Q: Publisher, Failure == P.Failure, P.Failure == Q.Failure {
         return self.combineLatest(publisher1, publisher2).map(transform)
     }
     
@@ -37,7 +37,7 @@ extension Publisher {
     ///   - publisher2: A third publisher to combine with this one.
     ///   - publisher3: A fourth publisher to combine with this one.
     /// - Returns: A publisher that receives and combines elements from this publisher and three other publishers.
-    public func combineLatest<P, Q, R>(_ publisher1: P, _ publisher2: Q, _ publisher3: R) -> Publishers.CombineLatest4<Self, P, Q, R> where P : Publisher, Q : Publisher, R : Publisher, Failure == P.Failure, P.Failure == Q.Failure, Q.Failure == R.Failure {
+    public func combineLatest<P, Q, R>(_ publisher1: P, _ publisher2: Q, _ publisher3: R) -> Publishers.CombineLatest4<Self, P, Q, R> where P: Publisher, Q: Publisher, R: Publisher, Failure == P.Failure, P.Failure == Q.Failure, Q.Failure == R.Failure {
         return .init(self, publisher1, publisher2, publisher3)
     }
     
@@ -52,7 +52,7 @@ extension Publisher {
     ///   - publisher3: A fourth publisher to combine with this one.
     ///   - transform: A closure that receives the most recent value from each publisher and returns a new value to publish.
     /// - Returns: A publisher that receives and combines elements from this publisher and three other publishers.
-    public func combineLatest<P, Q, R, T>(_ publisher1: P, _ publisher2: Q, _ publisher3: R, _ transform: @escaping (Output, P.Output, Q.Output, R.Output) -> T) -> Publishers.Map<Publishers.CombineLatest4<Self, P, Q, R>, T> where P : Publisher, Q : Publisher, R : Publisher, Failure == P.Failure, P.Failure == Q.Failure, Q.Failure == R.Failure {
+    public func combineLatest<P, Q, R, T>(_ publisher1: P, _ publisher2: Q, _ publisher3: R, _ transform: @escaping (Output, P.Output, Q.Output, R.Output) -> T) -> Publishers.Map<Publishers.CombineLatest4<Self, P, Q, R>, T> where P: Publisher, Q: Publisher, R: Publisher, Failure == P.Failure, P.Failure == Q.Failure, Q.Failure == R.Failure {
         return self.combineLatest(publisher1, publisher2, publisher3).map(transform)
     }
 }
@@ -63,7 +63,7 @@ extension Publisher {
 ///   - lhs: A combineLatest publisher to compare for equality.
 ///   - rhs: Another combineLatest publisher to compare for equality.
 /// - Returns: `true` if the corresponding upstream publishers of each combineLatest publisher are equal, `false` otherwise.
-extension Publishers.CombineLatest3 : Equatable where A : Equatable, B : Equatable, C : Equatable {
+extension Publishers.CombineLatest3: Equatable where A: Equatable, B: Equatable, C: Equatable {
     
     public static func == (lhs: Publishers.CombineLatest3<A, B, C>, rhs: Publishers.CombineLatest3<A, B, C>) -> Bool {
         return lhs.a == rhs.a && lhs.b == rhs.b && lhs.c == rhs.c
@@ -77,7 +77,7 @@ extension Publishers.CombineLatest3 : Equatable where A : Equatable, B : Equatab
 ///   - lhs: A combineLatest publisher to compare for equality.
 ///   - rhs: Another combineLatest publisher to compare for equality.
 /// - Returns: `true` if the corresponding upstream publishers of each combineLatest publisher are equal, `false` otherwise.
-extension Publishers.CombineLatest4 : Equatable where A : Equatable, B : Equatable, C : Equatable, D : Equatable {
+extension Publishers.CombineLatest4: Equatable where A: Equatable, B: Equatable, C: Equatable, D: Equatable {
     
     public static func == (lhs: Publishers.CombineLatest4<A, B, C, D>, rhs: Publishers.CombineLatest4<A, B, C, D>) -> Bool {
         return lhs.a == rhs.a && lhs.b == rhs.b && lhs.c == rhs.c && lhs.d == rhs.d
@@ -88,7 +88,7 @@ extension Publishers.CombineLatest4 : Equatable where A : Equatable, B : Equatab
 extension Publishers {
     
     /// A publisher that receives and combines the latest elements from three publishers.
-    public struct CombineLatest3<A, B, C> : Publisher where A : Publisher, B : Publisher, C : Publisher, A.Failure == B.Failure, B.Failure == C.Failure {
+    public struct CombineLatest3<A, B, C>: Publisher where A: Publisher, B: Publisher, C: Publisher, A.Failure == B.Failure, B.Failure == C.Failure {
         
         public typealias Output = (A.Output, B.Output, C.Output)
         
@@ -118,7 +118,7 @@ extension Publishers {
     }
     
     /// A publisher that receives and combines the latest elements from four publishers.
-    public struct CombineLatest4<A, B, C, D> : Publisher where A : Publisher, B : Publisher, C : Publisher, D : Publisher, A.Failure == B.Failure, B.Failure == C.Failure, C.Failure == D.Failure {
+    public struct CombineLatest4<A, B, C, D>: Publisher where A: Publisher, B: Publisher, C: Publisher, D: Publisher, A.Failure == B.Failure, B.Failure == C.Failure, C.Failure == D.Failure {
         
         public typealias Output = (A.Output, B.Output, C.Output, D.Output)
         

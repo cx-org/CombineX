@@ -18,7 +18,7 @@ extension Publisher {
 extension Publishers {
     
     /// A publisher that converts any failure from the upstream publisher into a new error.
-    public struct MapError<Upstream, Failure> : Publisher where Upstream : Publisher, Failure : Error {
+    public struct MapError<Upstream: Publisher, Failure: Error>: Publisher {
         
         public typealias Output = Upstream.Output
         

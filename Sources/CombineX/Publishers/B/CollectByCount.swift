@@ -16,7 +16,7 @@ extension Publisher {
     }
 }
 
-extension Publishers.CollectByCount : Equatable where Upstream : Equatable {
+extension Publishers.CollectByCount: Equatable where Upstream: Equatable {
     
     public static func == (lhs: Publishers.CollectByCount<Upstream>, rhs: Publishers.CollectByCount<Upstream>) -> Bool {
         return lhs.upstream == rhs.upstream && lhs.count == rhs.count
@@ -26,7 +26,7 @@ extension Publishers.CollectByCount : Equatable where Upstream : Equatable {
 extension Publishers {
     
     /// A publisher that buffers a maximum number of items.
-    public struct CollectByCount<Upstream> : Publisher where Upstream : Publisher {
+    public struct CollectByCount<Upstream: Publisher>: Publisher {
         
         public typealias Output = [Upstream.Output]
         

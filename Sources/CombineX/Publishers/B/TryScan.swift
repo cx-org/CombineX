@@ -18,7 +18,7 @@ extension Publisher {
 
 extension Publishers {
     
-    public struct TryScan<Upstream, Output> : Publisher where Upstream : Publisher {
+    public struct TryScan<Upstream: Publisher, Output>: Publisher {
         
         public typealias Failure = Error
         

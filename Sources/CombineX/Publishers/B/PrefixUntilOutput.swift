@@ -17,7 +17,7 @@ extension Publisher {
 
 extension Publishers {
     
-    public struct PrefixUntilOutput<Upstream, Other> : Publisher where Upstream : Publisher, Other : Publisher {
+    public struct PrefixUntilOutput<Upstream: Publisher, Other: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         

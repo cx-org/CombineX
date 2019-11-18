@@ -25,7 +25,7 @@ extension Publisher {
     }
 }
 
-extension Publishers.Output : Equatable where Upstream : Equatable {
+extension Publishers.Output: Equatable where Upstream: Equatable {
     
     public static func == (lhs: Publishers.Output<Upstream>, rhs: Publishers.Output<Upstream>) -> Bool {
         return lhs.upstream == rhs.upstream && lhs.range == rhs.range
@@ -47,7 +47,7 @@ extension Publisher {
 extension Publishers {
     
     /// A publisher that publishes elements specified by a range in the sequence of published elements.
-    public struct Output<Upstream> : Publisher where Upstream : Publisher {
+    public struct Output<Upstream: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         

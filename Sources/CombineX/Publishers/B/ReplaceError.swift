@@ -14,7 +14,7 @@ extension Publisher {
     }
 }
 
-extension Publishers.ReplaceError : Equatable where Upstream : Equatable, Upstream.Output : Equatable {
+extension Publishers.ReplaceError: Equatable where Upstream: Equatable, Upstream.Output: Equatable {
     
     /// Returns a Boolean value that indicates whether two publishers are equivalent.
     ///
@@ -30,7 +30,7 @@ extension Publishers.ReplaceError : Equatable where Upstream : Equatable, Upstre
 extension Publishers {
     
     /// A publisher that replaces any errors in the stream with a provided element.
-    public struct ReplaceError<Upstream> : Publisher where Upstream : Publisher {
+    public struct ReplaceError<Upstream: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         

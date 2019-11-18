@@ -52,7 +52,7 @@ extension CXWrappers.URLSession {
 
 extension CXWrappers.URLSession {
     
-    public struct DataTaskPublisher : Publisher {
+    public struct DataTaskPublisher: Publisher {
 
         public typealias Output = (data: Data, response: URLResponse)
 

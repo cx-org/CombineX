@@ -26,7 +26,7 @@ extension Publisher {
 extension Publishers {
     
     /// A publisher that uses a subject to deliver elements to multiple subscribers.
-    final public class Multicast<Upstream, SubjectType> : ConnectablePublisher where Upstream : Publisher, SubjectType : Subject, Upstream.Failure == SubjectType.Failure, Upstream.Output == SubjectType.Output {
+    final public class Multicast<Upstream, SubjectType>: ConnectablePublisher where Upstream: Publisher, SubjectType: Subject, Upstream.Failure == SubjectType.Failure, Upstream.Output == SubjectType.Output {
         
         public typealias Output = Upstream.Output
         

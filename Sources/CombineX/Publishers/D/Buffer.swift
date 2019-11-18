@@ -31,7 +31,7 @@ extension Publishers {
     /// * dropNewest: When full, discard the newly-received element without buffering it.
     /// * dropOldest: When full, remove the least recently-received element from the buffer.
     /// * customError: When full, execute the closure to provide a custom error.
-    public enum BufferingStrategy<Failure> where Failure : Error {
+    public enum BufferingStrategy<Failure: Error> {
         
         case dropNewest
         
@@ -41,7 +41,7 @@ extension Publishers {
     }
     
     /// A publisher that buffers elements received from an upstream publisher.
-    public struct Buffer<Upstream> : Publisher where Upstream : Publisher {
+    public struct Buffer<Upstream: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         

@@ -14,7 +14,7 @@ extension Publisher {
 extension Publishers {
     
     /// A publisher that publishes only elements that don’t match the previous element, as evaluated by a provided error-throwing closure.
-    public struct TryRemoveDuplicates<Upstream> : Publisher where Upstream : Publisher {
+    public struct TryRemoveDuplicates<Upstream: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         

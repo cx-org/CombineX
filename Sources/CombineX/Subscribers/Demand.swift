@@ -4,7 +4,7 @@ extension Subscribers {
     ///
     /// - unlimited: A request for an unlimited number of items.
     /// - max: A request for a maximum number of items.
-    public struct Demand : Equatable, Comparable, Hashable, Codable, CustomStringConvertible {
+    public struct Demand: Equatable, Comparable, Hashable, Codable, CustomStringConvertible {
         
         @usableFromInline
         let rawValue: UInt
@@ -46,7 +46,7 @@ extension Subscribers {
         @inlinable
         public static func + (lhs: Subscribers.Demand, rhs: Subscribers.Demand) -> Subscribers.Demand {
             let (v, overflow) = lhs.rawValue.addingReportingOverflow(rhs.rawValue)
-            return overflow ? .unlimited : Demand(v)
+            return overflow ? .unlimited: Demand(v)
         }
         
         /// When adding any value to .unlimited, the result is .unlimited.
@@ -74,7 +74,7 @@ extension Subscribers {
         public static func * (lhs: Subscribers.Demand, rhs: Int) -> Subscribers.Demand {
             precondition(rhs >= 0)
             let (v, overflow) = lhs.rawValue.multipliedReportingOverflow(by: UInt(rhs))
-            return overflow ? .unlimited : Demand(v)
+            return overflow ? .unlimited: Demand(v)
         }
         
         @inlinable
@@ -92,7 +92,7 @@ extension Subscribers {
                 return .max(0)
             default:
                 let (v, overflow) = lhs.rawValue.subtractingReportingOverflow(rhs.rawValue)
-                return overflow ? .none : Demand(v)
+                return overflow ? .none: Demand(v)
             }
         }
         
@@ -239,7 +239,7 @@ extension Subscribers {
         /// Returns the number of requested values, or nil if unlimited.
         @inlinable
         public var max: Int? {
-            return self == .unlimited ? nil : Int(rawValue)
+            return self == .unlimited ? nil: Int(rawValue)
         }
         
         private enum CodingKeys: CodingKey {

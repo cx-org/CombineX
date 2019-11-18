@@ -11,7 +11,7 @@ extension Publisher where Failure == Never {
     }
 }
 
-extension Publishers.SetFailureType : Equatable where Upstream : Equatable {
+extension Publishers.SetFailureType: Equatable where Upstream: Equatable {
     
     public static func == (lhs: Publishers.SetFailureType<Upstream, Failure>, rhs: Publishers.SetFailureType<Upstream, Failure>) -> Bool {
         return lhs.upstream == rhs.upstream
@@ -23,7 +23,7 @@ extension Publishers {
     /// A publisher that appears to send a specified failure type.
     ///
     /// The publisher cannot actually fail with the specified type and instead just finishes normally. Use this publisher type when you need to match the error types for two mismatched publishers.
-    public struct SetFailureType<Upstream, Failure> : Publisher where Upstream : Publisher, Failure : Error, Upstream.Failure == Never {
+    public struct SetFailureType<Upstream: Publisher, Failure: Error>: Publisher where Upstream.Failure == Never {
         
         public typealias Output = Upstream.Output
         

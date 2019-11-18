@@ -2,7 +2,7 @@
 import CXUtility
 #endif
 
-extension Publisher where Failure == Output.Failure, Output : Publisher {
+extension Publisher where Failure == Output.Failure, Output: Publisher {
     
     /// Flattens the stream of events from multiple upstream publishers to appear as if they were coming from a single stream of events.
     ///
@@ -19,7 +19,7 @@ extension Publishers {
     ///
     /// Given a publisher that publishes Publishers, the `SwitchToLatest` publisher produces a sequence of events from only the most recent one.
     /// For example, given the type `Publisher<Publisher<Data, NSError>, Never>`, calling `switchToLatest()` will result in the type `Publisher<Data, NSError>`. The downstream subscriber sees a continuous stream of values even though they may be coming from different upstream publishers.
-    public struct SwitchToLatest<P: Publisher, Upstream> : Publisher where P == Upstream.Output, Upstream : Publisher, P.Failure == Upstream.Failure {
+    public struct SwitchToLatest<P: Publisher, Upstream>: Publisher where P == Upstream.Output, Upstream: Publisher, P.Failure == Upstream.Failure {
         
         public typealias Output = P.Output
         

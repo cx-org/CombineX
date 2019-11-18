@@ -86,7 +86,7 @@ extension Result.CX.Publisher {
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
-        S : Subscriber,
+        S: Subscriber,
         S.Input == Output,
         S.Failure == Failure
     {

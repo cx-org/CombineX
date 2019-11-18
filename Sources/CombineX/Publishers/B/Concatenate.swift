@@ -47,7 +47,7 @@ extension Publisher {
     }
 }
 
-extension Publishers.Concatenate : Equatable where Prefix : Equatable, Suffix : Equatable {
+extension Publishers.Concatenate: Equatable where Prefix: Equatable, Suffix: Equatable {
     
     /// Returns a Boolean value that indicates whether two publishers are equivalent.
     ///
@@ -63,7 +63,7 @@ extension Publishers.Concatenate : Equatable where Prefix : Equatable, Suffix : 
 extension Publishers {
     
     /// A publisher that emits all of one publisher’s elements before those from another publisher.
-    public struct Concatenate<Prefix, Suffix> : Publisher where Prefix : Publisher, Suffix : Publisher, Prefix.Failure == Suffix.Failure, Prefix.Output == Suffix.Output {
+    public struct Concatenate<Prefix, Suffix>: Publisher where Prefix: Publisher, Suffix: Publisher, Prefix.Failure == Suffix.Failure, Prefix.Output == Suffix.Output {
         
         public typealias Output = Suffix.Output
         

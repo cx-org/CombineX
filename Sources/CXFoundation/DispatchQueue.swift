@@ -40,7 +40,7 @@ extension DispatchQueue {
 extension CXWrappers.DispatchQueue: CombineX.Scheduler {
     
     /// The scheduler time type used by the dispatch queue.
-    public struct SchedulerTimeType : Strideable, Hashable {
+    public struct SchedulerTimeType: Strideable, Hashable {
         
         /// The dispatch time represented by this type.
         public var dispatchTime: DispatchTime
@@ -68,7 +68,7 @@ extension CXWrappers.DispatchQueue: CombineX.Scheduler {
             return .init(self.dispatchTime + n.timeInterval)
         }
         
-        public struct Stride : SchedulerTimeIntervalConvertible, Comparable, SignedNumeric, ExpressibleByFloatLiteral, Hashable, Codable {
+        public struct Stride: SchedulerTimeIntervalConvertible, Comparable, SignedNumeric, ExpressibleByFloatLiteral, Hashable, Codable {
             
             /// If created via floating point literal, the value is converted to nanoseconds via multiplication.
             public typealias FloatLiteralType = Double

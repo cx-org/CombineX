@@ -14,7 +14,7 @@ extension Publisher {
     }
 }
 
-extension Publishers.ReplaceEmpty : Equatable where Upstream : Equatable, Upstream.Output : Equatable {
+extension Publishers.ReplaceEmpty: Equatable where Upstream: Equatable, Upstream.Output: Equatable {
     
     /// Returns a Boolean value that indicates whether two publishers are equivalent.
     ///
@@ -30,7 +30,7 @@ extension Publishers.ReplaceEmpty : Equatable where Upstream : Equatable, Upstre
 extension Publishers {
     
     /// A publisher that replaces an empty stream with a provided element.
-    public struct ReplaceEmpty<Upstream> : Publisher where Upstream : Publisher {
+    public struct ReplaceEmpty<Upstream: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         

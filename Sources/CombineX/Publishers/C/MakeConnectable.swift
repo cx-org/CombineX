@@ -10,7 +10,7 @@ extension Publisher where Failure == Never {
 
 extension Publishers {
     
-    public struct MakeConnectable<Upstream> : ConnectablePublisher where Upstream : Publisher {
+    public struct MakeConnectable<Upstream>: ConnectablePublisher where Upstream: Publisher {
         
         public typealias Output = Upstream.Output
         

@@ -19,7 +19,7 @@ extension Publisher {
 extension Publishers {
 
     /// A publisher that publishes either the most-recent or first element published by the upstream publisher in a specified time interval.
-    public struct Throttle<Upstream, Context> : Publisher where Upstream : Publisher, Context : Scheduler {
+    public struct Throttle<Upstream: Publisher, Context: Scheduler>: Publisher {
 
         public typealias Output = Upstream.Output
 

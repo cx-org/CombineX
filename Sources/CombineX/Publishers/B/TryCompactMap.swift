@@ -26,7 +26,7 @@ extension Publishers.TryCompactMap {
 extension Publishers {
     
     /// A publisher that republishes all non-`nil` results of calling an error-throwing closure with each received element.
-    public struct TryCompactMap<Upstream, Output> : Publisher where Upstream : Publisher {
+    public struct TryCompactMap<Upstream: Publisher, Output>: Publisher {
         
         public typealias Failure = Error
         

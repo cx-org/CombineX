@@ -12,7 +12,7 @@ extension Publisher {
 
 extension Publishers {
     /// A publisher that emits a Boolean value upon receiving an element that satisfies the throwing predicate closure.
-    public struct TryContainsWhere<Upstream> : Publisher where Upstream : Publisher {
+    public struct TryContainsWhere<Upstream: Publisher>: Publisher {
         
         public typealias Output = Bool
         

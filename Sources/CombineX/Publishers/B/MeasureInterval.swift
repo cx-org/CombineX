@@ -19,7 +19,7 @@ extension Publisher {
 extension Publishers {
     
     /// A publisher that measures and emits the time interval between events received from an upstream publisher.
-    public struct MeasureInterval<Upstream, Context> : Publisher where Upstream : Publisher, Context : Scheduler {
+    public struct MeasureInterval<Upstream: Publisher, Context: Scheduler>: Publisher {
         
         public typealias Output = Context.SchedulerTimeType.Stride
         

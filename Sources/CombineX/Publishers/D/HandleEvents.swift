@@ -21,7 +21,7 @@ extension Publisher {
 extension Publishers {
     
     /// A publisher that performs the specified closures when publisher events occur.
-    public struct HandleEvents<Upstream> : Publisher where Upstream : Publisher {
+    public struct HandleEvents<Upstream: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         

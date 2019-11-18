@@ -19,7 +19,7 @@ extension Publishers {
     /// A publisher that raises a fatal error upon receiving any failure, and otherwise republishes all received input.
     ///
     /// Use this function for internal sanity checks that are active during testing but do not impact performance of shipping code.
-    public struct AssertNoFailure<Upstream> : Publisher where Upstream : Publisher {
+    public struct AssertNoFailure<Upstream: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         

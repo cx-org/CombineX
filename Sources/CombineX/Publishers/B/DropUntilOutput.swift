@@ -16,7 +16,7 @@ extension Publisher {
     }
 }
 
-extension Publishers.DropUntilOutput : Equatable where Upstream : Equatable, Other : Equatable {
+extension Publishers.DropUntilOutput: Equatable where Upstream: Equatable, Other: Equatable {
     
     public static func == (lhs: Publishers.DropUntilOutput<Upstream, Other>, rhs: Publishers.DropUntilOutput<Upstream, Other>) -> Bool {
         return lhs.upstream == rhs.upstream && lhs.other == rhs.other
@@ -26,7 +26,7 @@ extension Publishers.DropUntilOutput : Equatable where Upstream : Equatable, Oth
 extension Publishers {
     
     /// A publisher that ignores elements from the upstream publisher until it receives an element from second publisher.
-    public struct DropUntilOutput<Upstream, Other> : Publisher where Upstream : Publisher, Other : Publisher, Upstream.Failure == Other.Failure {
+    public struct DropUntilOutput<Upstream: Publisher, Other: Publisher>: Publisher where Upstream.Failure == Other.Failure {
         
         public typealias Output = Upstream.Output
         

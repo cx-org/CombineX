@@ -6,7 +6,7 @@ import CXUtility
 ///
 /// Use an `AnySubscriber` to wrap an existing subscriber whose details you don’t want to expose.
 /// You can also use `AnySubscriber` to create a custom subscriber by providing closures for `Subscriber`’s methods, rather than implementing `Subscriber` directly.
-public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertible, CustomReflectable, CustomPlaygroundDisplayConvertible where Failure : Error {
+public struct AnySubscriber<Input, Failure: Error>: Subscriber, CustomStringConvertible, CustomReflectable, CustomPlaygroundDisplayConvertible {
     
     public let combineIdentifier: CombineIdentifier
     

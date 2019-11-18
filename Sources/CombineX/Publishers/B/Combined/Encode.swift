@@ -1,15 +1,15 @@
-extension Publisher where Output : Encodable {
+extension Publisher where Output: Encodable {
 
     /// Encodes the output from upstream using a specified `TopLevelEncoder`.
     /// For example, use `JSONEncoder`.
-    public func encode<Coder>(encoder: Coder) -> Publishers.Encode<Self, Coder> where Coder : TopLevelEncoder {
+    public func encode<Coder>(encoder: Coder) -> Publishers.Encode<Self, Coder> where Coder: TopLevelEncoder {
         return .init(upstream: self, encoder: encoder)
     }
 }
 
 extension Publishers {
 
-    public struct Encode<Upstream, Coder> : Publisher where Upstream : Publisher, Coder : TopLevelEncoder, Upstream.Output : Encodable {
+    public struct Encode<Upstream: Publisher, Coder: TopLevelEncoder>: Publisher where Upstream.Output: Encodable {
 
         public typealias Failure = Error
 

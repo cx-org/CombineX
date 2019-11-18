@@ -1,6 +1,6 @@
 import CXShim
 
-public class TestPublisher<Output, Failure>: Publisher where Failure : Error {
+public class TestPublisher<Output, Failure: Error>: Publisher {
     
     let subscribeBody: (AnySubscriber<Output, Failure>) -> Void
     

@@ -19,7 +19,7 @@ extension Publisher {
 
 extension Publishers {
 
-    public struct Timeout<Upstream, Context> : Publisher where Upstream : Publisher, Context : Scheduler {
+    public struct Timeout<Upstream: Publisher, Context: Scheduler>: Publisher {
 
         public typealias Output = Upstream.Output
 

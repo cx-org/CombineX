@@ -1,4 +1,4 @@
-extension Fail : Equatable where Failure : Equatable {
+extension Fail: Equatable where Failure: Equatable {
     
     public static func == (lhs: Fail<Output, Failure>, rhs: Fail<Output, Failure>) -> Bool {
         return lhs.error == rhs.error
@@ -6,7 +6,7 @@ extension Fail : Equatable where Failure : Equatable {
 }
 
 /// A publisher that immediately terminates with the specified error.
-public struct Fail<Output, Failure> : Publisher where Failure : Error {
+public struct Fail<Output, Failure: Error>: Publisher {
     
     /// Creates a publisher that immediately terminates with the specified failure.
     ///

@@ -1,4 +1,4 @@
-extension Publishers.Contains : Equatable where Upstream : Equatable {
+extension Publishers.Contains: Equatable where Upstream: Equatable {
     
     /// Returns a Boolean value that indicates whether two publishers are equivalent.
     ///
@@ -11,7 +11,7 @@ extension Publishers.Contains : Equatable where Upstream : Equatable {
     }
 }
 
-extension Publisher where Output : Equatable {
+extension Publisher where Output: Equatable {
     
     /// Publishes a Boolean value upon receiving an element equal to the argument.
     ///
@@ -26,7 +26,7 @@ extension Publisher where Output : Equatable {
 extension Publishers {
     
     /// A publisher that emits a Boolean value when a specified element is received from its upstream publisher.
-    public struct Contains<Upstream> : Publisher where Upstream : Publisher, Upstream.Output : Equatable {
+    public struct Contains<Upstream>: Publisher where Upstream: Publisher, Upstream.Output: Equatable {
         
         public typealias Output = Bool
         

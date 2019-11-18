@@ -21,7 +21,7 @@ extension Publisher {
 extension Publishers {
 
     /// A publisher that publishes elements only after a specified time interval elapses between events.
-    public struct Debounce<Upstream, Context> : Publisher where Upstream : Publisher, Context : Scheduler {
+    public struct Debounce<Upstream: Publisher, Context: Scheduler>: Publisher {
 
         public typealias Output = Upstream.Output
 

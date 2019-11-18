@@ -20,7 +20,7 @@ public protocol Publisher {
     /// The kind of errors this publisher might publish.
     ///
     /// Use `Never` if this `Publisher` does not publish errors.
-    associatedtype Failure : Error
+    associatedtype Failure: Error
     
     /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
     ///

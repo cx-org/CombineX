@@ -40,7 +40,7 @@ extension Publishers.Map {
 extension Publishers {
     
     /// A publisher that transforms all elements from the upstream publisher with a provided closure.
-    public struct Map<Upstream, Output> : Publisher where Upstream : Publisher {
+    public struct Map<Upstream: Publisher, Output>: Publisher {
         
         public typealias Failure = Upstream.Failure
         

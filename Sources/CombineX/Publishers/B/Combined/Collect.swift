@@ -12,7 +12,7 @@ extension Publisher {
     }
 }
 
-extension Publishers.Collect : Equatable where Upstream : Equatable {
+extension Publishers.Collect: Equatable where Upstream: Equatable {
     
     public static func == (lhs: Publishers.Collect<Upstream>, rhs: Publishers.Collect<Upstream>) -> Bool {
         return lhs.upstream == rhs.upstream
@@ -22,7 +22,7 @@ extension Publishers.Collect : Equatable where Upstream : Equatable {
 extension Publishers {
     
     /// A publisher that buffers items.
-    public struct Collect<Upstream> : Publisher where Upstream : Publisher {
+    public struct Collect<Upstream: Publisher>: Publisher {
         
         public typealias Output = [Upstream.Output]
         

@@ -5,7 +5,7 @@ import CXUtility
 /// A subject that passes along values and completion.
 ///
 /// Use a `PassthroughSubject` in unit tests when you want a publisher than can publish specific values on-demand during tests.
-final public class PassthroughSubject<Output, Failure> : Subject where Failure : Error {
+final public class PassthroughSubject<Output, Failure: Error>: Subject {
     
     private let downstreamLock = Lock()
     private var completion: Subscribers.Completion<Failure>?

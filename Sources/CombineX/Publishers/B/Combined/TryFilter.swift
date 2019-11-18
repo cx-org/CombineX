@@ -36,7 +36,7 @@ extension Publishers.TryFilter {
 extension Publishers {
     
     /// A publisher that republishes all elements that match a provided error-throwing closure.
-    public struct TryFilter<Upstream> : Publisher where Upstream : Publisher {
+    public struct TryFilter<Upstream: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         

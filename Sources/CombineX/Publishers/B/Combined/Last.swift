@@ -7,7 +7,7 @@ extension Publisher {
     }
 }
 
-extension Publishers.Last : Equatable where Upstream : Equatable {
+extension Publishers.Last: Equatable where Upstream: Equatable {
     
     /// Returns a Boolean value that indicates whether two publishers are equivalent.
     ///
@@ -23,7 +23,7 @@ extension Publishers.Last : Equatable where Upstream : Equatable {
 extension Publishers {
     
     /// A publisher that only publishes the last element of a stream, after the stream finishes.
-    public struct Last<Upstream> : Publisher where Upstream : Publisher {
+    public struct Last<Upstream: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         

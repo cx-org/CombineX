@@ -171,14 +171,14 @@ extension Just {
     }
 }
 
-extension Just : Equatable where Output : Equatable {
+extension Just: Equatable where Output: Equatable {
     
     public static func == (lhs: Just<Output>, rhs: Just<Output>) -> Bool {
         return lhs.output == rhs.output
     }
 }
 
-extension Just where Output : Comparable {
+extension Just where Output: Comparable {
     
     public func min() -> Just<Output> {
         return self
@@ -189,7 +189,7 @@ extension Just where Output : Comparable {
     }
 }
 
-extension Just where Output : Equatable {
+extension Just where Output: Equatable {
     
     public func contains(_ output: Output) -> Just<Bool> {
         return .init(self.output == output)
@@ -205,7 +205,7 @@ extension Just where Output : Equatable {
 /// You can use a `Just` publisher to start a chain of publishers. A `Just` publisher is also useful when replacing a value with `Catch`.
 ///
 /// In contrast with `Publishers.Once`, a `Just` publisher cannot fail with an error.
-public struct Just<Output> : Publisher {
+public struct Just<Output>: Publisher {
     
     public typealias Failure = Never
     
@@ -232,7 +232,7 @@ extension Just {
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
-        S : Subscriber,
+        S: Subscriber,
         S.Input == Output,
         S.Failure == Failure
     {

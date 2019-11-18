@@ -19,7 +19,7 @@ extension Publisher {
 extension Publishers {
     
     /// A publisher that publishes a single Boolean value that indicates whether all received elements pass a given error-throwing predicate.
-    public struct TryAllSatisfy<Upstream> : Publisher where Upstream : Publisher {
+    public struct TryAllSatisfy<Upstream: Publisher>: Publisher {
         
         public typealias Output = Bool
         

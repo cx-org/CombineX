@@ -19,7 +19,7 @@ extension AnyPublisher: Publisher {
 /// A type-erasing publisher.
 ///
 /// Use `AnyPublisher` to wrap a publisher whose type has details you don’t want to expose to subscribers or other publishers.
-public struct AnyPublisher<Output, Failure> : CustomStringConvertible, CustomPlaygroundDisplayConvertible where Failure : Error {
+public struct AnyPublisher<Output, Failure: Error>: CustomStringConvertible, CustomPlaygroundDisplayConvertible {
     
     @usableFromInline
     let subscribeBody: (AnySubscriber<Output, Failure>) -> Void

@@ -10,7 +10,7 @@ extension Publisher {
     ///   - publisher1: A second publisher.
     ///   - publisher2: A third publisher.
     /// - Returns: A publisher that emits groups of elements from the upstream publishers as tuples.
-    public func zip<P, Q>(_ publisher1: P, _ publisher2: Q) -> Publishers.Zip3<Self, P, Q> where P : Publisher, Q : Publisher, Failure == P.Failure, P.Failure == Q.Failure {
+    public func zip<P, Q>(_ publisher1: P, _ publisher2: Q) -> Publishers.Zip3<Self, P, Q> where P: Publisher, Q: Publisher, Failure == P.Failure, P.Failure == Q.Failure {
         return .init(self, publisher1, publisher2)
     }
     
@@ -25,7 +25,7 @@ extension Publisher {
     ///   - publisher2: A third publisher.
     ///   - transform: A closure that receives the most recent value from each publisher and returns a new value to publish.
     /// - Returns: A publisher that emits groups of elements from the upstream publishers as tuples.
-    public func zip<P, Q, T>(_ publisher1: P, _ publisher2: Q, _ transform: @escaping (Output, P.Output, Q.Output) -> T) -> Publishers.Map<Publishers.Zip3<Self, P, Q>, T> where P : Publisher, Q : Publisher, Failure == P.Failure, P.Failure == Q.Failure {
+    public func zip<P, Q, T>(_ publisher1: P, _ publisher2: Q, _ transform: @escaping (Output, P.Output, Q.Output) -> T) -> Publishers.Map<Publishers.Zip3<Self, P, Q>, T> where P: Publisher, Q: Publisher, Failure == P.Failure, P.Failure == Q.Failure {
         return self.zip(publisher1, publisher2).map(transform)
     }
     
@@ -40,7 +40,7 @@ extension Publisher {
     ///   - publisher2: A third publisher.
     ///   - publisher3: A fourth publisher.
     /// - Returns: A publisher that emits groups of elements from the upstream publishers as tuples.
-    public func zip<P, Q, R>(_ publisher1: P, _ publisher2: Q, _ publisher3: R) -> Publishers.Zip4<Self, P, Q, R> where P : Publisher, Q : Publisher, R : Publisher, Failure == P.Failure, P.Failure == Q.Failure, Q.Failure == R.Failure {
+    public func zip<P, Q, R>(_ publisher1: P, _ publisher2: Q, _ publisher3: R) -> Publishers.Zip4<Self, P, Q, R> where P: Publisher, Q: Publisher, R: Publisher, Failure == P.Failure, P.Failure == Q.Failure, Q.Failure == R.Failure {
         return .init(self, publisher1, publisher2, publisher3)
     }
     
@@ -56,7 +56,7 @@ extension Publisher {
     ///   - publisher3: A fourth publisher.
     ///   - transform: A closure that receives the most recent value from each publisher and returns a new value to publish.
     /// - Returns: A publisher that emits groups of elements from the upstream publishers as tuples.
-    public func zip<P, Q, R, T>(_ publisher1: P, _ publisher2: Q, _ publisher3: R, _ transform: @escaping (Output, P.Output, Q.Output, R.Output) -> T) -> Publishers.Map<Publishers.Zip4<Self, P, Q, R>, T> where P : Publisher, Q : Publisher, R : Publisher, Failure == P.Failure, P.Failure == Q.Failure, Q.Failure == R.Failure {
+    public func zip<P, Q, R, T>(_ publisher1: P, _ publisher2: Q, _ publisher3: R, _ transform: @escaping (Output, P.Output, Q.Output, R.Output) -> T) -> Publishers.Map<Publishers.Zip4<Self, P, Q, R>, T> where P: Publisher, Q: Publisher, R: Publisher, Failure == P.Failure, P.Failure == Q.Failure, Q.Failure == R.Failure {
         return self.zip(publisher1, publisher2, publisher3).map(transform)
     }
     
@@ -68,7 +68,7 @@ extension Publisher {
 ///   - lhs: A zip publisher to compare for equality.
 ///   - rhs: Another zip publisher to compare for equality.
 /// - Returns: `true` if the corresponding upstream publishers of each zip publisher are equal, `false` otherwise.
-extension Publishers.Zip3 : Equatable where A : Equatable, B : Equatable, C : Equatable {
+extension Publishers.Zip3: Equatable where A: Equatable, B: Equatable, C: Equatable {
     
     public static func == (lhs: Publishers.Zip3<A, B, C>, rhs: Publishers.Zip3<A, B, C>) -> Bool {
         return lhs.a == rhs.a && lhs.b == rhs.b && lhs.c == rhs.c
@@ -81,7 +81,7 @@ extension Publishers.Zip3 : Equatable where A : Equatable, B : Equatable, C : Eq
 ///   - lhs: A zip publisher to compare for equality.
 ///   - rhs: Another zip publisher to compare for equality.
 /// - Returns: `true` if the corresponding upstream publishers of each zip publisher are equal, `false` otherwise.
-extension Publishers.Zip4 : Equatable where A : Equatable, B : Equatable, C : Equatable, D : Equatable {
+extension Publishers.Zip4: Equatable where A: Equatable, B: Equatable, C: Equatable, D: Equatable {
     
     public static func == (lhs: Publishers.Zip4<A, B, C, D>, rhs: Publishers.Zip4<A, B, C, D>) -> Bool {
         return lhs.a == rhs.a && lhs.b == rhs.b && lhs.c == rhs.c && lhs.d == rhs.d
@@ -92,7 +92,7 @@ extension Publishers.Zip4 : Equatable where A : Equatable, B : Equatable, C : Eq
 extension Publishers {
     
     /// A publisher created by applying the zip function to three upstream publishers.
-    public struct Zip3<A, B, C> : Publisher where A : Publisher, B : Publisher, C : Publisher, A.Failure == B.Failure, B.Failure == C.Failure {
+    public struct Zip3<A, B, C>: Publisher where A: Publisher, B: Publisher, C: Publisher, A.Failure == B.Failure, B.Failure == C.Failure {
         
         public typealias Output = (A.Output, B.Output, C.Output)
         
@@ -120,7 +120,7 @@ extension Publishers {
     }
     
     /// A publisher created by applying the zip function to four upstream publishers.
-    public struct Zip4<A, B, C, D> : Publisher where A : Publisher, B : Publisher, C : Publisher, D : Publisher, A.Failure == B.Failure, B.Failure == C.Failure, C.Failure == D.Failure {
+    public struct Zip4<A, B, C, D>: Publisher where A: Publisher, B: Publisher, C: Publisher, D: Publisher, A.Failure == B.Failure, B.Failure == C.Failure, C.Failure == D.Failure {
         
         public typealias Output = (A.Output, B.Output, C.Output, D.Output)
         

@@ -9,7 +9,7 @@ extension Publisher {
     }
 }
 
-extension Publishers.IgnoreOutput : Equatable where Upstream : Equatable {
+extension Publishers.IgnoreOutput: Equatable where Upstream: Equatable {
     
     /// Returns a Boolean value that indicates whether two publishers are equivalent.
     ///
@@ -25,7 +25,7 @@ extension Publishers.IgnoreOutput : Equatable where Upstream : Equatable {
 extension Publishers {
     
     /// A publisher that ignores all upstream elements, but passes along a completion state (finish or failed).
-    public struct IgnoreOutput<Upstream> : Publisher where Upstream : Publisher {
+    public struct IgnoreOutput<Upstream: Publisher>: Publisher {
         
         public typealias Output = Never
         

@@ -28,7 +28,7 @@ extension Publisher {
 extension Publishers {
     
     /// A publisher that receives elements from an upstream publisher on a specific scheduler.
-    public struct SubscribeOn<Upstream, Context> : Publisher where Upstream : Publisher, Context : Scheduler {
+    public struct SubscribeOn<Upstream: Publisher, Context: Scheduler>: Publisher {
         
         public typealias Output = Upstream.Output
         

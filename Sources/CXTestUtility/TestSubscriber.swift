@@ -18,7 +18,7 @@ public func makeTestSubscriber<Input, Failure: Error>(_ input: Input.Type, _ fai
     })
 }
 
-public class TestSubscriber<Input, Failure>: Subscriber where Failure : Error {
+public class TestSubscriber<Input, Failure: Error>: Subscriber {
     
     public typealias Event = TestSubscriberEvent<Input, Failure>
     
