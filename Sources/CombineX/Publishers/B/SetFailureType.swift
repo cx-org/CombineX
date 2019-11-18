@@ -6,7 +6,7 @@ extension Publisher where Failure == Never {
     ///
     /// - Parameter failureType: The `Failure` type presented by this publisher.
     /// - Returns: A publisher that appears to send the specified failure type.
-    public func setFailureType<E>(to failureType: E.Type) -> Publishers.SetFailureType<Self, E> where E : Error {
+    public func setFailureType<E: Error>(to failureType: E.Type) -> Publishers.SetFailureType<Self, E> {
         return .init(upstream: self)
     }
 }
@@ -43,7 +43,7 @@ extension Publishers {
                 .receive(subscriber: subscriber)
         }
         
-        public func setFailureType<E>(to failure: E.Type) -> Publishers.SetFailureType<Upstream, E> where E : Error {
+        public func setFailureType<E: Error>(to failure: E.Type) -> Publishers.SetFailureType<Upstream, E> {
             return Publishers.SetFailureType(upstream: self.upstream)
         }
     }

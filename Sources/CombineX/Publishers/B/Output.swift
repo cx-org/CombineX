@@ -20,7 +20,7 @@ extension Publisher {
     /// If the publisher completes normally or with an error before producing all the elements in the range, it doesn’t publish the remaining elements.
     /// - Parameter range: A range that indicates which elements to publish.
     /// - Returns: A publisher that publishes elements specified by a range.
-    public func output<R>(in range: R) -> Publishers.Output<Self> where R : RangeExpression, R.Bound == Int {
+    public func output<R: RangeExpression>(in range: R) -> Publishers.Output<Self> where R.Bound == Int {
         return .init(upstream: self, range: range.relative(to: 0..<Int.max))
     }
 }

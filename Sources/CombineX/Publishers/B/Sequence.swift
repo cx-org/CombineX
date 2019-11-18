@@ -99,7 +99,7 @@ extension Publishers.Sequence {
         return .init(sequence: s)
     }
     
-    public func setFailureType<E>(to error: E.Type) -> Publishers.Sequence<Elements, E> where E : Error {
+    public func setFailureType<E: Error>(to error: E.Type) -> Publishers.Sequence<Elements, E> {
         return .init(sequence: self.sequence)
     }
 }

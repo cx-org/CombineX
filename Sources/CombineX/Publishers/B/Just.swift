@@ -105,7 +105,7 @@ extension Just {
         })
     }
     
-    public func mapError<E>(_ transform: (Just<Output>.Failure) -> E) -> Result<Output, E>.CX.Publisher where E : Error {
+    public func mapError<E: Error>(_ transform: (Just<Output>.Failure) -> E) -> Result<Output, E>.CX.Publisher {
         return .init(self.output)
     }
     
@@ -113,7 +113,7 @@ extension Just {
         return index == 0 ? .init(self.output) : .init(nil)
     }
     
-    public func output<R>(in range: R) -> Optional<Output>.CX.Publisher where R : RangeExpression, R.Bound == Int {
+    public func output<R: RangeExpression>(in range: R) -> Optional<Output>.CX.Publisher where R.Bound == Int {
         return range.contains(0) ? .init(self.output) : .init(nil)
     }
     
@@ -166,7 +166,7 @@ extension Just {
         })
     }
     
-    public func setFailureType<E>(to failureType: E.Type) -> Result<Output, E>.CX.Publisher where E : Error {
+    public func setFailureType<E: Error>(to failureType: E.Type) -> Result<Output, E>.CX.Publisher {
         return .init(self.output)
     }
 }
