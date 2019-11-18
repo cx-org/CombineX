@@ -26,8 +26,6 @@ public struct TestSchedulerTime: Strideable {
     
     public struct Stride: ExpressibleByFloatLiteral, Comparable, SignedNumeric, Codable, SchedulerTimeIntervalConvertible {
         
-        public typealias Magnitude = Double
-        
         public let seconds: Double
         
         public init(seconds: Double) {

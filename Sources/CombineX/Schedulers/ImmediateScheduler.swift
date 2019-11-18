@@ -25,12 +25,6 @@ public struct ImmediateScheduler : Scheduler {
         /// The increment by which the immediate scheduler counts time.
         public struct Stride : ExpressibleByFloatLiteral, Comparable, SignedNumeric, Codable, SchedulerTimeIntervalConvertible {
             
-            public typealias FloatLiteralType = Double
-            
-            public typealias IntegerLiteralType = Int
-            
-            public typealias Magnitude = Int
-            
             public var magnitude: Int
 
             public init(_ value: Int) {
