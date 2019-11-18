@@ -13,7 +13,7 @@ final public class AnyCancellable: Cancellable, Hashable {
         self.cancelBody = cancel
     }
     
-    public init<C>(_ canceller: C) where C: Cancellable {
+    public init<C: Cancellable>(_ canceller: C) {
         self.cancelBody = canceller.cancel
     }
     
@@ -44,7 +44,7 @@ extension AnyCancellable {
     /// Stores this AnyCancellable in the specified collection.
     /// Parameters:
     ///    - collection: The collection to store this AnyCancellable.
-    final public func store<C>(in collection: inout C) where C : RangeReplaceableCollection, C.Element == AnyCancellable {
+    final public func store<C: RangeReplaceableCollection>(in collection: inout C) where C.Element == AnyCancellable {
         collection.append(self)
     }
     

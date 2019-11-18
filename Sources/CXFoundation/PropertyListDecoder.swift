@@ -27,10 +27,8 @@ extension PropertyListDecoder: CXWrapping {
 }
 
 extension PropertyListDecoder.CX: CombineX.TopLevelDecoder {
-     
-    public typealias Input = Data
     
-    public func decode<T>(_ type: T.Type, from: Input) throws -> T where T : Decodable {
+    public func decode<T: Decodable>(_ type: T.Type, from: Data) throws -> T {
         return try self.base.decode(type, from: from)
     }
 }

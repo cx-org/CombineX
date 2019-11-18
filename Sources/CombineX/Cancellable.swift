@@ -12,7 +12,7 @@ extension Cancellable {
     /// Stores this Cancellable in the specified collection.
     /// Parameters:
     ///    - collection: The collection to store this Cancellable.
-    public func store<C>(in collection: inout C) where C : RangeReplaceableCollection, C.Element == AnyCancellable {
+    public func store<C: RangeReplaceableCollection>(in collection: inout C) where C.Element == AnyCancellable {
         collection.append(AnyCancellable(self))
     }
 

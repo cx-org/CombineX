@@ -19,22 +19,22 @@ public protocol Subscriber : CustomCombineIdentifierConvertible {
     ///
     /// - Parameter input: The published element.
     /// - Returns: A `Demand` instance indicating how many more elements the subcriber expects to receive.
-    func receive(_ input: Self.Input) -> Subscribers.Demand
+    func receive(_ input: Input) -> Subscribers.Demand
     
     /// Tells the subscriber that the publisher has completed publishing, either normally or with an error.
     ///
     /// - Parameter completion: A `Completion` case indicating whether publishing completed normally or with an error.
-    func receive(completion: Subscribers.Completion<Self.Failure>)
+    func receive(completion: Subscribers.Completion<Failure>)
 }
 
 extension Subscriber {
     
-    public func eraseToAnySubscriber() -> AnySubscriber<Self.Input, Self.Failure> {
+    public func eraseToAnySubscriber() -> AnySubscriber<Input, Failure> {
         return AnySubscriber(self)
     }
 }
 
-extension Subscriber where Self.Input == Void {
+extension Subscriber where Input == Void {
     
     public func receive() -> Subscribers.Demand {
         return self.receive(())

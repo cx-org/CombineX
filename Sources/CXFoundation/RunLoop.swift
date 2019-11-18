@@ -54,12 +54,6 @@ extension CXWrappers.RunLoop: CombineX.Scheduler {
         /// The interval by which run loop times advance.
         public struct Stride : ExpressibleByFloatLiteral, Comparable, SignedNumeric, Codable, SchedulerTimeIntervalConvertible {
             
-            public typealias FloatLiteralType = TimeInterval
-            
-            public typealias IntegerLiteralType = TimeInterval
-            
-            public typealias Magnitude = TimeInterval
-            
             /// The value of this time interval in seconds.
             public var magnitude: TimeInterval
             
@@ -80,71 +74,59 @@ extension CXWrappers.RunLoop: CombineX.Scheduler {
                 self.magnitude = timeInterval
             }
             
-            public init?<T>(exactly source: T) where T : BinaryInteger {
+            public init?<T: BinaryInteger>(exactly source: T) {
                 guard let value = Double(exactly: source) else {
                     return nil
                 }
                 self.init(value)
             }
             
-            public static func < (lhs: SchedulerTimeType.Stride, rhs: SchedulerTimeType.Stride) -> Bool {
+            public static func < (lhs: Stride, rhs: Stride) -> Bool {
                 return lhs.magnitude < rhs.magnitude
             }
             
-            public static func * (lhs: SchedulerTimeType.Stride, rhs: SchedulerTimeType.Stride) -> SchedulerTimeType.Stride {
+            public static func * (lhs: Stride, rhs: Stride) -> Stride {
                 return .init(lhs.magnitude * rhs.magnitude)
             }
             
-            public static func + (lhs: SchedulerTimeType.Stride, rhs: SchedulerTimeType.Stride) -> SchedulerTimeType.Stride {
+            public static func + (lhs: Stride, rhs: Stride) -> Stride {
                 return .init(lhs.magnitude + rhs.magnitude)
             }
             
-            public static func - (lhs: SchedulerTimeType.Stride, rhs: SchedulerTimeType.Stride) -> SchedulerTimeType.Stride {
+            public static func - (lhs: Stride, rhs: Stride) -> Stride {
                 return .init(lhs.magnitude - rhs.magnitude)
             }
             
-            public static func *= (lhs: inout SchedulerTimeType.Stride, rhs: SchedulerTimeType.Stride) {
+            public static func *= (lhs: inout Stride, rhs: Stride) {
                 lhs = lhs * rhs
             }
             
-            public static func += (lhs: inout SchedulerTimeType.Stride, rhs: SchedulerTimeType.Stride) {
+            public static func += (lhs: inout Stride, rhs: Stride) {
                 lhs = lhs + rhs
             }
             
-            public static func -= (lhs: inout SchedulerTimeType.Stride, rhs: SchedulerTimeType.Stride) {
+            public static func -= (lhs: inout Stride, rhs: Stride) {
                 lhs = lhs - rhs
             }
             
-            public static func seconds(_ s: Int) -> SchedulerTimeType.Stride {
+            public static func seconds(_ s: Int) -> Stride {
                 return .init(Double(s))
             }
             
-            public static func seconds(_ s: Double) -> SchedulerTimeType.Stride {
+            public static func seconds(_ s: Double) -> Stride {
                 return .init(s)
             }
             
-            public static func milliseconds(_ ms: Int) -> SchedulerTimeType.Stride {
+            public static func milliseconds(_ ms: Int) -> Stride {
                 return .init(Double(ms) / Double(Const.msec_per_sec))
             }
             
-            public static func microseconds(_ us: Int) -> SchedulerTimeType.Stride {
+            public static func microseconds(_ us: Int) -> Stride {
                 return .init(Double(us) / Double(Const.usec_per_sec))
             }
             
-            public static func nanoseconds(_ ns: Int) -> SchedulerTimeType.Stride {
+            public static func nanoseconds(_ ns: Int) -> Stride {
                 return .init(Double(ns) / Double(Const.nsec_per_sec))
-            }
-            
-            /// Returns a Boolean value indicating whether two values are equal.
-            ///
-            /// Equality is the inverse of inequality. For any values `a` and `b`,
-            /// `a == b` implies that `a != b` is `false`.
-            ///
-            /// - Parameters:
-            ///   - lhs: A value to compare.
-            ///   - rhs: Another value to compare.
-            public static func == (a: SchedulerTimeType.Stride, b: SchedulerTimeType.Stride) -> Bool {
-                return a.magnitude == b.magnitude
             }
         }
     }

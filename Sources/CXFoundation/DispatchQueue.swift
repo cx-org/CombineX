@@ -76,8 +76,6 @@ extension CXWrappers.DispatchQueue: CombineX.Scheduler {
             /// Nanoseconds, same as DispatchTimeInterval.
             public typealias IntegerLiteralType = Int
             
-            public typealias Magnitude = Int
-            
             /// The value of this time interval in nanoseconds.
             public var magnitude: Int
             
@@ -129,58 +127,58 @@ extension CXWrappers.DispatchQueue: CombineX.Scheduler {
             ///
             /// If `exactly` cannot convert to an `Int`, the resulting time interval is `nil`.
             /// - Parameter exactly: A binary integer representing a time interval.
-            public init?<T>(exactly source: T) where T : BinaryInteger {
+            public init?<T: BinaryInteger>(exactly source: T) {
                 guard let value = Int(exactly: source) else {
                     return nil
                 }
                 self.init(integerLiteral: value)
             }
             
-            public static func < (lhs: SchedulerTimeType.Stride, rhs: SchedulerTimeType.Stride) -> Bool {
+            public static func < (lhs: Stride, rhs: Stride) -> Bool {
                 return lhs.magnitude < rhs.magnitude
             }
             
-            public static func * (lhs: SchedulerTimeType.Stride, rhs: SchedulerTimeType.Stride) -> SchedulerTimeType.Stride {
-                return .init(magnitude: lhs.magnitude * rhs.magnitude)
-            }
-            
-            public static func + (lhs: SchedulerTimeType.Stride, rhs: SchedulerTimeType.Stride) -> SchedulerTimeType.Stride {
+            public static func + (lhs: Stride, rhs: Stride) -> Stride {
                 return .init(magnitude: lhs.magnitude + rhs.magnitude)
             }
             
-            public static func - (lhs: SchedulerTimeType.Stride, rhs: SchedulerTimeType.Stride) -> SchedulerTimeType.Stride {
+            public static func += (lhs: inout Stride, rhs: Stride) {
+                lhs = lhs + rhs
+            }
+            
+            public static func - (lhs: Stride, rhs: Stride) -> Stride {
                 return .init(magnitude: lhs.magnitude - rhs.magnitude)
             }
             
-            public static func -= (lhs: inout SchedulerTimeType.Stride, rhs: SchedulerTimeType.Stride) {
+            public static func -= (lhs: inout Stride, rhs: Stride) {
                 lhs = lhs + rhs
             }
             
-            public static func *= (lhs: inout SchedulerTimeType.Stride, rhs: SchedulerTimeType.Stride) {
+            public static func * (lhs: Stride, rhs: Stride) -> Stride {
+                return .init(magnitude: lhs.magnitude * rhs.magnitude)
+            }
+            
+            public static func *= (lhs: inout Stride, rhs: Stride) {
                 lhs = lhs * rhs
             }
-            
-            public static func += (lhs: inout SchedulerTimeType.Stride, rhs: SchedulerTimeType.Stride) {
-                lhs = lhs + rhs
-            }
 
-            public static func seconds(_ s: Double) -> SchedulerTimeType.Stride {
+            public static func seconds(_ s: Double) -> Stride {
                 return .init(floatLiteral: s)
             }
 
-            public static func seconds(_ s: Int) -> SchedulerTimeType.Stride {
+            public static func seconds(_ s: Int) -> Stride {
                 return .init(integerLiteral: s)
             }
 
-            public static func milliseconds(_ ms: Int) -> SchedulerTimeType.Stride {
+            public static func milliseconds(_ ms: Int) -> Stride {
                 return .init(.milliseconds(ms))
             }
 
-            public static func microseconds(_ us: Int) -> SchedulerTimeType.Stride {
+            public static func microseconds(_ us: Int) -> Stride {
                 return .init(.microseconds(us))
             }
 
-            public static func nanoseconds(_ ns: Int) -> SchedulerTimeType.Stride {
+            public static func nanoseconds(_ ns: Int) -> Stride {
                 return .init(.nanoseconds(ns))
             }
         }

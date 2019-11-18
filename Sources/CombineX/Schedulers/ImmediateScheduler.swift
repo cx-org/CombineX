@@ -10,7 +10,7 @@ public struct ImmediateScheduler : Scheduler {
         ///
         /// - Parameter other: The other scheduler time.
         /// - Returns: `0`, as a `Stride`.
-        public func distance(to other: ImmediateScheduler.SchedulerTimeType) -> ImmediateScheduler.SchedulerTimeType.Stride {
+        public func distance(to other: SchedulerTimeType) -> Stride {
             return Stride(0)
         }
         
@@ -18,7 +18,7 @@ public struct ImmediateScheduler : Scheduler {
         ///
         /// - Parameter n: The amount to advance by. The `ImmediateScheduler` ignores this value.
         /// - Returns: An empty `SchedulerTimeType`.
-        public func advanced(by n: ImmediateScheduler.SchedulerTimeType.Stride) -> ImmediateScheduler.SchedulerTimeType {
+        public func advanced(by n: Stride) -> SchedulerTimeType {
             return self
         }
         
@@ -45,62 +45,62 @@ public struct ImmediateScheduler : Scheduler {
                 self.magnitude = Int(value)
             }
             
-            public init?<T>(exactly source: T) where T : BinaryInteger {
+            public init?<T: BinaryInteger>(exactly source: T) {
                 guard let v = Int(exactly: source) else {
                     return nil
                 }
                 self.magnitude = v
             }
             
-            public static func < (lhs: ImmediateScheduler.SchedulerTimeType.Stride, rhs: ImmediateScheduler.SchedulerTimeType.Stride) -> Bool {
+            public static func < (lhs: Stride, rhs: Stride) -> Bool {
                 return lhs.magnitude < rhs.magnitude
             }
             
-            public static func * (lhs: ImmediateScheduler.SchedulerTimeType.Stride, rhs: ImmediateScheduler.SchedulerTimeType.Stride) -> ImmediateScheduler.SchedulerTimeType.Stride {
+            public static func * (lhs: Stride, rhs: Stride) -> Stride {
                 return Stride(integerLiteral: lhs.magnitude * rhs.magnitude)
             }
             
-            public static func + (lhs: ImmediateScheduler.SchedulerTimeType.Stride, rhs: ImmediateScheduler.SchedulerTimeType.Stride) -> ImmediateScheduler.SchedulerTimeType.Stride {
+            public static func + (lhs: Stride, rhs: Stride) -> Stride {
                 return Stride(integerLiteral: lhs.magnitude + rhs.magnitude)
             }
             
-            public static func - (lhs: ImmediateScheduler.SchedulerTimeType.Stride, rhs: ImmediateScheduler.SchedulerTimeType.Stride) -> ImmediateScheduler.SchedulerTimeType.Stride {
+            public static func - (lhs: Stride, rhs: Stride) -> Stride {
                 return Stride(integerLiteral: lhs.magnitude - rhs.magnitude)
             }
             
-            public static func -= (lhs: inout ImmediateScheduler.SchedulerTimeType.Stride, rhs: ImmediateScheduler.SchedulerTimeType.Stride) {
+            public static func -= (lhs: inout Stride, rhs: Stride) {
                 lhs = lhs - rhs
             }
             
-            public static func *= (lhs: inout ImmediateScheduler.SchedulerTimeType.Stride, rhs: ImmediateScheduler.SchedulerTimeType.Stride) {
+            public static func *= (lhs: inout Stride, rhs: Stride) {
                 lhs = lhs * rhs
             }
             
-            public static func += (lhs: inout ImmediateScheduler.SchedulerTimeType.Stride, rhs: ImmediateScheduler.SchedulerTimeType.Stride) {
+            public static func += (lhs: inout Stride, rhs: Stride) {
                 lhs = lhs + rhs
             }
             
-            public static func seconds(_ s: Int) -> ImmediateScheduler.SchedulerTimeType.Stride {
+            public static func seconds(_ s: Int) -> Stride {
                 return Stride(0)
             }
             
-            public static func seconds(_ s: Double) -> ImmediateScheduler.SchedulerTimeType.Stride {
+            public static func seconds(_ s: Double) -> Stride {
                 return Stride(0)
             }
             
-            public static func milliseconds(_ ms: Int) -> ImmediateScheduler.SchedulerTimeType.Stride {
+            public static func milliseconds(_ ms: Int) -> Stride {
                 return Stride(0)
             }
             
-            public static func microseconds(_ us: Int) -> ImmediateScheduler.SchedulerTimeType.Stride {
+            public static func microseconds(_ us: Int) -> Stride {
                 return Stride(0)
             }
             
-            public static func nanoseconds(_ ns: Int) -> ImmediateScheduler.SchedulerTimeType.Stride {
+            public static func nanoseconds(_ ns: Int) -> Stride {
                 return Stride(0)
             }
             
-            public static func == (a: ImmediateScheduler.SchedulerTimeType.Stride, b: ImmediateScheduler.SchedulerTimeType.Stride) -> Bool {
+            public static func == (a: Stride, b: Stride) -> Bool {
                 return a.magnitude == b.magnitude
             }
         }
@@ -113,24 +113,24 @@ public struct ImmediateScheduler : Scheduler {
     /// You cannot create instances of the immediate scheduler yourself. Use only the shared instance.
     public static let shared: ImmediateScheduler = ImmediateScheduler()
     
-    public func schedule(options: ImmediateScheduler.SchedulerOptions?, _ action: @escaping () -> Void) {
+    public func schedule(options: SchedulerOptions?, _ action: @escaping () -> Void) {
         action()
     }
     
-    public var now: ImmediateScheduler.SchedulerTimeType {
+    public var now: SchedulerTimeType {
         return SchedulerTimeType()
     }
     
-    public var minimumTolerance: ImmediateScheduler.SchedulerTimeType.Stride {
-        return ImmediateScheduler.SchedulerTimeType.Stride(0)
+    public var minimumTolerance: SchedulerTimeType.Stride {
+        return SchedulerTimeType.Stride(0)
     }
     
-    public func schedule(after date: ImmediateScheduler.SchedulerTimeType, tolerance: ImmediateScheduler.SchedulerTimeType.Stride, options: ImmediateScheduler.SchedulerOptions?, _ action: @escaping () -> Void) {
+    public func schedule(after date: SchedulerTimeType, tolerance: SchedulerTimeType.Stride, options: SchedulerOptions?, _ action: @escaping () -> Void) {
         action()
     }
     
-    public func schedule(after date: ImmediateScheduler.SchedulerTimeType, interval: ImmediateScheduler.SchedulerTimeType.Stride, tolerance: ImmediateScheduler.SchedulerTimeType.Stride, options: ImmediateScheduler.SchedulerOptions?, _ action: @escaping () -> Void) -> Cancellable {
+    public func schedule(after date: SchedulerTimeType, interval: SchedulerTimeType.Stride, tolerance: SchedulerTimeType.Stride, options: SchedulerOptions?, _ action: @escaping () -> Void) -> Cancellable {
         action()
-        return AnyCancellable { }
+        return AnyCancellable {}
     }
 }

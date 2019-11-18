@@ -2,12 +2,12 @@ public protocol TopLevelDecoder {
     
     associatedtype Input
     
-    func decode<T>(_ type: T.Type, from: Self.Input) throws -> T where T : Decodable
+    func decode<T: Decodable>(_ type: T.Type, from: Input) throws -> T
 }
 
 public protocol TopLevelEncoder {
     
     associatedtype Output
     
-    func encode<T>(_ value: T) throws -> Self.Output where T : Encodable
+    func encode<T: Encodable>(_ value: T) throws -> Output
 }

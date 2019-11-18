@@ -30,10 +30,10 @@
 public protocol ObservableObject : AnyObject {
 
     /// The type of publisher that emits before the object has changed.
-    associatedtype ObjectWillChangePublisher : Publisher = ObservableObjectPublisher where Self.ObjectWillChangePublisher.Failure == Never
+    associatedtype ObjectWillChangePublisher : Publisher = ObservableObjectPublisher where ObjectWillChangePublisher.Failure == Never
 
     /// A publisher that emits before the object has changed.
-    var objectWillChange: Self.ObjectWillChangePublisher { get }
+    var objectWillChange: ObjectWillChangePublisher { get }
 }
 
 #if canImport(Runtime)
@@ -48,7 +48,7 @@ private let publishedPropertiesCache = TypeInfoCache<UnsafeRawPointer, [Property
 private let globalObjectWillChangeCache = ObservableObjectPublisherCache<AnyObject, ObservableObjectPublisher>()
 #endif
 
-extension ObservableObject where Self.ObjectWillChangePublisher == ObservableObjectPublisher {
+extension ObservableObject where ObjectWillChangePublisher == ObservableObjectPublisher {
     
     #if canImport(Runtime)
     private static func publishedProperties() throws -> [PropertyInfo] {
@@ -102,7 +102,7 @@ final public class ObservableObjectPublisher : Publisher {
         // Do nothing
     }
 
-    final public func receive<S>(subscriber: S) where S : Subscriber, S.Failure == ObservableObjectPublisher.Failure, S.Input == ObservableObjectPublisher.Output {
+    final public func receive<S: Subscriber>(subscriber: S) where S.Failure == ObservableObjectPublisher.Failure, S.Input == ObservableObjectPublisher.Output {
         self.subject.receive(subscriber: subscriber)
     }
 

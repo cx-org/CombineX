@@ -27,10 +27,8 @@ extension PropertyListEncoder: CXWrapping {
 }
 
 extension PropertyListEncoder.CX: CombineX.TopLevelEncoder {
-     
-    public typealias Output = Data
     
-    public func encode<T>(_ value: T) throws -> Output where T : Encodable {
+    public func encode<T: Encodable>(_ value: T) throws -> Data {
         return try self.base.encode(value)
     }
 }

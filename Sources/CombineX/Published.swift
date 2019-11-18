@@ -43,7 +43,7 @@
             self.subject = CurrentValueSubject<Value, Never>(value)
         }
 
-        public func receive<S>(subscriber: S) where Value == S.Input, S : Subscriber, S.Failure == Published<Value>.Publisher.Failure {
+        public func receive<S: Subscriber>(subscriber: S) where Value == S.Input, S.Failure == Published<Value>.Publisher.Failure {
             self.subject.receive(subscriber: subscriber)
         }
     }

@@ -6,7 +6,7 @@
 public protocol Scheduler {
     
     /// Describes an instant in time for this scheduler.
-    associatedtype SchedulerTimeType : Strideable where Self.SchedulerTimeType.Stride : SchedulerTimeIntervalConvertible
+    associatedtype SchedulerTimeType: Strideable where SchedulerTimeType.Stride: SchedulerTimeIntervalConvertible
     
     /// A type that defines options accepted by the scheduler.
     ///
@@ -14,48 +14,48 @@ public protocol Scheduler {
     associatedtype SchedulerOptions
     
     /// Returns this scheduler's definition of the current moment in time.
-    var now: Self.SchedulerTimeType { get }
+    var now: SchedulerTimeType { get }
     
     /// Returns the minimum tolerance allowed by the scheduler.
-    var minimumTolerance: Self.SchedulerTimeType.Stride { get }
+    var minimumTolerance: SchedulerTimeType.Stride { get }
     
     /// Performs the action at the next possible opportunity.
-    func schedule(options: Self.SchedulerOptions?, _ action: @escaping () -> Void)
+    func schedule(options: SchedulerOptions?, _ action: @escaping () -> Void)
     
     /// Performs the action at some time after the specified date.
-    func schedule(after date: Self.SchedulerTimeType, tolerance: Self.SchedulerTimeType.Stride, options: Self.SchedulerOptions?, _ action: @escaping () -> Void)
+    func schedule(after date: SchedulerTimeType, tolerance: SchedulerTimeType.Stride, options: SchedulerOptions?, _ action: @escaping () -> Void)
     
     /// Performs the action at some time after the specified date, at the specified
     /// frequency, optionally taking into account tolerance if possible.
-    func schedule(after date: Self.SchedulerTimeType, interval: Self.SchedulerTimeType.Stride, tolerance: Self.SchedulerTimeType.Stride, options: Self.SchedulerOptions?, _ action: @escaping () -> Void) -> Cancellable
+    func schedule(after date: SchedulerTimeType, interval: SchedulerTimeType.Stride, tolerance: SchedulerTimeType.Stride, options: SchedulerOptions?, _ action: @escaping () -> Void) -> Cancellable
 }
 
 extension Scheduler {
     
     /// Performs the action at some time after the specified date, using the scheduler’s minimum tolerance.
-    public func schedule(after date: Self.SchedulerTimeType, _ action: @escaping () -> Void) {
-        self.schedule(after: date, tolerance: self.minimumTolerance, action)
+    public func schedule(after date: SchedulerTimeType, _ action: @escaping () -> Void) {
+        schedule(after: date, tolerance: minimumTolerance, action)
     }
     
     /// Performs the action at the next possible opportunity, without options.
     public func schedule(_ action: @escaping () -> Void) {
-        self.schedule(options: nil, action)
+        schedule(options: nil, action)
     }
     
     /// Performs the action at some time after the specified date.
-    public func schedule(after date: Self.SchedulerTimeType, tolerance: Self.SchedulerTimeType.Stride, _ action: @escaping () -> Void) {
-        self.schedule(after: date, tolerance: tolerance, options: nil, action)
+    public func schedule(after date: SchedulerTimeType, tolerance: SchedulerTimeType.Stride, _ action: @escaping () -> Void) {
+        schedule(after: date, tolerance: tolerance, options: nil, action)
     }
     
     /// Performs the action at some time after the specified date, at the specified
     /// frequency, taking into account tolerance if possible.
-    public func schedule(after date: Self.SchedulerTimeType, interval: Self.SchedulerTimeType.Stride, tolerance: Self.SchedulerTimeType.Stride, _ action: @escaping () -> Void) -> Cancellable {
-        return self.schedule(after: date, interval: interval, tolerance: tolerance, options: nil, action)
+    public func schedule(after date: SchedulerTimeType, interval: SchedulerTimeType.Stride, tolerance: SchedulerTimeType.Stride, _ action: @escaping () -> Void) -> Cancellable {
+        return schedule(after: date, interval: interval, tolerance: tolerance, options: nil, action)
     }
     
     /// Performs the action at some time after the specified date, at the specified
     /// frequency, using minimum tolerance possible for this Scheduler.
-    public func schedule(after date: Self.SchedulerTimeType, interval: Self.SchedulerTimeType.Stride, _ action: @escaping () -> Void) -> Cancellable {
-        return self.schedule(after: date, interval: interval, tolerance: self.minimumTolerance, action)
+    public func schedule(after date: SchedulerTimeType, interval: SchedulerTimeType.Stride, _ action: @escaping () -> Void) -> Cancellable {
+        return schedule(after: date, interval: interval, tolerance: minimumTolerance, action)
     }
 }

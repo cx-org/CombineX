@@ -46,7 +46,7 @@ public struct TestSchedulerTime: Strideable {
             self.seconds = value
         }
         
-        public init?<T>(exactly source: T) where T : BinaryInteger {
+        public init?<T: BinaryInteger>(exactly source: T) {
             guard let v = Double(exactly: source) else {
                 return nil
             }

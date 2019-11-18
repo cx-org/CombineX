@@ -29,12 +29,12 @@ public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertibl
     ///
     /// - Parameter s: The subscriber to type-erase.
     @inlinable
-    public init<S>(_ s: S) where Input == S.Input, Failure == S.Failure, S : Subscriber {
+    public init<S: Subscriber>(_ s: S) where Input == S.Input, Failure == S.Failure {
         self.box = ClosureSubscriberBox<Input, Failure>(receiveSubscription: s.receive(subscription:), receiveValue: s.receive(_:), receiveCompletion: s.receive(completion:))
         self.combineIdentifier = s.combineIdentifier
     }
     
-    public init<S>(_ s: S) where Input == S.Output, Failure == S.Failure, S : Subject {
+    public init<S: Subject>(_ s: S) where Input == S.Output, Failure == S.Failure {
         self.box = SubjectSubscriberBox(s)
         self.combineIdentifier = CombineIdentifier(s)
     }
