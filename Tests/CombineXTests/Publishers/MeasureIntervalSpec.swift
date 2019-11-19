@@ -1,8 +1,8 @@
-import Foundation
 import CXShim
 import CXTestUtility
-import Quick
+import Foundation
 import Nimble
+import Quick
 
 class MeasureIntervalSpec: QuickSpec {
     
@@ -22,14 +22,14 @@ class MeasureIntervalSpec: QuickSpec {
                 let pub = subject.measureInterval(using: TestDispatchQueueScheduler.main)
                 var t = Date()
                 var dts: [TimeInterval] = []
-                let sub = TestSubscriber<TestDispatchQueueScheduler.SchedulerTimeType.Stride, Never>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<TestDispatchQueueScheduler.SchedulerTimeType.Stride, Never>(receiveSubscription: { s in
                     s.request(.unlimited)
                     t = Date()
-                }, receiveValue: { v in
+                }, receiveValue: { _ in
                     dts.append(-t.timeIntervalSinceNow)
                     t = Date()
                     return .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 
                 pub.subscribe(sub)
@@ -43,7 +43,7 @@ class MeasureIntervalSpec: QuickSpec {
                 subject.send(completion: .finished)
                 
                 expect(sub.events).to(haveCount(dts.count + 1))
-                expect(sub.events.last).to(equal(.completion(.finished)))
+                expect(sub.events.last) == .completion(.finished)
                 for (event, dt) in zip(sub.events.dropLast(), dts) {
                     expect(event.value?.seconds).to(beCloseTo(dt, within: 0.1))
                 }

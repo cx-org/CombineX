@@ -13,13 +13,13 @@ extension Publisher {
 extension Publishers {
     
     /// A publisher implemented as a class, which otherwise behaves like its upstream publisher.
-    final public class Share<Upstream>: Publisher, Equatable where Upstream: Publisher {
+    public final class Share<Upstream>: Publisher, Equatable where Upstream: Publisher {
         
         public typealias Output = Upstream.Output
         
         public typealias Failure = Upstream.Failure
         
-        final public let upstream: Upstream
+        public final let upstream: Upstream
         
         private lazy var pub = self.upstream
             .multicast(subject: PassthroughSubject<Output, Failure>())
@@ -29,7 +29,7 @@ extension Publishers {
             self.upstream = upstream
         }
         
-        final public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, Upstream.Output == S.Input {
+        public final func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             self.pub.receive(subscriber: subscriber)
         }
         

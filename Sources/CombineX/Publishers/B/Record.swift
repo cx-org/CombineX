@@ -85,4 +85,3 @@ extension Record.Recording: Codable where Output: Decodable, Output: Encodable, 
         try self.encode(to: encoder)
     }
 }
-

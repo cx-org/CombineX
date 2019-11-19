@@ -11,7 +11,6 @@ extension Publisher {
     public func tryCatch<P: Publisher>(_ handler: @escaping (Failure) throws -> P) -> Publishers.TryCatch<Self, P> where Output == P.Output {
         return .init(upstream: self, handler: handler)
     }
-    
 }
 
 extension Publishers {
@@ -39,21 +38,18 @@ extension Publishers {
                 .receive(subscriber: s)
         }
     }
-
 }
 
 extension Publishers.TryCatch {
     
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == NewPublisher.Output,
-        S.Failure == Error
-    {
+        S.Failure == Error {
         
         typealias Input = NewPublisher.Output
         typealias Failure = Error

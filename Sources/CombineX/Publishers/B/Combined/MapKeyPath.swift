@@ -28,7 +28,6 @@ extension Publisher {
     public func map<T0, T1, T2>(_ keyPath0: KeyPath<Output, T0>, _ keyPath1: KeyPath<Output, T1>, _ keyPath2: KeyPath<Output, T2>) -> Publishers.MapKeyPath3<Self, T0, T1, T2> {
         return .init(upstream: self, keyPath0: keyPath0, keyPath1: keyPath1, keyPath2: keyPath2)
     }
-
 }
 
 extension Publishers {

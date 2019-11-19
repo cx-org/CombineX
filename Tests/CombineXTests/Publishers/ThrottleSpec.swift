@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class ThrottleSpec: QuickSpec {
     
@@ -39,10 +39,10 @@ class ThrottleSpec: QuickSpec {
                     
                     subject.send(7)
                     
-                    expect(sub.events).to(equal([.value(2), .value(4), .value(6)]))
+                    expect(sub.events) == [.value(2), .value(4), .value(6)]
                     
                     scheduler.advance(by: .seconds(0.5))
-                    expect(sub.events).to(equal([.value(2), .value(4), .value(6), .value(7)]))
+                    expect(sub.events) == [.value(2), .value(4), .value(6), .value(7)]
                 }
                 
                 // MARK: 1.2 should send as many values as demand
@@ -50,11 +50,11 @@ class ThrottleSpec: QuickSpec {
                     let subject = PassthroughSubject<Int, TestError>()
                     let scheduler = TestScheduler()
                     let pub = subject.throttle(for: .seconds(1), scheduler: scheduler, latest: true)
-                    let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
+                    let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
                         s.request(.max(10))
                     }, receiveValue: { v in
                         return [0, 5].contains(v) ? .max(1) : .none
-                    }, receiveCompletion: { c in
+                    }, receiveCompletion: { _ in
                     })
                     pub.subscribe(sub)
                     
@@ -92,10 +92,10 @@ class ThrottleSpec: QuickSpec {
                     
                     subject.send(7)
                     
-                    expect(sub.events).to(equal([.value(1), .value(3), .value(5)]))
+                    expect(sub.events) == [.value(1), .value(3), .value(5)]
                     
                     scheduler.advance(by: .seconds(0.5))
-                    expect(sub.events).to(equal([.value(1), .value(3), .value(5), .value(7)]))
+                    expect(sub.events) == [.value(1), .value(3), .value(5), .value(7)]
                 }
                 
                 // MARK: 1.4 should send as many values as demand
@@ -103,11 +103,11 @@ class ThrottleSpec: QuickSpec {
                     let subject = PassthroughSubject<Int, TestError>()
                     let scheduler = TestScheduler()
                     let pub = subject.throttle(for: .seconds(1), scheduler: scheduler, latest: true)
-                    let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
+                    let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
                         s.request(.max(10))
                     }, receiveValue: { v in
                         return [0, 5].contains(v) ? .max(1) : .none
-                    }, receiveCompletion: { c in
+                    }, receiveCompletion: { _ in
                     })
                     pub.subscribe(sub)
                     
@@ -131,12 +131,11 @@ class ThrottleSpec: QuickSpec {
                     let subject = TestSubject<Int, TestError>()
                     let scheduler = TestScheduler()
                     let pub = subject.throttle(for: .seconds(1), scheduler: scheduler, latest: true)
-                    let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
+                    let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
                         s.request(.max(10))
                     }, receiveValue: { v in
                         return [1].contains(v) ? .max(1) : .none
-                    }, receiveCompletion: { c in
-                        
+                    }, receiveCompletion: { _ in
                     })
                     pub.subscribe(sub)
                     
@@ -144,8 +143,8 @@ class ThrottleSpec: QuickSpec {
                         subject.send($0)
                         scheduler.advance(by: .seconds(1))
                     }
-                    expect(subject.subscription.requestDemandRecords).to(equal([.unlimited]))
-                    expect(subject.subscription.syncDemandRecords).to(equal(Array(repeating: .max(0), count: 100)))
+                    expect(subject.subscription.requestDemandRecords) == [.unlimited]
+                    expect(subject.subscription.syncDemandRecords) == Array(repeating: .max(0), count: 100)
                 }
             }
             
@@ -156,12 +155,11 @@ class ThrottleSpec: QuickSpec {
                     let subject = TestSubject<Int, TestError>()
                     let scheduler = TestScheduler()
                     let pub = subject.throttle(for: .seconds(1), scheduler: scheduler, latest: false)
-                    let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
+                    let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
                         s.request(.max(10))
                     }, receiveValue: { v in
                         return [1].contains(v) ? .max(1) : .none
-                    }, receiveCompletion: { c in
-                        
+                    }, receiveCompletion: { _ in
                     })
                     pub.subscribe(sub)
                     
@@ -169,8 +167,8 @@ class ThrottleSpec: QuickSpec {
                         subject.send($0)
                         scheduler.advance(by: .seconds(1))
                     }
-                    expect(subject.subscription.requestDemandRecords).to(equal([.unlimited]))
-                    expect(subject.subscription.syncDemandRecords).to(equal(Array(repeating: .max(0), count: 100)))
+                    expect(subject.subscription.requestDemandRecords) == [.unlimited]
+                    expect(subject.subscription.syncDemandRecords) == Array(repeating: .max(0), count: 100)
                 }
             }
         }

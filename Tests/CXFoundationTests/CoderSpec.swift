@@ -1,8 +1,8 @@
-import Foundation
 import CXShim
 import CXTestUtility
-import Quick
+import Foundation
 import Nimble
+import Quick
 
 class CoderSpec: QuickSpec {
     
@@ -22,7 +22,7 @@ class CoderSpec: QuickSpec {
             let json = try! JSONEncoder().cx.encode(a)
             let b = try! JSONDecoder().cx.decode(User.self, from: json)
             
-            expect(b.name).to(equal(a.name))
+            expect(b.name) == a.name
         }
         
         #if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
@@ -36,7 +36,7 @@ class CoderSpec: QuickSpec {
             let json = try! PropertyListEncoder().cx.encode(a)
             let b = try! PropertyListDecoder().cx.decode(User.self, from: json)
             
-            expect(b.name).to(equal(a.name))
+            expect(b.name) == a.name
         }
         #endif
     }

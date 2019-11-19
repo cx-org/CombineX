@@ -22,7 +22,6 @@ extension Publishers.First: Equatable where Upstream: Equatable {
     }
 }
 
-
 extension Publishers {
     
     /// A publisher that publishes the first element of a stream, then finishes.

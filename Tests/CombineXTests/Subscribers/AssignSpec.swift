@@ -1,8 +1,8 @@
-import Foundation
 import CXShim
 import CXTestUtility
-import Quick
+import Foundation
 import Nimble
+import Quick
 
 class AssignSpec: QuickSpec {
     
@@ -37,14 +37,14 @@ class AssignSpec: QuickSpec {
                 pub.send(2)
                 pub.send(3)
                 
-                expect(obj.records).to(equal([1, 2, 3]))
+                expect(obj.records) == [1, 2, 3]
                 
                 _ = assign
             }
              
             // MARK: 1.2 should not receive values if it haven't received subscription
             it("should not receive values if it hasn't received subscription") {
-                let pub = TestPublisher<Int, Never> { (s) in
+                let pub = TestPublisher<Int, Never> { s in
                     _ = s.receive(1)
                     _ = s.receive(2)
                     s.receive(completion: .finished)
@@ -55,12 +55,12 @@ class AssignSpec: QuickSpec {
                 
                 pub.subscribe(assign)
                 
-                expect(obj.records).to(equal([]))
+                expect(obj.records) == []
             }
             
             // MARK: 1.3 should not receive values if it has received completion
             it("should not receive values if it has received completion") {
-                let pub = TestPublisher<Int, Never> { (s) in
+                let pub = TestPublisher<Int, Never> { s in
                     s.receive(subscription: Subscriptions.empty)
                     _ = s.receive(1)
                     s.receive(completion: .finished)
@@ -72,7 +72,7 @@ class AssignSpec: QuickSpec {
                 
                 pub.subscribe(assign)
                 
-                expect(obj.records).to(equal([1]))
+                expect(obj.records) == [1]
             }
 
             // MARK: 1.4 should not receive vaules when re-activated
@@ -85,7 +85,7 @@ class AssignSpec: QuickSpec {
                 pub.send(1)
                 pub.send(completion: .finished)
 
-                expect(obj.records).to(equal([1]))
+                expect(obj.records) == [1]
 
                 // Try to start a new one
                 let pub2 = PassthroughSubject<Int, Never>()
@@ -93,7 +93,7 @@ class AssignSpec: QuickSpec {
                 pub2.send(2)
                 pub2.send(completion: .finished)
 
-                expect(obj.records).to(equal([1]))
+                expect(obj.records) == [1]
             }
 
             // MARK: 1.5 should not receive vaules if it was cancelled
@@ -104,9 +104,9 @@ class AssignSpec: QuickSpec {
                 let cancellable = pub.assign(to: \Object.value, on: obj)
 
                 cancellable.cancel()
-                expect(obj.records).to(equal([]))
+                expect(obj.records) == []
                 pub.send(1)
-                expect(obj.records).to(equal([]))
+                expect(obj.records) == []
             }
         }
         
@@ -137,11 +137,11 @@ class AssignSpec: QuickSpec {
                 
                 expect(subscription).toNot(beNil())
                 expect(object).toNot(beNil())
-                expect(cancelled).to(beFalse())
+                expect(cancelled) == false
                 assign.receive(completion: .finished)
                 expect(subscription).to(beNil())
                 expect(object).to(beNil())
-                expect(cancelled).to(beTrue())
+                expect(cancelled) == true
             }
             
             // MARK: 2.2 should retain subscription and object then release them after cancel
@@ -167,11 +167,11 @@ class AssignSpec: QuickSpec {
                 
                 expect(subscription).toNot(beNil())
                 expect(object).toNot(beNil())
-                expect(cancelled).to(beFalse())
+                expect(cancelled) == false
                 assign.cancel()
                 expect(subscription).to(beNil())
                 expect(object).to(beNil())
-                expect(cancelled).to(beTrue())
+                expect(cancelled) == true
             }
             
             // MARK: 2.3 should not release root when complete if there is no subscription

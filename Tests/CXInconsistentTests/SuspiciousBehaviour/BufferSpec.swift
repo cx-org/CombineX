@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class SuspiciousBufferSpec: QuickSpec {
     

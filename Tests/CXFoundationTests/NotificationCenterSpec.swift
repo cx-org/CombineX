@@ -1,8 +1,8 @@
-import Foundation
 import CXShim
 import CXTestUtility
-import Quick
+import Foundation
 import Nimble
+import Quick
 
 class NotificationCenterSpec: QuickSpec {
     

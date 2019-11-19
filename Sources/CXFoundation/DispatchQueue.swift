@@ -2,8 +2,8 @@ import CombineX
 import Dispatch
 
 #if !COCOAPODS
-import CXUtility
 import CXNamespace
+import CXUtility
 #endif
 
 extension CXWrappers {
@@ -223,7 +223,7 @@ extension CXWrappers.DispatchQueue: CombineX.Scheduler {
         let timer = DispatchSource.makeTimerSource(queue: self.base)
         var ref: DispatchSourceTimer? = timer
         
-        timer.setEventHandler() {
+        timer.setEventHandler {
             action()
             
             ref?.cancel()
@@ -237,7 +237,7 @@ extension CXWrappers.DispatchQueue: CombineX.Scheduler {
     public func schedule(after date: SchedulerTimeType, interval: SchedulerTimeType.Stride, tolerance: SchedulerTimeType.Stride, options: SchedulerOptions?, _ action: @escaping () -> Void) -> Cancellable {
         let timer = DispatchSource.makeTimerSource(queue: self.base)
         
-        timer.setEventHandler() {
+        timer.setEventHandler {
             action()
         }
         
@@ -249,5 +249,3 @@ extension CXWrappers.DispatchQueue: CombineX.Scheduler {
         }
     }
 }
-
-

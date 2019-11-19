@@ -59,7 +59,6 @@ extension Publisher {
     public func zip<P, Q, R, T>(_ publisher1: P, _ publisher2: Q, _ publisher3: R, _ transform: @escaping (Output, P.Output, Q.Output, R.Output) -> T) -> Publishers.Map<Publishers.Zip4<Self, P, Q, R>, T> where P: Publisher, Q: Publisher, R: Publisher, Failure == P.Failure, P.Failure == Q.Failure, Q.Failure == R.Failure {
         return self.zip(publisher1, publisher2, publisher3).map(transform)
     }
-    
 }
 
 /// Returns a Boolean value that indicates whether two publishers are equivalent.
@@ -87,7 +86,6 @@ extension Publishers.Zip4: Equatable where A: Equatable, B: Equatable, C: Equata
         return lhs.a == rhs.a && lhs.b == rhs.b && lhs.c == rhs.c && lhs.d == rhs.d
     }
 }
-
 
 extension Publishers {
     

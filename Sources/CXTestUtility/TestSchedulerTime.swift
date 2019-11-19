@@ -1,6 +1,6 @@
-import Foundation
-import CXUtility
 import CXShim
+import CXUtility
+import Foundation
 
 public struct TestSchedulerTime: Strideable {
     
@@ -104,7 +104,6 @@ public struct TestSchedulerTime: Strideable {
         }
     }
 }
-
 
 extension TestSchedulerTime: CustomStringConvertible {
     

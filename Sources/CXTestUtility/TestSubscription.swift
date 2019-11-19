@@ -1,5 +1,5 @@
-import CXUtility
 import CXShim
+import CXUtility
 
 public enum TestSubscriptionEvent {
     case request(demand: Subscribers.Demand)
@@ -47,7 +47,6 @@ public class TestSubscription: Subscription, TestLogging {
         self.trace("deinit")
     }
 }
-
 
 extension TestSubscriptionEvent: Equatable {
     

@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class MulticastSpec: QuickSpec {
     
@@ -24,14 +24,14 @@ class MulticastSpec: QuickSpec {
                 10.times {
                     subject.send($0)
                 }
-                expect(sub.events).to(equal([]))
+                expect(sub.events) == []
                 
                 let cancel = pub.connect()
                 
                 10.times {
                     subject.send($0)
                 }
-                expect(sub.events).to(equal((0..<10).map { .value($0) }))
+                expect(sub.events) == (0..<10).map { .value($0) }
                 
                 cancel.cancel()
                 
@@ -39,7 +39,7 @@ class MulticastSpec: QuickSpec {
                     subject.send($0)
                 }
                 
-                expect(sub.events).to(equal((0..<10).map { .value($0) }))
+                expect(sub.events) == (0..<10).map { .value($0) }
             }
         }
     }

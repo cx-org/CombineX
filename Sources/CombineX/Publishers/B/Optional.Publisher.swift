@@ -4,6 +4,7 @@ import CXNamespace
 
 extension CXWrappers {
     
+    // swiftlint:disable:next syntactic_sugar
     typealias Optional<Wrapped> = Swift.Optional<Wrapped>.CX
 }
 
@@ -11,7 +12,7 @@ extension Optional: CXWrapping {
     
     public struct CX: CXWrapper {
         
-        public typealias Base = Optional<Wrapped>
+        public typealias Base = Wrapped?
         
         public let base: Base
         

@@ -10,7 +10,6 @@ extension Publisher {
     }
 }
 
-
 extension Publishers.Merge: Equatable where A: Equatable, B: Equatable {
     
     /// Returns a Boolean value that indicates whether two publishers are equivalent.

@@ -1,6 +1,6 @@
 #if !COCOAPODS
-import CXUtility
 import CXNamespace
+import CXUtility
 #endif
 
 extension CXWrappers {
@@ -81,15 +81,13 @@ extension Result.CX {
 
 extension Result.CX.Publisher {
     
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         
         typealias Sub = S
         
@@ -255,7 +253,7 @@ extension Result.CX.Publisher {
         return .init(result.map { nextPartialResult(initialResult, $0) })
     }
 
-    public func tryReduce<Accumulator>(_ initialResult: Accumulator, _ nextPartialResult: (Accumulator, Output) throws -> Accumulator) -> Result<Accumulator, Error>.CX.Publisher{
+    public func tryReduce<Accumulator>(_ initialResult: Accumulator, _ nextPartialResult: (Accumulator, Output) throws -> Accumulator) -> Result<Accumulator, Error>.CX.Publisher {
         return .init(result.tryMap { try nextPartialResult(initialResult, $0) })
     }
 

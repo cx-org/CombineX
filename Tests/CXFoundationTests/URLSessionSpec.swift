@@ -1,8 +1,8 @@
-import Foundation
 import CXShim
 import CXTestUtility
-import Quick
+import Foundation
 import Nimble
+import Quick
 
 #if canImport(FoundationNetworking)
 import FoundationNetworking
@@ -23,7 +23,7 @@ class URLSessionSpec: QuickSpec {
             var response: URLResponse?
             let pub = URLSession.shared.cx.dataTaskPublisher(for: testURL)
             let sink = pub
-                .sink(receiveCompletion: { (c) in
+                .sink(receiveCompletion: { _ in
                 }, receiveValue: { v in
                     response = v.response
                 })

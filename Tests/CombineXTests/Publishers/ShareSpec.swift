@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class ShareSpec: QuickSpec {
     
@@ -37,8 +37,8 @@ class ShareSpec: QuickSpec {
                 subject.send(2)
                 subject.send(3)
                 
-                expect(normalCount).to(equal(6))
-                expect(shareCount).to(equal(3))
+                expect(normalCount) == 6
+                expect(shareCount) == 3
             }
         }
     }

@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class MapErrorSpec: QuickSpec {
     
@@ -28,9 +28,8 @@ class MapErrorSpec: QuickSpec {
                 
                 let valueEvents = (0..<100).map { TestSubscriberEvent<Int, TestError>.value($0) }
                 let expected = valueEvents + [.completion(.failure(.e2))]
-                expect(sub.events).to(equal(expected))
+                expect(sub.events) == expected
             }
-         
             
             #if !SWIFT_PACKAGE
             // MARK: 1.2 should throw assertion when upstream send values before sending subscription

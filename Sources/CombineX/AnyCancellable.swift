@@ -2,7 +2,7 @@
 ///
 /// Subscriber implementations can use this type to provide a “cancellation token” that makes it possible for a caller to cancel a publisher, but not to use the `Subscription` object to request items.
 /// An AnyCancellable instance automatically calls `cancel()` when deinitialized.
-final public class AnyCancellable: Cancellable, Hashable {
+public final class AnyCancellable: Cancellable, Hashable {
     
     private var cancelBody: (() -> Void)?
 
@@ -17,7 +17,7 @@ final public class AnyCancellable: Cancellable, Hashable {
         self.cancelBody = canceller.cancel
     }
     
-    final public func cancel() {
+    public final func cancel() {
         self.cancelBody?()
         self.cancelBody = nil
     }
@@ -26,7 +26,7 @@ final public class AnyCancellable: Cancellable, Hashable {
         self.cancelBody?()
     }
     
-    final public func hash(into hasher: inout Hasher) {
+    public final func hash(into hasher: inout Hasher) {
         hasher.combine(ObjectIdentifier(self))
     }
     
@@ -44,16 +44,14 @@ extension AnyCancellable {
     /// Stores this AnyCancellable in the specified collection.
     /// Parameters:
     ///    - collection: The collection to store this AnyCancellable.
-    final public func store<C: RangeReplaceableCollection>(in collection: inout C) where C.Element == AnyCancellable {
+    public final func store<C: RangeReplaceableCollection>(in collection: inout C) where C.Element == AnyCancellable {
         collection.append(self)
     }
     
     /// Stores this AnyCancellable in the specified set.
     /// Parameters:
     ///    - collection: The set to store this AnyCancellable.
-    final public func store(in set: inout Set<AnyCancellable>) {
+    public final func store(in set: inout Set<AnyCancellable>) {
         set.insert(self)
     }
-
 }
-

@@ -1,6 +1,6 @@
-import Foundation
-import CXUtility
 import CXShim
+import CXUtility
+import Foundation
 
 private let counter = Atom<Int>(val: 0)
 

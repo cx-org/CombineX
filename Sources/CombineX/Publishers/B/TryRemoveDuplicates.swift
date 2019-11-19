@@ -43,16 +43,14 @@ extension Publishers {
 
 extension Publishers.TryRemoveDuplicates {
     
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
@@ -65,7 +63,7 @@ extension Publishers.TryRemoveDuplicates {
         let predicate: Predicate
         let sub: Sub
         
-        var previous: Output? = nil
+        var previous: Output?
         var state = RelayState.waiting
         
         init(pub: Pub, sub: Sub) {

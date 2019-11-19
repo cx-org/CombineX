@@ -1,6 +1,6 @@
 #if !COCOAPODS
-import CXUtility
 import CXNamespace
+import CXUtility
 #endif
 
 extension Publishers.Sequence where Failure == Never {
@@ -259,15 +259,13 @@ extension Publishers {
 
 extension Publishers.Sequence {
     
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         
         let lock = Lock()
         
@@ -414,4 +412,3 @@ extension CXWrappers.Sequence {
         return .init(sequence: self.base)
     }
 }
-

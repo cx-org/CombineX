@@ -8,4 +8,3 @@ public protocol ConnectablePublisher: Publisher {
     /// - Returns: A `Cancellable` instance that can be used to cancel publishing.
     func connect() -> Cancellable
 }
-

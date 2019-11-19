@@ -1,5 +1,5 @@
-import CXUtility
 import CXShim
+import CXUtility
 
 public class TestTimeline<Context: Scheduler>: CustomStringConvertible {
     

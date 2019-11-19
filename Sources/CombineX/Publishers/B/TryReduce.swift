@@ -18,7 +18,6 @@ extension Publisher {
 
 extension Publishers {
     
-    
     /// A publisher that applies an error-throwing closure to all received elements and produces an accumulated value when the upstream publisher finishes.
     public struct TryReduce<Upstream: Publisher, Output>: Publisher {
         
@@ -50,16 +49,14 @@ extension Publishers {
 
 extension Publishers.TryReduce {
     
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure

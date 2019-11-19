@@ -10,7 +10,6 @@ extension Publisher {
     }
 }
 
-
 extension Publishers {
     
     /// A publisher that emits a Boolean value upon receiving an element that satisfies the predicate closure.

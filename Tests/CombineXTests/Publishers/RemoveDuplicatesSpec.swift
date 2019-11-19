@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class RemoveDuplicatesSpec: QuickSpec {
     
@@ -15,11 +15,11 @@ class RemoveDuplicatesSpec: QuickSpec {
             let subject = PassthroughSubject<Int, Never>()
             let pub = subject.removeDuplicates()
             
-            let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
+            let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
                 s.request(.unlimited)
-            }, receiveValue: { v in
+            }, receiveValue: { _ in
                 return .none
-            }, receiveCompletion: { c in
+            }, receiveCompletion: { _ in
             })
             
             pub.subscribe(sub)
@@ -34,7 +34,7 @@ class RemoveDuplicatesSpec: QuickSpec {
             
             let events = [1, 2, 1].map { TestSubscriber<Int, Never>.Event.value($0) }
             let expected = events + [.completion(.finished)]
-            expect(sub.events).to(equal(expected))
+            expect(sub.events) == expected
         }
     }
 }

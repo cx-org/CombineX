@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class TryCompactMapSpec: QuickSpec {
     
@@ -36,7 +36,7 @@ class TryCompactMapSpec: QuickSpec {
                     }
                 }
                 
-                expect(got).to(equal(expected))
+                expect(got) == expected
             }
             
             // MARK: 1.2 should send as many values as demand
@@ -50,7 +50,7 @@ class TryCompactMapSpec: QuickSpec {
                     pub.send(i)
                 }
                 
-                expect(sub.events.count).to(equal(10))
+                expect(sub.events.count) == 10
             }
             
             // MARK: 1.3 should fail if transform throws an error
@@ -77,7 +77,7 @@ class TryCompactMapSpec: QuickSpec {
                 
                 let got = sub.events.mapError { $0 as! TestError }
                 
-                expect(got).to(equal(expected))
+                expect(got) == expected
             }
             
             #if !SWIFT_PACKAGE
@@ -109,7 +109,6 @@ class TryCompactMapSpec: QuickSpec {
             #endif
         }
         
-        
         // MARK: - Release Resources
         describe("Release Resources") {
             
@@ -121,7 +120,7 @@ class TryCompactMapSpec: QuickSpec {
                 var subscription: Subscription?
                 
                 do {
-                    let testPub = TestPublisher<Int, TestError> { (s) in
+                    let testPub = TestPublisher<Int, TestError> { s in
                         s.receive(subscription: Subscriptions.empty)
                         s.receive(completion: .finished)
                     }
@@ -129,11 +128,11 @@ class TryCompactMapSpec: QuickSpec {
                     let obj = TestObject()
                     closureObj = obj
                     
-                    let sub = TestSubscriber<Int, Error>(receiveSubscription: { (s) in
+                    let sub = TestSubscriber<Int, Error>(receiveSubscription: { s in
                         subscription = s
-                    }, receiveValue: { v in
+                    }, receiveValue: { _ in
                         return .none
-                    }, receiveCompletion: { s in
+                    }, receiveCompletion: { _ in
                     })
                     downstreamObj = sub
                     
@@ -141,7 +140,7 @@ class TryCompactMapSpec: QuickSpec {
                         .tryCompactMap { i -> Int in
                             obj.run()
                             return i
-                    }
+                        }
                     .subscribe(sub)
                 }
                 
@@ -159,18 +158,18 @@ class TryCompactMapSpec: QuickSpec {
                 var subscription: Subscription?
                 
                 do {
-                    let testPub = TestPublisher<Int, TestError> { (s) in
+                    let testPub = TestPublisher<Int, TestError> { s in
                         s.receive(subscription: Subscriptions.empty)
                     }
                     
                     let obj = TestObject()
                     closureObj = obj
                     
-                    let sub = TestSubscriber<Int, Error>(receiveSubscription: { (s) in
+                    let sub = TestSubscriber<Int, Error>(receiveSubscription: { s in
                         subscription = s
-                    }, receiveValue: { v in
+                    }, receiveValue: { _ in
                         return .none
-                    }, receiveCompletion: { s in
+                    }, receiveCompletion: { _ in
                     })
                     downstreamObj = sub
                     
@@ -189,6 +188,5 @@ class TryCompactMapSpec: QuickSpec {
                 _ = subscription
             }
         }
-
     }
 }

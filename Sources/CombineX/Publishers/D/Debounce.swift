@@ -17,7 +17,6 @@ extension Publisher {
     }
 }
 
-
 extension Publishers {
 
     /// A publisher that publishes elements only after a specified time interval elapses between events.
@@ -46,7 +45,6 @@ extension Publishers {
             self.options = options
         }
 
-
         public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             let s = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(s)
@@ -56,16 +54,14 @@ extension Publishers {
 
 extension Publishers.Debounce {
     
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
@@ -113,7 +109,7 @@ extension Publishers.Debounce {
                 self.demand -= 1
                 self.lock.unlock()
                 
-                let more =  self.sub.receive(last)
+                let more = self.sub.receive(last)
                 
                 self.lock.lock()
                 guard self.state.isRelaying else {

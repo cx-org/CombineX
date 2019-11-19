@@ -57,16 +57,14 @@ extension Publishers {
 
 extension Publishers.Print {
     
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure

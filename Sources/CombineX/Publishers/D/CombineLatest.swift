@@ -28,7 +28,6 @@ extension Publisher {
     public func combineLatest<P: Publisher, T>(_ other: P, _ transform: @escaping (Output, P.Output) -> T) -> Publishers.Map<Publishers.CombineLatest<Self, P>, T> where Failure == P.Failure {
         return self.combineLatest(other).map(transform)
     }
-    
 }
 
 extension Publishers.CombineLatest: Equatable where A: Equatable, B: Equatable {
@@ -93,15 +92,13 @@ private struct CombineLatestState: OptionSet {
  
 extension Publishers.CombineLatest {
 
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         B.Failure == S.Failure,
-        S.Input == (A.Output, B.Output)
-    {
+        S.Input == (A.Output, B.Output) {
 
         typealias Pub = Publishers.CombineLatest<A, B>
         typealias Sub = S
@@ -166,7 +163,7 @@ extension Publishers.CombineLatest {
             childB?.cancel()
         }
         
-        private func release() -> (Child<A.Output>?, Child<B.Output>?){
+        private func release() -> (Child<A.Output>?, Child<B.Output>?) {
             defer {
                 self.outputA = nil
                 self.outputB = nil
@@ -302,4 +299,3 @@ extension Publishers.CombineLatest {
         }
     }
 }
-

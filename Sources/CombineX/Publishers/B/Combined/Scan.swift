@@ -16,7 +16,6 @@ extension Publisher {
     public func scan<T>(_ initialResult: T, _ nextPartialResult: @escaping (T, Output) -> T) -> Publishers.Scan<Self, T> {
         return .init(upstream: self, initialResult: initialResult, nextPartialResult: nextPartialResult)
     }
-    
 }
 
 extension Publishers {
@@ -46,5 +45,4 @@ extension Publishers {
                 .receive(subscriber: subscriber)
         }
     }
-    
 }

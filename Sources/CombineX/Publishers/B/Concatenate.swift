@@ -89,16 +89,14 @@ extension Publishers {
 
 extension Publishers.Concatenate {
     
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Suffix.Output,
-        S.Failure == Suffix.Failure
-    {
+        S.Failure == Suffix.Failure {
         
         typealias Input = Prefix.Output
         typealias Failure = Prefix.Failure

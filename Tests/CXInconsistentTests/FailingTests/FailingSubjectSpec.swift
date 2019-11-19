@@ -1,9 +1,9 @@
-import Foundation
-import CXUtility
 import CXShim
 import CXTestUtility
-import Quick
+import CXUtility
+import Foundation
 import Nimble
+import Quick
 
 class FailingSubjectSpec: QuickSpec {
 
@@ -35,7 +35,7 @@ class FailingSubjectSpec: QuickSpec {
                          if total == sequenceLength {
                             semaphore.signal()
                          }
-                      }
+                    }
                    })
                 
                 // Try to send from a hundred different threads at once
@@ -47,7 +47,7 @@ class FailingSubjectSpec: QuickSpec {
                 
                 semaphore.wait()
                 c.cancel()
-                expect(total.get()).to(equal(sequenceLength))
+                expect(total.get()) == sequenceLength
                 
                 // FIXME: collision should not happen
                 expect(collision).toFail(beFalse())
@@ -73,7 +73,7 @@ class FailingSubjectSpec: QuickSpec {
                          if total == sequenceLength {
                             semaphore.signal()
                          }
-                      }
+                    }
                    })
                 
                 // Try to send from a hundred different threads at once
@@ -85,7 +85,7 @@ class FailingSubjectSpec: QuickSpec {
                 
                 semaphore.wait()
                 c.cancel()
-                expect(total.get()).to(equal(sequenceLength))
+                expect(total.get()) == sequenceLength
                 
                 // FIXME: collision should not happen
                 expect(collision).toFail(beFalse())

@@ -26,17 +26,17 @@ extension Publisher {
 extension Publishers {
     
     /// A publisher that uses a subject to deliver elements to multiple subscribers.
-    final public class Multicast<Upstream, SubjectType>: ConnectablePublisher where Upstream: Publisher, SubjectType: Subject, Upstream.Failure == SubjectType.Failure, Upstream.Output == SubjectType.Output {
+    public final class Multicast<Upstream, SubjectType>: ConnectablePublisher where Upstream: Publisher, SubjectType: Subject, Upstream.Failure == SubjectType.Failure, Upstream.Output == SubjectType.Output {
         
         public typealias Output = Upstream.Output
         
         public typealias Failure = Upstream.Failure
         
         /// The publisher from which this publisher receives elements.
-        final public let upstream: Upstream
+        public final let upstream: Upstream
         
         /// A closure to create a new Subject each time a subscriber attaches to the multicast publisher.
-        final public let createSubject: () -> SubjectType
+        public final let createSubject: () -> SubjectType
         
         private lazy var subject: SubjectType = self.createSubject()
         
@@ -51,11 +51,11 @@ extension Publishers {
             self.createSubject = createSubject
         }
         
-        final public func receive<S: Subscriber>(subscriber: S) where SubjectType.Failure == S.Failure, SubjectType.Output == S.Input {
+        public final func receive<S: Subscriber>(subscriber: S) where SubjectType.Failure == S.Failure, SubjectType.Output == S.Input {
             self.subject.receive(subscriber: subscriber)
         }
         
-        final public func connect() -> Cancellable {
+        public final func connect() -> Cancellable {
             self.lock.lock()
             defer {
                 self.lock.unlock()

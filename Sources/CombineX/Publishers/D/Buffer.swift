@@ -88,16 +88,14 @@ extension Publishers {
 
 extension Publishers.Buffer {
     
-    private final class KeepFull<S>:
-        Subscriber,
+    private final class KeepFull<S>: Subscriber,
         Subscription,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
         
@@ -257,16 +255,14 @@ extension Publishers.Buffer {
 
 extension Publishers.Buffer {
     
-    private final class ByRequest<S>:
-        Subscriber,
+    private final class ByRequest<S>: Subscriber,
         Subscription,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
         

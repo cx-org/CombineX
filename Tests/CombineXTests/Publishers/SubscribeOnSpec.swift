@@ -1,9 +1,9 @@
-import Foundation
-import CXUtility
 import CXShim
 import CXTestUtility
-import Quick
+import CXUtility
+import Foundation
 import Nimble
+import Quick
 
 class SubscribeOnSpec: QuickSpec {
     
@@ -21,9 +21,9 @@ class SubscribeOnSpec: QuickSpec {
                 let scheduler = TestDispatchQueueScheduler.serial()
                 var executed = false
                 
-                let upstream = TestPublisher<Int, TestError> { (s) in
-                    let subscription = TestSubscription(request: { (d) in
-                        expect(scheduler.isCurrent).to(beTrue())
+                let upstream = TestPublisher<Int, TestError> { s in
+                    let subscription = TestSubscription(request: { _ in
+                        expect(scheduler.isCurrent) == true
                         executed = true
                     })
                     s.receive(subscription: subscription)
@@ -41,26 +41,26 @@ class SubscribeOnSpec: QuickSpec {
                 let scheduler = TestDispatchQueueScheduler.serial()
                 var executed = false
                 
-                let upstream = TestPublisher<Int, TestError> { (s) in
-                    let subscription = TestSubscription(request: { (d) in
-                        expect(scheduler.isCurrent).to(beTrue())
+                let upstream = TestPublisher<Int, TestError> { s in
+                    let subscription = TestSubscription(request: { _ in
+                        expect(scheduler.isCurrent) == true
                     })
                     s.receive(subscription: subscription)
                     let d0 = s.receive(0)
                     let d1 = s.receive(1)
                     
-                    expect(d0).to(equal(.max(2)))
-                    expect(d1).to(equal(.max(2)))
+                    expect(d0) == .max(2)
+                    expect(d1) == .max(2)
                     
                     executed = true
                 }
                 
                 let pub = upstream.subscribe(on: scheduler)
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.max(10))
-                }, receiveValue: { v in
+                }, receiveValue: { _ in
                     return .max(2)
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 pub.subscribe(sub)
                 
@@ -72,20 +72,20 @@ class SubscribeOnSpec: QuickSpec {
                 let scheduler = TestDispatchQueueScheduler.serial()
                 
                 let executedCount = Atom(val: 0)
-                let upstream = TestPublisher<Int, TestError> { (s) in
-                    let subscription = TestSubscription(request: { (d) in
-                        expect(scheduler.isCurrent).to(beTrue())
+                let upstream = TestPublisher<Int, TestError> { s in
+                    let subscription = TestSubscription(request: { _ in
+                        expect(scheduler.isCurrent) == true
                         _ = executedCount.add(1)
                     })
                     s.receive(subscription: subscription)
                 }
                 
                 let pub = upstream.subscribe(on: scheduler)
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.max(10))
-                }, receiveValue: { v in
+                }, receiveValue: { _ in
                     return .max(2)
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 pub.subscribe(sub)
                 

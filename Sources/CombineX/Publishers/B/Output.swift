@@ -13,7 +13,6 @@ extension Publisher {
         return .init(upstream: self, range: index..<index + 1)
     }
     
-    
     /// Publishes elements specified by their range in the sequence of published elements.
     ///
     /// After all elements are published, the publisher finishes normally.
@@ -42,7 +41,6 @@ extension Publisher {
         return self.output(in: 0..<maxLength)
     }
 }
-
 
 extension Publishers {
     
@@ -78,16 +76,14 @@ extension Publishers {
 
 extension Publishers.Output {
     
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
         

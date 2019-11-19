@@ -1,9 +1,9 @@
-import Dispatch
-import CXUtility
 import CXShim
 import CXTestUtility
-import Quick
+import CXUtility
+import Dispatch
 import Nimble
+import Quick
 
 class CombineIdentifierSpec: QuickSpec {
     
@@ -28,7 +28,7 @@ class CombineIdentifierSpec: QuickSpec {
                 }
                 g.wait()
                 
-                expect(set.get().count).to(equal(100))
+                expect(set.get().count) == 100
             }
             
             // MARK: 1.2 should use object's address as id
@@ -38,7 +38,7 @@ class CombineIdentifierSpec: QuickSpec {
                 let id1 = CombineIdentifier(obj)
                 let id2 = CombineIdentifier(obj)
                 
-                expect(id1).to(equal(id2))
+                expect(id1) == id2
             }
         }
     }

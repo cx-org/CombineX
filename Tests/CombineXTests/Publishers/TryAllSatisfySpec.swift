@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class TryAllSatisfySpec: QuickSpec {
     
@@ -18,11 +18,11 @@ class TryAllSatisfySpec: QuickSpec {
             it("should send true then send finished") {
                 let subject = PassthroughSubject<Int, Never>()
                 let pub = subject.tryAllSatisfy { $0 < 100 }
-                let sub = TestSubscriber<Bool, Error>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Bool, Error>(receiveSubscription: { s in
                     s.request(.unlimited)
-                }, receiveValue: { v in
+                }, receiveValue: { _ in
                     return .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 
                 pub.subscribe(sub)
@@ -33,18 +33,18 @@ class TryAllSatisfySpec: QuickSpec {
                 subject.send(completion: .finished)
                 
                 let got = sub.events.mapError { $0 as! TestError }
-                expect(got).to(equal([.value(true), .completion(.finished)]))
+                expect(got) == [.value(true), .completion(.finished)]
             }
             
             // MARK: 1.2 should send false then send finished
             it("should send false then send finished") {
                 let subject = PassthroughSubject<Int, Never>()
                 let pub = subject.tryAllSatisfy { $0 < 5 }
-                let sub = TestSubscriber<Bool, Error>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Bool, Error>(receiveSubscription: { s in
                     s.request(.unlimited)
-                }, receiveValue: { v in
+                }, receiveValue: { _ in
                     return .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 
                 pub.subscribe(sub)
@@ -55,7 +55,7 @@ class TryAllSatisfySpec: QuickSpec {
                 subject.send(completion: .finished)
                 
                 let got = sub.events.mapError { $0 as! TestError }
-                expect(got).to(equal([.value(false), .completion(.finished)]))
+                expect(got) == [.value(false), .completion(.finished)]
             }
             
             // MARK: 1.3 should fail if closure throws an error
@@ -67,11 +67,11 @@ class TryAllSatisfySpec: QuickSpec {
                     }
                     return true
                 }
-                let sub = TestSubscriber<Bool, Error>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Bool, Error>(receiveSubscription: { s in
                     s.request(.unlimited)
-                }, receiveValue: { v in
+                }, receiveValue: { _ in
                     return .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 
                 pub.subscribe(sub)
@@ -82,7 +82,7 @@ class TryAllSatisfySpec: QuickSpec {
                 subject.send(completion: .finished)
                 
                 let got = sub.events.mapError { $0 as! TestError }
-                expect(got).to(equal([.completion(.failure(.e0))]))
+                expect(got) == [.completion(.failure(.e0]))
             }
         }
     }

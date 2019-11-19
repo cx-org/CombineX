@@ -35,4 +35,3 @@ extension Publisher {
         }
     }
 }
-

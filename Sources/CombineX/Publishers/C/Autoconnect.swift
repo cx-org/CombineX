@@ -25,7 +25,7 @@ extension Publishers {
         public typealias Failure = Upstream.Failure
         
         /// The publisher from which this publisher receives elements.
-        final public let upstream: Upstream
+        public final let upstream: Upstream
         
         public init(upstream: Upstream) {
             self.upstream = upstream
@@ -35,7 +35,7 @@ extension Publishers {
             var cancel: Cancellable?
             self.upstream
                 .handleEvents(
-                    receiveSubscription: { (_) in
+                    receiveSubscription: { _ in
                         cancel = self.upstream.connect()
                     }, receiveCancel: {
                         cancel?.cancel()

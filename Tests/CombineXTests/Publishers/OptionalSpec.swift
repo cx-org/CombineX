@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 typealias OptionalPublisher<Wrapped> = Optional<Wrapped>.CX.Publisher
 
@@ -23,7 +23,7 @@ class OptionalSpec: QuickSpec {
                 let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
                 pub.subscribe(sub)
                 
-                expect(sub.events).to(equal([.value(1), .completion(.finished)]))
+                expect(sub.events) == [.value(1), .completion(.finished)]
             }
             
             // MARK: 1.2 should send finished even no demand
@@ -33,7 +33,7 @@ class OptionalSpec: QuickSpec {
                 let sub = makeTestSubscriber(Int.self, Never.self, .max(0))
                 pub.subscribe(sub)
                 
-                expect(sub.events).to(equal([.completion(.finished)]))
+                expect(sub.events) == [.completion(.finished)]
             }
             
             #if !SWIFT_PACKAGE

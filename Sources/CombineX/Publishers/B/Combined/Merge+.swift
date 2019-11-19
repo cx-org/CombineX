@@ -297,7 +297,7 @@ extension Publishers {
                     b.eraseToAnyPublisher(),
                     c.eraseToAnyPublisher(),
                     d.eraseToAnyPublisher()
-                    ])
+                ])
                 .flatMap { $0 }
                 .eraseToAnyPublisher()
         }
@@ -356,7 +356,7 @@ extension Publishers {
                     c.eraseToAnyPublisher(),
                     d.eraseToAnyPublisher(),
                     e.eraseToAnyPublisher()
-                    ])
+                ])
                 .flatMap { $0 }
                 .eraseToAnyPublisher()
         }
@@ -415,7 +415,7 @@ extension Publishers {
                     d.eraseToAnyPublisher(),
                     e.eraseToAnyPublisher(),
                     f.eraseToAnyPublisher()
-                    ])
+                ])
                 .flatMap { $0 }
                 .eraseToAnyPublisher()
         }
@@ -474,7 +474,7 @@ extension Publishers {
                     e.eraseToAnyPublisher(),
                     f.eraseToAnyPublisher(),
                     g.eraseToAnyPublisher()
-                    ])
+                ])
                 .flatMap { $0 }
                 .eraseToAnyPublisher()
         }
@@ -533,7 +533,7 @@ extension Publishers {
                     f.eraseToAnyPublisher(),
                     g.eraseToAnyPublisher(),
                     h.eraseToAnyPublisher()
-                    ])
+                ])
                 .flatMap { $0 }
                 .eraseToAnyPublisher()
         }

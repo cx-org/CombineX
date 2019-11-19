@@ -19,7 +19,6 @@ extension Publisher {
     public func tryMax(by areInIncreasingOrder: @escaping (Output, Output) throws -> Bool) -> Publishers.TryComparison<Self> {
         return .init(upstream: self, areInIncreasingOrder: areInIncreasingOrder)
     }
-    
 }
 
 extension Publishers {

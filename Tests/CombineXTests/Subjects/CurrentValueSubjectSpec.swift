@@ -1,8 +1,8 @@
-import Foundation
 import CXShim
 import CXTestUtility
-import Quick
+import Foundation
 import Nimble
+import Quick
 
 class CurrentValueSubjectSpec: QuickSpec {
     
@@ -27,8 +27,8 @@ class CurrentValueSubjectSpec: QuickSpec {
                     subject.send($0)
                 }
                 
-                expect(sub.events).to(equal([.value(-1), .completion(.finished)]))
-                expect(subject.value).to(equal(-1))
+                expect(sub.events) == [.value(-1), .completion(.finished)]
+                expect(subject.value) == -1
             }
             
             // MARK: 1.2 should not send completion to subscribers after sending completion
@@ -41,18 +41,18 @@ class CurrentValueSubjectSpec: QuickSpec {
                 subject.send(completion: .failure(.e1))
                 subject.send(completion: .failure(.e2))
                 
-                expect(sub.events).to(equal([.value(-1), .completion(.failure(.e0))]))
+                expect(sub.events) == [.value(-1), .completion(.failure(.e0]))
             }
             
             // MARK: 1.3 should not send events after the subscription is cancelled
             it("should not send events after the subscription is cancelled") {
                 let subject = CurrentValueSubject<Int, TestError>(-1)
                 
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.cancel()
-                }, receiveValue: { v in
+                }, receiveValue: { _ in
                     return .none
-                }, receiveCompletion: { s in
+                }, receiveCompletion: { _ in
                 })
                 
                 subject.subscribe(sub)
@@ -63,15 +63,15 @@ class CurrentValueSubjectSpec: QuickSpec {
                 expect(sub.events).to(beEmpty())
             }
             
-            // MARK:
+            // MARK: 
             // MARK: 1.4 should not send values before the subscriber requests
             it("should not send values before the subscriber requests") {
                 let subject = CurrentValueSubject<Int, TestError>(-1)
                 
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
-                }, receiveValue: { v in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
+                }, receiveValue: { _ in
                     return .none
-                }, receiveCompletion: { s in
+                }, receiveCompletion: { _ in
                 })
                 
                 subject.subscribe(sub)
@@ -86,18 +86,18 @@ class CurrentValueSubjectSpec: QuickSpec {
             it("should send completion even if the subscriber does not request") {
                 let subject = CurrentValueSubject<Int, TestError>(-1)
                 
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
-                }, receiveValue: { v in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
+                }, receiveValue: { _ in
                     return .none
-                }, receiveCompletion: { s in
+                }, receiveCompletion: { _ in
                 })
                 subject.subscribe(sub)
                 subject.send(completion: .failure(.e0))
                 
-                expect(sub.events).to(equal([.completion(.failure(.e0))]))
+                expect(sub.events) == [.completion(.failure(.e0]))
             }
             
-            // MARK:
+            // MARK: 
             // MARK: 1.6 should resend completion if the subscription happens after sending completion
             it("should resend completion if the subscription happens after sending completion") {
                 let subject = CurrentValueSubject<Int, TestError>(-1)
@@ -106,7 +106,7 @@ class CurrentValueSubjectSpec: QuickSpec {
                 let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
                 subject.subscribe(sub)
                 
-                expect(sub.events).to(equal([.completion(.finished)]))
+                expect(sub.events) == [.completion(.finished)]
             }
         }
         
@@ -117,11 +117,11 @@ class CurrentValueSubjectSpec: QuickSpec {
             it("should send as many values as the subscriber's demand") {
                 let subject = CurrentValueSubject<Int, TestError>(-1)
 
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.max(1))
                 }, receiveValue: { v in
                     return v == -1 ? .max(1) : .none
-                }, receiveCompletion: { s in
+                }, receiveCompletion: { _ in
                 })
 
                 subject.subscribe(sub)
@@ -130,13 +130,13 @@ class CurrentValueSubjectSpec: QuickSpec {
                     subject.send($0)
                 }
                 
-                expect(sub.events.count).to(equal(2))
+                expect(sub.events.count) == 2
                 sub.subscription?.request(.max(5))
 
                 10.times {
                     subject.send($0)
                 }
-                expect(sub.events.count).to(equal(7))
+                expect(sub.events.count) == 7
             }
             
             // MARK: 2.2 should send as many values to subscribers as their demands
@@ -157,7 +157,7 @@ class CurrentValueSubjectSpec: QuickSpec {
                 }
                 
                 for (i, sub) in zip(nums, subs) {
-                    expect(sub.events.count).to(equal(i))
+                    expect(sub.events.count) == i
                 }
             }
             
@@ -173,7 +173,6 @@ class CurrentValueSubjectSpec: QuickSpec {
             }
             #endif
         }
-        
         
         // MARK: - Release Resources
         describe("Release Resources") {
@@ -305,12 +304,12 @@ class CurrentValueSubjectSpec: QuickSpec {
             it("should send value concurrently") {
                 let pub = CurrentValueSubject<Int, Never>(-1)
                 
-                let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
                     s.request(.unlimited)
-                }, receiveValue: { v in
+                }, receiveValue: { _ in
                     Thread.sleep(forTimeInterval: 0.1)
                     return .none
-                }, receiveCompletion: { s in
+                }, receiveCompletion: { _ in
                 })
                 
                 pub.subscribe(sub)
@@ -336,7 +335,7 @@ class CurrentValueSubjectSpec: QuickSpec {
                 g.wait()
                 
                 q.sync {
-                    expect(datesA.max()).to(beLessThan(datesB.min()))
+                    expect(datesA.max()) < datesB.min()
                 }
             }
             
@@ -344,11 +343,11 @@ class CurrentValueSubjectSpec: QuickSpec {
             it("should send as many values as the subscriber's demand even if these are sent concurrently") {
                 let subject = CurrentValueSubject<Int, Never>(-1)
                 
-                let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
                     s.request(.max(10))
-                }, receiveValue: { v in
+                }, receiveValue: { _ in
                     return .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 
                 subject.subscribe(sub)
@@ -362,14 +361,14 @@ class CurrentValueSubjectSpec: QuickSpec {
                 
                 g.wait()
                 
-                expect(sub.events.count).to(equal(10))
+                expect(sub.events.count) == 10
             }
             
             // MARK: 4.3 no guarantee of synchronous backpressure
             it("no guarantee of synchronous backpressure") {
                 let subject = CurrentValueSubject<Int, Never>(-1)
                 
-                let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
                     s.request(.max(10))
                 }, receiveValue: { v in
                     if v == 1 {
@@ -377,7 +376,7 @@ class CurrentValueSubjectSpec: QuickSpec {
                         return .max(5)
                     }
                     return .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 
                 subject.subscribe(sub)
@@ -392,7 +391,7 @@ class CurrentValueSubjectSpec: QuickSpec {
                 
                 g.wait()
                 
-                expect(sub.events.count).to(equal(10))
+                expect(sub.events.count) == 10
             }
         }
         
@@ -402,41 +401,40 @@ class CurrentValueSubjectSpec: QuickSpec {
             // MARK: 5.1 should not change current value after complete
             it("should not change current value after complete") {
                 let subject = CurrentValueSubject<Int, TestError>(0)
-                expect(subject.value).to(equal(0))
+                expect(subject.value) == 0
                 subject.value = 1
-                expect(subject.value).to(equal(1))
+                expect(subject.value) == 1
                 subject.send(2)
-                expect(subject.value).to(equal(2))
+                expect(subject.value) == 2
                 
                 subject.send(completion: .finished)
                 
                 subject.send(3)
-                expect(subject.value).to(equal(2))
+                expect(subject.value) == 2
                 
                 subject.value = 4
-                expect(subject.value).to(equal(4))
+                expect(subject.value) == 4
             }
             
             // MARK: 5.2 should not send current value if the subscription requests again
             it("should not send current value if the subscription requests again") {
                 let subject = CurrentValueSubject<Int, TestError>(0)
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
-                }, receiveValue: { v in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { _ in
+                }, receiveValue: { _ in
                     return .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 subject.subscribe(sub)
-                expect(sub.events).to(equal([]))
+                expect(sub.events) == []
                 
                 subject.send(1)
                 
                 sub.subscription?.request(.max(1))
-                expect(sub.events).to(equal([.value(1)]))
+                expect(sub.events) == [.value(1)]
                 
                 sub.subscription?.request(.max(1))
-                expect(sub.events).to(equal([.value(1)]))
+                expect(sub.events) == [.value(1)]
             }
         }
-        
     }
 }

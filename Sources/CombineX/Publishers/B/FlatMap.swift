@@ -48,16 +48,14 @@ extension Publishers {
 
 extension Publishers.FlatMap {
     
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == NewPublisher.Output,
-        S.Failure == NewPublisher.Failure
-    {
+        S.Failure == NewPublisher.Failure {
         
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure

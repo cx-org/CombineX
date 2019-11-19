@@ -64,7 +64,7 @@ extension CXWrappers.NotificationCenter {
 
         public func receive<S: Subscriber>(subscriber: S) where S.Failure == NotificationPublisher.Failure, S.Input == NotificationPublisher.Output {
             let subject = PassthroughSubject<Output, Failure>()
-            let observer = self.center.addObserver(forName: self.name, object: self.object, queue: nil) { (n) in
+            let observer = self.center.addObserver(forName: self.name, object: self.object, queue: nil) { n in
                 subject.send(n)
             }
             subject
@@ -72,7 +72,6 @@ extension CXWrappers.NotificationCenter {
                     self.center.removeObserver(observer)
                 })
                 .receive(subscriber: subscriber)
-            
         }
     }
 }

@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class HandleEventsSpec: QuickSpec {
     
@@ -15,7 +15,7 @@ class HandleEventsSpec: QuickSpec {
         describe("Relay") {
             
             it("should") {
-                expect(1989).toNot(equal(0614))
+                expect(1989) != 0614
             }
         }
     }

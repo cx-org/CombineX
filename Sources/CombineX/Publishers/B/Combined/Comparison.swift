@@ -40,7 +40,6 @@ extension Publisher where Output: Comparable {
     }
 }
 
-
 extension Publishers {
     
     /// A publisher that republishes items from another publisher only if each new item is in increasing order from the previously-published item.

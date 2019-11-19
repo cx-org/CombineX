@@ -34,13 +34,13 @@ extension Publisher where Failure == Never {
 extension Subscribers {
     
     /// A simple subscriber that requests an unlimited number of values upon subscription.
-    final public class Sink<Input, Failure: Error>: Subscriber, Cancellable, CustomStringConvertible, CustomReflectable, CustomPlaygroundDisplayConvertible {
+    public final class Sink<Input, Failure: Error>: Subscriber, Cancellable, CustomStringConvertible, CustomReflectable, CustomPlaygroundDisplayConvertible {
         
         /// The closure to execute on receipt of a value.
-        final public let receiveValue: (Input) -> Void
+        public final let receiveValue: (Input) -> Void
         
         /// The closure to execute on completion.
-        final public let receiveCompletion: (Subscribers.Completion<Failure>) -> Void
+        public final let receiveCompletion: (Subscribers.Completion<Failure>) -> Void
         
         /// Initializes a sink with the provided closures.
         ///
@@ -52,15 +52,15 @@ extension Subscribers {
             self.receiveValue = receiveValue
         }
         
-        final public var description: String {
+        public final var description: String {
             return "Sink"
         }
         
-        final public var customMirror: Mirror {
+        public final var customMirror: Mirror {
             return Mirror(self, children: EmptyCollection())
         }
         
-        final public var playgroundDescription: Any {
+        public final var playgroundDescription: Any {
             return self.description
         }
         
@@ -72,7 +72,7 @@ extension Subscribers {
 
         private let state = Atom<State>(val: .unsubscribed)
         
-        final public func receive(subscription: Subscription) {
+        public final func receive(subscription: Subscription) {
             var didSet = false
             self.state.withLockMutating { state in
                 guard case .unsubscribed = state else {
@@ -90,17 +90,17 @@ extension Subscribers {
             }
         }
         
-        final public func receive(_ value: Input) -> Subscribers.Demand {
+        public final func receive(_ value: Input) -> Subscribers.Demand {
             self.receiveValue(value)
             return .none
         }
         
-        final public func receive(completion: Subscribers.Completion<Failure>) {
+        public final func receive(completion: Subscribers.Completion<Failure>) {
             self.receiveCompletion(completion)
             _ = self.state.exchange(with: .closed)
         }
         
-        final public func cancel() {
+        public final func cancel() {
             let oldState = self.state.exchange(with: .closed)
             if case let .subscribed(subscription) = oldState {
                 subscription.cancel()

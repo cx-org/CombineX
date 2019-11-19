@@ -54,7 +54,6 @@ extension Publishers {
             self.transform = transform
         }
         
-        
         public func receive<S: Subscriber>(subscriber: S) where Output == S.Input, S.Failure == Publishers.TryCombineLatest3<A, B, C, Output>.Failure {
             self.a
                 .combineLatest(self.b)

@@ -19,19 +19,19 @@ extension Publisher where Failure == Never {
 
 extension Subscribers {
     
-    final public class Assign<Root, Input>: Subscriber, Cancellable, CustomStringConvertible, CustomReflectable, CustomPlaygroundDisplayConvertible {
+    public final class Assign<Root, Input>: Subscriber, Cancellable, CustomStringConvertible, CustomReflectable, CustomPlaygroundDisplayConvertible {
         
         public typealias Failure = Never
         
-        final public private(set) var object: Root?
+        public private(set) final var object: Root?
         
-        final public let keyPath: ReferenceWritableKeyPath<Root, Input>
+        public final let keyPath: ReferenceWritableKeyPath<Root, Input>
         
-        final public var description: String {
+        public final var description: String {
             return "Assign \(Root.self)"
         }
         
-        final public var customMirror: Mirror {
+        public final var customMirror: Mirror {
             return Mirror(self, children: [
                 "object": self.object as Any,
                 "keyPath": self.keyPath,
@@ -39,7 +39,7 @@ extension Subscribers {
             ])
         }
         
-        final public var playgroundDescription: Any {
+        public final var playgroundDescription: Any {
             return self.description
         }
         
@@ -51,7 +51,7 @@ extension Subscribers {
             self.keyPath = keyPath
         }
         
-        final public func receive(subscription: Subscription) {
+        public final func receive(subscription: Subscription) {
             self.lock.lock()
             if self.subscription == nil {
                 self.subscription = subscription
@@ -63,7 +63,7 @@ extension Subscribers {
             }
         }
         
-        final public func receive(_ value: Input) -> Subscribers.Demand {
+        public final func receive(_ value: Input) -> Subscribers.Demand {
             self.lock.lock()
             if self.subscription.isNil {
                 self.lock.unlock()
@@ -76,11 +76,11 @@ extension Subscribers {
             return .none
         }
         
-        final public func receive(completion: Subscribers.Completion<Never>) {
+        public final func receive(completion: Subscribers.Completion<Never>) {
             self.cancel()
         }
         
-        final public func cancel() {
+        public final func cancel() {
             self.lock.lock()
             guard let subscription = self.subscription else {
                 self.lock.unlock()
@@ -93,6 +93,5 @@ extension Subscribers {
             
             subscription.cancel()
         }
-        
     }
 }

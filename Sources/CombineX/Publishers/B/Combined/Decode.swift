@@ -30,5 +30,4 @@ extension Publishers {
                 .receive(subscriber: subscriber)
         }
     }
-
 }

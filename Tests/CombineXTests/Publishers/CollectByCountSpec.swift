@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class CollectByCountSpec: QuickSpec {
     
@@ -25,10 +25,10 @@ class CollectByCountSpec: QuickSpec {
                 }
                 pub.send(completion: .failure(.e0))
                 
-                expect(sub.events).to(equal([
+                expect(sub.events) == [
                     .value([0, 1]),
                     .value([2, 3]),
-                    .completion(.failure(.e0))
+                    .completion(.failure(.e0
                 ]))
             }
             
@@ -43,22 +43,22 @@ class CollectByCountSpec: QuickSpec {
                 }
                 pub.send(completion: .finished)
                 
-                expect(sub.events).to(equal([
+                expect(sub.events) == [
                     .value([0, 1]),
                     .value([2, 3]),
                     .value([4]),
                     .completion(.finished)
-                ]))
+                ]
             }
             
             // MARK: 1.3 should relay as many values as demand
             it("should relay as many values as demand") {
                 let pub = PassthroughSubject<Int, TestError>()
-                let sub = TestSubscriber<[Int], TestError>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<[Int], TestError>(receiveSubscription: { s in
                     s.request(.max(1))
                 }, receiveValue: { v in
                     v == [0, 1] ? .max(1) : .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 
                 pub.collect(2).subscribe(sub)
@@ -68,9 +68,7 @@ class CollectByCountSpec: QuickSpec {
                 }
                 pub.send(completion: .finished)
                 
-                expect(sub.events).to(equal(
-                    [.value([0, 1]), .value([2, 3]), .completion(.finished)]
-                ))
+                expect(sub.events) == [.value([0, 1]), .value([2, 3]), .completion(.finished)]
             }
         }
     }

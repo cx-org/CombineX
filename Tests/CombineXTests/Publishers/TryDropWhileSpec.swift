@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class TryDropWhileSpec: QuickSpec {
     
@@ -33,7 +33,7 @@ class TryDropWhileSpec: QuickSpec {
                 }
                 let expected = valueEvents + [.completion(.finished)]
                 
-                expect(got).to(equal(expected))
+                expect(got) == expected
             }
             
             // MARK: 1.2 should send as many values as demand
@@ -46,7 +46,7 @@ class TryDropWhileSpec: QuickSpec {
                     pub.send(i)
                 }
                 
-                expect(sub.events.count).to(equal(10))
+                expect(sub.events.count) == 10
             }
             
             // MARK: 1.3 should fail if predicate throws error
@@ -64,7 +64,7 @@ class TryDropWhileSpec: QuickSpec {
                 pub.send(completion: .finished)
                 
                 let got = sub.events.mapError { $0 as! TestError }
-                expect(got).to(equal([.completion(.failure(.e0))]))
+                expect(got) == [.completion(.failure(.e0]))
             }
             
             #if !SWIFT_PACKAGE
@@ -74,7 +74,7 @@ class TryDropWhileSpec: QuickSpec {
                     _ = s.receive(1)
                 }
                 
-                let pub = upstream.tryDrop { _ in true}
+                let pub = upstream.tryDrop { _ in true }
                 let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
                 
                 expect {
@@ -88,7 +88,7 @@ class TryDropWhileSpec: QuickSpec {
                     s.receive(completion: .finished)
                 }
                 
-                let pub = upstream.tryDrop { _ in true}
+                let pub = upstream.tryDrop { _ in true }
                 let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
 
                 expect {

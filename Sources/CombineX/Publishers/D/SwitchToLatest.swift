@@ -44,16 +44,14 @@ extension Publishers {
 
 extension Publishers.SwitchToLatest {
     
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == P.Output,
-        S.Failure == P.Failure
-    {
+        S.Failure == P.Failure {
         
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure

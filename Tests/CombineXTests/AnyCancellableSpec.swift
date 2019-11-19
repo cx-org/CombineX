@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class AnyCancellableSpec: QuickSpec {
     
@@ -24,7 +24,7 @@ class AnyCancellableSpec: QuickSpec {
                 
                 cancel.cancel()
                 
-                expect(count).to(equal(1))
+                expect(count) == 1
             }
             
             // MARK: 1.2 should cancel parent when cancel is called
@@ -39,7 +39,7 @@ class AnyCancellableSpec: QuickSpec {
                 
                 cancel.cancel()
                 
-                expect(count).to(equal(1))
+                expect(count) == 1
             }
             
             // MARK: 1.3 should cancel when deinit
@@ -52,7 +52,7 @@ class AnyCancellableSpec: QuickSpec {
                     }
                 }
                 
-                expect(count).to(equal(1))
+                expect(count) == 1
             }
         }
         
@@ -89,15 +89,15 @@ class AnyCancellableSpec: QuickSpec {
             it("should use ObjectIdentifier to implement hash") {
                 let cancel = AnyCancellable { }
                 let id = ObjectIdentifier(cancel)
-                expect(cancel.hashValue).to(equal(id.hashValue))
+                expect(cancel.hashValue) == id.hashValue
             }
             
             // MARK: 3.2
             it("should use ObjectIdentifier to implement equal") {
                 let lhs = AnyCancellable { }
                 let rhs = AnyCancellable { }
-                expect(lhs).to(equal(lhs))
-                expect(lhs).toNot(equal(rhs))
+                expect(lhs) == lhs
+                expect(lhs) != rhs
             }
         }
         
@@ -112,7 +112,7 @@ class AnyCancellableSpec: QuickSpec {
                 cancel.store(in: &cancels)
                 cancel.store(in: &cancels)
                 
-                expect(cancels).to(equal([cancel, cancel, cancel]))
+                expect(cancels) == [cancel, cancel, cancel]
             }
             
             it("should be stored in set") {
@@ -123,7 +123,7 @@ class AnyCancellableSpec: QuickSpec {
                 cancel.store(in: &cancels)
                 cancel.store(in: &cancels)
                 
-                expect(cancels).to(equal([cancel]))
+                expect(cancels) == [cancel]
             }
         }
     }

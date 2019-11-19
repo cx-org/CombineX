@@ -2,8 +2,8 @@ import CombineX
 import Foundation
 
 #if !COCOAPODS
-import CXUtility
 import CXNamespace
+import CXUtility
 #endif
 
 extension CXWrappers {
@@ -130,7 +130,6 @@ extension CXWrappers.RunLoop: CombineX.Scheduler {
             }
         }
     }
-    
 
     /// Options that affect the operation of the run loop scheduler.
     ///
@@ -145,7 +144,7 @@ extension CXWrappers.RunLoop: CombineX.Scheduler {
     }
     
     public func schedule(after date: SchedulerTimeType, tolerance: SchedulerTimeType.Stride, options: SchedulerOptions?, _ action: @escaping () -> Void) {
-        Timer.cx_scheduledTimer(withTimeInterval: self.now.distance(to: date).timeInterval, repeats: false) { (_) in
+        Timer.cx_scheduledTimer(withTimeInterval: self.now.distance(to: date).timeInterval, repeats: false) { _ in
             action()
         }
     }

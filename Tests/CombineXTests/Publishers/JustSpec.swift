@@ -1,8 +1,8 @@
-import Dispatch
 import CXShim
 import CXTestUtility
-import Quick
+import Dispatch
 import Nimble
+import Quick
 
 class JustSpec: QuickSpec {
     
@@ -22,7 +22,7 @@ class JustSpec: QuickSpec {
                 let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
                 pub.subscribe(sub)
                 
-                expect(sub.events).to(equal([.value(1), .completion(.finished)]))
+                expect(sub.events) == [.value(1), .completion(.finished)]
             }
             
             #if !SWIFT_PACKAGE
@@ -43,9 +43,9 @@ class JustSpec: QuickSpec {
                 let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
                     subscription = s
                     s.request(.unlimited)
-                }, receiveValue: { v in
+                }, receiveValue: { _ in
                     return .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 pub.subscribe(sub)
                 
@@ -66,11 +66,11 @@ class JustSpec: QuickSpec {
                 
                 do {
                     let pub = Just<Int>(1)
-                    let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
+                    let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
                         subscription = s
-                    }, receiveValue: { v in
+                    }, receiveValue: { _ in
                         return .none
-                    }, receiveCompletion: { s in
+                    }, receiveCompletion: { _ in
                     })
                     subObj = sub
                     pub.subscribe(sub)
@@ -90,11 +90,11 @@ class JustSpec: QuickSpec {
                 
                 do {
                     let pub = Just<Int>(1)
-                    let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
+                    let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
                         subscription = s
-                    }, receiveValue: { v in
+                    }, receiveValue: { _ in
                         return .none
-                    }, receiveCompletion: { s in
+                    }, receiveCompletion: { _ in
                     })
                     
                     subObj = sub
@@ -118,11 +118,11 @@ class JustSpec: QuickSpec {
                     testObj = obj
                     
                     let pub = Just<TestObject>(obj)
-                    let sub = TestSubscriber<TestObject, Never>(receiveSubscription: { (s) in
+                    let sub = TestSubscriber<TestObject, Never>(receiveSubscription: { s in
                         subscription = s
-                    }, receiveValue: { v in
+                    }, receiveValue: { _ in
                         return .none
-                    }, receiveCompletion: { s in
+                    }, receiveCompletion: { _ in
                     })
                     
                     pub.subscribe(sub)
@@ -145,11 +145,11 @@ class JustSpec: QuickSpec {
                     testObj = obj
                     
                     let pub = Just<TestObject>(obj)
-                    let sub = TestSubscriber<TestObject, Never>(receiveSubscription: { (s) in
+                    let sub = TestSubscriber<TestObject, Never>(receiveSubscription: { s in
                         subscription = s
-                    }, receiveValue: { v in
+                    }, receiveValue: { _ in
                         return .none
-                    }, receiveCompletion: { s in
+                    }, receiveCompletion: { _ in
                     })
                     
                     pub.subscribe(sub)
@@ -169,11 +169,11 @@ class JustSpec: QuickSpec {
                 var subscription: Subscription?
                 
                 let pub = Just<Int>(1)
-                let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
                     subscription = s
-                }, receiveValue: { v in
+                }, receiveValue: { _ in
                     return .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 
                 pub.subscribe(sub)
@@ -186,7 +186,7 @@ class JustSpec: QuickSpec {
                 }
                 g.wait()
                 
-                expect(sub.events).to(equal([.value(1), .completion(.finished)]))
+                expect(sub.events) == [.value(1), .completion(.finished)]
             }
         }
     }

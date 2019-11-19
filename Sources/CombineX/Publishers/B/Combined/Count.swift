@@ -38,7 +38,7 @@ extension Publishers {
         
         public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, S.Input == Publishers.Count<Upstream>.Output {
             self.upstream
-                .reduce(Atom(val: 0)) { (counter, _) in
+                .reduce(Atom(val: 0)) { counter, _ in
                     _ = counter.add(1)
                     return counter
                 }

@@ -30,4 +30,3 @@ extension JSONDecoder.CX: CombineX.TopLevelDecoder {
         return try self.base.decode(type, from: from)
     }
 }
-

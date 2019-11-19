@@ -66,20 +66,17 @@ extension Publishers {
     }
 }
 
-
 // MARK: - ByTimeOrCount
 extension Publishers.CollectByTime {
     
-    private final class ByTimeOrCount<S>:
-        Subscription,
+    private final class ByTimeOrCount<S>: Subscription,
         Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
@@ -119,8 +116,7 @@ extension Publishers.CollectByTime {
             self.timeoutTask?.cancel()
             self.timeoutTask = self.context.schedule(
                 after: self.context.now.advanced(by: self.time),
-                interval: .seconds(Int.max))
-            {
+                interval: .seconds(Int.max)) {
                 self.lock.lock()
                 guard self.state.isRelaying else {
                     self.lock.unlock()
@@ -218,20 +214,17 @@ extension Publishers.CollectByTime {
     }
 }
 
-
 // MARK: - ByTime
 extension Publishers.CollectByTime {
     
-    private final class ByTime<S>:
-        Subscription,
+    private final class ByTime<S>: Subscription,
         Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
@@ -267,8 +260,7 @@ extension Publishers.CollectByTime {
             self.timeoutTask?.cancel()
             self.timeoutTask = self.context.schedule(
                 after: self.context.now.advanced(by: self.time),
-                interval: .seconds(Int.max))
-            {
+                interval: .seconds(Int.max)) {
                 self.lock.lock()
                 guard self.state.isRelaying else {
                     self.lock.unlock()
@@ -379,4 +371,3 @@ extension Publishers.CollectByTime {
         }
     }
 }
-

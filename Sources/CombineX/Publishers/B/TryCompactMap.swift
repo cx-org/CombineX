@@ -52,16 +52,14 @@ extension Publishers {
 
 extension Publishers.TryCompactMap {
     
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
@@ -145,4 +143,3 @@ extension Publishers.TryCompactMap {
         }
     }
 }
-

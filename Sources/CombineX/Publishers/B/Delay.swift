@@ -57,16 +57,14 @@ extension Publishers {
 
 extension Publishers.Delay {
     
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
@@ -113,8 +111,7 @@ extension Publishers.Delay {
             self.scheduler.schedule(
                 after: self.scheduler.now.advanced(by: self.interval),
                 tolerance: self.tolerance,
-                options: self.options)
-            {
+                options: self.options) {
                 action()
             }
         }
@@ -153,5 +150,4 @@ extension Publishers.Delay {
             return "Delay"
         }
     }
-
 }

@@ -1,6 +1,5 @@
 extension Publisher {
     
-    
     /// Publishes the first element of a stream to satisfy a predicate closure, then finishes.
     ///
     /// The publisher ignores all elements after the first. If this publisher doesn’t receive any elements, it finishes without publishing.
@@ -38,5 +37,4 @@ extension Publishers {
                 .receive(subscriber: subscriber)
         }
     }
-    
 }

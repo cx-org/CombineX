@@ -1,6 +1,6 @@
-import Foundation
-import CXUtility
 import CXShim
+import CXUtility
+import Foundation
 
 public class TestDispatchQueueScheduler: Scheduler {
     
@@ -28,7 +28,7 @@ public class TestDispatchQueueScheduler: Scheduler {
         
         var hold: DispatchSourceTimer? = timer
         
-        timer.setEventHandler() {
+        timer.setEventHandler {
             action()
             
             hold?.cancel()
@@ -44,7 +44,7 @@ public class TestDispatchQueueScheduler: Scheduler {
         
         let timer = DispatchSource.makeTimerSource(queue: self.dispatchQueue)
         
-        timer.setEventHandler() {
+        timer.setEventHandler {
             action()
         }
         
@@ -73,7 +73,6 @@ public extension TestDispatchQueueScheduler {
         return TestDispatchQueueScheduler(dispatchQueue: DispatchQueue.global(qos: qos))
     }
 }
-
 
 public extension TestDispatchQueueScheduler {
     

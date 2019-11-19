@@ -7,7 +7,7 @@ protocol OptionalProtocol {
     associatedtype Wrapped
     
     var optional: Wrapped? {
-        set get
+        get set
     }
 }
 
@@ -39,7 +39,7 @@ extension Optional {
         }
     }
     
-    func filter(_ isIncluded: (Wrapped) -> Bool) -> Optional<Wrapped> {
+    func filter(_ isIncluded: (Wrapped) -> Bool) -> Wrapped? {
         guard let val = self, isIncluded(val) else {
             return nil
         }

@@ -90,7 +90,7 @@ extension ObservableObject where ObjectWillChangePublisher == ObservableObjectPu
 }
 
 /// The default publisher of an `ObservableObject`.
-final public class ObservableObjectPublisher: Publisher {
+public final class ObservableObjectPublisher: Publisher {
     
     public typealias Output = Void
     
@@ -102,11 +102,11 @@ final public class ObservableObjectPublisher: Publisher {
         // Do nothing
     }
 
-    final public func receive<S: Subscriber>(subscriber: S) where S.Failure == ObservableObjectPublisher.Failure, S.Input == ObservableObjectPublisher.Output {
+    public final func receive<S: Subscriber>(subscriber: S) where S.Failure == ObservableObjectPublisher.Failure, S.Input == ObservableObjectPublisher.Output {
         self.subject.receive(subscriber: subscriber)
     }
 
-    final public func send() {
+    public final func send() {
         self.subject.send()
     }
 }

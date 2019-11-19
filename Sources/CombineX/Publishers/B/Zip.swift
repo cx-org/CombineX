@@ -66,20 +66,17 @@ extension Publishers {
             subscriber.receive(subscription: s)
         }
     }
-
 }
 
 extension Publishers.Zip {
 
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         B.Failure == S.Failure,
-        S.Input == (A.Output, B.Output)
-    {
+        S.Input == (A.Output, B.Output) {
 
         typealias Pub = Publishers.Zip<A, B>
         typealias Sub = S
@@ -113,7 +110,6 @@ extension Publishers.Zip {
             let childB = Child<B.Output>(parent: self, source: .b)
             pub.b.subscribe(childB)
             self.childB = childB
-            
         }
 
         func request(_ demand: Subscribers.Demand) {
@@ -144,7 +140,7 @@ extension Publishers.Zip {
             childB?.cancel()
         }
         
-        private func release() -> (Child<A.Output>?, Child<B.Output>?){
+        private func release() -> (Child<A.Output>?, Child<B.Output>?) {
             defer {
                 self.bufferA = Queue()
                 self.bufferB = Queue()

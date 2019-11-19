@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class TryReduceSpec: QuickSpec {
     
@@ -31,7 +31,7 @@ class TryReduceSpec: QuickSpec {
                 let reduced = (0..<100).reduce(0) { $0 + $1 }
                 let got = sub.events.mapError { $0 as! TestError }
 
-                expect(got).to(equal([.value(reduced), .completion(.finished)]))
+                expect(got) == [.value(reduced), .completion(.finished)]
             }
             
             // MARK: 1.2 should fail if closure throws an error
@@ -39,7 +39,7 @@ class TryReduceSpec: QuickSpec {
                 let subject = PassthroughSubject<Int, Never>()
                 let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
                 
-                subject.tryReduce(0) { (_, _) in
+                subject.tryReduce(0) { _, _ in
                     throw TestError.e0
                 }.subscribe(sub)
                 
@@ -48,7 +48,7 @@ class TryReduceSpec: QuickSpec {
                 }
                 
                 let got = sub.events.mapError { $0 as! TestError }
-                expect(got).to(equal([.completion(.failure(.e0))]))
+                expect(got) == [.completion(.failure(.e0]))
             }
             
             #if !SWIFT_PACKAGE

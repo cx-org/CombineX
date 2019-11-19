@@ -47,7 +47,6 @@ public extension TestLogging {
     func critical(_ items: Any...) {
         logger._output(.critical, items, object: self)
     }
-
 }
 
 public let logger = Logger.shared
@@ -87,7 +86,7 @@ public class Logger {
             }
         }
         
-        let str = items.map { "\($0)" }.joined(separator: "")
+        let str = items.map { "\($0)" }.joined()
         print(symbol, "[\(prefix)]:", str)
     }
     

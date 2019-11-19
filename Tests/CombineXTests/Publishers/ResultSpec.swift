@@ -1,8 +1,8 @@
-import Dispatch
 import CXShim
 import CXTestUtility
-import Quick
+import Dispatch
 import Nimble
+import Quick
 
 typealias ResultPublisher<Success, Failure: Error> = Result<Success, Failure>.CX.Publisher
 
@@ -24,7 +24,7 @@ class ResultSpec: QuickSpec {
                 let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
                 pub.subscribe(sub)
                 
-                expect(sub.events).to(equal([.value(1), .completion(.finished)]))
+                expect(sub.events) == [.value(1), .completion(.finished)]
             }
             
             // MARK: 1.2 should send failure even no demand
@@ -34,7 +34,7 @@ class ResultSpec: QuickSpec {
                 let sub = makeTestSubscriber(Int.self, TestError.self, .max(0))
                 pub.subscribe(sub)
                 
-                expect(sub.events).to(equal([.completion(.failure(.e0))]))
+                expect(sub.events) == [.completion(.failure(.e0]))
             }
             
             #if !SWIFT_PACKAGE

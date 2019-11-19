@@ -1,8 +1,8 @@
-import Dispatch
 import CXShim
 import CXTestUtility
-import Quick
+import Dispatch
 import Nimble
+import Quick
 
 class FlatMapSpec: QuickSpec {
     
@@ -26,16 +26,16 @@ class FlatMapSpec: QuickSpec {
                 
                 let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
                     s.request(.unlimited)
-                }, receiveValue: { v in
+                }, receiveValue: { _ in
                     return .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 
                 pub.subscribe(sub)
                 
                 let events = [1, 2, 3].flatMap { [$0, $0, $0] }.map { TestSubscriberEvent<Int, Never>.value($0) }
                 let expected = events + [.completion(.finished)]
-                expect(sub.events).to(equal(expected))
+                expect(sub.events) == expected
             }
             
             // MARK: 1.2 should send values as demand
@@ -54,12 +54,12 @@ class FlatMapSpec: QuickSpec {
                     s.request(.max(10))
                 }, receiveValue: { v in
                     [1, 5].contains(v) ? .max(1) : .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 
                 pub.subscribe(sub)
                 
-                expect(sub.events.count).to(equal(19))
+                expect(sub.events.count) == 19
             }
             
             // MARK: 1.3 should complete when a sub-publisher sends an error
@@ -81,9 +81,9 @@ class FlatMapSpec: QuickSpec {
                 
                 let sub = Sub(receiveSubscription: { s in
                     s.request(.unlimited)
-                }, receiveValue: { v in
+                }, receiveValue: { _ in
                     return .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 
                 pub.subscribe(sub)
@@ -96,12 +96,12 @@ class FlatMapSpec: QuickSpec {
                 
                 subjects[1].send(completion: .failure(.e1))
                 
-                expect(sub.events.count).to(equal(10))
+                expect(sub.events.count) == 10
                 
                 var events = [0, 1, 2].flatMap { _ in [0, 1, 2] }.map { Sub.Event.value($0) }
                 events.append(Sub.Event.completion(.failure(.e1)))
                 
-                expect(sub.events).to(equal(events))
+                expect(sub.events) == events
             }
             
             // MARK: 1.4 should buffer one output for each sub-publisher if there is no demand
@@ -117,9 +117,9 @@ class FlatMapSpec: QuickSpec {
                 var subscription: Subscription?
                 let sub = Sub(receiveSubscription: { s in
                     subscription = s
-                }, receiveValue: { v in
+                }, receiveValue: { _ in
                     return .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 pub.subscribe(sub)
                 
@@ -138,7 +138,7 @@ class FlatMapSpec: QuickSpec {
                 
                 subscription?.request(.unlimited)
                 
-                expect(sub.events).to(equal([.value(0), .value(0), .value(2), .value(3)]))
+                expect(sub.events) == [.value(0), .value(0), .value(2), .value(3)]
             }
         }
         
@@ -154,15 +154,15 @@ class FlatMapSpec: QuickSpec {
                     subjects.append(PassthroughSubject<Int, Never>())
                 }
                 
-                let pub = sequence.flatMap { (i) -> PassthroughSubject<Int, Never> in
+                let pub = sequence.flatMap { i -> PassthroughSubject<Int, Never> in
                     return subjects[i]
                 }
                 
                 let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
                     s.request(.max(10))
-                }, receiveValue: { v in
+                }, receiveValue: { _ in
                     return .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 
                 pub.subscribe(sub)
@@ -177,7 +177,7 @@ class FlatMapSpec: QuickSpec {
                 
                 g.wait()
                 
-                expect(sub.events.count).to(equal(10))
+                expect(sub.events.count) == 10
             }
         }
     }

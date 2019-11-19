@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class DelaySpec: QuickSpec {
     
@@ -24,20 +24,19 @@ class DelaySpec: QuickSpec {
                 let receiveV = TestTimeline(context: scheduler)
                 let receiveC = TestTimeline(context: scheduler)
                 
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
                     receiveS.record()
                     s.request(.unlimited)
-                }, receiveValue: { v in
+                }, receiveValue: { _ in
                     receiveV.record()
                     return .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                     receiveC.record()
                 })
                 
                 let sendS = TestTimeline(context: scheduler)
                 let sendV = TestTimeline(context: scheduler)
                 let sendB = TestTimeline(context: scheduler)
-                
                 
                 sendS.record()
                 pub.subscribe(sub)
@@ -57,7 +56,7 @@ class DelaySpec: QuickSpec {
                 
                 scheduler.advance(by: .seconds(5))
                 
-                expect(sendS.isCloseTo(to: receiveS)).to(beTrue())
+                expect(sendS.isCloseTo(to: receiveS)) == true
 
                 expect(sendV.delayed(1).isCloseTo(to: receiveV)).toEventually(beTrue())
                 expect(sendB.delayed(1).isCloseTo(to: receiveC)).toEventually(beTrue())
@@ -70,16 +69,16 @@ class DelaySpec: QuickSpec {
                 let pub = subject.delay(for: .seconds(0.1), scheduler: scheduler)
                 
                 var executed = (subscription: false, value: false, completion: false)
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.unlimited)
-                    expect(scheduler.isCurrent).to(beTrue())
+                    expect(scheduler.isCurrent) == true
                     executed.subscription = true
-                }, receiveValue: { v in
-                    expect(scheduler.isCurrent).to(beTrue())
+                }, receiveValue: { _ in
+                    expect(scheduler.isCurrent) == true
                     executed.value = true
                     return .none
-                }, receiveCompletion: { c in
-                    expect(scheduler.isCurrent).to(beTrue())
+                }, receiveCompletion: { _ in
+                    expect(scheduler.isCurrent) == true
                     executed.completion = true
                 })
                 

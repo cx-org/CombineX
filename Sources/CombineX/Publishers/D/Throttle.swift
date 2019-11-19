@@ -57,20 +57,17 @@ extension Publishers {
         }
     }
 }
-
  
 extension Publishers.Throttle {
     
-    private final class Latest<S>:
-        Subscription,
+    private final class Latest<S>: Subscription,
         Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
@@ -186,19 +183,16 @@ extension Publishers.Throttle {
     }
 }
 
-
 extension Publishers.Throttle {
     
-    private final class First<S>:
-        Subscription,
+    private final class First<S>: Subscription,
         Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure

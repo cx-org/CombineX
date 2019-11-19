@@ -1,5 +1,5 @@
-import XCTest
 import Quick
+import XCTest
 
 @testable import CombineXTests
 @testable import CXFoundationTests

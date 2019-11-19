@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class ObserableObjectSpec: QuickSpec {
 
@@ -14,7 +14,6 @@ class ObserableObjectSpec: QuickSpec {
         }
         
         class Y: ObservableObject {}
-
         
         afterEach {
             TestResources.release()
@@ -46,7 +45,7 @@ class ObserableObjectSpec: QuickSpec {
                 let x = X()
                 let xPub1 = x.objectWillChange
                 let xPub2 = x.objectWillChange
-                expect(xPub1).to(beIdenticalTo(xPub2))
+                expect(xPub1) === xPub2
             }
             
             // MARK: 2.2 object with @Published property should hold objectWillChange

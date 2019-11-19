@@ -227,15 +227,13 @@ public struct Just<Output>: Publisher {
 
 extension Just {
     
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         
         typealias Pub = Just<Output>
         typealias Sub = S

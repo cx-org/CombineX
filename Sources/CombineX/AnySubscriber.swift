@@ -67,7 +67,6 @@ public struct AnySubscriber<Input, Failure: Error>: Subscriber, CustomStringConv
     }
 }
 
-
 @usableFromInline
 class SubscriberBox<Input, Failure>: Subscriber, Cancellable where Failure: Error {
     

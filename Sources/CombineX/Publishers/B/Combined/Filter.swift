@@ -8,7 +8,7 @@ extension Publisher {
 extension Publishers.Filter {
     
     public func tryFilter(_ isIncluded: @escaping (Publishers.Filter<Upstream>.Output) throws -> Bool) -> Publishers.TryFilter<Upstream> {
-        let newIsIncluded:  (Upstream.Output) throws -> Bool = {
+        let newIsIncluded: (Upstream.Output) throws -> Bool = {
             let lhs = self.isIncluded($0)
             let rhs = try isIncluded($0)
             return lhs && rhs
