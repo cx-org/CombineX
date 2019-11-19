@@ -114,7 +114,14 @@ class PrintSpec: QuickSpec {
                 
                 subscription?.cancel()
                 
-                let expected = ["", "[Q]: receive subscription: (PassthroughSubject)", "\n", "", "[Q]: request unlimited", "\n", "", "[Q]: receive value: (0)", "\n", "", "[Q]: request max: (1) (synchronous)", "\n", "", "[Q]: receive finished", "\n", "", "[Q]: receive cancel", "\n"]
+                let expected = [
+                    "", "[Q]: receive subscription: (PassthroughSubject)", "\n",
+                    "", "[Q]: request unlimited", "\n",
+                    "", "[Q]: receive value: (0)", "\n",
+                    "", "[Q]: request max: (1) (synchronous)", "\n",
+                    "", "[Q]: receive finished", "\n",
+                    "", "[Q]: receive cancel", "\n",
+                ]
                 expect(stream.outputs) == expected
             }
         }

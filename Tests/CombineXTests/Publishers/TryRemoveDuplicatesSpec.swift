@@ -61,7 +61,7 @@ class TryRemoveDuplicatesSpec: QuickSpec {
                 
                 let got = sub.events.mapError { $0 as! TestError }
                 
-                expect(got) == [.value(1), .completion(.failure(.e0]))
+                expect(got) == [.value(1), .completion(.failure(.e0))]
             }
         }
     }

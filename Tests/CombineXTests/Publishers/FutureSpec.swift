@@ -80,7 +80,7 @@ class FutureSpec: QuickSpec {
                 g.wait()
                 
                 for sub in subs {
-                    expect(sub.events) == [.completion(.failure(.e0]))
+                    expect(sub.events) == [.completion(.failure(.e0))]
                 }
             }
         }

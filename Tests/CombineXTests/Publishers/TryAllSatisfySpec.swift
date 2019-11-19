@@ -82,7 +82,7 @@ class TryAllSatisfySpec: QuickSpec {
                 subject.send(completion: .finished)
                 
                 let got = sub.events.mapError { $0 as! TestError }
-                expect(got) == [.completion(.failure(.e0]))
+                expect(got) == [.completion(.failure(.e0))]
             }
         }
     }

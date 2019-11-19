@@ -15,7 +15,10 @@ extension Publisher where Output: Equatable {
     
     /// Publishes a Boolean value upon receiving an element equal to the argument.
     ///
-    /// The contains publisher consumes all received elements until the upstream publisher produces a matching element. At that point, it emits `true` and finishes normally. If the upstream finishes normally without producing a matching element, this publisher emits `false`, then finishes.
+    /// The contains publisher consumes all received elements until the upstream publisher produces a
+    /// matching element. At that point, it emits `true` and finishes normally. If the upstream finishes
+    /// normally without producing a matching element, this publisher emits `false`, then finishes.
+    /// 
     /// - Parameter output: An element to match against.
     /// - Returns: A publisher that emits the Boolean value `true` when the upstream publisher emits a matching value.
     public func contains(_ output: Output) -> Publishers.Contains<Self> {

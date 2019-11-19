@@ -23,7 +23,12 @@ public class TestDispatchQueueScheduler: Scheduler {
         self.dispatchQueue.async(execute: action)
     }
     
-    public func schedule(after date: SchedulerTimeType, tolerance: SchedulerTimeType.Stride, options: SchedulerOptions?, _ action: @escaping () -> Void) {
+    public func schedule(
+        after date: SchedulerTimeType,
+        tolerance: SchedulerTimeType.Stride,
+        options: SchedulerOptions?,
+        _ action: @escaping () -> Void)
+    {
         let timer = DispatchSource.makeTimerSource(queue: self.dispatchQueue)
         
         var hold: DispatchSourceTimer? = timer
@@ -40,8 +45,13 @@ public class TestDispatchQueueScheduler: Scheduler {
         timer.resume()
     }
     
-    public func schedule(after date: SchedulerTimeType, interval: SchedulerTimeType.Stride, tolerance: SchedulerTimeType.Stride, options: SchedulerOptions?, _ action: @escaping () -> Void) -> Cancellable {
-        
+    public func schedule(
+        after date: SchedulerTimeType,
+        interval: SchedulerTimeType.Stride,
+        tolerance: SchedulerTimeType.Stride,
+        options: SchedulerOptions?,
+        _ action: @escaping () -> Void
+    ) -> Cancellable {
         let timer = DispatchSource.makeTimerSource(queue: self.dispatchQueue)
         
         timer.setEventHandler {

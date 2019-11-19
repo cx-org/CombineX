@@ -143,7 +143,7 @@ extension CXWrappers.DispatchQueue: CombineX.Scheduler {
             }
             
             public static func += (lhs: inout Stride, rhs: Stride) {
-                lhs = lhs + rhs
+                lhs.magnitude += rhs.magnitude
             }
             
             public static func - (lhs: Stride, rhs: Stride) -> Stride {
@@ -151,7 +151,7 @@ extension CXWrappers.DispatchQueue: CombineX.Scheduler {
             }
             
             public static func -= (lhs: inout Stride, rhs: Stride) {
-                lhs = lhs + rhs
+                lhs.magnitude -= rhs.magnitude
             }
             
             public static func * (lhs: Stride, rhs: Stride) -> Stride {
@@ -159,9 +159,9 @@ extension CXWrappers.DispatchQueue: CombineX.Scheduler {
             }
             
             public static func *= (lhs: inout Stride, rhs: Stride) {
-                lhs = lhs * rhs
+                lhs.magnitude *= rhs.magnitude
             }
-
+            
             public static func seconds(_ s: Double) -> Stride {
                 return .init(floatLiteral: s)
             }
@@ -234,7 +234,13 @@ extension CXWrappers.DispatchQueue: CombineX.Scheduler {
         timer.resume()
     }
     
-    public func schedule(after date: SchedulerTimeType, interval: SchedulerTimeType.Stride, tolerance: SchedulerTimeType.Stride, options: SchedulerOptions?, _ action: @escaping () -> Void) -> Cancellable {
+    public func schedule(
+        after date: SchedulerTimeType,
+        interval: SchedulerTimeType.Stride,
+        tolerance: SchedulerTimeType.Stride,
+        options: SchedulerOptions?,
+        _ action: @escaping () -> Void
+    ) -> Cancellable {
         let timer = DispatchSource.makeTimerSource(queue: self.base)
         
         timer.setEventHandler {

@@ -28,7 +28,7 @@ class TimeoutSpec: QuickSpec {
                 expect(sub.events) == []
                 
                 scheduler.advance(by: .seconds(5))
-                expect(sub.events) == [.completion(.failure(.e0]))
+                expect(sub.events) == [.completion(.failure(.e0))]
             }
             
             // MARK: 1.2 should finish if `customError` is nil

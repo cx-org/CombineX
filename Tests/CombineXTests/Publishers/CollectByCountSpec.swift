@@ -28,8 +28,8 @@ class CollectByCountSpec: QuickSpec {
                 expect(sub.events) == [
                     .value([0, 1]),
                     .value([2, 3]),
-                    .completion(.failure(.e0
-                ]))
+                    .completion(.failure(.e0))
+                ]
             }
             
             // MARK: 1.2 should send unsent values if upstream finishes

@@ -35,8 +35,9 @@ class SuspiciousSwitchToLatestSpec: QuickSpec {
             expect {
                 subject1.send(11)
             }.toBranch(
-                combine: beVoid(),
-                cx: throwAssertion())
+                combine: throwAssertion(),
+                cx: beVoid()
+            )
             #endif
         }
         

@@ -71,7 +71,7 @@ class RecordSpec: QuickSpec {
                 let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
                 record.subscribe(sub)
                 
-                expect(sub.events) == [.value(1), .value(2), .completion(.failure(.e2]))
+                expect(sub.events) == [.value(1), .value(2), .completion(.failure(.e2))]
             }
         }
     }

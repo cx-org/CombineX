@@ -82,7 +82,9 @@ extension Subscribers {
             lhs = lhs * rhs
         }
         
-        /// When subtracting any value (including .unlimited) from .unlimited, the result is still .unlimited. Subtracting unlimited from any value (except unlimited) results in .max(0). A negative demand is not possible; any operation that would result in a negative value is clamped to .max(0).
+        /// When subtracting any value (including .unlimited) from .unlimited, the result is still .unlimited.
+        /// Subtracting unlimited from any value (except unlimited) results in .max(0). A negative demand
+        /// is not possible; any operation that would result in a negative value is clamped to .max(0).
         @inlinable
         public static func - (lhs: Subscribers.Demand, rhs: Subscribers.Demand) -> Subscribers.Demand {
             switch (lhs, rhs) {
@@ -96,19 +98,23 @@ extension Subscribers {
             }
         }
         
-        /// When subtracting any value (including .unlimited) from .unlimited, the result is still .unlimited. Subtracting unlimited from any value (except unlimited) results in .max(0). A negative demand is not possible; any operation that would result in a negative value is clamped to .max(0).
+        /// When subtracting any value (including .unlimited) from .unlimited, the result is still .unlimited.
+        /// Subtracting unlimited from any value (except unlimited) results in .max(0). A negative demand
+        /// is not possible; any operation that would result in a negative value is clamped to .max(0).
         @inlinable
         public static func -= (lhs: inout Subscribers.Demand, rhs: Subscribers.Demand) {
             lhs = lhs - rhs
         }
         
-        /// When subtracting any value from .unlimited, the result is still .unlimited. A negative demand is not possible; any operation that would result in a negative value is clamped to .max(0)
+        /// When subtracting any value from .unlimited, the result is still .unlimited. A negative demand is
+        /// not possible; any operation that would result in a negative value is clamped to .max(0)
         @inlinable
         public static func - (lhs: Subscribers.Demand, rhs: Int) -> Subscribers.Demand {
             return lhs + (-rhs)
         }
         
-        /// When subtracting any value from .unlimited, the result is still .unlimited. A negative demand is possible, but be aware that it is not usable when requesting values in a subscription.
+        /// When subtracting any value from .unlimited, the result is still .unlimited. A negative demand is
+        /// possible, but be aware that it is not usable when requesting values in a subscription.
         @inlinable
         public static func -= (lhs: inout Subscribers.Demand, rhs: Int) {
             lhs = lhs - rhs
@@ -173,7 +179,8 @@ extension Subscribers {
             return lhs.rawValue == rhs.rawValue
         }
         
-        /// If lhs is .unlimited, then the result is always false. If rhs is .unlimited then the result is always false. Otherwise, the two max values are compared.
+        /// If lhs is .unlimited, then the result is always false. If rhs is .unlimited then the result is always
+        /// false. Otherwise, the two max values are compared.
         @inlinable
         public static func < (lhs: Subscribers.Demand, rhs: Subscribers.Demand) -> Bool {
             switch (lhs, rhs) {

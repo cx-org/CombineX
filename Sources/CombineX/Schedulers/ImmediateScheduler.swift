@@ -50,12 +50,12 @@ public struct ImmediateScheduler: Scheduler {
                 return lhs.magnitude < rhs.magnitude
             }
             
-            public static func * (lhs: Stride, rhs: Stride) -> Stride {
-                return Stride(integerLiteral: lhs.magnitude * rhs.magnitude)
-            }
-            
             public static func + (lhs: Stride, rhs: Stride) -> Stride {
                 return Stride(integerLiteral: lhs.magnitude + rhs.magnitude)
+            }
+            
+            public static func += (lhs: inout Stride, rhs: Stride) {
+                lhs.magnitude += rhs.magnitude
             }
             
             public static func - (lhs: Stride, rhs: Stride) -> Stride {
@@ -63,15 +63,15 @@ public struct ImmediateScheduler: Scheduler {
             }
             
             public static func -= (lhs: inout Stride, rhs: Stride) {
-                lhs = lhs - rhs
+                lhs.magnitude -= rhs.magnitude
+            }
+            
+            public static func * (lhs: Stride, rhs: Stride) -> Stride {
+                return Stride(integerLiteral: lhs.magnitude * rhs.magnitude)
             }
             
             public static func *= (lhs: inout Stride, rhs: Stride) {
-                lhs = lhs * rhs
-            }
-            
-            public static func += (lhs: inout Stride, rhs: Stride) {
-                lhs = lhs + rhs
+                lhs.magnitude *= rhs.magnitude
             }
             
             public static func seconds(_ s: Int) -> Stride {
@@ -123,7 +123,13 @@ public struct ImmediateScheduler: Scheduler {
         action()
     }
     
-    public func schedule(after date: SchedulerTimeType, interval: SchedulerTimeType.Stride, tolerance: SchedulerTimeType.Stride, options: SchedulerOptions?, _ action: @escaping () -> Void) -> Cancellable {
+    public func schedule(
+        after date: SchedulerTimeType,
+        interval: SchedulerTimeType.Stride,
+        tolerance: SchedulerTimeType.Stride,
+        options: SchedulerOptions?,
+        _ action: @escaping () -> Void
+    ) -> Cancellable {
         action()
         return AnyCancellable {}
     }

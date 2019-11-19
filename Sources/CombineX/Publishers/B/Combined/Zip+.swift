@@ -2,8 +2,13 @@ extension Publisher {
     
     /// Combine elements from two other publishers and deliver groups of elements as tuples.
     ///
-    /// The returned publisher waits until all three publishers have emitted an event, then delivers the oldest unconsumed event from each publisher as a tuple to the subscriber.
-    /// For example, if publisher `P1` emits elements `a` and `b`, and publisher `P2` emits elements `c` and `d`, and publisher `P3` emits the event `e`, the zip publisher emits the tuple `(a, c, e)`. It won’t emit a tuple with elements `b` or `d` until `P3` emits another event.
+    /// The returned publisher waits until all three publishers have emitted an event, then delivers the oldest
+    /// unconsumed event from each publisher as a tuple to the subscriber.
+    ///
+    /// For example, if publisher `P1` emits elements `a` and `b`, and publisher `P2` emits elements
+    /// `c` and `d`, and publisher `P3` emits the event `e`, the zip publisher emits the tuple
+    /// `(a, c, e)`. It won’t emit a tuple with elements `b` or `d` until `P3` emits another event.
+    ///
     /// If any upstream publisher finishes successfuly or fails with an error, the zipped publisher does the same.
     ///
     /// - Parameters:
@@ -16,8 +21,13 @@ extension Publisher {
     
     /// Combine elements from two other publishers and deliver a transformed output.
     ///
-    /// The returned publisher waits until all three publishers have emitted an event, then delivers the oldest unconsumed event from each publisher as a tuple to the subscriber.
-    /// For example, if publisher `P1` emits elements `a` and `b`, and publisher `P2` emits elements `c` and `d`, and publisher `P3` emits the event `e`, the zip publisher emits the tuple `(a, c, e)`. It won’t emit a tuple with elements `b` or `d` until `P3` emits another event.
+    /// The returned publisher waits until all three publishers have emitted an event, then delivers the oldest
+    /// unconsumed event from each publisher as a tuple to the subscriber.
+    ///
+    /// For example, if publisher `P1` emits elements `a` and `b`, and publisher `P2` emits elements
+    /// `c` and `d`, and publisher `P3` emits the event `e`, the zip publisher emits the tuple
+    /// `(a, c, e)`. It won’t emit a tuple with elements `b` or `d` until `P3` emits another event.
+    ///
     /// If any upstream publisher finishes successfuly or fails with an error, the zipped publisher does the same.
     ///
     /// - Parameters:
@@ -31,8 +41,14 @@ extension Publisher {
     
     /// Combine elements from three other publishers and deliver groups of elements as tuples.
     ///
-    /// The returned publisher waits until all four publishers have emitted an event, then delivers the oldest unconsumed event from each publisher as a tuple to the subscriber.
-    /// For example, if publisher `P1` emits elements `a` and `b`, and publisher `P2` emits elements `c` and `d`, and publisher `P3` emits the elements `e` and `f`, and publisher `P4` emits the event `g`, the zip publisher emits the tuple `(a, c, e, g)`. It won’t emit a tuple with elements `b`, `d`, or `f` until `P4` emits another event.
+    /// The returned publisher waits until all four publishers have emitted an event, then delivers the oldest
+    /// unconsumed event from each publisher as a tuple to the subscriber.
+    ///
+    /// For example, if publisher `P1` emits elements `a` and `b`, and publisher `P2` emits elements
+    /// `c` and `d`, and publisher `P3` emits the elements `e` and `f`, and publisher `P4` emits the
+    /// event `g`, the zip publisher emits the tuple `(a, c, e, g)`. It won’t emit a tuple with elements
+    /// `b`, `d`, or `f` until `P4` emits another event.
+    ///
     /// If any upstream publisher finishes successfuly or fails with an error, the zipped publisher does the same.
     ///
     /// - Parameters:
@@ -46,15 +62,22 @@ extension Publisher {
     
     /// Combine elements from three other publishers and deliver a transformed output.
     ///
-    /// The returned publisher waits until all four publishers have emitted an event, then delivers the oldest unconsumed event from each publisher as a tuple to the subscriber.
-    /// For example, if publisher `P1` emits elements `a` and `b`, and publisher `P2` emits elements `c` and `d`, and publisher `P3` emits the elements `e` and `f`, and publisher `P4` emits the event `g`, the zip publisher emits the tuple `(a, c, e, g)`. It won’t emit a tuple with elements `b`, `d`, or `f` until `P4` emits another event.
+    /// The returned publisher waits until all four publishers have emitted an event, then delivers the oldest
+    /// unconsumed event from each publisher as a tuple to the subscriber.
+    ///
+    /// For example, if publisher `P1` emits elements `a` and `b`, and publisher `P2` emits elements
+    /// `c` and `d`, and publisher `P3` emits the elements `e` and `f`, and publisher `P4` emits the
+    /// event `g`, the zip publisher emits the tuple `(a, c, e, g)`. It won’t emit a tuple with elements
+    /// `b`, `d`, or `f` until `P4` emits another event.
+    ///
     /// If any upstream publisher finishes successfuly or fails with an error, the zipped publisher does the same.
     ///
     /// - Parameters:
     ///   - publisher1: A second publisher.
     ///   - publisher2: A third publisher.
     ///   - publisher3: A fourth publisher.
-    ///   - transform: A closure that receives the most recent value from each publisher and returns a new value to publish.
+    ///   - transform: A closure that receives the most recent value from each publisher and returns a
+    ///   new value to publish.
     /// - Returns: A publisher that emits groups of elements from the upstream publishers as tuples.
     public func zip<P, Q, R, T>(_ publisher1: P, _ publisher2: Q, _ publisher3: R, _ transform: @escaping (Output, P.Output, Q.Output, R.Output) -> T) -> Publishers.Map<Publishers.Zip4<Self, P, Q, R>, T> where P: Publisher, Q: Publisher, R: Publisher, Failure == P.Failure, P.Failure == Q.Failure, Q.Failure == R.Failure {
         return self.zip(publisher1, publisher2, publisher3).map(transform)

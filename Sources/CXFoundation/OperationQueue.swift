@@ -50,7 +50,13 @@ extension CXWrappers.OperationQueue: CombineX.Scheduler {
         }
     }
     
-    public func schedule(after date: SchedulerTimeType, interval: SchedulerTimeType.Stride, tolerance: SchedulerTimeType.Stride, options: SchedulerOptions?, _ action: @escaping () -> Void) -> Cancellable {
+    public func schedule(
+        after date: SchedulerTimeType,
+        interval: SchedulerTimeType.Stride,
+        tolerance: SchedulerTimeType.Stride,
+        options: SchedulerOptions?,
+        _ action: @escaping () -> Void
+    ) -> Cancellable {
         let s = DispatchQueue.global().cx
         let d = s.now.advanced(by: .seconds(date.date.timeIntervalSinceNow))
         let task = s.schedule(after: d, interval: .seconds(interval.timeInterval), tolerance: .seconds(tolerance.timeInterval)) {

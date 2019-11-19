@@ -32,7 +32,7 @@ class TryScanSpec: QuickSpec {
                 
                 var initial = 0
                 let valueEvents = (0..<100).map { n -> TestSubscriberEvent<Int, TestError> in
-                    initial = initial + n
+                    initial += n
                     return TestSubscriberEvent<Int, TestError>.value(initial)
                 }
                 let expected = valueEvents + [.completion(.finished)]
@@ -54,7 +54,7 @@ class TryScanSpec: QuickSpec {
                 }
                 
                 let got = sub.events.mapError { $0 as! TestError }
-                expect(got) == [.completion(.failure(.e0]))
+                expect(got) == [.completion(.failure(.e0))]
             }
             
             #if !SWIFT_PACKAGE

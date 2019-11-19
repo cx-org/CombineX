@@ -45,7 +45,7 @@ class RetrySpec: QuickSpec {
                 let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
                 pub.retry(1).subscribe(sub)
                 
-                expect(sub.events) == [.completion(.failure(.e1]))
+                expect(sub.events) == [.completion(.failure(.e1))]
             }
         }
         

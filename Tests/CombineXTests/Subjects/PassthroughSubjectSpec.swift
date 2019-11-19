@@ -117,7 +117,7 @@ class PassthroughSubjectSpec: QuickSpec {
                 subject.send(completion: .failure(.e1))
                 subject.send(completion: .failure(.e2))
                 
-                expect(sub.events) == [.completion(.failure(.e0]))
+                expect(sub.events) == [.completion(.failure(.e0))]
             }
             
             // MARK: 1.3 should not send events after the subscription is cancelled
@@ -143,7 +143,7 @@ class PassthroughSubjectSpec: QuickSpec {
             it("should not send values before the subscriber requests") {
                 let subject = PassthroughSubject<Int, TestError>()
                 
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { _ in
                 }, receiveValue: { _ in
                     return .none
                 }, receiveCompletion: { _ in
@@ -165,7 +165,7 @@ class PassthroughSubjectSpec: QuickSpec {
                 subject.subscribe(sub)
                 subject.send(completion: .failure(.e0))
                 
-                expect(sub.events) == [.completion(.failure(.e0]))
+                expect(sub.events) == [.completion(.failure(.e0))]
             }
             
             // MARK: 1.6 should resend completion if the subscription happens after sending completion
@@ -404,7 +404,7 @@ class PassthroughSubjectSpec: QuickSpec {
                 g.wait()
                 
                 q.sync {
-                    expect(dateA.max()) < dateB.min()
+                    expect(dateA.max()) < dateB.min()!
                 }
             }
             

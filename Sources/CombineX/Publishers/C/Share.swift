@@ -2,7 +2,9 @@ extension Publisher {
     
     /// Returns a publisher as a class instance.
     ///
-    /// The downstream subscriber receieves elements and completion states unchanged from the upstream publisher. Use this operator when you want to use reference semantics, such as storing a publisher instance in a property.
+    /// The downstream subscriber receieves elements and completion states unchanged from the
+    /// upstream publisher. Use this operator when you want to use reference semantics, such as storing a
+    /// publisher instance in a property.
     ///
     /// - Returns: A class instance that republishes its upstream publisher.
     public func share() -> Publishers.Share<Self> {

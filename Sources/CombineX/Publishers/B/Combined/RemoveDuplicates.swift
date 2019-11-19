@@ -11,7 +11,9 @@ extension Publisher where Output: Equatable {
 extension Publisher {
     
     /// Publishes only elements that don’t match the previous element, as evaluated by a provided closure.
-    /// - Parameter predicate: A closure to evaluate whether two elements are equivalent, for purposes of filtering. Return `true` from this closure to indicate that the second element is a duplicate of the first.
+    /// 
+    /// - Parameter predicate: A closure to evaluate whether two elements are equivalent, for
+    /// purposes of filtering. Return `true` from this closure to indicate that the second element is a duplicate of the first.
     public func removeDuplicates(by predicate: @escaping (Output, Output) -> Bool) -> Publishers.RemoveDuplicates<Self> {
         return .init(upstream: self, predicate: predicate)
     }
@@ -32,9 +34,13 @@ extension Publishers {
         /// A closure to evaluate whether two elements are equivalent, for purposes of filtering.
         public let predicate: (Upstream.Output, Upstream.Output) -> Bool
         
-        /// Creates a publisher that publishes only elements that don’t match the previous element, as evaluated by a provided closure.
+        /// Creates a publisher that publishes only elements that don’t match the previous element, as
+        /// evaluated by a provided closure.
+        ///
         /// - Parameter upstream: The publisher from which this publisher receives elements.
-        /// - Parameter predicate: A closure to evaluate whether two elements are equivalent, for purposes of filtering. Return `true` from this closure to indicate that the second element is a duplicate of the first.
+        /// - Parameter predicate: A closure to evaluate whether two elements are equivalent,
+        /// for purposes of filtering. Return `true` from this closure to indicate that the second element
+        /// is a duplicate of the first.
         public init(upstream: Upstream, predicate: @escaping (Publishers.RemoveDuplicates<Upstream>.Output, Publishers.RemoveDuplicates<Upstream>.Output) -> Bool) {
             self.upstream = upstream
             self.predicate = predicate

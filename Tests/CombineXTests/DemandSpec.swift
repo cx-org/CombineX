@@ -92,8 +92,8 @@ class DemandSpec: QuickSpec {
                 expect(Demand.max(Int.max)) < .unlimited
                 expect(Demand.unlimited) == .unlimited
                 
-                expect(Demand.unlimited).toNot(beLessThan(.unlimited))
-                expect(Demand.unlimited).toNot(beGreaterThan(.unlimited))
+                expect(Demand.unlimited) >= .unlimited
+                expect(Demand.unlimited) <= .unlimited
                 
                 expect(Demand.max(1) > -1) == true
                 expect(Demand.max(1) < -1) == false

@@ -2,7 +2,9 @@ extension Publisher where Failure == Never {
     
     /// Changes the failure type declared by the upstream publisher.
     ///
-    /// The publisher returned by this method cannot actually fail with the specified type and instead just finishes normally. Instead, you use this method when you need to match the error types of two mismatched publishers.
+    /// The publisher returned by this method cannot actually fail with the specified type and instead just
+    /// finishes normally. Instead, you use this method when you need to match the error types of two
+    /// mismatched publishers.
     ///
     /// - Parameter failureType: The `Failure` type presented by this publisher.
     /// - Returns: A publisher that appears to send the specified failure type.
@@ -22,7 +24,8 @@ extension Publishers {
     
     /// A publisher that appears to send a specified failure type.
     ///
-    /// The publisher cannot actually fail with the specified type and instead just finishes normally. Use this publisher type when you need to match the error types for two mismatched publishers.
+    /// The publisher cannot actually fail with the specified type and instead just finishes normally. Use this
+    /// publisher type when you need to match the error types for two mismatched publishers.
     public struct SetFailureType<Upstream: Publisher, Failure: Error>: Publisher where Upstream.Failure == Never {
         
         public typealias Output = Upstream.Output

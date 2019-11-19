@@ -92,7 +92,7 @@ class ZipSpec: QuickSpec {
                     subjects[$0 % 4].send($0)
                 }
                 subjects[3].send(completion: .failure(.e0))
-                expect(sub.events) == [.value(6), .value(22), .completion(.failure(.e0]))
+                expect(sub.events) == [.value(6), .value(22), .completion(.failure(.e0))]
             }
             
             // MARK: 1.5 should send as many as demands

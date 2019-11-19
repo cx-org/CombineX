@@ -6,8 +6,13 @@ extension Publisher {
     
     /// Specifies the scheduler on which to receive elements from the publisher.
     ///
-    /// You use the `receive(on:options:)` operator to receive results on a specific scheduler, such as performing UI work on the main run loop.
-    /// In contrast with `subscribe(on:options:)`, which affects upstream messages, `receive(on:options:)` changes the execution context of downstream messages. In the following example, requests to `jsonPublisher` are performed on `backgroundQueue`, but elements received from it are performed on `RunLoop.main`.
+    /// You use the `receive(on:options:)` operator to receive results on a specific scheduler, such
+    /// as performing UI work on the main run loop.
+    ///
+    /// In contrast with `subscribe(on:options:)`, which affects upstream messages,
+    /// `receive(on:options:)` changes the execution context of downstream messages. In the
+    /// following example, requests to `jsonPublisher` are performed on `backgroundQueue`, but
+    /// elements received from it are performed on `RunLoop.main`.
     ///
     ///     let jsonPublisher = MyJSONLoaderPublisher() // Some publisher.
     ///     let labelUpdater = MyLabelUpdateSubscriber() // Some subscriber that updates the UI.

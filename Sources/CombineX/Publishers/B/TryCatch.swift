@@ -4,10 +4,14 @@ import CXUtility
 
 extension Publisher {
     
-    /// Handles errors from an upstream publisher by either replacing it with another publisher or `throw`ing  a new error.
+    /// Handles errors from an upstream publisher by either replacing it with another publisher or
+    /// `throw`ing  a new error.
     ///
-    /// - Parameter handler: A `throw`ing closure that accepts the upstream failure as input and returns a publisher to replace the upstream publisher or if an error is thrown will send the error downstream.
-    /// - Returns: A publisher that handles errors from an upstream publisher by replacing the failed publisher with another publisher.
+    /// - Parameter handler: A `throw`ing closure that accepts the upstream failure as input and
+    /// returns a publisher to replace the upstream publisher or if an error is thrown will send the error
+    /// downstream.
+    /// - Returns: A publisher that handles errors from an upstream publisher by replacing the failed
+    /// publisher with another publisher.
     public func tryCatch<P: Publisher>(_ handler: @escaping (Failure) throws -> P) -> Publishers.TryCatch<Self, P> where Output == P.Output {
         return .init(upstream: self, handler: handler)
     }
@@ -15,7 +19,8 @@ extension Publisher {
 
 extension Publishers {
     
-    /// A publisher that handles errors from an upstream publisher by replacing the failed publisher with another publisher or optionally producing a new error.
+    /// A publisher that handles errors from an upstream publisher by replacing the failed publisher with
+    /// another publisher or optionally producing a new error.
     public struct TryCatch<Upstream: Publisher, NewPublisher: Publisher>: Publisher where Upstream.Output == NewPublisher.Output {
         
         public typealias Output = Upstream.Output

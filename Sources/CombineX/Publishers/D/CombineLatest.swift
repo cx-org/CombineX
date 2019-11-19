@@ -6,9 +6,16 @@ extension Publisher {
     
     /// Subscribes to an additional publisher and publishes a tuple upon receiving output from either publisher.
     ///
-    /// The combined publisher passes through any requests to *all* upstream publishers. However, it still obeys the demand-fulfilling rule of only sending the request amount downstream. If the demand isn’t `.unlimited`, it drops values from upstream publishers. It implements this by using a buffer size of 1 for each upstream, and holds the most recent value in each buffer.
-    /// All upstream publishers need to finish for this publisher to finsh. If an upstream publisher never publishes a value, this publisher never finishes.
+    /// The combined publisher passes through any requests to *all* upstream publishers. However, it still
+    /// obeys the demand-fulfilling rule of only sending the request amount downstream. If the demand isn’t
+    /// `.unlimited`, it drops values from upstream publishers. It implements this by using a buffer size
+    /// of 1 for each upstream, and holds the most recent value in each buffer.
+    ///
+    /// All upstream publishers need to finish for this publisher to finsh. If an upstream publisher never
+    /// publishes a value, this publisher never finishes.
+    ///
     /// If any of the combined publishers terminates with a failure, this publisher also fails.
+    ///
     /// - Parameters:
     ///   - other: Another publisher to combine with this one.
     /// - Returns: A publisher that receives and combines elements from this and another publisher.
@@ -18,9 +25,16 @@ extension Publisher {
     
     /// Subscribes to an additional publisher and invokes a closure upon receiving output from either publisher.
     ///
-    /// The combined publisher passes through any requests to *all* upstream publishers. However, it still obeys the demand-fulfilling rule of only sending the request amount downstream. If the demand isn’t `.unlimited`, it drops values from upstream publishers. It implements this by using a buffer size of 1 for each upstream, and holds the most recent value in each buffer.
-    /// All upstream publishers need to finish for this publisher to finsh. If an upstream publisher never publishes a value, this publisher never finishes.
+    /// The combined publisher passes through any requests to *all* upstream publishers. However, it still
+    /// obeys the demand-fulfilling rule of only sending the request amount downstream. If the demand isn’t
+    /// `.unlimited`, it drops values from upstream publishers. It implements this by using a buffer size
+    /// of 1 for each upstream, and holds the most recent value in each buffer.
+    ///
+    /// All upstream publishers need to finish for this publisher to finsh. If an upstream publisher never
+    /// publishes a value, this publisher never finishes.
+    ///
     /// If any of the combined publishers terminates with a failure, this publisher also fails.
+    ///
     /// - Parameters:
     ///   - other: Another publisher to combine with this one.
     ///   - transform: A closure that receives the most recent value from each publisher and returns a new value to publish.

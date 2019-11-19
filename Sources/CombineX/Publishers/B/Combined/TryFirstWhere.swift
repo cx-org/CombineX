@@ -2,8 +2,11 @@ extension Publisher {
     
     /// Publishes the first element of a stream to satisfy a throwing predicate closure, then finishes.
     ///
-    /// The publisher ignores all elements after the first. If this publisher doesn’t receive any elements, it finishes without publishing. If the predicate closure throws, the publisher fails with an error.
-    /// - Parameter predicate: A closure that takes an element as a parameter and returns a Boolean value that indicates whether to publish the element.
+    /// The publisher ignores all elements after the first. If this publisher doesn’t receive any elements, it
+    /// finishes without publishing. If the predicate closure throws, the publisher fails with an error.
+    ///
+    /// - Parameter predicate: A closure that takes an element as a parameter and returns a
+    /// Boolean value that indicates whether to publish the element.
     /// - Returns: A publisher that only publishes the first element of a stream that satifies the predicate.
     public func tryFirst(where predicate: @escaping (Output) throws -> Bool) -> Publishers.TryFirstWhere<Self> {
         return .init(upstream: self, predicate: predicate)

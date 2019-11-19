@@ -64,7 +64,7 @@ class TryCatchSpec: QuickSpec {
                 pub.subscribe(sub)
                 
                 let got = sub.events.mapError { $0 as! TestError }
-                expect(got) == [.completion(.failure(.e2]))
+                expect(got) == [.completion(.failure(.e2))]
             }
         }
     }

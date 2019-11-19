@@ -41,7 +41,7 @@ class CurrentValueSubjectSpec: QuickSpec {
                 subject.send(completion: .failure(.e1))
                 subject.send(completion: .failure(.e2))
                 
-                expect(sub.events) == [.value(-1), .completion(.failure(.e0]))
+                expect(sub.events) == [.value(-1), .completion(.failure(.e0))]
             }
             
             // MARK: 1.3 should not send events after the subscription is cancelled
@@ -68,7 +68,7 @@ class CurrentValueSubjectSpec: QuickSpec {
             it("should not send values before the subscriber requests") {
                 let subject = CurrentValueSubject<Int, TestError>(-1)
                 
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { _ in
                 }, receiveValue: { _ in
                     return .none
                 }, receiveCompletion: { _ in
@@ -86,7 +86,7 @@ class CurrentValueSubjectSpec: QuickSpec {
             it("should send completion even if the subscriber does not request") {
                 let subject = CurrentValueSubject<Int, TestError>(-1)
                 
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { _ in
                 }, receiveValue: { _ in
                     return .none
                 }, receiveCompletion: { _ in
@@ -94,7 +94,7 @@ class CurrentValueSubjectSpec: QuickSpec {
                 subject.subscribe(sub)
                 subject.send(completion: .failure(.e0))
                 
-                expect(sub.events) == [.completion(.failure(.e0]))
+                expect(sub.events) == [.completion(.failure(.e0))]
             }
             
             // MARK: 
@@ -335,7 +335,7 @@ class CurrentValueSubjectSpec: QuickSpec {
                 g.wait()
                 
                 q.sync {
-                    expect(datesA.max()) < datesB.min()
+                    expect(datesA.max()) < datesB.min()!
                 }
             }
             

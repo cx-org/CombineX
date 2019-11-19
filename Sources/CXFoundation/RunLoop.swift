@@ -85,28 +85,28 @@ extension CXWrappers.RunLoop: CombineX.Scheduler {
                 return lhs.magnitude < rhs.magnitude
             }
             
-            public static func * (lhs: Stride, rhs: Stride) -> Stride {
-                return .init(lhs.magnitude * rhs.magnitude)
-            }
-            
             public static func + (lhs: Stride, rhs: Stride) -> Stride {
                 return .init(lhs.magnitude + rhs.magnitude)
+            }
+            
+            public static func += (lhs: inout Stride, rhs: Stride) {
+                lhs.magnitude += rhs.magnitude
             }
             
             public static func - (lhs: Stride, rhs: Stride) -> Stride {
                 return .init(lhs.magnitude - rhs.magnitude)
             }
             
-            public static func *= (lhs: inout Stride, rhs: Stride) {
-                lhs = lhs * rhs
-            }
-            
-            public static func += (lhs: inout Stride, rhs: Stride) {
-                lhs = lhs + rhs
-            }
-            
             public static func -= (lhs: inout Stride, rhs: Stride) {
-                lhs = lhs - rhs
+                lhs.magnitude -= rhs.magnitude
+            }
+            
+            public static func * (lhs: Stride, rhs: Stride) -> Stride {
+                return .init(lhs.magnitude * rhs.magnitude)
+            }
+            
+            public static func *= (lhs: inout Stride, rhs: Stride) {
+                lhs.magnitude *= rhs.magnitude
             }
             
             public static func seconds(_ s: Int) -> Stride {
@@ -149,7 +149,13 @@ extension CXWrappers.RunLoop: CombineX.Scheduler {
         }
     }
     
-    public func schedule(after date: SchedulerTimeType, interval: SchedulerTimeType.Stride, tolerance: SchedulerTimeType.Stride, options: SchedulerOptions?, _ action: @escaping () -> Void) -> Cancellable {
+    public func schedule(
+        after date: SchedulerTimeType,
+        interval: SchedulerTimeType.Stride,
+        tolerance: SchedulerTimeType.Stride,
+        options: SchedulerOptions?,
+        _ action: @escaping () -> Void
+    ) -> Cancellable {
         let timer = Timer.cx_init(fire: date.date, interval: interval.timeInterval, repeats: true) { _ in
             action()
         }

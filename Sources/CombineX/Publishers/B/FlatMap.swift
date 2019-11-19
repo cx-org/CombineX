@@ -14,7 +14,10 @@ extension Publisher {
     /// that produces elements of that type.
     /// - Returns: A publisher that transforms elements from an upstream publisher into
     /// a publisher of that element’s type.
-    public func flatMap<T, P>(maxPublishers: Subscribers.Demand = .unlimited, _ transform: @escaping (Output) -> P) -> Publishers.FlatMap<P, Self> where T == P.Output, P: Publisher, Failure == P.Failure {
+    public func flatMap<T, P>(
+        maxPublishers: Subscribers.Demand = .unlimited,
+        _ transform: @escaping (Output) -> P
+    ) -> Publishers.FlatMap<P, Self> where T == P.Output, P: Publisher, Failure == P.Failure {
         return .init(upstream: self, maxPublishers: maxPublishers, transform: transform)
     }
 }

@@ -35,7 +35,13 @@ extension Publishers {
 
         public let customError: (() -> Upstream.Failure)?
         
-        public init(upstream: Upstream, interval: Context.SchedulerTimeType.Stride, scheduler: Context, options: Context.SchedulerOptions?, customError: (() -> Publishers.Timeout<Upstream, Context>.Failure)?) {
+        public init(
+            upstream: Upstream,
+            interval: Context.SchedulerTimeType.Stride,
+            scheduler: Context,
+            options: Context.SchedulerOptions?,
+            customError: (() -> Publishers.Timeout<Upstream, Context>.Failure)?
+        ) {
             self.upstream = upstream
             self.interval = interval
             self.scheduler = scheduler

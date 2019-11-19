@@ -30,7 +30,13 @@ extension CXWrappers.Timer {
     ///   - mode: The run loop mode in which to run the timer.
     ///   - options: Scheduler options passed to the timer. Defaults to `nil`.
     /// - Returns: A publisher that repeatedly emits the current date on the given interval.
-    public static func publish(every interval: TimeInterval, tolerance: TimeInterval? = nil, on runLoop: RunLoop, in mode: RunLoop.Mode, options: CXWrappers.RunLoop.SchedulerOptions? = nil) -> TimerPublisher {
+    public static func publish(
+        every interval: TimeInterval,
+        tolerance: TimeInterval? = nil,
+        on runLoop: RunLoop,
+        in mode: RunLoop.Mode,
+        options: CXWrappers.RunLoop.SchedulerOptions? = nil
+    ) -> TimerPublisher {
         return .init(interval: interval, tolerance: tolerance, runLoop: runLoop, mode: mode, options: options)
     }
 }

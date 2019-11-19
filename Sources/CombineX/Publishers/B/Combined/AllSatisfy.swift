@@ -2,11 +2,19 @@ extension Publisher {
     
     /// Publishes a single Boolean value that indicates whether all received elements pass a given predicate.
     ///
-    /// When this publisher receives an element, it runs the predicate against the element. If the predicate returns `false`, the publisher produces a `false` value and finishes. If the upstream publisher finishes normally, this publisher produces a `true` value and finishes.
+    /// When this publisher receives an element, it runs the predicate against the element. If the predicate
+    /// returns `false`, the publisher produces a `false` value and finishes. If the upstream publisher
+    /// finishes normally, this publisher produces a `true` value and finishes.
+    ///
     /// As a `reduce`-style operator, this publisher produces at most one value.
-    /// Backpressure note: Upon receiving any request greater than zero, this publisher requests unlimited elements from the upstream publisher.
-    /// - Parameter predicate: A closure that evaluates each received element. Return `true` to continue, or `false` to cancel the upstream and complete.
-    /// - Returns: A publisher that publishes a Boolean value that indicates whether all received elements pass a given predicate.
+    ///
+    /// Backpressure note: Upon receiving any request greater than zero, this publisher requests unlimited
+    /// elements from the upstream publisher.
+    ///
+    /// - Parameter predicate: A closure that evaluates each received element. Return `true` to
+    /// continue, or `false` to cancel the upstream and complete.
+    /// - Returns: A publisher that publishes a Boolean value that indicates whether all received
+    /// elements pass a given predicate.
     public func allSatisfy(_ predicate: @escaping (Output) -> Bool) -> Publishers.AllSatisfy<Self> {
         return .init(upstream: self, predicate: predicate)
     }

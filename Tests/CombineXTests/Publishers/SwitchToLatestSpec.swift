@@ -66,7 +66,7 @@ class SwitchToLatestSpec: QuickSpec {
                     subject2.send($0)
                 }
                 
-                expect(sub.events) == [.completion(.failure(.e0]))
+                expect(sub.events) == [.completion(.failure(.e0))]
             }
             
             // MARK: 1.4 should relay finish when there are no unfinished children

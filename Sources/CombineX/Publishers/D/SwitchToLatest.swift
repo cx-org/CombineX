@@ -4,10 +4,16 @@ import CXUtility
 
 extension Publisher where Failure == Output.Failure, Output: Publisher {
     
-    /// Flattens the stream of events from multiple upstream publishers to appear as if they were coming from a single stream of events.
+    /// Flattens the stream of events from multiple upstream publishers to appear as if they were coming
+    /// from a single stream of events.
     ///
-    /// This operator switches the inner publisher as new ones arrive but keeps the outer one constant for downstream subscribers.
-    /// For example, given the type `Publisher<Publisher<Data, NSError>, Never>`, calling `switchToLatest()` will result in the type `Publisher<Data, NSError>`. The downstream subscriber sees a continuous stream of values even though they may be coming from different upstream publishers.
+    /// This operator switches the inner publisher as new ones arrive but keeps the outer one constant for
+    /// downstream subscribers.
+    ///
+    /// For example, given the type `Publisher<Publisher<Data, NSError>, Never>`, calling
+    /// `switchToLatest()` will result in the type `Publisher<Data, NSError>`. The
+    /// downstream subscriber sees a continuous stream of values even though they may be coming from
+    /// different upstream publishers.
     public func switchToLatest() -> Publishers.SwitchToLatest<Output, Self> {
         return .init(upstream: self)
     }
@@ -17,8 +23,13 @@ extension Publishers {
     
     /// A publisher that “flattens” nested publishers.
     ///
-    /// Given a publisher that publishes Publishers, the `SwitchToLatest` publisher produces a sequence of events from only the most recent one.
-    /// For example, given the type `Publisher<Publisher<Data, NSError>, Never>`, calling `switchToLatest()` will result in the type `Publisher<Data, NSError>`. The downstream subscriber sees a continuous stream of values even though they may be coming from different upstream publishers.
+    /// Given a publisher that publishes Publishers, the `SwitchToLatest` publisher produces a
+    /// sequence of events from only the most recent one.
+    ///
+    /// For example, given the type `Publisher<Publisher<Data, NSError>, Never>`, calling
+    /// `switchToLatest()` will result in the type `Publisher<Data, NSError>`. The
+    /// downstream subscriber sees a continuous stream of values even though they may be coming from
+    /// different upstream publishers.
     public struct SwitchToLatest<P: Publisher, Upstream>: Publisher where P == Upstream.Output, Upstream: Publisher, P.Failure == Upstream.Failure {
         
         public typealias Output = P.Output

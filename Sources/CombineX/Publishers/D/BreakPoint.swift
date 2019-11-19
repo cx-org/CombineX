@@ -64,7 +64,12 @@ extension Publishers {
         ///   - receiveSubscription: A closure that executes when the publisher receives a subscription, and can raise a debugger signal by returning a true Boolean value.
         ///   - receiveOutput: A closure that executes when the publisher receives output from the upstream publisher, and can raise a debugger signal by returning a true Boolean value.
         ///   - receiveCompletion: A closure that executes when the publisher receives completion, and can raise a debugger signal by returning a true Boolean value.
-        public init(upstream: Upstream, receiveSubscription: ((Subscription) -> Bool)? = nil, receiveOutput: ((Upstream.Output) -> Bool)? = nil, receiveCompletion: ((Subscribers.Completion<Publishers.Breakpoint<Upstream>.Failure>) -> Bool)? = nil) {
+        public init(
+            upstream: Upstream,
+            receiveSubscription: ((Subscription) -> Bool)? = nil,
+            receiveOutput: ((Upstream.Output) -> Bool)? = nil,
+            receiveCompletion: ((Subscribers.Completion<Publishers.Breakpoint<Upstream>.Failure>) -> Bool)? = nil
+        ) {
             self.upstream = upstream
             self.receiveSubscription = receiveSubscription
             self.receiveOutput = receiveOutput

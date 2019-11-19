@@ -34,7 +34,7 @@ class ResultSpec: QuickSpec {
                 let sub = makeTestSubscriber(Int.self, TestError.self, .max(0))
                 pub.subscribe(sub)
                 
-                expect(sub.events) == [.completion(.failure(.e0]))
+                expect(sub.events) == [.completion(.failure(.e0))]
             }
             
             #if !SWIFT_PACKAGE
