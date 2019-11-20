@@ -6,7 +6,7 @@ import CXUtility
 ///
 /// Use an `AnySubscriber` to wrap an existing subscriber whose details you don’t want to expose.
 /// You can also use `AnySubscriber` to create a custom subscriber by providing closures for `Subscriber`’s methods, rather than implementing `Subscriber` directly.
-public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertible, CustomReflectable, CustomPlaygroundDisplayConvertible where Failure : Error {
+public struct AnySubscriber<Input, Failure: Error>: Subscriber, CustomStringConvertible, CustomReflectable, CustomPlaygroundDisplayConvertible {
     
     public let combineIdentifier: CombineIdentifier
     
@@ -29,12 +29,12 @@ public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertibl
     ///
     /// - Parameter s: The subscriber to type-erase.
     @inlinable
-    public init<S>(_ s: S) where Input == S.Input, Failure == S.Failure, S : Subscriber {
+    public init<S: Subscriber>(_ s: S) where Input == S.Input, Failure == S.Failure {
         self.box = ClosureSubscriberBox<Input, Failure>(receiveSubscription: s.receive(subscription:), receiveValue: s.receive(_:), receiveCompletion: s.receive(completion:))
         self.combineIdentifier = s.combineIdentifier
     }
     
-    public init<S>(_ s: S) where Input == S.Output, Failure == S.Failure, S : Subject {
+    public init<S: Subject>(_ s: S) where Input == S.Output, Failure == S.Failure {
         self.box = SubjectSubscriberBox(s)
         self.combineIdentifier = CombineIdentifier(s)
     }
@@ -66,7 +66,6 @@ public struct AnySubscriber<Input, Failure> : Subscriber, CustomStringConvertibl
         self.box.receive(completion: completion)
     }
 }
-
 
 @usableFromInline
 class SubscriberBox<Input, Failure>: Subscriber, Cancellable where Failure: Error {

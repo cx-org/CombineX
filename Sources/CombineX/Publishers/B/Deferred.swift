@@ -1,5 +1,5 @@
 /// A publisher that awaits subscription before running the supplied closure to create a publisher for the new subscriber.
-public struct Deferred<DeferredPublisher> : Publisher where DeferredPublisher : Publisher {
+public struct Deferred<DeferredPublisher>: Publisher where DeferredPublisher: Publisher {
     
     public typealias Output = DeferredPublisher.Output
     
@@ -17,7 +17,7 @@ public struct Deferred<DeferredPublisher> : Publisher where DeferredPublisher : 
         self.createPublisher = createPublisher
     }
     
-    public func receive<S>(subscriber: S) where S : Subscriber, DeferredPublisher.Failure == S.Failure, DeferredPublisher.Output == S.Input {
+    public func receive<S: Subscriber>(subscriber: S) where DeferredPublisher.Failure == S.Failure, DeferredPublisher.Output == S.Input {
         self.createPublisher().receive(subscriber: subscriber)
     }
 }

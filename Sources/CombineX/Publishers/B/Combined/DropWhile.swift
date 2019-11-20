@@ -5,7 +5,7 @@ extension Publisher {
     /// - Parameter predicate: A closure that takes an element as a parameter and returns a Boolean
     /// value indicating whether to drop the element from the publisher’s output.
     /// - Returns: A publisher that skips over elements until the provided closure returns `false`.
-    public func drop(while predicate: @escaping (Self.Output) -> Bool) -> Publishers.DropWhile<Self> {
+    public func drop(while predicate: @escaping (Output) -> Bool) -> Publishers.DropWhile<Self> {
         return .init(upstream: self, predicate: predicate)
     }
 }
@@ -13,7 +13,7 @@ extension Publisher {
 extension Publishers {
     
     /// A publisher that omits elements from an upstream publisher until a given closure returns false.
-    public struct DropWhile<Upstream> : Publisher where Upstream : Publisher {
+    public struct DropWhile<Upstream: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         
@@ -30,7 +30,7 @@ extension Publishers {
             self.predicate = predicate
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             self.upstream
                 .tryDrop(while: self.predicate)
                 .mapError {

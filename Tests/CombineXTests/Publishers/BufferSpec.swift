@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class BufferSpec: QuickSpec {
     
@@ -19,11 +19,11 @@ class BufferSpec: QuickSpec {
                 let subject = TestSubject<Int, TestError>()
                 let pub = subject.buffer(size: 5, prefetch: .byRequest, whenFull: .dropOldest)
                 
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.max(2))
                 }, receiveValue: { v in
                     return [5].contains(v) ? .max(5) : .max(0)
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 
                 pub.subscribe(sub)
@@ -34,8 +34,8 @@ class BufferSpec: QuickSpec {
                 
                 sub.subscription?.request(.max(2))
                 
-                expect(subject.subscription.requestDemandRecords).to(equal([.unlimited, .max(2), .max(2)]))
-                expect(subject.subscription.syncDemandRecords).to(equal(Array(repeating: .max(0), count: 100)))
+                expect(subject.subscription.requestDemandRecords) == [.unlimited, .max(2), .max(2)]
+                expect(subject.subscription.syncDemandRecords) == Array(repeating: .max(0), count: 100)
             }
             
             // MARK: 1.2 should drop oldest
@@ -52,7 +52,7 @@ class BufferSpec: QuickSpec {
                 sub.subscription?.request(.max(5))
                 
                 let expected = (Array(0..<5) + Array(6..<11)).map { TestSubscriberEvent<Int, TestError>.value($0) }
-                expect(sub.events).to(equal(expected))
+                expect(sub.events) == expected
             }
             
             // MARK: 1.3 should drop newest
@@ -69,7 +69,7 @@ class BufferSpec: QuickSpec {
                 sub.subscription?.request(.max(5))
                 
                 let expected = Array(0..<10).map { TestSubscriberEvent<Int, TestError>.value($0) }
-                expect(sub.events).to(equal(expected))
+                expect(sub.events) == expected
             }
         }
          
@@ -81,11 +81,11 @@ class BufferSpec: QuickSpec {
                 let subject = TestSubject<Int, TestError>()
                 let pub = subject.buffer(size: 10, prefetch: .keepFull, whenFull: .dropOldest)
                 
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.max(5))
                 }, receiveValue: { v in
                     return [5, 10].contains(v) ? .max(5) : .max(0)
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 
                 pub.subscribe(sub)
@@ -97,11 +97,11 @@ class BufferSpec: QuickSpec {
                 sub.subscription?.request(.max(9))
                 sub.subscription?.request(.max(5))
                 
-                expect(subject.subscription.requestDemandRecords).to(equal([.max(10), .max(5), .max(19), .max(5)]))
+                expect(subject.subscription.requestDemandRecords) == [.max(10), .max(5), .max(19), .max(5)]
                 
                 let max1 = Array(repeating: Demand.max(1), count: 5)
                 let max0 = Array(repeating: Demand.max(0), count: 15)
-                expect(subject.subscription.syncDemandRecords).to(equal(max1 + max0))
+                expect(subject.subscription.syncDemandRecords) == max1 + max0
             }
         }
     }

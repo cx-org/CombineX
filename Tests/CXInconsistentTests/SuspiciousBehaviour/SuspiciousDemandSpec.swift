@@ -1,8 +1,8 @@
-import Foundation
 import CXShim
 import CXTestUtility
-import Quick
+import Foundation
 import Nimble
+import Quick
 
 class SuspiciousDemandSpec: QuickSpec {
     
@@ -13,7 +13,6 @@ class SuspiciousDemandSpec: QuickSpec {
         afterEach {
             TestResources.release()
         }
-        
             
         // FIXME: Doc says "any operation that would result in a negative value is clamped to .max(0)", but it will actually crash in Combine.
         it("result should clamped to .max(0) as documented") {

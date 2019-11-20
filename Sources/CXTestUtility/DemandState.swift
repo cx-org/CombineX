@@ -73,4 +73,3 @@ public extension DemandState {
         return (old, new)
     }
 }
-

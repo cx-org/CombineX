@@ -34,7 +34,7 @@ extension Just {
         return .init(sequence: elements + [self.output])
     }
     
-    public func prepend<S>(_ elements: S) -> Publishers.Sequence<[Output], Failure> where Output == S.Element, S : Sequence {
+    public func prepend<S: Sequence>(_ elements: S) -> Publishers.Sequence<[Output], Failure> where Output == S.Element {
         return .init(sequence: elements + [self.output])
     }
     
@@ -42,7 +42,7 @@ extension Just {
         return .init(sequence: [self.output] + elements)
     }
     
-    public func append<S>(_ elements: S) -> Publishers.Sequence<[Output], Failure> where Output == S.Element, S : Sequence {
+    public func append<S: Sequence>(_ elements: S) -> Publishers.Sequence<[Output], Failure> where Output == S.Element {
         return .init(sequence: [self.output] + elements)
     }
     
@@ -105,7 +105,7 @@ extension Just {
         })
     }
     
-    public func mapError<E>(_ transform: (Just<Output>.Failure) -> E) -> Result<Output, E>.CX.Publisher where E : Error {
+    public func mapError<E: Error>(_ transform: (Just<Output>.Failure) -> E) -> Result<Output, E>.CX.Publisher {
         return .init(self.output)
     }
     
@@ -113,7 +113,7 @@ extension Just {
         return index == 0 ? .init(self.output) : .init(nil)
     }
     
-    public func output<R>(in range: R) -> Optional<Output>.CX.Publisher where R : RangeExpression, R.Bound == Int {
+    public func output<R: RangeExpression>(in range: R) -> Optional<Output>.CX.Publisher where R.Bound == Int {
         return range.contains(0) ? .init(self.output) : .init(nil)
     }
     
@@ -166,19 +166,19 @@ extension Just {
         })
     }
     
-    public func setFailureType<E>(to failureType: E.Type) -> Result<Output, E>.CX.Publisher where E : Error {
+    public func setFailureType<E: Error>(to failureType: E.Type) -> Result<Output, E>.CX.Publisher {
         return .init(self.output)
     }
 }
 
-extension Just : Equatable where Output : Equatable {
+extension Just: Equatable where Output: Equatable {
     
     public static func == (lhs: Just<Output>, rhs: Just<Output>) -> Bool {
         return lhs.output == rhs.output
     }
 }
 
-extension Just where Output : Comparable {
+extension Just where Output: Comparable {
     
     public func min() -> Just<Output> {
         return self
@@ -189,7 +189,7 @@ extension Just where Output : Comparable {
     }
 }
 
-extension Just where Output : Equatable {
+extension Just where Output: Equatable {
     
     public func contains(_ output: Output) -> Just<Bool> {
         return .init(self.output == output)
@@ -205,7 +205,7 @@ extension Just where Output : Equatable {
 /// You can use a `Just` publisher to start a chain of publishers. A `Just` publisher is also useful when replacing a value with `Catch`.
 ///
 /// In contrast with `Publishers.Once`, a `Just` publisher cannot fail with an error.
-public struct Just<Output> : Publisher {
+public struct Just<Output>: Publisher {
     
     public typealias Failure = Never
     
@@ -219,7 +219,7 @@ public struct Just<Output> : Publisher {
         self.output = output
     }
     
-    public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, S.Failure == Just<Output>.Failure {
+    public func receive<S: Subscriber>(subscriber: S) where Output == S.Input, S.Failure == Just<Output>.Failure {
         let s = Inner(pub: self, sub: subscriber)
         subscriber.receive(subscription: s)
     }
@@ -227,15 +227,13 @@ public struct Just<Output> : Publisher {
 
 extension Just {
     
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
-        S : Subscriber,
+        S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         
         typealias Pub = Just<Output>
         typealias Sub = S

@@ -6,7 +6,7 @@ extension Publisher {
     ///   - initialResult: The value the closure receives the first time it is called.
     ///   - nextPartialResult: A closure that takes the previously-accumulated value and the next element from the upstream publisher to produce a new value.
     /// - Returns: A publisher that applies the closure to all received elements and produces an accumulated value when the upstream publisher finishes.
-    public func reduce<T>(_ initialResult: T, _ nextPartialResult: @escaping (T, Self.Output) -> T) -> Publishers.Reduce<Self, T> {
+    public func reduce<T>(_ initialResult: T, _ nextPartialResult: @escaping (T, Output) -> T) -> Publishers.Reduce<Self, T> {
         return .init(upstream: self, initial: initialResult, nextPartialResult: nextPartialResult)
     }
 }
@@ -14,7 +14,7 @@ extension Publisher {
 extension Publishers {
     
     /// A publisher that applies a closure to all received elements and produces an accumulated value when the upstream publisher finishes.
-    public struct Reduce<Upstream, Output> : Publisher where Upstream : Publisher {
+    public struct Reduce<Upstream: Publisher, Output>: Publisher {
         
         public typealias Failure = Upstream.Failure
         
@@ -33,7 +33,7 @@ extension Publishers {
             self.nextPartialResult = nextPartialResult
         }
         
-        public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, Upstream.Failure == S.Failure {
+        public func receive<S: Subscriber>(subscriber: S) where Output == S.Input, Upstream.Failure == S.Failure {
             self.upstream
                 .tryReduce(self.initial, self.nextPartialResult)
                 .mapError {

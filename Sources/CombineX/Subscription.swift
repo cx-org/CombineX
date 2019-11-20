@@ -7,7 +7,7 @@
 /// You can only cancel a `Subscription` once.
 ///
 /// Canceling a subscription frees up any resources previously allocated by attaching the `Subscriber`.
-public protocol Subscription : Cancellable, CustomCombineIdentifierConvertible {
+public protocol Subscription: Cancellable, CustomCombineIdentifierConvertible {
     
     /// Tells a publisher that it may send more values to the subscriber.
     func request(_ demand: Subscribers.Demand)

@@ -1,8 +1,8 @@
-import Foundation
 import CXShim
 import CXTestUtility
-import Quick
+import Foundation
 import Nimble
+import Quick
 
 class PassthroughSubjectSpec: QuickSpec {
     
@@ -65,27 +65,27 @@ class PassthroughSubjectSpec: QuickSpec {
                 
                 let sA = TestSubscription(name: "A")
                 subject.send(subscription: sA)
-                expect(sA.events).to(equal([]))
+                expect(sA.events) == []
                 
                 let sub = makeTestSubscriber(Int.self, TestError.self)
                 subject.subscribe(sub)
-                expect(sA.events).to(equal([]))
+                expect(sA.events) == []
                 
                 sub.subscription?.request(.max(1))
-                expect(sA.events).to(equal([.request(demand: .unlimited)]))
+                expect(sA.events) == [.request(demand: .unlimited)]
                 
                 sub.subscription?.cancel()
                 
                 let sB = TestSubscription(name: "B")
                 
                 subject.send(subscription: sB)
-                expect(sB.events).to(equal([.request(demand: .unlimited)]))
+                expect(sB.events) == [.request(demand: .unlimited)]
                 
                 let newSub = makeTestSubscriber(Int.self, TestError.self, .max(1))
                 subject.subscribe(newSub)
                 
-                expect(sA.events).to(equal([.request(demand: .unlimited)]))
-                expect(sB.events).to(equal([.request(demand: .unlimited)]))
+                expect(sA.events) == [.request(demand: .unlimited)]
+                expect(sB.events) == [.request(demand: .unlimited)]
             }
         }
         
@@ -103,7 +103,7 @@ class PassthroughSubjectSpec: QuickSpec {
                 10.times {
                     subject.send($0)
                 }
-                expect(sub.events).to(equal([.completion(.finished)]))
+                expect(sub.events) == [.completion(.finished)]
             }
             
             // MARK: 1.2 should not send completion to subscribers after sending completion
@@ -117,18 +117,18 @@ class PassthroughSubjectSpec: QuickSpec {
                 subject.send(completion: .failure(.e1))
                 subject.send(completion: .failure(.e2))
                 
-                expect(sub.events).to(equal([.completion(.failure(.e0))]))
+                expect(sub.events) == [.completion(.failure(.e0))]
             }
             
             // MARK: 1.3 should not send events after the subscription is cancelled
             it("should not send events after the subscription is cancelled") {
                 let subject = PassthroughSubject<Int, TestError>()
                 
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.cancel()
-                }, receiveValue: { v in
+                }, receiveValue: { _ in
                     return .none
-                }, receiveCompletion: { s in
+                }, receiveCompletion: { _ in
                 })
                 
                 subject.subscribe(sub)
@@ -143,10 +143,10 @@ class PassthroughSubjectSpec: QuickSpec {
             it("should not send values before the subscriber requests") {
                 let subject = PassthroughSubject<Int, TestError>()
                 
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
-                }, receiveValue: { v in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { _ in
+                }, receiveValue: { _ in
                     return .none
-                }, receiveCompletion: { s in
+                }, receiveCompletion: { _ in
                 })
                 
                 subject.subscribe(sub)
@@ -165,7 +165,7 @@ class PassthroughSubjectSpec: QuickSpec {
                 subject.subscribe(sub)
                 subject.send(completion: .failure(.e0))
                 
-                expect(sub.events).to(equal([.completion(.failure(.e0))]))
+                expect(sub.events) == [.completion(.failure(.e0))]
             }
             
             // MARK: 1.6 should resend completion if the subscription happens after sending completion
@@ -176,9 +176,8 @@ class PassthroughSubjectSpec: QuickSpec {
                 let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
                 subject.subscribe(sub)
                 
-                expect(sub.events).to(equal([.completion(.finished)]))
+                expect(sub.events) == [.completion(.finished)]
             }
-            
         }
         
         // MARK: - Demand
@@ -187,11 +186,11 @@ class PassthroughSubjectSpec: QuickSpec {
             // MARK: 2.1 should send as many values as the subscriber's demand
             it("should send as many values as the subscriber's demand") {
                 let subject = PassthroughSubject<Int, TestError>()
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.max(1))
                 }, receiveValue: { v in
                     return v == 0 ? .max(1) : .none
-                }, receiveCompletion: { s in
+                }, receiveCompletion: { _ in
                 })
                 
                 subject.subscribe(sub)
@@ -200,13 +199,13 @@ class PassthroughSubjectSpec: QuickSpec {
                     subject.send($0)
                 }
                 
-                expect(sub.events.count).to(equal(2))
+                expect(sub.events.count) == 2
                 sub.subscription?.request(.max(5))
                 
                 10.times {
                     subject.send($0)
                 }
-                expect(sub.events.count).to(equal(8))
+                expect(sub.events.count) == 8
             }
             
             // MARK: 2.2 should send as many values to subscribers as their demands
@@ -227,7 +226,7 @@ class PassthroughSubjectSpec: QuickSpec {
                 }
 
                 for (i, sub) in zip(nums, subs) {
-                    expect(sub.events.count).to(equal(i))
+                    expect(sub.events.count) == i
                 }
             }
             
@@ -374,12 +373,12 @@ class PassthroughSubjectSpec: QuickSpec {
             it("should send value concurrently") {
                 let pub = PassthroughSubject<Int, Never>()
                 
-                let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
                     s.request(.unlimited)
-                }, receiveValue: { v in
+                }, receiveValue: { _ in
                     Thread.sleep(forTimeInterval: 0.1)
                     return .none
-                }, receiveCompletion: { s in
+                }, receiveCompletion: { _ in
                 })
                 
                 pub.subscribe(sub)
@@ -405,7 +404,7 @@ class PassthroughSubjectSpec: QuickSpec {
                 g.wait()
                 
                 q.sync {
-                    expect(dateA.max()).to(beLessThan(dateB.min()))
+                    expect(dateA.max()) < dateB.min()!
                 }
             }
             
@@ -413,11 +412,11 @@ class PassthroughSubjectSpec: QuickSpec {
             it("should send as many values as the subscriber's demand even if these are sent concurrently") {
                 let subject = PassthroughSubject<Int, Never>()
                 
-                let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
                     s.request(.max(10))
-                }, receiveValue: { v in
+                }, receiveValue: { _ in
                     return .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 
                 subject.subscribe(sub)
@@ -432,14 +431,14 @@ class PassthroughSubjectSpec: QuickSpec {
                 
                 g.wait()
                 
-                expect(sub.events.count).to(equal(10))
+                expect(sub.events.count) == 10
             }
             
             // MARK: 4.3 no guarantee of synchronous backpressure
             it("no guarantee of synchronous backpressure") {
                 let subject = PassthroughSubject<Int, Never>()
                 
-                let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
                     s.request(.max(10))
                 }, receiveValue: { v in
                     if v == 1 {
@@ -447,7 +446,7 @@ class PassthroughSubjectSpec: QuickSpec {
                         return .max(5)
                     }
                     return .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 
                 subject.subscribe(sub)
@@ -462,7 +461,7 @@ class PassthroughSubjectSpec: QuickSpec {
 
                 g.wait()
                 
-                expect(sub.events.count).to(equal(10))
+                expect(sub.events.count) == 10
             }
         }
     }

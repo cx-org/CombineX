@@ -1,4 +1,4 @@
-extension Publishers.Contains : Equatable where Upstream : Equatable {
+extension Publishers.Contains: Equatable where Upstream: Equatable {
     
     /// Returns a Boolean value that indicates whether two publishers are equivalent.
     ///
@@ -11,14 +11,17 @@ extension Publishers.Contains : Equatable where Upstream : Equatable {
     }
 }
 
-extension Publisher where Self.Output : Equatable {
+extension Publisher where Output: Equatable {
     
     /// Publishes a Boolean value upon receiving an element equal to the argument.
     ///
-    /// The contains publisher consumes all received elements until the upstream publisher produces a matching element. At that point, it emits `true` and finishes normally. If the upstream finishes normally without producing a matching element, this publisher emits `false`, then finishes.
+    /// The contains publisher consumes all received elements until the upstream publisher produces a
+    /// matching element. At that point, it emits `true` and finishes normally. If the upstream finishes
+    /// normally without producing a matching element, this publisher emits `false`, then finishes.
+    /// 
     /// - Parameter output: An element to match against.
     /// - Returns: A publisher that emits the Boolean value `true` when the upstream publisher emits a matching value.
-    public func contains(_ output: Self.Output) -> Publishers.Contains<Self> {
+    public func contains(_ output: Output) -> Publishers.Contains<Self> {
         return .init(upstream: self, output: output)
     }
 }
@@ -26,7 +29,7 @@ extension Publisher where Self.Output : Equatable {
 extension Publishers {
     
     /// A publisher that emits a Boolean value when a specified element is received from its upstream publisher.
-    public struct Contains<Upstream> : Publisher where Upstream : Publisher, Upstream.Output : Equatable {
+    public struct Contains<Upstream>: Publisher where Upstream: Publisher, Upstream.Output: Equatable {
         
         public typealias Output = Bool
         
@@ -43,7 +46,7 @@ extension Publishers {
             self.output = output
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, S.Input == Publishers.Contains<Upstream>.Output {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, S.Input == Publishers.Contains<Upstream>.Output {
             self.upstream
                 .contains {
                     $0 == self.output

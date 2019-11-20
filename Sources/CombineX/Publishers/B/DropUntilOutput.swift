@@ -6,17 +6,24 @@ extension Publisher {
     
     /// Ignores elements from the upstream publisher until it receives an element from a second publisher.
     ///
-    /// This publisher requests a single value from the upstream publisher, and it ignores (drops) all elements from that publisher until the upstream publisher produces a value. After the `other` publisher produces an element, this publisher cancels its subscription to the `other` publisher, and allows events from the `upstream` publisher to pass through.
-    /// After this publisher receives a subscription from the upstream publisher, it passes through backpressure requests from downstream to the upstream publisher. If the upstream publisher acts on those requests before the other publisher produces an item, this publisher drops the elements it receives from the upstream publisher.
+    /// This publisher requests a single value from the upstream publisher, and it ignores (drops) all
+    /// elements from that publisher until the upstream publisher produces a value. After the `other`
+    /// publisher produces an element, this publisher cancels its subscription to the `other` publisher,
+    /// and allows events from the `upstream` publisher to pass through.
+    ///
+    /// After this publisher receives a subscription from the upstream publisher, it passes through
+    /// backpressure requests from downstream to the upstream publisher. If the upstream publisher acts
+    /// on those requests before the other publisher produces an item, this publisher drops the elements it
+    /// receives from the upstream publisher.
     ///
     /// - Parameter publisher: A publisher to monitor for its first emitted element.
     /// - Returns: A publisher that drops elements from the upstream publisher until the `other` publisher produces a value.
-    public func drop<P>(untilOutputFrom publisher: P) -> Publishers.DropUntilOutput<Self, P> where P : Publisher, Self.Failure == P.Failure {
+    public func drop<P: Publisher>(untilOutputFrom publisher: P) -> Publishers.DropUntilOutput<Self, P> where Failure == P.Failure {
         return .init(upstream: self, other: publisher)
     }
 }
 
-extension Publishers.DropUntilOutput : Equatable where Upstream : Equatable, Other : Equatable {
+extension Publishers.DropUntilOutput: Equatable where Upstream: Equatable, Other: Equatable {
     
     public static func == (lhs: Publishers.DropUntilOutput<Upstream, Other>, rhs: Publishers.DropUntilOutput<Upstream, Other>) -> Bool {
         return lhs.upstream == rhs.upstream && lhs.other == rhs.other
@@ -26,7 +33,7 @@ extension Publishers.DropUntilOutput : Equatable where Upstream : Equatable, Oth
 extension Publishers {
     
     /// A publisher that ignores elements from the upstream publisher until it receives an element from second publisher.
-    public struct DropUntilOutput<Upstream, Other> : Publisher where Upstream : Publisher, Other : Publisher, Upstream.Failure == Other.Failure {
+    public struct DropUntilOutput<Upstream: Publisher, Other: Publisher>: Publisher where Upstream.Failure == Other.Failure {
         
         public typealias Output = Upstream.Output
         
@@ -48,7 +55,7 @@ extension Publishers {
             self.other = other
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, Other.Failure == S.Failure {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Output == S.Input, Other.Failure == S.Failure {
             let s = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(s)
         }
@@ -57,16 +64,14 @@ extension Publishers {
 
 extension Publishers.DropUntilOutput {
 
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
 

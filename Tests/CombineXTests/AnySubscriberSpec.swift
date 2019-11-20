@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class AnySubscriberSpec: QuickSpec {
     
@@ -25,8 +25,8 @@ class AnySubscriberSpec: QuickSpec {
                 sub.receive(subscription: s0)
                 sub.receive(subscription: s1)
                 
-                expect(s0.events).to(equal([]))
-                expect(s1.events).to(equal([.cancel]))
+                expect(s0.events) == []
+                expect(s1.events) == [.cancel]
             }
             
             // MARK: 1.2 should request none when receive values
@@ -36,7 +36,7 @@ class AnySubscriberSpec: QuickSpec {
 
                 sub.receive(subscription: TestSubscription())
 
-                expect(sub.receive(1)).to(equal(.max(0)))
+                expect(sub.receive(1)) == .max(0)
             }
             
             // MARK: 1.3 should not cancel subscription when receive completion
@@ -48,7 +48,7 @@ class AnySubscriberSpec: QuickSpec {
                 sub.receive(subscription: subscription)
                 
                 sub.receive(completion: .finished)
-                expect(subscription.events).to(equal([]))
+                expect(subscription.events) == []
             }
             
             #if !SWIFT_PACKAGE

@@ -10,14 +10,14 @@ extension Publisher {
     ///
     /// - Parameter publisher: A second publisher.
     /// - Returns: A publisher that republishes elements until the second publisher publishes an element.
-    public func prefix<P>(untilOutputFrom publisher: P) -> Publishers.PrefixUntilOutput<Self, P> where P : Publisher {
+    public func prefix<P: Publisher>(untilOutputFrom publisher: P) -> Publishers.PrefixUntilOutput<Self, P> {
         return .init(upstream: self, other: publisher)
     }
 }
 
 extension Publishers {
     
-    public struct PrefixUntilOutput<Upstream, Other> : Publisher where Upstream : Publisher, Other : Publisher {
+    public struct PrefixUntilOutput<Upstream: Publisher, Other: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         
@@ -34,7 +34,7 @@ extension Publishers {
             self.other = other
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             let s = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(s)
         }
@@ -43,16 +43,14 @@ extension Publishers {
 
 extension Publishers.PrefixUntilOutput {
     
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
         
@@ -188,7 +186,5 @@ extension Publishers.PrefixUntilOutput {
                 self.subscription.exchange(with: nil)?.cancel()
             }
         }
-        
     }
 }
-

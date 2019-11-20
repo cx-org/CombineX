@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class SwitchToLatestSpec: QuickSpec {
     
@@ -41,7 +41,7 @@ class SwitchToLatestSpec: QuickSpec {
                 subject2.send(9)
 
                 let expected = [1, 2, 3, 7, 8, 9].map { TestSubscriberEvent<Int, Never>.value($0) }
-                expect(sub.events).to(equal(expected))
+                expect(sub.events) == expected
             }
             
             // MARK: 1.3 should send failure if a child send failure
@@ -66,7 +66,7 @@ class SwitchToLatestSpec: QuickSpec {
                     subject2.send($0)
                 }
                 
-                expect(sub.events).to(equal([.completion(.failure(.e0))]))
+                expect(sub.events) == [.completion(.failure(.e0))]
             }
             
             // MARK: 1.4 should relay finish when there are no unfinished children
@@ -81,15 +81,15 @@ class SwitchToLatestSpec: QuickSpec {
                 
                 subject.send(subject1)
                 subject1.send(completion: .finished)
-                expect(sub.events).to(equal([]))
+                expect(sub.events) == []
                 
                 subject.send(subject2)
                 
                 subject2.send(completion: .finished)
-                expect(sub.events).to(equal([]))
+                expect(sub.events) == []
                 
                 subject.send(completion: .finished)
-                expect(sub.events).to(equal([.completion(.finished)]))
+                expect(sub.events) == [.completion(.finished)]
             }
         }
         
@@ -106,8 +106,8 @@ class SwitchToLatestSpec: QuickSpec {
                 pub.send(Just(1))
                 pub.send(Just(1))
                 
-                expect(pub.subscription.requestDemandRecords).to(equal([.unlimited]))
-                expect(pub.subscription.syncDemandRecords).to(equal([.max(0), .max(0)]))
+                expect(pub.subscription.requestDemandRecords) == [.unlimited]
+                expect(pub.subscription.syncDemandRecords) == [.max(0), .max(0)]
             }
         }
     }

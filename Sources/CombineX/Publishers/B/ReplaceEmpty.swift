@@ -9,12 +9,12 @@ extension Publisher {
     /// If the upstream publisher finishes without producing any elements, this publisher emits the provided element, then finishes normally.
     /// - Parameter output: An element to emit when the upstream publisher finishes without emitting any elements.
     /// - Returns: A publisher that replaces an empty stream with the provided output element.
-    public func replaceEmpty(with output: Self.Output) -> Publishers.ReplaceEmpty<Self> {
+    public func replaceEmpty(with output: Output) -> Publishers.ReplaceEmpty<Self> {
         return .init(upstream: self, output: output)
     }
 }
 
-extension Publishers.ReplaceEmpty : Equatable where Upstream : Equatable, Upstream.Output : Equatable {
+extension Publishers.ReplaceEmpty: Equatable where Upstream: Equatable, Upstream.Output: Equatable {
     
     /// Returns a Boolean value that indicates whether two publishers are equivalent.
     ///
@@ -30,7 +30,7 @@ extension Publishers.ReplaceEmpty : Equatable where Upstream : Equatable, Upstre
 extension Publishers {
     
     /// A publisher that replaces an empty stream with a provided element.
-    public struct ReplaceEmpty<Upstream> : Publisher where Upstream : Publisher {
+    public struct ReplaceEmpty<Upstream: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         
@@ -47,7 +47,7 @@ extension Publishers {
             self.output = output
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             let s = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(s)
         }
@@ -56,16 +56,14 @@ extension Publishers {
 
 extension Publishers.ReplaceEmpty {
     
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Upstream.Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure

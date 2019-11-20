@@ -3,7 +3,7 @@ extension Publisher {
     /// Wraps this publisher with a type eraser.
     ///
     /// Use `eraseToAnyPublisher()` to expose an instance of AnyPublisher to the downstream subscriber, rather than this publisher’s actual type.
-    public func eraseToAnyPublisher() -> AnyPublisher<Self.Output, Self.Failure> {
+    public func eraseToAnyPublisher() -> AnyPublisher<Output, Failure> {
         return AnyPublisher(self)
     }
 }
@@ -11,7 +11,7 @@ extension Publisher {
 extension AnyPublisher: Publisher {
     
     @inlinable
-    public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
+    public func receive<S: Subscriber>(subscriber: S) where Output == S.Input, Failure == S.Failure {
         self.subscribeBody(subscriber.eraseToAnySubscriber())
     }
 }
@@ -19,7 +19,7 @@ extension AnyPublisher: Publisher {
 /// A type-erasing publisher.
 ///
 /// Use `AnyPublisher` to wrap a publisher whose type has details you don’t want to expose to subscribers or other publishers.
-public struct AnyPublisher<Output, Failure> : CustomStringConvertible, CustomPlaygroundDisplayConvertible where Failure : Error {
+public struct AnyPublisher<Output, Failure: Error>: CustomStringConvertible, CustomPlaygroundDisplayConvertible {
     
     @usableFromInline
     let subscribeBody: (AnySubscriber<Output, Failure>) -> Void
@@ -38,7 +38,7 @@ public struct AnyPublisher<Output, Failure> : CustomStringConvertible, CustomPla
     /// - Parameters:
     ///   - publisher: A publisher to wrap with a type-eraser.
     @inlinable
-    public init<P>(_ publisher: P) where Output == P.Output, Failure == P.Failure, P : Publisher {
+    public init<P: Publisher>(_ publisher: P) where Output == P.Output, Failure == P.Failure {
         self.subscribeBody = publisher.subscribe(_:)
     }
 }

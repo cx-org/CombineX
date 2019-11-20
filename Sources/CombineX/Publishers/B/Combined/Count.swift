@@ -13,7 +13,7 @@ extension Publisher {
     }
 }
 
-extension Publishers.Count : Equatable where Upstream : Equatable {
+extension Publishers.Count: Equatable where Upstream: Equatable {
     
     public static func == (lhs: Publishers.Count<Upstream>, rhs: Publishers.Count<Upstream>) -> Bool {
         return lhs.upstream == rhs.upstream
@@ -23,7 +23,7 @@ extension Publishers.Count : Equatable where Upstream : Equatable {
 extension Publishers {
     
     /// A publisher that publishes the number of elements received from the upstream publisher.
-    public struct Count<Upstream> : Publisher where Upstream : Publisher {
+    public struct Count<Upstream: Publisher>: Publisher {
         
         public typealias Output = Int
         
@@ -36,9 +36,9 @@ extension Publishers {
             self.upstream = upstream
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, S.Input == Publishers.Count<Upstream>.Output {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, S.Input == Publishers.Count<Upstream>.Output {
             self.upstream
-                .reduce(Atom(val: 0)) { (counter, _) in
+                .reduce(Atom(val: 0)) { counter, _ in
                     _ = counter.add(1)
                     return counter
                 }

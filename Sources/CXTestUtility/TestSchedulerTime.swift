@@ -1,6 +1,6 @@
-import Foundation
-import CXUtility
 import CXShim
+import CXUtility
+import Foundation
 
 public struct TestSchedulerTime: Strideable {
     
@@ -26,9 +26,7 @@ public struct TestSchedulerTime: Strideable {
     
     public struct Stride: ExpressibleByFloatLiteral, Comparable, SignedNumeric, Codable, SchedulerTimeIntervalConvertible {
         
-        public typealias Magnitude = Double
-        
-        public let seconds: Double
+        public var seconds: Double
         
         public init(seconds: Double) {
             self.seconds = seconds
@@ -46,7 +44,7 @@ public struct TestSchedulerTime: Strideable {
             self.seconds = value
         }
         
-        public init?<T>(exactly source: T) where T : BinaryInteger {
+        public init?<T: BinaryInteger>(exactly source: T) {
             guard let v = Double(exactly: source) else {
                 return nil
             }
@@ -57,12 +55,12 @@ public struct TestSchedulerTime: Strideable {
             return lhs.seconds < rhs.seconds
         }
         
-        public static func * (lhs: Stride, rhs: Stride) -> Stride {
-            return Stride(floatLiteral: lhs.seconds * rhs.seconds)
-        }
-        
         public static func + (lhs: Stride, rhs: Stride) -> Stride {
             return Stride(floatLiteral: lhs.seconds + rhs.seconds)
+        }
+        
+        public static func += (lhs: inout Stride, rhs: Stride) {
+            lhs.seconds += rhs.seconds
         }
         
         public static func - (lhs: Stride, rhs: Stride) -> Stride {
@@ -70,15 +68,15 @@ public struct TestSchedulerTime: Strideable {
         }
         
         public static func -= (lhs: inout Stride, rhs: Stride) {
-            lhs = lhs - rhs
+            lhs.seconds -= rhs.seconds
+        }
+        
+        public static func * (lhs: Stride, rhs: Stride) -> Stride {
+            return Stride(floatLiteral: lhs.seconds * rhs.seconds)
         }
         
         public static func *= (lhs: inout Stride, rhs: Stride) {
-            lhs = lhs * rhs
-        }
-        
-        public static func += (lhs: inout Stride, rhs: Stride) {
-            lhs = lhs + rhs
+            lhs.seconds *= rhs.seconds
         }
         
         public static func seconds(_ s: Int) -> Stride {
@@ -106,7 +104,6 @@ public struct TestSchedulerTime: Strideable {
         }
     }
 }
-
 
 extension TestSchedulerTime: CustomStringConvertible {
     

@@ -1,8 +1,8 @@
-import CXUtility
 import CXShim
 import CXTestUtility
-import Quick
+import CXUtility
 import Nimble
+import Quick
 
 class PrintSpec: QuickSpec {
     
@@ -22,11 +22,11 @@ class PrintSpec: QuickSpec {
                 let subject = PassthroughSubject<Int, TestError>()
                 let pub = subject.print("[Q]", to: stream)
                 var subscription: Subscription?
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
                     subscription = s
-                }, receiveValue: { v in
+                }, receiveValue: { _ in
                     return .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 pub.subscribe(sub)
 
@@ -35,7 +35,7 @@ class PrintSpec: QuickSpec {
                 subscription?.cancel()
                 
                 let count = stream.outputs.count(of: "[Q]: receive cancel")
-                expect(count).to(equal(2))
+                expect(count) == 2
             }
             
             // MARK: 1.2 should print request demand even if the sub is completed
@@ -45,11 +45,11 @@ class PrintSpec: QuickSpec {
                 let subject = PassthroughSubject<Int, TestError>()
                 let pub = subject.print("[Q]", to: stream)
                 var subscription: Subscription?
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
                     subscription = s
-                }, receiveValue: { v in
+                }, receiveValue: { _ in
                     return .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 pub.subscribe(sub)
                 
@@ -58,7 +58,7 @@ class PrintSpec: QuickSpec {
                 subscription?.request(.max(1))
                 
                 let count = stream.outputs.count(of: "[Q]: request max: (1)")
-                expect(count).to(equal(2))
+                expect(count) == 2
             }
             
             // MARK: 1.3 should not print events after complete
@@ -68,11 +68,11 @@ class PrintSpec: QuickSpec {
                 let subject = PassthroughSubject<Int, TestError>()
                 let pub = subject.print("[Q]", to: stream)
                 var subscription: Subscription?
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
                     subscription = s
-                }, receiveValue: { v in
+                }, receiveValue: { _ in
                     return .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 pub.subscribe(sub)
                 
@@ -86,8 +86,8 @@ class PrintSpec: QuickSpec {
                 let valueEventsCount = outputs.filter({ $0.starts(with: "[Q]: receive value") }).count
                 let finishEventsCount = outputs.filter({ $0.starts(with: "[Q]: receive finished") }).count
                 
-                expect(valueEventsCount).to(equal(0))
-                expect(finishEventsCount).to(equal(0))
+                expect(valueEventsCount) == 0
+                expect(finishEventsCount) == 0
             }
             
             // MARK: 1.2 should print as expect
@@ -99,12 +99,12 @@ class PrintSpec: QuickSpec {
                 let pub = subject.print("[Q]", to: stream)
                 
                 var subscription: Subscription?
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.unlimited)
                     subscription = s
-                }, receiveValue: { v in
+                }, receiveValue: { _ in
                     return .max(1)
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 
                 pub.subscribe(sub)
@@ -114,8 +114,15 @@ class PrintSpec: QuickSpec {
                 
                 subscription?.cancel()
                 
-                let expected = ["", "[Q]: receive subscription: (PassthroughSubject)", "\n", "", "[Q]: request unlimited", "\n", "", "[Q]: receive value: (0)", "\n", "", "[Q]: request max: (1) (synchronous)", "\n", "", "[Q]: receive finished", "\n", "", "[Q]: receive cancel", "\n"]
-                expect(stream.outputs).to(equal(expected))
+                let expected = [
+                    "", "[Q]: receive subscription: (PassthroughSubject)", "\n",
+                    "", "[Q]: request unlimited", "\n",
+                    "", "[Q]: receive value: (0)", "\n",
+                    "", "[Q]: request max: (1) (synchronous)", "\n",
+                    "", "[Q]: receive finished", "\n",
+                    "", "[Q]: receive cancel", "\n",
+                ]
+                expect(stream.outputs) == expected
             }
         }
     }

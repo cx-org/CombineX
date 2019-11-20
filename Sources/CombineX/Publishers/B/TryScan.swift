@@ -11,14 +11,14 @@ extension Publisher {
     ///   - initialResult: The previous result returned by the `nextPartialResult` closure.
     ///   - nextPartialResult: An error-throwing closure that takes as its arguments the previous value returned by the closure and the next element emitted from the upstream publisher.
     /// - Returns: A publisher that transforms elements by applying a closure that receives its previous return value and the next element from the upstream publisher.
-    public func tryScan<T>(_ initialResult: T, _ nextPartialResult: @escaping (T, Self.Output) throws -> T) -> Publishers.TryScan<Self, T> {
+    public func tryScan<T>(_ initialResult: T, _ nextPartialResult: @escaping (T, Output) throws -> T) -> Publishers.TryScan<Self, T> {
         return .init(upstream: self, initialResult: initialResult, nextPartialResult: nextPartialResult)
     }
 }
 
 extension Publishers {
     
-    public struct TryScan<Upstream, Output> : Publisher where Upstream : Publisher {
+    public struct TryScan<Upstream: Publisher, Output>: Publisher {
         
         public typealias Failure = Error
         
@@ -34,7 +34,7 @@ extension Publishers {
             self.nextPartialResult = nextPartialResult
         }
         
-        public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, S.Failure == Publishers.TryScan<Upstream, Output>.Failure {
+        public func receive<S: Subscriber>(subscriber: S) where Output == S.Input, S.Failure == Publishers.TryScan<Upstream, Output>.Failure {
             let s = Inner(pub: self, sub: subscriber)
             self.upstream.receive(subscriber: s)
         }
@@ -43,16 +43,14 @@ extension Publishers {
 
 extension Publishers.TryScan {
     
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure

@@ -23,7 +23,7 @@ extension Publishers {
     /// * normal completion
     /// * failure
     /// * cancellation
-    public struct Print<Upstream> : Publisher where Upstream : Publisher {
+    public struct Print<Upstream: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         
@@ -48,7 +48,7 @@ extension Publishers {
             self.stream = stream
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             let subscription = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(subscription)
         }
@@ -57,16 +57,14 @@ extension Publishers {
 
 extension Publishers.Print {
     
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure

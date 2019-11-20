@@ -30,7 +30,13 @@ extension CXWrappers.Timer {
     ///   - mode: The run loop mode in which to run the timer.
     ///   - options: Scheduler options passed to the timer. Defaults to `nil`.
     /// - Returns: A publisher that repeatedly emits the current date on the given interval.
-    public static func publish(every interval: TimeInterval, tolerance: TimeInterval? = nil, on runLoop: RunLoop, in mode: RunLoop.Mode, options: CXWrappers.RunLoop.SchedulerOptions? = nil) -> TimerPublisher {
+    public static func publish(
+        every interval: TimeInterval,
+        tolerance: TimeInterval? = nil,
+        on runLoop: RunLoop,
+        in mode: RunLoop.Mode,
+        options: CXWrappers.RunLoop.SchedulerOptions? = nil
+    ) -> TimerPublisher {
         return .init(interval: interval, tolerance: tolerance, runLoop: runLoop, mode: mode, options: options)
     }
 }
@@ -38,21 +44,21 @@ extension CXWrappers.Timer {
 extension CXWrappers.Timer {
     
     /// A publisher that repeatedly emits the current date on a given interval.
-    final public class TimerPublisher : ConnectablePublisher {
+    public final class TimerPublisher: ConnectablePublisher {
         
         public typealias Output = Date
         
         public typealias Failure = Never
         
-        final public let interval: TimeInterval
+        public final let interval: TimeInterval
         
-        final public let tolerance: TimeInterval?
+        public final let tolerance: TimeInterval?
         
-        final public let runLoop: RunLoop
+        public final let runLoop: RunLoop
         
-        final public let mode: RunLoop.Mode
+        public final let mode: RunLoop.Mode
         
-        final public let options: CXWrappers.RunLoop.SchedulerOptions?
+        public final let options: CXWrappers.RunLoop.SchedulerOptions?
         
         private typealias Subject = PassthroughSubject<Date, Never>
         private typealias Multicast = Publishers.Multicast<Subject, Subject>
@@ -88,11 +94,11 @@ extension CXWrappers.Timer {
             self.timer.invalidate()
         }
         
-        final public func receive<S>(subscriber: S) where S : Subscriber, S.Failure == TimerPublisher.Failure, S.Input == TimerPublisher.Output {
+        public final func receive<S: Subscriber>(subscriber: S) where S.Failure == TimerPublisher.Failure, S.Input == TimerPublisher.Output {
             self.multicast.receive(subscriber: subscriber)
         }
         
-        final public func connect() -> Cancellable {
+        public final func connect() -> Cancellable {
             return self.multicast.connect()
         }
     }

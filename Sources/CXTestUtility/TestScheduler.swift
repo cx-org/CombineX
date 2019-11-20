@@ -1,6 +1,6 @@
-import Foundation
-import CXUtility
 import CXShim
+import CXUtility
+import Foundation
 
 private let counter = Atom<Int>(val: 0)
 
@@ -59,7 +59,13 @@ public final class TestScheduler: Scheduler {
         self.lock.unlock()
     }
     
-    public func schedule(after date: SchedulerTimeType, interval: SchedulerTimeType.Stride, tolerance: SchedulerTimeType.Stride, options: SchedulerOptions?, _ action: @escaping () -> Void) -> Cancellable {
+    public func schedule(
+        after date: SchedulerTimeType,
+        interval: SchedulerTimeType.Stride,
+        tolerance: SchedulerTimeType.Stride,
+        options: SchedulerOptions?,
+        _ action: @escaping () -> Void
+    ) -> Cancellable {
         self.lock.lock()
         
         class Box: Cancellable {

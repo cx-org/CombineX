@@ -2,7 +2,7 @@
 import CXUtility
 #endif
 
-extension Publisher where Self.Failure == Never {
+extension Publisher where Failure == Never {
     
     /// Assigns each element from a Publisher to a property on an object.
     ///
@@ -10,7 +10,7 @@ extension Publisher where Self.Failure == Never {
     ///   - keyPath: The key path of the property to assign.
     ///   - object: The object on which to assign the value.
     /// - Returns: A cancellable instance; used when you end assignment of the received value. Deallocation of the result will tear down the subscription stream.
-    public func assign<Root>(to keyPath: ReferenceWritableKeyPath<Root, Self.Output>, on object: Root) -> AnyCancellable {
+    public func assign<Root>(to keyPath: ReferenceWritableKeyPath<Root, Output>, on object: Root) -> AnyCancellable {
         let assign = Subscribers.Assign(object: object, keyPath: keyPath)
         self.subscribe(assign)
         return AnyCancellable(assign)
@@ -19,19 +19,19 @@ extension Publisher where Self.Failure == Never {
 
 extension Subscribers {
     
-    final public class Assign<Root, Input> : Subscriber, Cancellable, CustomStringConvertible, CustomReflectable, CustomPlaygroundDisplayConvertible {
+    public final class Assign<Root, Input>: Subscriber, Cancellable, CustomStringConvertible, CustomReflectable, CustomPlaygroundDisplayConvertible {
         
         public typealias Failure = Never
         
-        final public private(set) var object: Root?
+        public private(set) final var object: Root?
         
-        final public let keyPath: ReferenceWritableKeyPath<Root, Input>
+        public final let keyPath: ReferenceWritableKeyPath<Root, Input>
         
-        final public var description: String {
+        public final var description: String {
             return "Assign \(Root.self)"
         }
         
-        final public var customMirror: Mirror {
+        public final var customMirror: Mirror {
             return Mirror(self, children: [
                 "object": self.object as Any,
                 "keyPath": self.keyPath,
@@ -39,7 +39,7 @@ extension Subscribers {
             ])
         }
         
-        final public var playgroundDescription: Any {
+        public final var playgroundDescription: Any {
             return self.description
         }
         
@@ -51,7 +51,7 @@ extension Subscribers {
             self.keyPath = keyPath
         }
         
-        final public func receive(subscription: Subscription) {
+        public final func receive(subscription: Subscription) {
             self.lock.lock()
             if self.subscription == nil {
                 self.subscription = subscription
@@ -63,7 +63,7 @@ extension Subscribers {
             }
         }
         
-        final public func receive(_ value: Input) -> Subscribers.Demand {
+        public final func receive(_ value: Input) -> Subscribers.Demand {
             self.lock.lock()
             if self.subscription.isNil {
                 self.lock.unlock()
@@ -76,11 +76,11 @@ extension Subscribers {
             return .none
         }
         
-        final public func receive(completion: Subscribers.Completion<Never>) {
+        public final func receive(completion: Subscribers.Completion<Never>) {
             self.cancel()
         }
         
-        final public func cancel() {
+        public final func cancel() {
             self.lock.lock()
             guard let subscription = self.subscription else {
                 self.lock.unlock()
@@ -93,6 +93,5 @@ extension Subscribers {
             
             subscription.cancel()
         }
-        
     }
 }

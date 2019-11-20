@@ -14,7 +14,7 @@ extension Publisher {
     ///   - receiveOutput: A closure that executes when when the publisher receives a value. Return `true` from this closure to raise `SIGTRAP`, or false to continue.
     ///   - receiveCompletion: A closure that executes when when the publisher receives a completion. Return `true` from this closure to raise `SIGTRAP`, or false to continue.
     /// - Returns: A publisher that raises a debugger signal when one of the provided closures returns `true`.
-    public func breakpoint(receiveSubscription: ((Subscription) -> Bool)? = nil, receiveOutput: ((Self.Output) -> Bool)? = nil, receiveCompletion: ((Subscribers.Completion<Self.Failure>) -> Bool)? = nil) -> Publishers.Breakpoint<Self> {
+    public func breakpoint(receiveSubscription: ((Subscription) -> Bool)? = nil, receiveOutput: ((Output) -> Bool)? = nil, receiveCompletion: ((Subscribers.Completion<Failure>) -> Bool)? = nil) -> Publishers.Breakpoint<Self> {
         return .init(upstream: self, receiveSubscription: receiveSubscription, receiveOutput: receiveOutput, receiveCompletion: receiveCompletion)
     }
     
@@ -39,7 +39,7 @@ extension Publishers {
     ///
     /// When any of the provided closures returns `true`, this publisher raises the `SIGTRAP` signal to stop the process in the debugger.
     /// Otherwise, this publisher passes through values and completions as-is.
-    public struct Breakpoint<Upstream> : Publisher where Upstream : Publisher {
+    public struct Breakpoint<Upstream: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         
@@ -64,14 +64,19 @@ extension Publishers {
         ///   - receiveSubscription: A closure that executes when the publisher receives a subscription, and can raise a debugger signal by returning a true Boolean value.
         ///   - receiveOutput: A closure that executes when the publisher receives output from the upstream publisher, and can raise a debugger signal by returning a true Boolean value.
         ///   - receiveCompletion: A closure that executes when the publisher receives completion, and can raise a debugger signal by returning a true Boolean value.
-        public init(upstream: Upstream, receiveSubscription: ((Subscription) -> Bool)? = nil, receiveOutput: ((Upstream.Output) -> Bool)? = nil, receiveCompletion: ((Subscribers.Completion<Publishers.Breakpoint<Upstream>.Failure>) -> Bool)? = nil) {
+        public init(
+            upstream: Upstream,
+            receiveSubscription: ((Subscription) -> Bool)? = nil,
+            receiveOutput: ((Upstream.Output) -> Bool)? = nil,
+            receiveCompletion: ((Subscribers.Completion<Publishers.Breakpoint<Upstream>.Failure>) -> Bool)? = nil
+        ) {
             self.upstream = upstream
             self.receiveSubscription = receiveSubscription
             self.receiveOutput = receiveOutput
             self.receiveCompletion = receiveCompletion
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, Upstream.Output == S.Input {
 
             self.upstream
                 .handleEvents(receiveSubscription: { s in

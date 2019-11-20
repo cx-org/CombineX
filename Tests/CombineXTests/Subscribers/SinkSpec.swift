@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class SinkSpec: QuickSpec {
     
@@ -21,7 +21,7 @@ class SinkSpec: QuickSpec {
                 var values: [Int] = []
                 var completions: [Subscribers.Completion<Never>] = []
                 
-                let sink = pub.sink(receiveCompletion: { (c) in
+                let sink = pub.sink(receiveCompletion: { c in
                     completions.append(c)
                 }, receiveValue: { v in
                     values.append(v)
@@ -32,8 +32,8 @@ class SinkSpec: QuickSpec {
                 pub.send(3)
                 pub.send(completion: .finished)
                 
-                expect(values).to(equal([1, 2, 3]))
-                expect(completions).to(equal([.finished]))
+                expect(values) == [1, 2, 3]
+                expect(completions) == [.finished]
                 
                 _ = sink
             }
@@ -47,13 +47,13 @@ class SinkSpec: QuickSpec {
                 }
                 
                 var events: [TestSubscriberEvent<Int, Never>] = []
-                let sink = pub.sink(receiveCompletion: { (c) in
+                let sink = pub.sink(receiveCompletion: { c in
                     events.append(.completion(c))
                 }, receiveValue: { v in
                     events.append(.value(v))
                 })
                 
-                expect(events).to(equal([.value(1), .value(2), .completion(.finished)]))
+                expect(events) == [.value(1), .value(2), .completion(.finished)]
                 
                 _ = sink
             }
@@ -67,13 +67,13 @@ class SinkSpec: QuickSpec {
                 }
                 
                 var events: [TestSubscriberEvent<Int, Never>] = []
-                let sink = pub.sink(receiveCompletion: { (c) in
+                let sink = pub.sink(receiveCompletion: { c in
                     events.append(.completion(c))
                 }, receiveValue: { v in
                     events.append(.value(v))
                 })
                 
-                expect(events).to(equal([.value(1), .completion(.finished), .value(2)]))
+                expect(events) == [.value(1), .completion(.finished), .value(2)]
                 
                 _ = sink
             }
@@ -83,7 +83,7 @@ class SinkSpec: QuickSpec {
                 let pub = PassthroughSubject<Int, Never>()
 
                 var events = [TestSubscriberEvent<Int, Never>]()
-                let sink = Subscribers.Sink<Int, Never>(receiveCompletion: { (c) in
+                let sink = Subscribers.Sink<Int, Never>(receiveCompletion: { c in
                     events.append(.completion(c))
                 }, receiveValue: { v in
                     events.append(.value(v))
@@ -92,7 +92,7 @@ class SinkSpec: QuickSpec {
                 pub.send(1)
                 pub.send(completion: .finished)
 
-                expect(events).to(equal([.value(1), .completion(.finished)]))
+                expect(events) == [.value(1), .completion(.finished)]
 
                 // Try to start a new one
                 let pub2 = PassthroughSubject<Int, Never>()
@@ -100,7 +100,7 @@ class SinkSpec: QuickSpec {
                 pub2.send(2)
                 pub2.send(completion: .finished)
 
-                expect(events).to(equal([.value(1), .completion(.finished)]))
+                expect(events) == [.value(1), .completion(.finished)]
             }
 
             // MARK: 1.5 should not receive vaules if it was cancelled
@@ -111,9 +111,9 @@ class SinkSpec: QuickSpec {
                 let cancellable = pub.sink { events.append(.value($0)) }
 
                 cancellable.cancel()
-                expect(events).to(equal([]))
+                expect(events) == []
                 pub.send(1)
-                expect(events).to(equal([]))
+                expect(events) == []
             }
         }
         
@@ -122,8 +122,8 @@ class SinkSpec: QuickSpec {
             
             // MARK: 2.1 should retain subscription then release it after completion
             it("should retain subscription then release it after completion") {
-                let sink = Subscribers.Sink<Int, Never>(receiveCompletion: { c in
-                }, receiveValue: { v in
+                let sink = Subscribers.Sink<Int, Never>(receiveCompletion: { _ in
+                }, receiveValue: { _ in
                 })
                 
                 weak var subscription: TestSubscription?
@@ -138,16 +138,16 @@ class SinkSpec: QuickSpec {
                 }
                 
                 expect(subscription).toNot(beNil())
-                expect(cancelled).to(beFalse())
+                expect(cancelled) == false
                 sink.receive(completion: .finished)
                 expect(subscription).to(beNil())
-                expect(cancelled).to(beFalse())
+                expect(cancelled) == false
             }
             
             // MARK: 2.2 should retain subscription then release and cancel it after cancel
             it("should retain subscription then release and cancel it after cancel") {
-                let sink = Subscribers.Sink<Int, Never>(receiveCompletion: { c in
-                }, receiveValue: { v in
+                let sink = Subscribers.Sink<Int, Never>(receiveCompletion: { _ in
+                }, receiveValue: { _ in
                 })
                 
                 weak var subscription: TestSubscription?
@@ -162,16 +162,16 @@ class SinkSpec: QuickSpec {
                 }
                 
                 expect(subscription).toNot(beNil())
-                expect(cancelled).to(beFalse())
+                expect(cancelled) == false
                 sink.cancel()
                 expect(subscription).to(beNil())
-                expect(cancelled).to(beTrue())
+                expect(cancelled) == true
             }
             
             // MARK: 2.3 should not retain subscription if it is already subscribing
             it("should not retain subscription if it is already subscribing") {
-                let sink = Subscribers.Sink<Int, Never>(receiveCompletion: { c in
-                }, receiveValue: { v in
+                let sink = Subscribers.Sink<Int, Never>(receiveCompletion: { _ in
+                }, receiveValue: { _ in
                 })
                 
                 sink.receive(subscription: Subscriptions.empty)
@@ -188,7 +188,7 @@ class SinkSpec: QuickSpec {
                 }
                 
                 expect(subscription).to(beNil())
-                expect(cancelled).to(beTrue())
+                expect(cancelled) == true
             }
         }
     }

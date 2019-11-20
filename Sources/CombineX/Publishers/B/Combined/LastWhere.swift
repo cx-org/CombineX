@@ -3,7 +3,7 @@ extension Publisher {
     /// Only publishes the last element of a stream that satisfies a predicate closure, after the stream finishes.
     /// - Parameter predicate: A closure that takes an element as its parameter and returns a Boolean value indicating whether to publish the element.
     /// - Returns: A publisher that only publishes the last element satisfying the given predicate.
-    public func last(where predicate: @escaping (Self.Output) -> Bool) -> Publishers.LastWhere<Self> {
+    public func last(where predicate: @escaping (Output) -> Bool) -> Publishers.LastWhere<Self> {
         return .init(upstream: self, predicate: predicate)
     }
 }
@@ -11,7 +11,7 @@ extension Publisher {
 extension Publishers {
     
     /// A publisher that only publishes the last element of a stream that satisfies a predicate closure, once the stream finishes.
-    public struct LastWhere<Upstream> : Publisher where Upstream : Publisher {
+    public struct LastWhere<Upstream: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         
@@ -28,7 +28,7 @@ extension Publishers {
             self.predicate = predicate
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             self.upstream
                 .tryLast(where: self.predicate)
                 .mapError {
@@ -37,5 +37,4 @@ extension Publishers {
                 .receive(subscriber: subscriber)
         }
     }
-    
 }

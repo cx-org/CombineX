@@ -16,7 +16,7 @@ extension Publisher {
     }
 }
 
-extension Publishers.CollectByCount : Equatable where Upstream : Equatable {
+extension Publishers.CollectByCount: Equatable where Upstream: Equatable {
     
     public static func == (lhs: Publishers.CollectByCount<Upstream>, rhs: Publishers.CollectByCount<Upstream>) -> Bool {
         return lhs.upstream == rhs.upstream && lhs.count == rhs.count
@@ -26,7 +26,7 @@ extension Publishers.CollectByCount : Equatable where Upstream : Equatable {
 extension Publishers {
     
     /// A publisher that buffers a maximum number of items.
-    public struct CollectByCount<Upstream> : Publisher where Upstream : Publisher {
+    public struct CollectByCount<Upstream: Publisher>: Publisher {
         
         public typealias Output = [Upstream.Output]
         
@@ -43,26 +43,23 @@ extension Publishers {
             self.count = count
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, S.Input == [Upstream.Output] {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, S.Input == [Upstream.Output] {
             let s = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(s)
         }
     }
-
 }
 
 extension Publishers.CollectByCount {
     
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure

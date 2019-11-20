@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class PrefixUntilOutputSpec: QuickSpec {
     
@@ -35,7 +35,7 @@ class PrefixUntilOutputSpec: QuickSpec {
                  
                 let valueEvents = (0..<10).map { TestSubscriberEvent<Int, TestError>.value($0) }
                 let expected = valueEvents + [.completion(.finished)]
-                expect(sub.events).to(equal(expected))
+                expect(sub.events) == expected
             }
             
             // MARK: 1.2 should complete when other complete
@@ -59,7 +59,7 @@ class PrefixUntilOutputSpec: QuickSpec {
                 let expected = (0..<20).map {
                     TestSubscriberEvent<Int, TestError>.value($0)
                 }
-                expect(sub.events).to(equal(expected))
+                expect(sub.events) == expected
             }
         }
     }

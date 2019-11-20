@@ -20,7 +20,7 @@ public protocol Publisher {
     /// The kind of errors this publisher might publish.
     ///
     /// Use `Never` if this `Publisher` does not publish errors.
-    associatedtype Failure : Error
+    associatedtype Failure: Error
     
     /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
     ///
@@ -28,7 +28,7 @@ public protocol Publisher {
     /// - Parameters:
     ///     - subscriber: The subscriber to attach to this `Publisher`.
     ///                   once attached it can begin to receive values.
-    func receive<S>(subscriber: S) where S : Subscriber, Self.Failure == S.Failure, Self.Output == S.Input
+    func receive<S: Subscriber>(subscriber: S) where Failure == S.Failure, Output == S.Input
 }
 
 extension Publisher {
@@ -40,7 +40,7 @@ extension Publisher {
     /// - SeeAlso: `receive(subscriber:)`
     /// - Parameters:
     ///     - subscriber: The subscriber to attach to this `Publisher`. After attaching, the subscriber can start to receive values.
-    public func subscribe<S>(_ subscriber: S) where S : Subscriber, Self.Failure == S.Failure, Self.Output == S.Input {
+    public func subscribe<S: Subscriber>(_ subscriber: S) where Failure == S.Failure, Output == S.Input {
         self.receive(subscriber: subscriber)
     }
 }

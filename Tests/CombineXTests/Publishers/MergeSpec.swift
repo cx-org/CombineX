@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class MergeSpec: QuickSpec {
     
@@ -24,9 +24,9 @@ class MergeSpec: QuickSpec {
 
                 let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.unlimited)
-                }, receiveValue: { v in
+                }, receiveValue: { _ in
                     return .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
 
                 merge.subscribe(sub)
@@ -38,9 +38,8 @@ class MergeSpec: QuickSpec {
                 let events = (0..<100).map {
                     TestSubscriberEvent<Int, TestError>.value($0)
                 }
-                expect(sub.events).to(equal(events))
+                expect(sub.events) == events
             }
-            
             
             // MARK: It should merge many upstreams
             it("should merge many upstreams") {
@@ -49,9 +48,9 @@ class MergeSpec: QuickSpec {
                 let merge = Publishers.MergeMany(subjects)
                 let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.unlimited)
-                }, receiveValue: { v in
+                }, receiveValue: { _ in
                     return .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
 
                 merge.subscribe(sub)
@@ -63,7 +62,7 @@ class MergeSpec: QuickSpec {
                 let events = (0..<100).map {
                     TestSubscriberEvent<Int, TestError>.value($0)
                 }
-                expect(sub.events).to(equal(events))
+                expect(sub.events) == events
             }
         }
     }

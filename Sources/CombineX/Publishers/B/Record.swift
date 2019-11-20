@@ -1,5 +1,5 @@
 /// A publisher that allows for recording a series of inputs and a completion for later playback to each subscriber.
-public struct Record<Output, Failure> : Publisher where Failure : Error {
+public struct Record<Output, Failure: Error>: Publisher {
     
     /// The recorded output and completion.
     public let recording: Record<Output, Failure>.Recording
@@ -21,7 +21,7 @@ public struct Record<Output, Failure> : Publisher where Failure : Error {
         self.recording = .init(output: output, completion: completion)
     }
     
-    public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
+    public func receive<S: Subscriber>(subscriber: S) where Output == S.Input, Failure == S.Failure {
         let pub = self.recording.output.cx.publisher.setFailureType(to: Failure.self)
         switch self.recording.completion {
         case .finished:
@@ -76,13 +76,12 @@ public struct Record<Output, Failure> : Publisher where Failure : Error {
     }
 }
 
-extension Record : Codable where Output : Decodable, Output : Encodable, Failure : Decodable, Failure : Encodable {}
+extension Record: Codable where Output: Decodable, Output: Encodable, Failure: Decodable, Failure: Encodable {}
 
-extension Record.Recording : Codable where Output : Decodable, Output : Encodable, Failure : Decodable, Failure : Encodable {
+extension Record.Recording: Codable where Output: Decodable, Output: Encodable, Failure: Decodable, Failure: Encodable {
 
     // FIXME: Combine has this, what's the diff from `encode(to:)`?
     public func encode(into encoder: Encoder) throws {
         try self.encode(to: encoder)
     }
 }
-

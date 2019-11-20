@@ -5,7 +5,7 @@ extension Publisher {
     /// If the predicate closure throws, the publisher fails with the thrown error.
     /// - Parameter predicate: A closure that takes an element as its parameter and returns a Boolean value indicating whether to publish the element.
     /// - Returns: A publisher that only publishes the last element satisfying the given predicate.
-    public func tryLast(where predicate: @escaping (Self.Output) throws -> Bool) -> Publishers.TryLastWhere<Self> {
+    public func tryLast(where predicate: @escaping (Output) throws -> Bool) -> Publishers.TryLastWhere<Self> {
         return .init(upstream: self, predicate: predicate)
     }
 }
@@ -13,7 +13,7 @@ extension Publisher {
 extension Publishers {
     
     /// A publisher that only publishes the last element of a stream that satisfies a error-throwing predicate closure, once the stream finishes.
-    public struct TryLastWhere<Upstream> : Publisher where Upstream : Publisher {
+    public struct TryLastWhere<Upstream: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         
@@ -29,7 +29,7 @@ extension Publishers {
             self.upstream = upstream
             self.predicate = predicate
         }
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, S.Failure == Publishers.TryLastWhere<Upstream>.Failure {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Output == S.Input, S.Failure == Publishers.TryLastWhere<Upstream>.Failure {
             self.upstream
                 .tryReduce(nil as Output?) {
                     if try self.predicate($1) {

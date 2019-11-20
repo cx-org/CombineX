@@ -6,7 +6,7 @@ extension Publisher {
     ///
     /// - Parameter predicate: A closure that takes an element as its parameter and returns a Boolean value indicating whether publishing should continue.
     /// - Returns: A publisher that passes through elements until the predicate indicates publishing should finish.
-    public func prefix(while predicate: @escaping (Self.Output) -> Bool) -> Publishers.PrefixWhile<Self> {
+    public func prefix(while predicate: @escaping (Output) -> Bool) -> Publishers.PrefixWhile<Self> {
         return .init(upstream: self, predicate: predicate)
     }
 }
@@ -14,7 +14,7 @@ extension Publisher {
 extension Publishers {
     
     /// A publisher that republishes elements while a predicate closure indicates publishing should continue.
-    public struct PrefixWhile<Upstream> : Publisher where Upstream : Publisher {
+    public struct PrefixWhile<Upstream: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         
@@ -31,7 +31,7 @@ extension Publishers {
             self.predicate = predicate
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             self.upstream
                 .tryPrefix(while: self.predicate)
                 .mapError {

@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class TryRemoveDuplicatesSpec: QuickSpec {
     
@@ -31,7 +31,7 @@ class TryRemoveDuplicatesSpec: QuickSpec {
                 
                 let got = sub.events.mapError { $0 as! TestError }
                 
-                expect(got).to(equal([.value(1), .value(2), .value(3)]))
+                expect(got) == [.value(1), .value(2), .value(3)]
             }
             
             // MARK: 1.2 should send as many values as demand
@@ -44,7 +44,7 @@ class TryRemoveDuplicatesSpec: QuickSpec {
                     pub.send(Int.random(in: 0..<100))
                 }
                 
-                expect(sub.events.count).to(equal(10))
+                expect(sub.events.count) == 10
             }
             
             // MARK: 1.3 should fail if closure throws error
@@ -52,7 +52,7 @@ class TryRemoveDuplicatesSpec: QuickSpec {
                 let pub = PassthroughSubject<Int, Never>()
                 let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
                 
-                pub.tryRemoveDuplicates(by: { (_, _) -> Bool in
+                pub.tryRemoveDuplicates(by: { _, _ -> Bool in
                     throw TestError.e0
                 }).subscribe(sub)
                 
@@ -61,7 +61,7 @@ class TryRemoveDuplicatesSpec: QuickSpec {
                 
                 let got = sub.events.mapError { $0 as! TestError }
                 
-                expect(got).to(equal([.value(1), .completion(.failure(.e0))]))
+                expect(got) == [.value(1), .completion(.failure(.e0))]
             }
         }
     }

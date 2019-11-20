@@ -13,7 +13,7 @@ extension Publisher {
     ///   - strategy: The strategy with which to collect and publish elements.
     ///   - options: `Scheduler` options to use for the strategy.
     /// - Returns: A publisher that collects elements by a given strategy, and emits a single array of the collection.
-    public func collect<S>(_ strategy: Publishers.TimeGroupingStrategy<S>, options: S.SchedulerOptions? = nil) -> Publishers.CollectByTime<Self, S> where S : Scheduler {
+    public func collect<S: Scheduler>(_ strategy: Publishers.TimeGroupingStrategy<S>, options: S.SchedulerOptions? = nil) -> Publishers.CollectByTime<Self, S> {
         return .init(upstream: self, strategy: strategy, options: options)
     }
 }
@@ -24,7 +24,7 @@ extension Publishers {
     ///
     /// - byTime: Collect and periodically publish items.
     /// - byTimeOrCount: Collect and publish items, either periodically or when a buffer reaches its maximum size.
-    public enum TimeGroupingStrategy<Context> where Context : Scheduler {
+    public enum TimeGroupingStrategy<Context> where Context: Scheduler {
 
         case byTime(Context, Context.SchedulerTimeType.Stride)
 
@@ -32,7 +32,7 @@ extension Publishers {
     }
 
     /// A publisher that buffers and periodically publishes its items.
-    public struct CollectByTime<Upstream, Context> : Publisher where Upstream : Publisher, Context : Scheduler {
+    public struct CollectByTime<Upstream: Publisher, Context: Scheduler>: Publisher {
 
         public typealias Output = [Upstream.Output]
 
@@ -53,7 +53,7 @@ extension Publishers {
             self.options = options
         }
 
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, S.Input == [Upstream.Output] {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, S.Input == [Upstream.Output] {
             switch self.strategy {
             case .byTime:
                 let s = ByTime(pub: self, sub: subscriber)
@@ -66,20 +66,17 @@ extension Publishers {
     }
 }
 
-
 // MARK: - ByTimeOrCount
 extension Publishers.CollectByTime {
     
-    private final class ByTimeOrCount<S>:
-        Subscription,
+    private final class ByTimeOrCount<S>: Subscription,
         Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
@@ -119,8 +116,7 @@ extension Publishers.CollectByTime {
             self.timeoutTask?.cancel()
             self.timeoutTask = self.context.schedule(
                 after: self.context.now.advanced(by: self.time),
-                interval: .seconds(Int.max))
-            {
+                interval: .seconds(Int.max)) {
                 self.lock.lock()
                 guard self.state.isRelaying else {
                     self.lock.unlock()
@@ -218,20 +214,17 @@ extension Publishers.CollectByTime {
     }
 }
 
-
 // MARK: - ByTime
 extension Publishers.CollectByTime {
     
-    private final class ByTime<S>:
-        Subscription,
+    private final class ByTime<S>: Subscription,
         Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
@@ -267,8 +260,7 @@ extension Publishers.CollectByTime {
             self.timeoutTask?.cancel()
             self.timeoutTask = self.context.schedule(
                 after: self.context.now.advanced(by: self.time),
-                interval: .seconds(Int.max))
-            {
+                interval: .seconds(Int.max)) {
                 self.lock.lock()
                 guard self.state.isRelaying else {
                     self.lock.unlock()
@@ -379,4 +371,3 @@ extension Publishers.CollectByTime {
         }
     }
 }
-

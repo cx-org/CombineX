@@ -4,7 +4,7 @@ extension Subscribers {
     ///
     /// - finished: The publisher finished normally.
     /// - failure: The publisher stopped publishing due to the indicated error.
-    public enum Completion<Failure> where Failure : Error {
+    public enum Completion<Failure: Error> {
         
         case finished
         
@@ -12,7 +12,7 @@ extension Subscribers {
     }
 }
 
-extension Subscribers.Completion : Equatable where Failure : Equatable {
+extension Subscribers.Completion: Equatable where Failure: Equatable {
     
     public static func == (a: Subscribers.Completion<Failure>, b: Subscribers.Completion<Failure>) -> Bool {
         switch (a, b) {
@@ -26,7 +26,7 @@ extension Subscribers.Completion : Equatable where Failure : Equatable {
     }
 }
 
-extension Subscribers.Completion : Hashable where Failure : Hashable {
+extension Subscribers.Completion: Hashable where Failure: Hashable {
     
     public func hash(into hasher: inout Hasher) {
         switch self {
@@ -46,7 +46,7 @@ extension Subscribers.Completion {
     }
 }
 
-extension Subscribers.Completion : Encodable where Failure : Encodable {
+extension Subscribers.Completion: Encodable where Failure: Encodable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
@@ -60,7 +60,7 @@ extension Subscribers.Completion : Encodable where Failure : Encodable {
     }
 }
 
-extension Subscribers.Completion : Decodable where Failure : Decodable {
+extension Subscribers.Completion: Decodable where Failure: Decodable {
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)

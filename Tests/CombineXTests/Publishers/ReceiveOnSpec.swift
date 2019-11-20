@@ -1,8 +1,8 @@
-import Foundation
 import CXShim
 import CXTestUtility
-import Quick
+import Foundation
 import Nimble
+import Quick
 
 class ReceiveOnSpec: QuickSpec {
     
@@ -27,17 +27,17 @@ class ReceiveOnSpec: QuickSpec {
                     completion: false
                 )
                 
-                let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
                     s.request(.max(100))
                     received.subscription = true
-                    expect(scheduler.isCurrent).to(beTrue())
-                }, receiveValue: { v in
+                    expect(scheduler.isCurrent) == true
+                }, receiveValue: { _ in
                     received.value = true
-                    expect(scheduler.isCurrent).to(beTrue())
+                    expect(scheduler.isCurrent) == true
                     return .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                     received.completion = true
-                    expect(scheduler.isCurrent).to(beTrue())
+                    expect(scheduler.isCurrent) == true
                 })
                 
                 pub.subscribe(sub)
@@ -64,12 +64,12 @@ class ReceiveOnSpec: QuickSpec {
                 let scheduler = TestDispatchQueueScheduler.serial()
                 let pub = subject.receive(on: scheduler)
                 
-                let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
                     s.request(.max(10))
-                }, receiveValue: { v in
+                }, receiveValue: { _ in
                     // FIXME: Apple's Combine doesn't seems to strictly support sync backpressure.
                     return .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 
                 pub.subscribe(sub)

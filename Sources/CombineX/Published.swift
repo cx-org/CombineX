@@ -1,8 +1,12 @@
 #if swift(>=5.1)
 /// Adds a `Publisher` to a property.
 ///
-/// Properties annotated with `@Published` contain both the stored value and a publisher which sends any new values after the property value has been sent. New subscribers will receive the current value of the property first.
-/// Note that the `@Published` property is class-constrained. Use it with properties of classes, not with non-class types like structures.
+/// Properties annotated with `@Published` contain both the stored value and a publisher which sends any
+/// new values after the property value has been sent. New subscribers will receive the current value of the
+/// property first.
+///
+/// Note that the `@Published` property is class-constrained. Use it with properties of classes, not with
+/// non-class types like structures.
 @propertyWrapper public struct Published<Value> {
 
     /// Initialize the storage of the Published property as well as the corresponding `Publisher`.
@@ -31,7 +35,7 @@
     var objectWillChange: ObservableObjectPublisher?
     
     /// A publisher for properties marked with the `@Published` attribute.
-    public struct Publisher : CombineX.Publisher {
+    public struct Publisher: CombineX.Publisher {
 
         public typealias Output = Value
 
@@ -43,7 +47,7 @@
             self.subject = CurrentValueSubject<Value, Never>(value)
         }
 
-        public func receive<S>(subscriber: S) where Value == S.Input, S : Subscriber, S.Failure == Published<Value>.Publisher.Failure {
+        public func receive<S: Subscriber>(subscriber: S) where Value == S.Input, S.Failure == Published<Value>.Publisher.Failure {
             self.subject.receive(subscriber: subscriber)
         }
     }
@@ -60,6 +64,5 @@
             }
         }
     }
-
 }
 #endif

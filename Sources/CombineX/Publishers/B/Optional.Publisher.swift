@@ -4,6 +4,7 @@ import CXNamespace
 
 extension CXWrappers {
     
+    // swiftlint:disable:next syntactic_sugar
     typealias Optional<Wrapped> = Swift.Optional<Wrapped>.CX
 }
 
@@ -11,7 +12,7 @@ extension Optional: CXWrapping {
     
     public struct CX: CXWrapper {
         
-        public typealias Base = Optional<Wrapped>
+        public typealias Base = Wrapped?
         
         public let base: Base
         
@@ -42,7 +43,7 @@ extension Optional.CX {
             self.output = output
         }
 
-        public func receive<S>(subscriber: S) where Wrapped == S.Input, S : Subscriber, S.Failure == Failure {
+        public func receive<S: Subscriber>(subscriber: S) where Wrapped == S.Input, S.Failure == Failure {
             guard let output = output else {
                 subscriber.receive(subscription: Subscriptions.empty)
                 subscriber.receive(completion: .finished)

@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class TimeoutSpec: QuickSpec {
     
@@ -25,10 +25,10 @@ class TimeoutSpec: QuickSpec {
                 pub.subscribe(sub)
 
                 scheduler.advance(by: .seconds(4))
-                expect(sub.events).to(equal([]))
+                expect(sub.events) == []
                 
                 scheduler.advance(by: .seconds(5))
-                expect(sub.events).to(equal([.completion(.failure(.e0))]))
+                expect(sub.events) == [.completion(.failure(.e0))]
             }
             
             // MARK: 1.2 should finish if `customError` is nil
@@ -42,7 +42,7 @@ class TimeoutSpec: QuickSpec {
                 pub.subscribe(sub)
                 
                 scheduler.advance(by: .seconds(6))
-                expect(sub.events).to(equal([.completion(.finished)]))
+                expect(sub.events) == [.completion(.finished)]
             }
             
             // MARK: 1.3 should send timeout event in scheduled action
@@ -51,12 +51,12 @@ class TimeoutSpec: QuickSpec {
                 let scheduler = TestDispatchQueueScheduler.serial()
                 
                 let pub = subject.timeout(.seconds(0.01), scheduler: scheduler, customError: { TestError.e0 })
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.unlimited)
-                }, receiveValue: { v in
+                }, receiveValue: { _ in
                     return .none
-                }, receiveCompletion: { c in
-                    expect(scheduler.isCurrent).to(beTrue())
+                }, receiveCompletion: { _ in
+                    expect(scheduler.isCurrent) == true
                 })
                 
                 pub.subscribe(sub)

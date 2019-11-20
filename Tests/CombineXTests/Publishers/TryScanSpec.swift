@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class TryScanSpec: QuickSpec {
     
@@ -32,12 +32,12 @@ class TryScanSpec: QuickSpec {
                 
                 var initial = 0
                 let valueEvents = (0..<100).map { n -> TestSubscriberEvent<Int, TestError> in
-                    initial = initial + n
+                    initial += n
                     return TestSubscriberEvent<Int, TestError>.value(initial)
                 }
                 let expected = valueEvents + [.completion(.finished)]
 
-                expect(got).to(equal(expected))
+                expect(got) == expected
             }
             
             // MARK: 1.2 should fail if closure throws an error
@@ -45,7 +45,7 @@ class TryScanSpec: QuickSpec {
                 let subject = PassthroughSubject<Int, Never>()
                 let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
                 
-                subject.tryScan(0) { (_, _) in
+                subject.tryScan(0) { _, _ in
                     throw TestError.e0
                 }.subscribe(sub)
                 
@@ -54,7 +54,7 @@ class TryScanSpec: QuickSpec {
                 }
                 
                 let got = sub.events.mapError { $0 as! TestError }
-                expect(got).to(equal([.completion(.failure(.e0))]))
+                expect(got) == [.completion(.failure(.e0))]
             }
             
             #if !SWIFT_PACKAGE

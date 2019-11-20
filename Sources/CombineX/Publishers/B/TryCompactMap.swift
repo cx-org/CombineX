@@ -9,7 +9,7 @@ extension Publisher {
     /// If the closure throws an error, the publisher cancels the upstream and sends the thrown error to the downstream receiver as a `Failure`.
     /// - Parameter transform: an error-throwing closure that receives a value and returns an optional value.
     /// - Returns: A publisher that republishes all non-`nil` results of calling the transform closure.
-    public func tryCompactMap<T>(_ transform: @escaping (Self.Output) throws -> T?) -> Publishers.TryCompactMap<Self, T> {
+    public func tryCompactMap<T>(_ transform: @escaping (Output) throws -> T?) -> Publishers.TryCompactMap<Self, T> {
         return .init(upstream: self, transform: transform)
     }
 }
@@ -26,7 +26,7 @@ extension Publishers.TryCompactMap {
 extension Publishers {
     
     /// A publisher that republishes all non-`nil` results of calling an error-throwing closure with each received element.
-    public struct TryCompactMap<Upstream, Output> : Publisher where Upstream : Publisher {
+    public struct TryCompactMap<Upstream: Publisher, Output>: Publisher {
         
         public typealias Failure = Error
         
@@ -43,7 +43,7 @@ extension Publishers {
             self.transform = transform
         }
         
-        public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, S.Failure == Publishers.TryCompactMap<Upstream, Output>.Failure {
+        public func receive<S: Subscriber>(subscriber: S) where Output == S.Input, S.Failure == Publishers.TryCompactMap<Upstream, Output>.Failure {
             let s = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(s)
         }
@@ -52,16 +52,14 @@ extension Publishers {
 
 extension Publishers.TryCompactMap {
     
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
@@ -145,4 +143,3 @@ extension Publishers.TryCompactMap {
         }
     }
 }
-

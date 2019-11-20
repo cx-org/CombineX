@@ -10,7 +10,7 @@ extension Publisher {
     ///
     /// - Parameter predicate: A closure that takes an element as a parameter and returns a Boolean value indicating whether to drop the element from the publisher’s output.
     /// - Returns: A publisher that skips over elements until the provided closure returns `false`, and then republishes all remaining elements. If the predicate closure throws, the publisher fails with an error.
-    public func tryDrop(while predicate: @escaping (Self.Output) throws -> Bool) -> Publishers.TryDropWhile<Self> {
+    public func tryDrop(while predicate: @escaping (Output) throws -> Bool) -> Publishers.TryDropWhile<Self> {
         return .init(upstream: self, predicate: predicate)
     }
 }
@@ -18,7 +18,7 @@ extension Publisher {
 extension Publishers {
     
     /// A publisher that omits elements from an upstream publisher until a given error-throwing closure returns false.
-    public struct TryDropWhile<Upstream> : Publisher where Upstream : Publisher {
+    public struct TryDropWhile<Upstream: Publisher>: Publisher {
 
         public typealias Output = Upstream.Output
 
@@ -35,7 +35,7 @@ extension Publishers {
             self.predicate = predicate
         }
 
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, S.Failure == Publishers.TryDropWhile<Upstream>.Failure {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Output == S.Input, S.Failure == Publishers.TryDropWhile<Upstream>.Failure {
             let s = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(s)
         }
@@ -44,16 +44,14 @@ extension Publishers {
 
 extension Publishers.TryDropWhile {
     
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
         

@@ -6,7 +6,10 @@ extension Publisher {
     
     /// Specifies the scheduler on which to perform subscribe, cancel, and request operations.
     ///
-    /// In contrast with `receive(on:options:)`, which affects downstream messages, `subscribe(on:)` changes the execution context of upstream messages. In the following example, requests to `jsonPublisher` are performed on `backgroundQueue`, but elements received from it are performed on `RunLoop.main`.
+    /// In contrast with `receive(on:options:)`, which affects downstream messages,
+    /// `subscribe(on:)` changes the execution context of upstream messages. In the following
+    /// example, requests to `jsonPublisher` are performed on `backgroundQueue`, but elements
+    /// received from it are performed on `RunLoop.main`.
     ///
     ///     let ioPerformingPublisher == // Some publisher.
     ///     let uiUpdatingSubscriber == // Some subscriber that updates the UI.
@@ -20,7 +23,7 @@ extension Publisher {
     ///   - scheduler: The scheduler on which to receive upstream messages.
     ///   - options: Options that customize the delivery of elements.
     /// - Returns: A publisher which performs upstream operations on the specified scheduler.
-    public func subscribe<S>(on scheduler: S, options: S.SchedulerOptions? = nil) -> Publishers.SubscribeOn<Self, S> where S : Scheduler {
+    public func subscribe<S: Scheduler>(on scheduler: S, options: S.SchedulerOptions? = nil) -> Publishers.SubscribeOn<Self, S> {
         return .init(upstream: self, scheduler: scheduler, options: options)
     }
 }
@@ -28,7 +31,7 @@ extension Publisher {
 extension Publishers {
     
     /// A publisher that receives elements from an upstream publisher on a specific scheduler.
-    public struct SubscribeOn<Upstream, Context> : Publisher where Upstream : Publisher, Context : Scheduler {
+    public struct SubscribeOn<Upstream: Publisher, Context: Scheduler>: Publisher {
         
         public typealias Output = Upstream.Output
         
@@ -49,7 +52,7 @@ extension Publishers {
             self.options = options
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             let s = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(s)
         }
@@ -58,16 +61,14 @@ extension Publishers {
 
 extension Publishers.SubscribeOn {
     
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
@@ -134,5 +135,4 @@ extension Publishers.SubscribeOn {
             return "ReceiveOn"
         }
     }
-
 }

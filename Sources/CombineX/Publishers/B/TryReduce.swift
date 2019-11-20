@@ -11,16 +11,15 @@ extension Publisher {
     ///   - initialResult: The value the closure receives the first time it is called.
     ///   - nextPartialResult: An error-throwing closure that takes the previously-accumulated value and the next element from the upstream publisher to produce a new value.
     /// - Returns: A publisher that applies the closure to all received elements and produces an accumulated value when the upstream publisher finishes.
-    public func tryReduce<T>(_ initialResult: T, _ nextPartialResult: @escaping (T, Self.Output) throws -> T) -> Publishers.TryReduce<Self, T> {
+    public func tryReduce<T>(_ initialResult: T, _ nextPartialResult: @escaping (T, Output) throws -> T) -> Publishers.TryReduce<Self, T> {
         return .init(upstream: self, initial: initialResult, nextPartialResult: nextPartialResult)
     }
 }
 
 extension Publishers {
     
-    
     /// A publisher that applies an error-throwing closure to all received elements and produces an accumulated value when the upstream publisher finishes.
-    public struct TryReduce<Upstream, Output> : Publisher where Upstream : Publisher {
+    public struct TryReduce<Upstream: Publisher, Output>: Publisher {
         
         public typealias Failure = Error
         
@@ -41,7 +40,7 @@ extension Publishers {
             self.nextPartialResult = nextPartialResult
         }
         
-        public func receive<S>(subscriber: S) where Output == S.Input, S : Subscriber, S.Failure == Publishers.TryReduce<Upstream, Output>.Failure {
+        public func receive<S: Subscriber>(subscriber: S) where Output == S.Input, S.Failure == Publishers.TryReduce<Upstream, Output>.Failure {
             let s = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(s)
         }
@@ -50,16 +49,14 @@ extension Publishers {
 
 extension Publishers.TryReduce {
     
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure

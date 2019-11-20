@@ -14,14 +14,17 @@ extension Publisher {
     /// that produces elements of that type.
     /// - Returns: A publisher that transforms elements from an upstream publisher into
     /// a publisher of that element’s type.
-    public func flatMap<T, P>(maxPublishers: Subscribers.Demand = .unlimited, _ transform: @escaping (Self.Output) -> P) -> Publishers.FlatMap<P, Self> where T == P.Output, P : Publisher, Self.Failure == P.Failure {
+    public func flatMap<T, P>(
+        maxPublishers: Subscribers.Demand = .unlimited,
+        _ transform: @escaping (Output) -> P
+    ) -> Publishers.FlatMap<P, Self> where T == P.Output, P: Publisher, Failure == P.Failure {
         return .init(upstream: self, maxPublishers: maxPublishers, transform: transform)
     }
 }
 
 extension Publishers {
     
-    public struct FlatMap<NewPublisher, Upstream> : Publisher where NewPublisher : Publisher, Upstream : Publisher, NewPublisher.Failure == Upstream.Failure {
+    public struct FlatMap<NewPublisher, Upstream>: Publisher where NewPublisher: Publisher, Upstream: Publisher, NewPublisher.Failure == Upstream.Failure {
         
         public typealias Output = NewPublisher.Output
         
@@ -39,7 +42,7 @@ extension Publishers {
             self.transform = transform
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, NewPublisher.Output == S.Input, Upstream.Failure == S.Failure {
+        public func receive<S: Subscriber>(subscriber: S) where NewPublisher.Output == S.Input, Upstream.Failure == S.Failure {
             let s = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(s)
         }
@@ -48,16 +51,14 @@ extension Publishers {
 
 extension Publishers.FlatMap {
     
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == NewPublisher.Output,
-        S.Failure == NewPublisher.Failure
-    {
+        S.Failure == NewPublisher.Failure {
         
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure

@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class TryPrefixWhileSpec: QuickSpec {
     
@@ -33,7 +33,7 @@ class TryPrefixWhileSpec: QuickSpec {
                 }
                 let expected = valueEvents + [.completion(.finished)]
                 
-                expect(got).to(equal(expected))
+                expect(got) == expected
             }
             
             // MARK: 1.2 should finish immediately if the first element predicate failure
@@ -49,7 +49,7 @@ class TryPrefixWhileSpec: QuickSpec {
                 subject.send(completion: .failure(.e0))
                 
                 let got = sub.events.mapError { $0 as! TestError }
-                expect(got).to(equal([.completion(.finished)]))
+                expect(got) == [.completion(.finished)]
             }
             
             // MARK: 1.3 should send as many values as demand
@@ -62,7 +62,7 @@ class TryPrefixWhileSpec: QuickSpec {
                     pub.send(i)
                 }
                 
-                expect(sub.events.count).to(equal(10))
+                expect(sub.events.count) == 10
             }
             
             // MARK: 1.4 should fail if predicate throws error
@@ -80,7 +80,7 @@ class TryPrefixWhileSpec: QuickSpec {
                 pub.send(completion: .finished)
                 
                 let got = sub.events.mapError { $0 as! TestError }
-                expect(got).to(equal([.completion(.failure(.e0))]))
+                expect(got) == [.completion(.failure(.e0))]
             }
         }
     }

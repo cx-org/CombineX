@@ -29,4 +29,3 @@ public extension Subscribers.Completion {
         }
     }
 }
-

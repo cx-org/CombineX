@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class EmptySpec: QuickSpec {
     
@@ -20,7 +20,7 @@ class EmptySpec: QuickSpec {
                 let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
                 empty.subscribe(sub)
                 
-                expect(sub.events).to(equal([.completion(.finished)]))
+                expect(sub.events) == [.completion(.finished)]
             }
             
             // MARK: 1.2 should send nothing
@@ -28,7 +28,7 @@ class EmptySpec: QuickSpec {
                 let empty = Empty<Int, Never>(completeImmediately: false)
                 let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
                 empty.subscribe(sub)
-                expect(sub.events).to(equal([]))
+                expect(sub.events) == []
             }
         }
         
@@ -42,10 +42,9 @@ class EmptySpec: QuickSpec {
                 let e2 = Empty<Int, Never>()
                 let e3 = Empty<Int, Never>(completeImmediately: false)
                 
-                expect(e1).to(equal(e2))
-                expect(e1).toNot(equal(e3))
+                expect(e1) == e2
+                expect(e1) != e3
             }
         }
     }
-
 }

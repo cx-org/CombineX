@@ -1,7 +1,7 @@
-import CXUtility
 import CXShim
+import CXUtility
 
-public class TestSubject<Output, Failure>: Subject, TestLogging where Failure : Error {
+public class TestSubject<Output, Failure: Error>: Subject, TestLogging {
     
     private let downstreamLock = Lock()
     private var completion: Subscribers.Completion<Failure>?
@@ -25,7 +25,7 @@ public class TestSubject<Output, Failure>: Subject, TestLogging where Failure : 
         return self.subscriptions[0]
     }
     
-    public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
+    public func receive<S: Subscriber>(subscriber: S) where Output == S.Input, Failure == S.Failure {
         self.downstreamLock.lock()
         
         if let completion = self.completion {
@@ -133,13 +133,13 @@ extension TestSubject {
         }
         
         public var requestDemandRecords: [Subscribers.Demand] {
-            return self._demandRecords.get().compactMap { (type, demand) in
+            return self._demandRecords.get().compactMap { type, demand in
                 type == .request ? demand : nil
             }
         }
         
         public var syncDemandRecords: [Subscribers.Demand] {
-            return self._demandRecords.get().compactMap { (type, demand) in
+            return self._demandRecords.get().compactMap { type, demand in
                 type == .sync ? demand : nil
             }
         }
@@ -165,7 +165,7 @@ extension TestSubject {
             // FIXME: Yes, no guarantee of synchronous backpressure. See PassthroughSubjectSpec#3.3 for more information.
             let more = sub.receive(value)
             
-            self._demandRecords.withLockMutating { $0.append((.sync, more))}
+            self._demandRecords.withLockMutating { $0.append((.sync, more)) }
             self.trace("sync more", more)
             
             self.lock.withLock {
@@ -190,7 +190,7 @@ extension TestSubject {
         
         public func request(_ demand: Subscribers.Demand) {
             precondition(demand > 0)
-            self._demandRecords.withLockMutating { $0.append((.request, demand))}
+            self._demandRecords.withLockMutating { $0.append((.request, demand)) }
             self.trace("request more", demand)
             
             self.lock.lock()

@@ -1,9 +1,9 @@
-import Foundation
-import CXUtility
 import CXShim
 import CXTestUtility
-import Quick
+import CXUtility
+import Foundation
 import Nimble
+import Quick
 
 class SequenceSpec: QuickSpec {
     
@@ -28,7 +28,7 @@ class SequenceSpec: QuickSpec {
                 
                 let valueEvents = values.map { Event.value($0) }
                 let expected = valueEvents + [.completion(.finished)]
-                expect(sub.events).to(equal(expected))
+                expect(sub.events) == expected
             }
             
             // MARK: 1.2 should send as many values as demand
@@ -36,17 +36,17 @@ class SequenceSpec: QuickSpec {
                 let values = Array(0..<100)
                 
                 let pub = Publishers.Sequence<[Int], TestError>(sequence: values)
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.max(50))
                 }, receiveValue: { v in
                     [0, 10].contains(v) ? .max(10) : .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 
                 pub.subscribe(sub)
                 
                 let events = (0..<70).map { Event.value($0) }
-                expect(sub.events).to(equal(events))
+                expect(sub.events) == events
             }
         }
         
@@ -61,11 +61,11 @@ class SequenceSpec: QuickSpec {
                 do {
                     let values = Array(0..<10)
                     let pub = Publishers.Sequence<[Int], Never>(sequence: values)
-                    let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
+                    let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
                         subscription = s
-                    }, receiveValue: { v in
+                    }, receiveValue: { _ in
                         return .none
-                    }, receiveCompletion: { s in
+                    }, receiveCompletion: { _ in
                     })
                     
                     subObj = sub
@@ -89,11 +89,11 @@ class SequenceSpec: QuickSpec {
                     let values = Array(0..<10)
                     let pub = Publishers.Sequence<[Int], Never>(sequence: values)
                     
-                    let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
+                    let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
                         subscription = s
-                    }, receiveValue: { v in
+                    }, receiveValue: { _ in
                         return .none
-                    }, receiveCompletion: { s in
+                    }, receiveCompletion: { _ in
                     })
                     
                     subObj = sub
@@ -127,11 +127,11 @@ class SequenceSpec: QuickSpec {
                 let pub = Publishers.Sequence<Seq, Never>(sequence: Seq())
                 
                 var subscription: Subscription?
-                let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
                     subscription = s
-                }, receiveValue: { v in
+                }, receiveValue: { _ in
                     return .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 
                 pub.subscribe(sub)
@@ -144,7 +144,7 @@ class SequenceSpec: QuickSpec {
             
                 g.wait()
                 
-                expect(sub.events.count).to(equal(100))
+                expect(sub.events.count) == 100
             }
             
             // MARK: 3.2 receiving value should not block cancel
@@ -152,12 +152,12 @@ class SequenceSpec: QuickSpec {
                 let pub = Publishers.Sequence<Seq, Never>(sequence: Seq())
                 
                 var subscription: Subscription?
-                let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
                     subscription = s
-                }, receiveValue: { v in
+                }, receiveValue: { _ in
                     Thread.sleep(forTimeInterval: 0.1)
                     return .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 
                 pub.subscribe(sub)
@@ -171,9 +171,8 @@ class SequenceSpec: QuickSpec {
                 subscription?.request(.max(5))
                 status.set(1)
                 
-                expect(status.get()).to(equal(1))
+                expect(status.get()) == 1
             }
         }
     }
-
 }

@@ -9,7 +9,7 @@ extension Publisher {
     }
 }
 
-extension Publishers.Drop : Equatable where Upstream : Equatable {
+extension Publishers.Drop: Equatable where Upstream: Equatable {
     
     /// Returns a Boolean value that indicates whether the two publishers are equivalent.
     ///
@@ -25,7 +25,7 @@ extension Publishers.Drop : Equatable where Upstream : Equatable {
 extension Publishers {
     
     /// A publisher that omits a specified number of elements before republishing later elements.
-    public struct Drop<Upstream> : Publisher where Upstream : Publisher {
+    public struct Drop<Upstream: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         
@@ -42,7 +42,7 @@ extension Publishers {
             self.count = count
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             return self.upstream
                 .output(in: self.count...)
                 .receive(subscriber: subscriber)

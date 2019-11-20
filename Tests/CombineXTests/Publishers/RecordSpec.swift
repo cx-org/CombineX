@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class RecordSpec: QuickSpec {
     
@@ -24,14 +24,14 @@ class RecordSpec: QuickSpec {
                 recording.receive(2)
                 recording.receive(completion: .failure(.e2))
                 
-                expect(recording.output).to(equal([1, 2]))
-                expect(recording.completion).to(equal(.failure(.e2)))
+                expect(recording.output) == [1, 2]
+                expect(recording.completion) == .failure(.e2)
             }
             
             // MARK: 1.2 should use finish temporarily
             it("should use finish temporarily") {
                 let recording = Recording()
-                expect(recording.completion).to(equal(.finished))
+                expect(recording.completion) == .finished
             }
             
             #if !SWIFT_PACKAGE
@@ -71,7 +71,7 @@ class RecordSpec: QuickSpec {
                 let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
                 record.subscribe(sub)
                 
-                expect(sub.events).to(equal([.value(1), .value(2), .completion(.failure(.e2))]))
+                expect(sub.events) == [.value(1), .value(2), .completion(.failure(.e2))]
             }
         }
     }

@@ -1,5 +1,5 @@
-import Foundation
 import CXShim
+import Foundation
 
 public extension Array {
     
@@ -19,7 +19,6 @@ public extension Array where Element: Equatable {
     }
 }
 
-
 public extension DispatchQueue {
     
     var isCurrent: Bool {
@@ -31,7 +30,6 @@ public extension DispatchQueue {
         return DispatchQueue.getSpecific(key: key) != nil
     }
 }
-
 
 public extension Double {
     
@@ -59,12 +57,11 @@ public extension Int {
     }
     
     func times(_ body: () -> Void) {
-        self.times { (_) in
+        self.times { _ in
             body()
         }
     }
 }
-
 
 public extension Optional {
     

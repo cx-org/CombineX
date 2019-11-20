@@ -3,7 +3,7 @@ import CXUtility
 #endif
 
 /// A publisher that eventually produces one value and then finishes or fails.
-final public class Future<Output, Failure> : Publisher where Failure : Error {
+public final class Future<Output, Failure: Error>: Publisher {
     
     public typealias Promise = (Result<Output, Failure>) -> Void
     
@@ -16,7 +16,7 @@ final public class Future<Output, Failure> : Publisher where Failure : Error {
         attemptToFulfill(self.complete)
     }
     
-    final public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
+    public final func receive<S: Subscriber>(subscriber: S) where Output == S.Input, Failure == S.Failure {
         self.lock.lock()
         if let result = self.result {
             self.lock.unlock()

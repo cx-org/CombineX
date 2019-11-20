@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class CombineLatestSpec: QuickSpec {
  
@@ -32,7 +32,7 @@ class CombineLatestSpec: QuickSpec {
                 subject1.send("c")
                 
                 let expected = ["1a", "2a", "2b", "2c"].map { TestSubscriberEvent<String, TestError>.value($0) }
-                expect(sub.events).to(equal(expected))
+                expect(sub.events) == expected
             }
             
             // MARK: 1.2 should combine latest of 3
@@ -60,7 +60,7 @@ class CombineLatestSpec: QuickSpec {
                 subject2.send("D")
                 
                 let expected = ["2bA", "3bA", "3cA", "3dA", "3dB", "3dC", "3dD"].map { TestSubscriberEvent<String, TestError>.value($0) }
-                expect(sub.events).to(equal(expected))
+                expect(sub.events) == expected
             }
             
             // MARK: 1.3 should finish when one sends an error
@@ -79,7 +79,7 @@ class CombineLatestSpec: QuickSpec {
                 
                 let valueEvents = [6, 10, 14, 18, 22, 26, 30].map { TestSubscriberEvent<Int, TestError>.value($0) }
                 let expected = valueEvents + [.completion(.failure(.e0))]
-                expect(sub.events).to(equal(expected))
+                expect(sub.events) == expected
             }
             
             // MARK: 1.4 should send as many as demands
@@ -89,12 +89,12 @@ class CombineLatestSpec: QuickSpec {
                 
                 var counter = 0
                 let pub = subject0.combineLatest(subject1, +)
-                let sub = TestSubscriber<String, TestError>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<String, TestError>(receiveSubscription: { s in
                     s.request(.max(10))
-                }, receiveValue: { v in
-                    defer { counter += 1}
+                }, receiveValue: { _ in
+                    defer { counter += 1 }
                     return [0, 10].contains(counter) ? .max(1) : .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 pub.subscribe(sub)
                 
@@ -102,7 +102,7 @@ class CombineLatestSpec: QuickSpec {
                     [subject0, subject1].randomElement()!.send("\($0)")
                 }
                 
-                expect(sub.events.count).to(equal(12))
+                expect(sub.events.count) == 12
             }
         }
         
@@ -126,8 +126,8 @@ class CombineLatestSpec: QuickSpec {
                 let records0 = subject0.subscription.syncDemandRecords
                 let records1 = subject1.subscription.syncDemandRecords
                 
-                expect(records0.allSatisfy({ $0 == .none })).to(beTrue())
-                expect(records1.allSatisfy({ $0 == .none })).to(beTrue())
+                expect(records0.allSatisfy({ $0 == .none })) == true
+                expect(records1.allSatisfy({ $0 == .none })) == true
             }
         }
     }

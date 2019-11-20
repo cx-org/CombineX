@@ -9,7 +9,7 @@ extension Publisher {
     }
 }
 
-extension Publishers.First : Equatable where Upstream : Equatable {
+extension Publishers.First: Equatable where Upstream: Equatable {
     
     /// Returns a Boolean value that indicates whether two first publishers have equal upstream publishers.
     ///
@@ -22,11 +22,10 @@ extension Publishers.First : Equatable where Upstream : Equatable {
     }
 }
 
-
 extension Publishers {
     
     /// A publisher that publishes the first element of a stream, then finishes.
-    public struct First<Upstream> : Publisher where Upstream : Publisher {
+    public struct First<Upstream: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         
@@ -39,7 +38,7 @@ extension Publishers {
             self.upstream = upstream
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             return self.upstream
                 .output(at: 0)
                 .receive(subscriber: subscriber)

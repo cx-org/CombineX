@@ -1,8 +1,8 @@
-import Foundation
 import CXShim
 import CXTestUtility
-import Quick
+import Foundation
 import Nimble
+import Quick
 
 class TimerSpec: QuickSpec {
     
@@ -18,7 +18,7 @@ class TimerSpec: QuickSpec {
             let sub = makeTestSubscriber(Date.self, Never.self, .unlimited)
             pub.subscribe(sub)
             
-            waitUntil(timeout: 3) { (done) in
+            waitUntil(timeout: 3) { done in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     done()
                     expect(sub.events).to(beEmpty())

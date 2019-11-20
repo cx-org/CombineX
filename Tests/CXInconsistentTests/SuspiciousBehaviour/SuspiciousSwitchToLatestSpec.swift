@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class SuspiciousSwitchToLatestSpec: QuickSpec {
     
@@ -18,11 +18,11 @@ class SuspiciousSwitchToLatestSpec: QuickSpec {
             let subject = PassthroughSubject<PassthroughSubject<Int, Never>, Never>()
             
             let pub = subject.switchToLatest()
-            let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
+            let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
                 s.request(.max(10))
             }, receiveValue: { v in
                 return [0, 10].contains(v) ? .max(1) : .none
-            }, receiveCompletion: { c in
+            }, receiveCompletion: { _ in
             })
             pub.subscribe(sub)
             
@@ -35,8 +35,9 @@ class SuspiciousSwitchToLatestSpec: QuickSpec {
             expect {
                 subject1.send(11)
             }.toBranch(
-                combine: beVoid(),
-                cx: throwAssertion())
+                combine: throwAssertion(),
+                cx: beVoid()
+            )
             #endif
         }
         
@@ -52,13 +53,13 @@ class SuspiciousSwitchToLatestSpec: QuickSpec {
             
             subject.send(subject1)
             subject1.send(completion: .finished)
-            expect(sub.events).to(equal([]))
+            expect(sub.events) == []
             
             subject.send(subject2)
-            expect(sub.events).to(equal([]))
+            expect(sub.events) == []
             
             subject.send(completion: .finished)
-            expect(sub.events).to(equal([]))
+            expect(sub.events) == []
             
             // FIXME: Combine won't get any event when the last child finish.
             subject2.send(completion: .finished)
@@ -75,11 +76,11 @@ class SuspiciousSwitchToLatestSpec: QuickSpec {
             let subject = PassthroughSubject<PassthroughSubject<Int, Never>, Never>()
             
             let pub = subject.switchToLatest()
-            let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
+            let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
                 s.request(.max(10))
             }, receiveValue: { v in
                 return [1, 11].contains(v) ? .max(1) : .none
-            }, receiveCompletion: { c in
+            }, receiveCompletion: { _ in
             })
             pub.subscribe(sub)
             

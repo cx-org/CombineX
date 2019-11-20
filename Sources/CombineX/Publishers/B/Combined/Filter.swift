@@ -1,6 +1,6 @@
 extension Publisher {
     
-    public func filter(_ isIncluded: @escaping (Self.Output) -> Bool) -> Publishers.Filter<Self> {
+    public func filter(_ isIncluded: @escaping (Output) -> Bool) -> Publishers.Filter<Self> {
         return .init(upstream: self, isIncluded: isIncluded)
     }
 }
@@ -8,7 +8,7 @@ extension Publisher {
 extension Publishers.Filter {
     
     public func tryFilter(_ isIncluded: @escaping (Publishers.Filter<Upstream>.Output) throws -> Bool) -> Publishers.TryFilter<Upstream> {
-        let newIsIncluded:  (Upstream.Output) throws -> Bool = {
+        let newIsIncluded: (Upstream.Output) throws -> Bool = {
             let lhs = self.isIncluded($0)
             let rhs = try isIncluded($0)
             return lhs && rhs
@@ -20,7 +20,7 @@ extension Publishers.Filter {
 extension Publishers {
     
     /// A publisher that republishes all elements that match a provided closure.
-    public struct Filter<Upstream> : Publisher where Upstream : Publisher {
+    public struct Filter<Upstream: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         
@@ -37,7 +37,7 @@ extension Publishers {
             self.isIncluded = isIncluded
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             self.upstream
                 .compactMap {
                     self.isIncluded($0) ? $0 : nil

@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class RetrySpec: QuickSpec {
     
@@ -17,7 +17,7 @@ class RetrySpec: QuickSpec {
             // MARK: 1.1 should retry specified times then finish
             it("should retry specified times then finish") {
                 var errs: [TestError] = [.e0, .e1, .e2]
-                let pub = TestPublisher<Int, TestError> { (s) in
+                let pub = TestPublisher<Int, TestError> { s in
                     s.receive(subscription: Subscriptions.empty)
                     if errs.isEmpty {
                         s.receive(completion: .finished)
@@ -28,13 +28,13 @@ class RetrySpec: QuickSpec {
                 let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
                 pub.retry(5).subscribe(sub)
                 
-                expect(sub.events).to(equal([.completion(.finished)]))
+                expect(sub.events) == [.completion(.finished)]
             }
             
             // MARK: 1.2 should retry specified times then fail
             it("should retry specified times then fail") {
                 var errs: [TestError] = [.e0, .e1, .e2]
-                let pub = TestPublisher<Int, TestError> { (s) in
+                let pub = TestPublisher<Int, TestError> { s in
                     s.receive(subscription: Subscriptions.empty)
                     if errs.isEmpty {
                         s.receive(completion: .finished)
@@ -45,7 +45,7 @@ class RetrySpec: QuickSpec {
                 let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
                 pub.retry(1).subscribe(sub)
                 
-                expect(sub.events).to(equal([.completion(.failure(.e1))]))
+                expect(sub.events) == [.completion(.failure(.e1))]
             }
         }
         
@@ -61,7 +61,7 @@ class RetrySpec: QuickSpec {
                 let sub = makeTestSubscriber(Int.self, TestError.self, .max(5))
                 pub.retry(1).subscribe(sub)
                 
-                expect(sub.events).to(equal([.value(1), .value(2), .value(3), .value(1), .value(2)]))
+                expect(sub.events) == [.value(1), .value(2), .value(3), .value(1), .value(2)]
             }
         }
     }

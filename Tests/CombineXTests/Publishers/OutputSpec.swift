@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class OutputSpec: QuickSpec {
     
@@ -15,7 +15,7 @@ class OutputSpec: QuickSpec {
         describe("Relay") {
             
             xit("should not receive values even if no subscription is received") {
-                let pub = TestPublisher<Int, Error> { (s) in
+                let pub = TestPublisher<Int, Error> { s in
                     _ = s.receive(0)
                     _ = s.receive(1)
                     _ = s.receive(2)
@@ -29,18 +29,18 @@ class OutputSpec: QuickSpec {
                 let got = sub.events.mapError { $0 as! TestError }
                 
                 // FIXME: Even if the upstream doesn't send subscription, the downstream still can receive values. 🤔.
-                expect(got).to(equal([.value(0), .value(1)]))
+                expect(got) == [.value(0), .value(1)]
             }
             
             // MARK: 1.1 should only send values specified by the range
             it("should only send values in the specified range") {
                 let subject = PassthroughSubject<Int, Never>()
                 let pub = subject.output(in: 10..<20)
-                let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
                     s.request(.unlimited)
-                }, receiveValue: { v in
+                }, receiveValue: { _ in
                     return .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 
                 pub.subscribe(sub)
@@ -53,18 +53,18 @@ class OutputSpec: QuickSpec {
                     TestSubscriberEvent<Int, Never>.value($0)
                 }
                 let expected = valueEvents + [.completion(.finished)]
-                expect(sub.events).to(equal(expected))
+                expect(sub.events) == expected
             }
             
             // MARK: 1.2 should send values as demand
             it("should send values as demand") {
                 let subject = PassthroughSubject<Int, Never>()
                 let pub = subject.output(in: 10..<20)
-                let sub = TestSubscriber<Int, Never>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
                     s.request(.max(5))
                 }, receiveValue: { v in
                     [10, 15].contains(v) ? .max(1) : .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 
                 pub.subscribe(sub)
@@ -76,7 +76,7 @@ class OutputSpec: QuickSpec {
                 let expected = (10..<17).map {
                     TestSubscriberEvent<Int, Never>.value($0)
                 }
-                expect(sub.events).to(equal(expected))
+                expect(sub.events) == expected
             }
             
             #if !SWIFT_PACKAGE

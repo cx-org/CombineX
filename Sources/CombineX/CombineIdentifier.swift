@@ -4,7 +4,7 @@ import CXUtility
 
 private let counter = Atom<UInt>(val: 0)
 
-public struct CombineIdentifier : Hashable, CustomStringConvertible {
+public struct CombineIdentifier: Hashable, CustomStringConvertible {
     
     private let id: UInt
     

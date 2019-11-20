@@ -6,8 +6,13 @@ extension Publisher {
     
     /// Specifies the scheduler on which to receive elements from the publisher.
     ///
-    /// You use the `receive(on:options:)` operator to receive results on a specific scheduler, such as performing UI work on the main run loop.
-    /// In contrast with `subscribe(on:options:)`, which affects upstream messages, `receive(on:options:)` changes the execution context of downstream messages. In the following example, requests to `jsonPublisher` are performed on `backgroundQueue`, but elements received from it are performed on `RunLoop.main`.
+    /// You use the `receive(on:options:)` operator to receive results on a specific scheduler, such
+    /// as performing UI work on the main run loop.
+    ///
+    /// In contrast with `subscribe(on:options:)`, which affects upstream messages,
+    /// `receive(on:options:)` changes the execution context of downstream messages. In the
+    /// following example, requests to `jsonPublisher` are performed on `backgroundQueue`, but
+    /// elements received from it are performed on `RunLoop.main`.
     ///
     ///     let jsonPublisher = MyJSONLoaderPublisher() // Some publisher.
     ///     let labelUpdater = MyLabelUpdateSubscriber() // Some subscriber that updates the UI.
@@ -21,7 +26,7 @@ extension Publisher {
     ///   - scheduler: The scheduler the publisher is to use for element delivery.
     ///   - options: Scheduler options that customize the element delivery.
     /// - Returns: A publisher that delivers elements using the specified scheduler.
-    public func receive<S>(on scheduler: S, options: S.SchedulerOptions? = nil) -> Publishers.ReceiveOn<Self, S> where S : Scheduler {
+    public func receive<S: Scheduler>(on scheduler: S, options: S.SchedulerOptions? = nil) -> Publishers.ReceiveOn<Self, S> {
         return .init(upstream: self, scheduler: scheduler, options: options)
     }
 }
@@ -29,7 +34,7 @@ extension Publisher {
 extension Publishers {
     
     /// A publisher that delivers elements to its downstream subscriber on a specific scheduler.
-    public struct ReceiveOn<Upstream, Context> : Publisher where Upstream : Publisher, Context : Scheduler {
+    public struct ReceiveOn<Upstream: Publisher, Context: Scheduler>: Publisher {
         
         public typealias Output = Upstream.Output
         
@@ -50,7 +55,7 @@ extension Publishers {
             self.options = options
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             let s = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(s)
         }
@@ -59,16 +64,14 @@ extension Publishers {
 
 extension Publishers.ReceiveOn {
     
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
@@ -147,5 +150,4 @@ extension Publishers.ReceiveOn {
             return "ReceiveOn"
         }
     }
-
 }

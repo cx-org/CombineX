@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class ZipSpec: QuickSpec {
     
@@ -32,7 +32,7 @@ class ZipSpec: QuickSpec {
                 subject1.send("c")
                 
                 let expected = ["0a", "1b", "2c"].map { TestSubscriberEvent<String, TestError>.value($0) }
-                expect(sub.events).to(equal(expected))
+                expect(sub.events) == expected
             }
             
             // MARK: 1.2 should zip of 3
@@ -60,7 +60,7 @@ class ZipSpec: QuickSpec {
                 subject2.send("D")
                 
                 let expected = ["0aA", "1bB", "2cC", "3dD"].map { TestSubscriberEvent<String, TestError>.value($0) }
-                expect(sub.events).to(equal(expected))
+                expect(sub.events) == expected
             }
             
             // MARK: 1.3 should finish when one sends a finish
@@ -76,7 +76,7 @@ class ZipSpec: QuickSpec {
                     subjects[$0 % 4].send($0)
                 }
                 subjects[3].send(completion: .finished)
-                expect(sub.events).to(equal([.value(6), .value(22), .completion(.finished)]))
+                expect(sub.events) == [.value(6), .value(22), .completion(.finished)]
             }
             
             // MARK: 1.4 should fail when one sends an error
@@ -92,7 +92,7 @@ class ZipSpec: QuickSpec {
                     subjects[$0 % 4].send($0)
                 }
                 subjects[3].send(completion: .failure(.e0))
-                expect(sub.events).to(equal([.value(6), .value(22), .completion(.failure(.e0))]))
+                expect(sub.events) == [.value(6), .value(22), .completion(.failure(.e0))]
             }
             
             // MARK: 1.5 should send as many as demands
@@ -102,15 +102,15 @@ class ZipSpec: QuickSpec {
                 
                 var counter = 0
                 let pub = subject0.zip(subject1)
-                let sub = TestSubscriber<(String, String), TestError>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<(String, String), TestError>(receiveSubscription: { s in
                     s.request(.max(10))
-                }, receiveValue: { v in
+                }, receiveValue: { _ in
                     defer {
                         counter += 1
                     }
                     
                     return [0, 10].contains(counter) ? .max(1) : .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 pub.subscribe(sub)
                 
@@ -119,7 +119,7 @@ class ZipSpec: QuickSpec {
                     subject1.send("\($0)")
                 }
                 
-                expect(sub.events.count).to(equal(12))
+                expect(sub.events.count) == 12
             }
         }
     }

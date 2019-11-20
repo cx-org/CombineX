@@ -1,5 +1,5 @@
-import Foundation
 import CombineX
+import Foundation
 
 #if canImport(FoundationNetworking)
 import FoundationNetworking
@@ -16,7 +16,6 @@ extension CXWrappers {
     #else
     public final class URLSession: NSObject<Foundation.URLSession> {}
     #endif
-    
 }
 
 extension URLSession {
@@ -49,10 +48,9 @@ extension CXWrappers.URLSession {
     }
 }
 
-
 extension CXWrappers.URLSession {
     
-    public struct DataTaskPublisher : Publisher {
+    public struct DataTaskPublisher: Publisher {
 
         public typealias Output = (data: Data, response: URLResponse)
 
@@ -67,9 +65,9 @@ extension CXWrappers.URLSession {
             self.session = session
         }
 
-        public func receive<S>(subscriber: S) where S : Subscriber, S.Failure == Failure, S.Input == Output {
+        public func receive<S: Subscriber>(subscriber: S) where S.Failure == Failure, S.Input == Output {
             let subject = PassthroughSubject<Output, Failure>()
-            let task = self.session.dataTask(with: self.request) { (data, response, error) in
+            let task = self.session.dataTask(with: self.request) { data, response, error in
                 if let e = error as? URLError {
                     subject.send(completion: .failure(e))
                     return

@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class PublishedSpec: QuickSpec {
     
@@ -25,12 +25,12 @@ class PublishedSpec: QuickSpec {
                 let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
                 x.$name.subscribe(sub)
 
-                expect(sub.events).to(equal([.value(0)]))
+                expect(sub.events) == [.value(0)]
                 
                 x.name = 1
                 x.name = 2
                 
-                expect(sub.events).to(equal([.value(0), .value(1), .value(2)]))
+                expect(sub.events) == [.value(0), .value(1), .value(2)]
             }
         }
         
@@ -47,7 +47,7 @@ class PublishedSpec: QuickSpec {
                     s.request(.max(10))
                 }, receiveValue: { v in
                     return [0, 10].contains(v) ? .max(1) : .max(0)
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 
                 x.$name.subscribe(sub)
@@ -56,7 +56,7 @@ class PublishedSpec: QuickSpec {
                     x.name = $0
                 }
                 
-                expect(sub.events.count).to(equal(13))
+                expect(sub.events.count) == 13
             }
         }
     }

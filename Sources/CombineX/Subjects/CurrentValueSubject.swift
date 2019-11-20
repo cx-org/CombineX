@@ -3,10 +3,10 @@ import CXUtility
 #endif
 
 /// A subject that wraps a single value and publishes a new element whenever the value changes.
-final public class CurrentValueSubject<Output, Failure> : Subject where Failure : Error {
+public final class CurrentValueSubject<Output, Failure: Error>: Subject {
     
     /// The value wrapped by this subject, published as a new element whenever it changes.
-    final public var value: Output {
+    public final var value: Output {
         get {
             return self.downstreamLock.withLock {
                 self.current
@@ -33,7 +33,7 @@ final public class CurrentValueSubject<Output, Failure> : Subject where Failure 
         self.current = value
     }
     
-    final public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
+    public final func receive<S: Subscriber>(subscriber: S) where Output == S.Input, Failure == S.Failure {
         self.downstreamLock.lock()
         
         if let completion = self.completion {
@@ -67,7 +67,7 @@ final public class CurrentValueSubject<Output, Failure> : Subject where Failure 
         }
     }
     
-    final public func send(_ input: Output) {
+    public final func send(_ input: Output) {
         self.downstreamLock.lock()
         guard self.completion == nil else {
             self.downstreamLock.unlock()
@@ -82,7 +82,7 @@ final public class CurrentValueSubject<Output, Failure> : Subject where Failure 
         }
     }
     
-    final public func send(completion: Subscribers.Completion<Failure>) {
+    public final func send(completion: Subscribers.Completion<Failure>) {
         self.downstreamLock.lock()
         guard self.completion == nil else {
             self.downstreamLock.unlock()
@@ -104,7 +104,7 @@ final public class CurrentValueSubject<Output, Failure> : Subject where Failure 
         self.downstreamLock.unlock()
     }
     
-    final public func send(subscription: Subscription) {
+    public final func send(subscription: Subscription) {
         self.upstreamLock.lock()
         self.upstreamSubscriptions.append(subscription)
         let isRequested = self.isRequested

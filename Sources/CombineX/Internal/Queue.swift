@@ -151,7 +151,6 @@ struct Queue<Element>: BidirectionalCollection, CustomStringConvertible {
     }
 }
 
-
 private extension FixedWidthInteger {
     
     func nextPowerOf2() -> Self {

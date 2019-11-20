@@ -2,10 +2,13 @@ extension Publisher {
     
     /// Publishes the first element of a stream to satisfy a throwing predicate closure, then finishes.
     ///
-    /// The publisher ignores all elements after the first. If this publisher doesn’t receive any elements, it finishes without publishing. If the predicate closure throws, the publisher fails with an error.
-    /// - Parameter predicate: A closure that takes an element as a parameter and returns a Boolean value that indicates whether to publish the element.
+    /// The publisher ignores all elements after the first. If this publisher doesn’t receive any elements, it
+    /// finishes without publishing. If the predicate closure throws, the publisher fails with an error.
+    ///
+    /// - Parameter predicate: A closure that takes an element as a parameter and returns a
+    /// Boolean value that indicates whether to publish the element.
     /// - Returns: A publisher that only publishes the first element of a stream that satifies the predicate.
-    public func tryFirst(where predicate: @escaping (Self.Output) throws -> Bool) -> Publishers.TryFirstWhere<Self> {
+    public func tryFirst(where predicate: @escaping (Output) throws -> Bool) -> Publishers.TryFirstWhere<Self> {
         return .init(upstream: self, predicate: predicate)
     }
 }
@@ -13,7 +16,7 @@ extension Publisher {
 extension Publishers {
     
     /// A publisher that only publishes the first element of a stream to satisfy a throwing predicate closure.
-    public struct TryFirstWhere<Upstream> : Publisher where Upstream : Publisher {
+    public struct TryFirstWhere<Upstream: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         
@@ -30,7 +33,7 @@ extension Publishers {
             self.predicate = predicate
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, S.Failure == Publishers.TryFirstWhere<Upstream>.Failure {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Output == S.Input, S.Failure == Publishers.TryFirstWhere<Upstream>.Failure {
             return self.upstream
                 .tryFilter(self.predicate)
                 .output(at: 0)

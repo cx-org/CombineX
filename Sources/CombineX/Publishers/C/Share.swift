@@ -2,7 +2,9 @@ extension Publisher {
     
     /// Returns a publisher as a class instance.
     ///
-    /// The downstream subscriber receieves elements and completion states unchanged from the upstream publisher. Use this operator when you want to use reference semantics, such as storing a publisher instance in a property.
+    /// The downstream subscriber receieves elements and completion states unchanged from the
+    /// upstream publisher. Use this operator when you want to use reference semantics, such as storing a
+    /// publisher instance in a property.
     ///
     /// - Returns: A class instance that republishes its upstream publisher.
     public func share() -> Publishers.Share<Self> {
@@ -13,13 +15,13 @@ extension Publisher {
 extension Publishers {
     
     /// A publisher implemented as a class, which otherwise behaves like its upstream publisher.
-    final public class Share<Upstream> : Publisher, Equatable where Upstream : Publisher {
+    public final class Share<Upstream>: Publisher, Equatable where Upstream: Publisher {
         
         public typealias Output = Upstream.Output
         
         public typealias Failure = Upstream.Failure
         
-        final public let upstream: Upstream
+        public final let upstream: Upstream
         
         private lazy var pub = self.upstream
             .multicast(subject: PassthroughSubject<Output, Failure>())
@@ -29,7 +31,7 @@ extension Publishers {
             self.upstream = upstream
         }
         
-        final public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
+        public final func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             self.pub.receive(subscriber: subscriber)
         }
         

@@ -9,7 +9,7 @@ extension Publisher {
     }
 }
 
-extension Publishers.IgnoreOutput : Equatable where Upstream : Equatable {
+extension Publishers.IgnoreOutput: Equatable where Upstream: Equatable {
     
     /// Returns a Boolean value that indicates whether two publishers are equivalent.
     ///
@@ -25,7 +25,7 @@ extension Publishers.IgnoreOutput : Equatable where Upstream : Equatable {
 extension Publishers {
     
     /// A publisher that ignores all upstream elements, but passes along a completion state (finish or failed).
-    public struct IgnoreOutput<Upstream> : Publisher where Upstream : Publisher {
+    public struct IgnoreOutput<Upstream: Publisher>: Publisher {
         
         public typealias Output = Never
         
@@ -38,7 +38,7 @@ extension Publishers {
             self.upstream = upstream
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, S.Input == Publishers.IgnoreOutput<Upstream>.Output {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, S.Input == Publishers.IgnoreOutput<Upstream>.Output {
             self.upstream
                 .filter { _ in false }
                 .map { _ in fatalError() }

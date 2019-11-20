@@ -8,7 +8,7 @@ extension Publisher {
     /// - Parameter size: The maximum number of elements to store.
     /// - Parameter prefetch: The strategy for initially populating the buffer.
     /// - Parameter whenFull: The action to take when the buffer becomes full.
-    public func buffer(size: Int, prefetch: Publishers.PrefetchStrategy, whenFull: Publishers.BufferingStrategy<Self.Failure>) -> Publishers.Buffer<Self> {
+    public func buffer(size: Int, prefetch: Publishers.PrefetchStrategy, whenFull: Publishers.BufferingStrategy<Failure>) -> Publishers.Buffer<Self> {
         return .init(upstream: self, size: size, prefetch: prefetch, whenFull: whenFull)
     }
 }
@@ -31,7 +31,7 @@ extension Publishers {
     /// * dropNewest: When full, discard the newly-received element without buffering it.
     /// * dropOldest: When full, remove the least recently-received element from the buffer.
     /// * customError: When full, execute the closure to provide a custom error.
-    public enum BufferingStrategy<Failure> where Failure : Error {
+    public enum BufferingStrategy<Failure: Error> {
         
         case dropNewest
         
@@ -41,7 +41,7 @@ extension Publishers {
     }
     
     /// A publisher that buffers elements received from an upstream publisher.
-    public struct Buffer<Upstream> : Publisher where Upstream : Publisher {
+    public struct Buffer<Upstream: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         
@@ -71,7 +71,7 @@ extension Publishers {
             self.whenFull = whenFull
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             switch self.prefetch {
             case .keepFull:
                 let subscription = KeepFull(pub: self, sub: subscriber)
@@ -88,16 +88,14 @@ extension Publishers {
 
 extension Publishers.Buffer {
     
-    private final class KeepFull<S>:
-        Subscriber,
+    private final class KeepFull<S>: Subscriber,
         Subscription,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
         
@@ -257,16 +255,14 @@ extension Publishers.Buffer {
 
 extension Publishers.Buffer {
     
-    private final class ByRequest<S>:
-        Subscriber,
+    private final class ByRequest<S>: Subscriber,
         Subscription,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
         

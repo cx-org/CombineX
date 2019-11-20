@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class CollectByTimeSpec: QuickSpec {
     
@@ -84,7 +84,6 @@ class CollectByTimeSpec: QuickSpec {
                 expect(sub.events).toEventually(equal(
                     [.value([1, 2]), .value([3]), .value([4, 5]), .value([6, 7]), .value([8]), .completion(.finished)]
                 ))
-
             }
             
             // MARK: 1.4 should send as many as demand when strategy is by time
@@ -93,7 +92,7 @@ class CollectByTimeSpec: QuickSpec {
                 let scheduler = TestScheduler()
                 let pub = subject.collect(.byTime(scheduler, .seconds(1)))
                 
-                let sub = TestSubscriber<[Int], TestError>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<[Int], TestError>(receiveSubscription: { s in
                     s.request(.max(2))
                 }, receiveValue: { v in
                     if Set(v).isDisjoint(with: [0, 5]) {
@@ -101,7 +100,7 @@ class CollectByTimeSpec: QuickSpec {
                     } else {
                         return .max(1)
                     }
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 
                 pub.subscribe(sub)
@@ -122,7 +121,7 @@ class CollectByTimeSpec: QuickSpec {
                 let scheduler = TestScheduler()
                 let pub = subject.collect(.byTime(scheduler, .seconds(1)))
                 
-                let sub = TestSubscriber<[Int], TestError>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<[Int], TestError>(receiveSubscription: { s in
                     s.request(.max(2))
                 }, receiveValue: { v in
                     if Set(v).isDisjoint(with: [0, 5]) {
@@ -130,7 +129,7 @@ class CollectByTimeSpec: QuickSpec {
                     } else {
                         return .max(1)
                     }
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 
                 pub.subscribe(sub)
@@ -159,13 +158,13 @@ class CollectByTimeSpec: QuickSpec {
                 let scheduler = TestScheduler()
                 let pub = subject.collect(.byTimeOrCount(scheduler, .seconds(1), 2))
                 
-                let sub = TestSubscriber<[Int], TestError>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<[Int], TestError>(receiveSubscription: { s in
                     s.request(.max(2))
                 }, receiveValue: { v in
                     if v.contains(0) { return .max(1) }
                     if v.contains(2) { return .max(5) }
                     return .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 
                 pub.subscribe(sub)

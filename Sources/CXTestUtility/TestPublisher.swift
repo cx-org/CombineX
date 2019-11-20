@@ -1,6 +1,6 @@
 import CXShim
 
-public class TestPublisher<Output, Failure>: Publisher where Failure : Error {
+public class TestPublisher<Output, Failure: Error>: Publisher {
     
     let subscribeBody: (AnySubscriber<Output, Failure>) -> Void
     
@@ -8,7 +8,7 @@ public class TestPublisher<Output, Failure>: Publisher where Failure : Error {
         self.subscribeBody = subscribe
     }
     
-    public func receive<S>(subscriber: S) where S : Subscriber, Failure == S.Failure, Output == S.Input {
+    public func receive<S: Subscriber>(subscriber: S) where Failure == S.Failure, Output == S.Input {
         self.subscribeBody(AnySubscriber(subscriber))
     }
 }

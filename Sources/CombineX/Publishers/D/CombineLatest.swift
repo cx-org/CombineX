@@ -6,32 +6,45 @@ extension Publisher {
     
     /// Subscribes to an additional publisher and publishes a tuple upon receiving output from either publisher.
     ///
-    /// The combined publisher passes through any requests to *all* upstream publishers. However, it still obeys the demand-fulfilling rule of only sending the request amount downstream. If the demand isn’t `.unlimited`, it drops values from upstream publishers. It implements this by using a buffer size of 1 for each upstream, and holds the most recent value in each buffer.
-    /// All upstream publishers need to finish for this publisher to finsh. If an upstream publisher never publishes a value, this publisher never finishes.
+    /// The combined publisher passes through any requests to *all* upstream publishers. However, it still
+    /// obeys the demand-fulfilling rule of only sending the request amount downstream. If the demand isn’t
+    /// `.unlimited`, it drops values from upstream publishers. It implements this by using a buffer size
+    /// of 1 for each upstream, and holds the most recent value in each buffer.
+    ///
+    /// All upstream publishers need to finish for this publisher to finsh. If an upstream publisher never
+    /// publishes a value, this publisher never finishes.
+    ///
     /// If any of the combined publishers terminates with a failure, this publisher also fails.
+    ///
     /// - Parameters:
     ///   - other: Another publisher to combine with this one.
     /// - Returns: A publisher that receives and combines elements from this and another publisher.
-    public func combineLatest<P>(_ other: P) -> Publishers.CombineLatest<Self, P> where P : Publisher, Self.Failure == P.Failure {
+    public func combineLatest<P: Publisher>(_ other: P) -> Publishers.CombineLatest<Self, P> where Failure == P.Failure {
         return .init(self, other)
     }
     
     /// Subscribes to an additional publisher and invokes a closure upon receiving output from either publisher.
     ///
-    /// The combined publisher passes through any requests to *all* upstream publishers. However, it still obeys the demand-fulfilling rule of only sending the request amount downstream. If the demand isn’t `.unlimited`, it drops values from upstream publishers. It implements this by using a buffer size of 1 for each upstream, and holds the most recent value in each buffer.
-    /// All upstream publishers need to finish for this publisher to finsh. If an upstream publisher never publishes a value, this publisher never finishes.
+    /// The combined publisher passes through any requests to *all* upstream publishers. However, it still
+    /// obeys the demand-fulfilling rule of only sending the request amount downstream. If the demand isn’t
+    /// `.unlimited`, it drops values from upstream publishers. It implements this by using a buffer size
+    /// of 1 for each upstream, and holds the most recent value in each buffer.
+    ///
+    /// All upstream publishers need to finish for this publisher to finsh. If an upstream publisher never
+    /// publishes a value, this publisher never finishes.
+    ///
     /// If any of the combined publishers terminates with a failure, this publisher also fails.
+    ///
     /// - Parameters:
     ///   - other: Another publisher to combine with this one.
     ///   - transform: A closure that receives the most recent value from each publisher and returns a new value to publish.
     /// - Returns: A publisher that receives and combines elements from this and another publisher.
-    public func combineLatest<P, T>(_ other: P, _ transform: @escaping (Self.Output, P.Output) -> T) -> Publishers.Map<Publishers.CombineLatest<Self, P>, T> where P : Publisher, Self.Failure == P.Failure {
+    public func combineLatest<P: Publisher, T>(_ other: P, _ transform: @escaping (Output, P.Output) -> T) -> Publishers.Map<Publishers.CombineLatest<Self, P>, T> where Failure == P.Failure {
         return self.combineLatest(other).map(transform)
     }
-    
 }
 
-extension Publishers.CombineLatest : Equatable where A : Equatable, B : Equatable {
+extension Publishers.CombineLatest: Equatable where A: Equatable, B: Equatable {
     
     /// Returns a Boolean value that indicates whether two publishers are equivalent.
     ///
@@ -47,7 +60,7 @@ extension Publishers.CombineLatest : Equatable where A : Equatable, B : Equatabl
 extension Publishers {
     
     /// A publisher that receives and combines the latest elements from two publishers.
-    public struct CombineLatest<A, B> : Publisher where A : Publisher, B : Publisher, A.Failure == B.Failure {
+    public struct CombineLatest<A, B>: Publisher where A: Publisher, B: Publisher, A.Failure == B.Failure {
         
         public typealias Output = (A.Output, B.Output)
         
@@ -62,7 +75,7 @@ extension Publishers {
             self.b = b
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, B.Failure == S.Failure, S.Input == (A.Output, B.Output) {
+        public func receive<S: Subscriber>(subscriber: S) where B.Failure == S.Failure, S.Input == (A.Output, B.Output) {
             let s = Inner(pub: self, sub: subscriber)
             subscriber.receive(subscription: s)
         }
@@ -93,15 +106,13 @@ private struct CombineLatestState: OptionSet {
  
 extension Publishers.CombineLatest {
 
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         B.Failure == S.Failure,
-        S.Input == (A.Output, B.Output)
-    {
+        S.Input == (A.Output, B.Output) {
 
         typealias Pub = Publishers.CombineLatest<A, B>
         typealias Sub = S
@@ -166,7 +177,7 @@ extension Publishers.CombineLatest {
             childB?.cancel()
         }
         
-        private func release() -> (Child<A.Output>?, Child<B.Output>?){
+        private func release() -> (Child<A.Output>?, Child<B.Output>?) {
             defer {
                 self.outputA = nil
                 self.outputB = nil
@@ -302,4 +313,3 @@ extension Publishers.CombineLatest {
         }
     }
 }
-

@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class ReplaceEmptySpec: QuickSpec {
     
@@ -20,7 +20,7 @@ class ReplaceEmptySpec: QuickSpec {
                 let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
                 pub.subscribe(sub)
                 
-                expect(sub.events).to(equal([.value(1), .completion(.finished)]))
+                expect(sub.events) == [.value(1), .completion(.finished)]
             }
             
             // MARK: 1.2 should not send default value if not empty
@@ -29,7 +29,7 @@ class ReplaceEmptySpec: QuickSpec {
                 let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
                 pub.subscribe(sub)
                 
-                expect(sub.events).to(equal([.value(0), .completion(.finished)]))
+                expect(sub.events) == [.value(0), .completion(.finished)]
             }
             
             #if !SWIFT_PACKAGE

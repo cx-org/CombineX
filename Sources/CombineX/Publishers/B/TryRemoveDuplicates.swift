@@ -6,7 +6,7 @@ extension Publisher {
     
     /// Publishes only elements that don’t match the previous element, as evaluated by a provided error-throwing closure.
     /// - Parameter predicate: A closure to evaluate whether two elements are equivalent, for purposes of filtering. Return `true` from this closure to indicate that the second element is a duplicate of the first. If this closure throws an error, the publisher terminates with the thrown error.
-    public func tryRemoveDuplicates(by predicate: @escaping (Self.Output, Self.Output) throws -> Bool) -> Publishers.TryRemoveDuplicates<Self> {
+    public func tryRemoveDuplicates(by predicate: @escaping (Output, Output) throws -> Bool) -> Publishers.TryRemoveDuplicates<Self> {
         return .init(upstream: self, predicate: predicate)
     }
 }
@@ -14,7 +14,7 @@ extension Publisher {
 extension Publishers {
     
     /// A publisher that publishes only elements that don’t match the previous element, as evaluated by a provided error-throwing closure.
-    public struct TryRemoveDuplicates<Upstream> : Publisher where Upstream : Publisher {
+    public struct TryRemoveDuplicates<Upstream: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         
@@ -34,7 +34,7 @@ extension Publishers {
             self.predicate = predicate
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Output == S.Input, S.Failure == Publishers.TryRemoveDuplicates<Upstream>.Failure {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Output == S.Input, S.Failure == Publishers.TryRemoveDuplicates<Upstream>.Failure {
             let s = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(s)
         }
@@ -43,16 +43,14 @@ extension Publishers {
 
 extension Publishers.TryRemoveDuplicates {
     
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
@@ -65,7 +63,7 @@ extension Publishers.TryRemoveDuplicates {
         let predicate: Predicate
         let sub: Sub
         
-        var previous: Output? = nil
+        var previous: Output?
         var state = RelayState.waiting
         
         init(pub: Pub, sub: Sub) {

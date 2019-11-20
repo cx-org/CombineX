@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class ImmediateSchedulerSpec: QuickSpec {
     
@@ -20,8 +20,8 @@ class ImmediateSchedulerSpec: QuickSpec {
             let s0 = Stride.seconds(1)
             let s1 = Stride.nanoseconds(2)
             
-            expect(s0.magnitude).to(equal(0))
-            expect(s1.magnitude).to(equal(0))
+            expect(s0.magnitude) == 0
+            expect(s1.magnitude) == 0
         }
         
         // MARK: It should have a lazy scheduler time
@@ -29,8 +29,8 @@ class ImmediateSchedulerSpec: QuickSpec {
             let time = ImmediateScheduler.shared.now
             let advanced = time.advanced(by: .seconds(10))
             
-            expect(advanced.distance(to: time)).to(equal(.seconds(0)))
-            expect((time..<advanced).isEmpty).to(beTrue())
+            expect(advanced.distance(to: time)) == .seconds(0)
+            expect((time..<advanced).isEmpty) == true
         }
     }
 }

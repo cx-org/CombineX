@@ -1,24 +1,24 @@
-import CXUtility
 import CXShim
+import CXUtility
 
 public func makeTestSubscriber<Input, Failure: Error>(_ input: Input.Type, _ failure: Failure.Type, _ demand: Subscribers.Demand) -> TestSubscriber<Input, Failure> {
-    return TestSubscriber<Input, Failure>(receiveSubscription: { (s) in
+    return TestSubscriber<Input, Failure>(receiveSubscription: { s in
          s.request(demand)
-    }, receiveValue: { v in
+    }, receiveValue: { _ in
         return .none
-    }, receiveCompletion: { c in
+    }, receiveCompletion: { _ in
     })
 }
 
 public func makeTestSubscriber<Input, Failure: Error>(_ input: Input.Type, _ failure: Failure.Type) -> TestSubscriber<Input, Failure> {
-    return TestSubscriber<Input, Failure>(receiveSubscription: { (s) in
-    }, receiveValue: { v in
+    return TestSubscriber<Input, Failure>(receiveSubscription: { _ in
+    }, receiveValue: { _ in
         return .none
-    }, receiveCompletion: { c in
+    }, receiveCompletion: { _ in
     })
 }
 
-public class TestSubscriber<Input, Failure>: Subscriber where Failure : Error {
+public class TestSubscriber<Input, Failure: Error>: Subscriber {
     
     public typealias Event = TestSubscriberEvent<Input, Failure>
     
@@ -77,4 +77,3 @@ extension TestSubscriber: TestResourceProtocol {
         }
     }
 }
-

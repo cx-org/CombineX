@@ -11,7 +11,7 @@ extension Publisher {
     ///   - scheduler: The scheduler on which to deliver elements.
     ///   - options: Options that customize the delivery of elements.
     /// - Returns: A publisher that emits elements representing the time interval between the elements it receives.
-    public func measureInterval<S>(using scheduler: S, options: S.SchedulerOptions? = nil) -> Publishers.MeasureInterval<Self, S> where S : Scheduler {
+    public func measureInterval<S: Scheduler>(using scheduler: S, options: S.SchedulerOptions? = nil) -> Publishers.MeasureInterval<Self, S> {
         return .init(upstream: self, scheduler: scheduler, options: options)
     }
 }
@@ -19,7 +19,7 @@ extension Publisher {
 extension Publishers {
     
     /// A publisher that measures and emits the time interval between events received from an upstream publisher.
-    public struct MeasureInterval<Upstream, Context> : Publisher where Upstream : Publisher, Context : Scheduler {
+    public struct MeasureInterval<Upstream: Publisher, Context: Scheduler>: Publisher {
         
         public typealias Output = Context.SchedulerTimeType.Stride
         
@@ -39,7 +39,7 @@ extension Publishers {
             self.options = options
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, S.Input == Context.SchedulerTimeType.Stride {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, S.Input == Context.SchedulerTimeType.Stride {
             let s = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(s)
         }
@@ -48,16 +48,14 @@ extension Publishers {
 
 extension Publishers.MeasureInterval {
     
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
@@ -132,4 +130,3 @@ extension Publishers.MeasureInterval {
         }
     }
 }
-

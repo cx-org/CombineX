@@ -5,7 +5,7 @@ import CXUtility
 /// A subject that passes along values and completion.
 ///
 /// Use a `PassthroughSubject` in unit tests when you want a publisher than can publish specific values on-demand during tests.
-final public class PassthroughSubject<Output, Failure> : Subject where Failure : Error {
+public final class PassthroughSubject<Output, Failure: Error>: Subject {
     
     private let downstreamLock = Lock()
     private var completion: Subscribers.Completion<Failure>?
@@ -17,7 +17,7 @@ final public class PassthroughSubject<Output, Failure> : Subject where Failure :
     
     public init() { }
     
-    final public func receive<S>(subscriber: S) where Output == S.Input, Failure == S.Failure, S : Subscriber {
+    public final func receive<S: Subscriber>(subscriber: S) where Output == S.Input, Failure == S.Failure {
         self.downstreamLock.lock()
         
         if let completion = self.completion {
@@ -34,7 +34,7 @@ final public class PassthroughSubject<Output, Failure> : Subject where Failure :
         subscriber.receive(subscription: subscription)
     }
     
-    final public func send(_ input: Output) {
+    public final func send(_ input: Output) {
         self.downstreamLock.lock()
         guard self.completion == nil else {
             self.downstreamLock.unlock()
@@ -48,7 +48,7 @@ final public class PassthroughSubject<Output, Failure> : Subject where Failure :
         }
     }
     
-    final public func send(completion: Subscribers.Completion<Failure>) {
+    public final func send(completion: Subscribers.Completion<Failure>) {
         self.downstreamLock.lock()
         guard self.completion == nil else {
             self.downstreamLock.unlock()
@@ -70,7 +70,7 @@ final public class PassthroughSubject<Output, Failure> : Subject where Failure :
         self.downstreamLock.unlock()
     }
     
-    final public func send(subscription: Subscription) {
+    public final func send(subscription: Subscription) {
         self.upstreamLock.lock()
         self.upstreamSubscriptions.append(subscription)
         let isRequested = self.isRequested

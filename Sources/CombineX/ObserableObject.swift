@@ -27,13 +27,13 @@
 ///     // Prints "24 will change"
 ///     // Prints "25"
 ///
-public protocol ObservableObject : AnyObject {
+public protocol ObservableObject: AnyObject {
 
     /// The type of publisher that emits before the object has changed.
-    associatedtype ObjectWillChangePublisher : Publisher = ObservableObjectPublisher where Self.ObjectWillChangePublisher.Failure == Never
+    associatedtype ObjectWillChangePublisher: Publisher = ObservableObjectPublisher where ObjectWillChangePublisher.Failure == Never
 
     /// A publisher that emits before the object has changed.
-    var objectWillChange: Self.ObjectWillChangePublisher { get }
+    var objectWillChange: ObjectWillChangePublisher { get }
 }
 
 #if canImport(Runtime)
@@ -48,7 +48,7 @@ private let publishedPropertiesCache = TypeInfoCache<UnsafeRawPointer, [Property
 private let globalObjectWillChangeCache = ObservableObjectPublisherCache<AnyObject, ObservableObjectPublisher>()
 #endif
 
-extension ObservableObject where Self.ObjectWillChangePublisher == ObservableObjectPublisher {
+extension ObservableObject where ObjectWillChangePublisher == ObservableObjectPublisher {
     
     #if canImport(Runtime)
     private static func publishedProperties() throws -> [PropertyInfo] {
@@ -90,7 +90,7 @@ extension ObservableObject where Self.ObjectWillChangePublisher == ObservableObj
 }
 
 /// The default publisher of an `ObservableObject`.
-final public class ObservableObjectPublisher : Publisher {
+public final class ObservableObjectPublisher: Publisher {
     
     public typealias Output = Void
     
@@ -102,11 +102,11 @@ final public class ObservableObjectPublisher : Publisher {
         // Do nothing
     }
 
-    final public func receive<S>(subscriber: S) where S : Subscriber, S.Failure == ObservableObjectPublisher.Failure, S.Input == ObservableObjectPublisher.Output {
+    public final func receive<S: Subscriber>(subscriber: S) where S.Failure == ObservableObjectPublisher.Failure, S.Input == ObservableObjectPublisher.Output {
         self.subject.receive(subscriber: subscriber)
     }
 
-    final public func send() {
+    public final func send() {
         self.subject.send()
     }
 }

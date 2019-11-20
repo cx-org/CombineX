@@ -12,14 +12,14 @@ extension Publisher {
     ///   - options: Scheduler options that customize the delivery of elements.
     ///   - customError: A closure that executes if the publisher times out. The publisher sends the failure returned by this closure to the subscriber as the reason for termination.
     /// - Returns: A publisher that terminates if the specified interval elapses with no events received from the upstream publisher.
-    public func timeout<S>(_ interval: S.SchedulerTimeType.Stride, scheduler: S, options: S.SchedulerOptions? = nil, customError: (() -> Self.Failure)? = nil) -> Publishers.Timeout<Self, S> where S : Scheduler {
+    public func timeout<S: Scheduler>(_ interval: S.SchedulerTimeType.Stride, scheduler: S, options: S.SchedulerOptions? = nil, customError: (() -> Failure)? = nil) -> Publishers.Timeout<Self, S> {
         return .init(upstream: self, interval: interval, scheduler: scheduler, options: options, customError: customError)
     }
 }
 
 extension Publishers {
 
-    public struct Timeout<Upstream, Context> : Publisher where Upstream : Publisher, Context : Scheduler {
+    public struct Timeout<Upstream: Publisher, Context: Scheduler>: Publisher {
 
         public typealias Output = Upstream.Output
 
@@ -35,7 +35,13 @@ extension Publishers {
 
         public let customError: (() -> Upstream.Failure)?
         
-        public init(upstream: Upstream, interval: Context.SchedulerTimeType.Stride, scheduler: Context, options: Context.SchedulerOptions?, customError: (() -> Publishers.Timeout<Upstream, Context>.Failure)?) {
+        public init(
+            upstream: Upstream,
+            interval: Context.SchedulerTimeType.Stride,
+            scheduler: Context,
+            options: Context.SchedulerOptions?,
+            customError: (() -> Publishers.Timeout<Upstream, Context>.Failure)?
+        ) {
             self.upstream = upstream
             self.interval = interval
             self.scheduler = scheduler
@@ -43,7 +49,7 @@ extension Publishers {
             self.customError = customError
         }
 
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             let s = Inner(pub: self, sub: subscriber)
             self.upstream.subscribe(s)
         }
@@ -52,16 +58,14 @@ extension Publishers {
 
 extension Publishers.Timeout {
     
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         Subscriber,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
         S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         
         typealias Input = Upstream.Output
         typealias Failure = Upstream.Failure
@@ -166,6 +170,4 @@ extension Publishers.Timeout {
             return "Timeout"
         }
     }
-
 }
-

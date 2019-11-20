@@ -15,7 +15,7 @@ public final class Lock {
     
     @inlinable
     public init(recursive: Bool = false) {
-        self.locking = recursive ? NSRecursiveLock() : NSLock()
+        self.locking = recursive ? NSRecursiveLock(): NSLock()
     }
     
     @inlinable

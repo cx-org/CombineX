@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class TryCatchSpec: QuickSpec {
     
@@ -29,7 +29,7 @@ class TryCatchSpec: QuickSpec {
                 let valueEvents = [1, 2, 3].map { TestSubscriberEvent<Int, TestError>.value($0) }
                 let expected = valueEvents + [.completion(.failure(.e0))]
                 
-                expect(got).to(equal(expected))
+                expect(got) == expected
             }
             
             // MARK: 1.2 should send as many value as demand
@@ -38,18 +38,18 @@ class TryCatchSpec: QuickSpec {
                 let p1 = Publishers.Sequence<[Int], TestError>(sequence: Array(10..<20))
                 
                 let pub = p0.tryCatch { _ in p1 }
-                let sub = TestSubscriber<Int, Error>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, Error>(receiveSubscription: { s in
                     s.request(.max(10))
                 }, receiveValue: { v in
                     [0, 10].contains(v) ? .max(1) : .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 
                 pub.subscribe(sub)
                 
                 let got = sub.events.mapError { $0 as! TestError }
                 let events = (0..<12).map { TestSubscriberEvent<Int, TestError>.value($0) }
-                expect(got).to(equal(events))
+                expect(got) == events
             }
             
             // MARK: 1.3 should fail if error handle throws an error
@@ -64,7 +64,7 @@ class TryCatchSpec: QuickSpec {
                 pub.subscribe(sub)
                 
                 let got = sub.events.mapError { $0 as! TestError }
-                expect(got).to(equal([.completion(.failure(.e2))]))
+                expect(got) == [.completion(.failure(.e2))]
             }
         }
     }

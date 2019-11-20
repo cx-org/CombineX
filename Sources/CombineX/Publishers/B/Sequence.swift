@@ -1,6 +1,6 @@
 #if !COCOAPODS
-import CXUtility
 import CXNamespace
+import CXUtility
 #endif
 
 extension Publishers.Sequence where Failure == Never {
@@ -99,12 +99,12 @@ extension Publishers.Sequence {
         return .init(sequence: s)
     }
     
-    public func setFailureType<E>(to error: E.Type) -> Publishers.Sequence<Elements, E> where E : Error {
+    public func setFailureType<E: Error>(to error: E.Type) -> Publishers.Sequence<Elements, E> {
         return .init(sequence: self.sequence)
     }
 }
 
-extension Publishers.Sequence where Elements.Element : Equatable {
+extension Publishers.Sequence where Elements.Element: Equatable {
     
     public func removeDuplicates() -> Publishers.Sequence<[Output], Failure> {
         var p: Elements.Element?
@@ -125,7 +125,7 @@ extension Publishers.Sequence where Elements.Element : Equatable {
     }
 }
 
-extension Publishers.Sequence where Elements.Element : Comparable, Failure == Never {
+extension Publishers.Sequence where Elements.Element: Comparable, Failure == Never {
     
     public func min() -> Optional<Output>.CX.Publisher {
         return .init(self.sequence.min())
@@ -136,7 +136,7 @@ extension Publishers.Sequence where Elements.Element : Comparable, Failure == Ne
     }
 }
 
-extension Publishers.Sequence where Elements : Collection, Failure == Never {
+extension Publishers.Sequence where Elements: Collection, Failure == Never {
     
     public func first() -> Optional<Output>.CX.Publisher {
         return .init(self.sequence.first)
@@ -147,7 +147,7 @@ extension Publishers.Sequence where Elements : Collection, Failure == Never {
     }
 }
 
-extension Publishers.Sequence where Elements : Collection {
+extension Publishers.Sequence where Elements: Collection {
     
     public func count() -> Result<Int, Failure>.CX.Publisher {
         return .init(self.sequence.count)
@@ -158,7 +158,7 @@ extension Publishers.Sequence where Elements : Collection {
     }
 }
 
-extension Publishers.Sequence where Elements : BidirectionalCollection, Failure == Never {
+extension Publishers.Sequence where Elements: BidirectionalCollection, Failure == Never {
   
     public func last() -> Optional<Output>.CX.Publisher {
         return .init(self.sequence.last)
@@ -169,41 +169,41 @@ extension Publishers.Sequence where Elements : BidirectionalCollection, Failure 
     }
 }
 
-extension Publishers.Sequence where Elements : RandomAccessCollection, Failure == Never {
+extension Publishers.Sequence where Elements: RandomAccessCollection, Failure == Never {
     
     public func output(at index: Elements.Index) -> Optional<Output>.CX.Publisher {
         return .init(self.sequence[index])
     }
 }
 
-extension Publishers.Sequence where Elements : RandomAccessCollection {
+extension Publishers.Sequence where Elements: RandomAccessCollection {
     
     public func output(in range: Range<Elements.Index>) -> Publishers.Sequence<[Output], Failure> {
         return .init(sequence: Array(self.sequence[range]))
     }
 }
 
-extension Publishers.Sequence where Elements : RandomAccessCollection, Failure == Never {
+extension Publishers.Sequence where Elements: RandomAccessCollection, Failure == Never {
 
     public func count() -> Just<Int> {
         return .init(self.sequence.count)
     }
 }
 
-extension Publishers.Sequence where Elements : RandomAccessCollection {
+extension Publishers.Sequence where Elements: RandomAccessCollection {
 
     public func count() -> Result<Int, Failure>.CX.Publisher {
         return .init(self.sequence.count)
     }
 }
 
-extension Publishers.Sequence where Elements : RangeReplaceableCollection {
+extension Publishers.Sequence where Elements: RangeReplaceableCollection {
     
     public func prepend(_ elements: Publishers.Sequence<Elements, Failure>.Output...) -> Publishers.Sequence<Elements, Failure> {
         return .init(sequence: elements + self.sequence)
     }
     
-    public func prepend<S>(_ elements: S) -> Publishers.Sequence<Elements, Failure> where S : Sequence, Elements.Element == S.Element {
+    public func prepend<S: Sequence>(_ elements: S) -> Publishers.Sequence<Elements, Failure> where Elements.Element == S.Element {
         return .init(sequence: elements + self.sequence)
     }
     
@@ -215,7 +215,7 @@ extension Publishers.Sequence where Elements : RangeReplaceableCollection {
         return .init(sequence: self.sequence + elements)
     }
     
-    public func append<S>(_ elements: S) -> Publishers.Sequence<Elements, Failure> where S : Sequence, Elements.Element == S.Element {
+    public func append<S: Sequence>(_ elements: S) -> Publishers.Sequence<Elements, Failure> where Elements.Element == S.Element {
         return .init(sequence: self.sequence + elements)
     }
     
@@ -224,7 +224,7 @@ extension Publishers.Sequence where Elements : RangeReplaceableCollection {
     }
 }
 
-extension Publishers.Sequence : Equatable where Elements : Equatable {
+extension Publishers.Sequence: Equatable where Elements: Equatable {
     
     public static func == (lhs: Publishers.Sequence<Elements, Failure>, rhs: Publishers.Sequence<Elements, Failure>) -> Bool {
         return lhs.sequence == rhs.sequence
@@ -236,7 +236,7 @@ extension Publishers {
     /// A publisher that publishes a given sequence of elements.
     ///
     /// When the publisher exhausts the elements in the sequence, the next request causes the publisher to finish.
-    public struct Sequence<Elements, Failure> : Publisher where Elements : Swift.Sequence, Failure : Error {
+    public struct Sequence<Elements: Swift.Sequence, Failure: Error>: Publisher {
         
         public typealias Output = Elements.Element
         
@@ -250,7 +250,7 @@ extension Publishers {
             self.sequence = sequence
         }
         
-        public func receive<S>(subscriber: S) where Failure == S.Failure, S : Subscriber, Elements.Element == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where Failure == S.Failure, Elements.Element == S.Input {
             let s = Inner(sequence: self.sequence, sub: subscriber)
             subscriber.receive(subscription: s)
         }
@@ -259,15 +259,13 @@ extension Publishers {
 
 extension Publishers.Sequence {
     
-    private final class Inner<S>:
-        Subscription,
+    private final class Inner<S>: Subscription,
         CustomStringConvertible,
         CustomDebugStringConvertible
     where
-        S : Subscriber,
+        S: Subscriber,
         S.Input == Output,
-        S.Failure == Failure
-    {
+        S.Failure == Failure {
         
         let lock = Lock()
         
@@ -414,4 +412,3 @@ extension CXWrappers.Sequence {
         return .init(sequence: self.base)
     }
 }
-

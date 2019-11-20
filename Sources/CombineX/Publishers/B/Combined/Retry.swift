@@ -10,7 +10,7 @@ extension Publisher {
     }
 }
 
-extension Publishers.Retry : Equatable where Upstream : Equatable {
+extension Publishers.Retry: Equatable where Upstream: Equatable {
     
     public static func == (lhs: Publishers.Retry<Upstream>, rhs: Publishers.Retry<Upstream>) -> Bool {
         return lhs.upstream == rhs.upstream && lhs.retries == rhs.retries
@@ -20,7 +20,7 @@ extension Publishers.Retry : Equatable where Upstream : Equatable {
 extension Publishers {
     
     /// A publisher that attempts to recreate its subscription to a failed upstream publisher.
-    public struct Retry<Upstream> : Publisher where Upstream : Publisher {
+    public struct Retry<Upstream: Publisher>: Publisher {
         
         public typealias Output = Upstream.Output
         
@@ -44,7 +44,7 @@ extension Publishers {
             self.retries = retries
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             
             guard let retries = self.retries else {
                 self.upstream

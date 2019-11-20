@@ -18,24 +18,24 @@ extension ConnectablePublisher {
 extension Publishers {
     
     /// A publisher that automatically connects and disconnects from this connectable publisher.
-    public class Autoconnect<Upstream> : Publisher where Upstream : ConnectablePublisher {
+    public class Autoconnect<Upstream>: Publisher where Upstream: ConnectablePublisher {
         
         public typealias Output = Upstream.Output
         
         public typealias Failure = Upstream.Failure
         
         /// The publisher from which this publisher receives elements.
-        final public let upstream: Upstream
+        public final let upstream: Upstream
         
         public init(upstream: Upstream) {
             self.upstream = upstream
         }
         
-        public func receive<S>(subscriber: S) where S : Subscriber, Upstream.Failure == S.Failure, Upstream.Output == S.Input {
+        public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, Upstream.Output == S.Input {
             var cancel: Cancellable?
             self.upstream
                 .handleEvents(
-                    receiveSubscription: { (_) in
+                    receiveSubscription: { _ in
                         cancel = self.upstream.connect()
                     }, receiveCancel: {
                         cancel?.cancel()

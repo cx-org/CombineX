@@ -1,7 +1,7 @@
 import CXShim
 import CXTestUtility
-import Quick
 import Nimble
+import Quick
 
 class DebounceSpec: QuickSpec {
     
@@ -29,7 +29,7 @@ class DebounceSpec: QuickSpec {
                 subject.send(4)
                 scheduler.advance(by: .seconds(0.9))
                 
-                expect(sub.events).to(equal([]))
+                expect(sub.events) == []
                 
                 subject.send(1)
                 subject.send(2)
@@ -44,7 +44,7 @@ class DebounceSpec: QuickSpec {
                 subject.send(9)
                 scheduler.advance(by: .seconds(1.8))
                 
-                expect(sub.events).to(equal([.value(3), .value(6), .value(9)]))
+                expect(sub.events) == [.value(3), .value(6), .value(9)]
             }
             
             // MARK: 1.2 should send last value repeatedly
@@ -58,7 +58,7 @@ class DebounceSpec: QuickSpec {
                 subject.send(1)
                 scheduler.advance(by: .seconds(10))
                 
-                expect(sub.events).to(equal([.value(1)]))
+                expect(sub.events) == [.value(1)]
             }
             
             // MARK: 1.3 should send as many values as demand
@@ -66,11 +66,11 @@ class DebounceSpec: QuickSpec {
                 let subject = PassthroughSubject<Int, TestError>()
                 let scheduler = TestScheduler()
                 let pub = subject.debounce(for: .seconds(1), scheduler: scheduler)
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.max(10))
                 }, receiveValue: { v in
                     return [0, 5].contains(v) ? .max(1) : .none
-                }, receiveCompletion: { c in
+                }, receiveCompletion: { _ in
                 })
                 pub.subscribe(sub)
                 
@@ -83,7 +83,6 @@ class DebounceSpec: QuickSpec {
             }
         }
         
-        
         // MARK: - Demand
         describe("Demand") {
             
@@ -92,12 +91,11 @@ class DebounceSpec: QuickSpec {
                 let subject = TestSubject<Int, TestError>()
                 let scheduler = TestScheduler()
                 let pub = subject.debounce(for: .seconds(1), scheduler: scheduler)
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { (s) in
+                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.max(10))
                 }, receiveValue: { v in
                     return [1].contains(v) ? .max(1) : .none
-                }, receiveCompletion: { c in
-                    
+                }, receiveCompletion: { _ in
                 })
                 pub.subscribe(sub)
                 
@@ -105,8 +103,8 @@ class DebounceSpec: QuickSpec {
                     subject.send($0)
                     scheduler.advance(by: .seconds(1))
                 }
-                expect(subject.subscription.requestDemandRecords).to(equal([.unlimited]))
-                expect(subject.subscription.syncDemandRecords).to(equal(Array(repeating: .max(0), count: 100)))
+                expect(subject.subscription.requestDemandRecords) == [.unlimited]
+                expect(subject.subscription.syncDemandRecords) == Array(repeating: .max(0), count: 100)
             }
         }
     }
