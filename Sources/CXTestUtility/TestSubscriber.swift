@@ -18,6 +18,15 @@ public func makeTestSubscriber<Input, Failure: Error>(_ input: Input.Type, _ fai
     })
 }
 
+public extension Publisher {
+    
+    func subscribeTestSubscriber(initialDemand: Subscribers.Demand = .unlimited) -> TestSubscriber<Output, Failure> {
+        let sub = makeTestSubscriber(Output.self, Failure.self, initialDemand)
+        subscribe(sub)
+        return sub
+    }
+}
+
 public class TestSubscriber<Input, Failure: Error>: Subscriber {
     
     public typealias Event = TestSubscriberEvent<Input, Failure>
