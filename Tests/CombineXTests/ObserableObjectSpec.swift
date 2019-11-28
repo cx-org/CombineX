@@ -106,9 +106,7 @@ class ObserableObjectSpec: QuickSpec {
                 #if canImport(Darwin)
                 objects += [
                     JSONEncoder(), // resilient class
-                    
-                    // FIXME: crash
-                    // ObservableDerivedResilient(), // subclass of resilient class
+                    ObservableDerivedResilient(), // subclass of resilient class
                     
                     // TODO: combine crash. should move to CXInconsistentTests
                     // ObservableDerivedGenericResilient(0, 0.0), // generic subclass of resilient class
@@ -138,8 +136,7 @@ class ObserableObjectSpec: QuickSpec {
                 objects += [
                     JSONEncoder(), // resilient class
                     ObservableDerivedResilient(), // subclass of resilient class
-                    // TODO: combine crashed. should move to CXInconsistentTests
-                    // ObservableDerivedGenericResilient(0, 0.0), // generic subclass of resilient class
+                    ObservableDerivedGenericResilient(0, 0.0), // generic subclass of resilient class
                 ]
                 #endif
                 

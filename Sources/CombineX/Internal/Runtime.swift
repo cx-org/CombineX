@@ -16,9 +16,10 @@ func enumerateClassFields(type: Any.Type, body: (Int, Any.Type) -> Bool) -> Bool
     }
     
     let classMetadataPtr = typePtr.assumingMemoryBound(to: ClassMetadata.self)
-    guard !classMetadataPtr.pointee.hasResilientSuperclass else {
+    let classTypeDescriptorPtr = classMetadataPtr.pointee.typeDescriptor
+    guard !classTypeDescriptorPtr.pointee.hasResilientSuperclass else {
         // resilient subclass
-        return true
+        return false
     }
     
     let superClass = classMetadataPtr.pointee.superClass
@@ -30,7 +31,6 @@ func enumerateClassFields(type: Any.Type, body: (Int, Any.Type) -> Bool) -> Bool
         }
     }
     
-    let classTypeDescriptorPtr = classMetadataPtr.pointee.typeDescriptor
     let numberOfFields = Int(classTypeDescriptorPtr.pointee.numberOfFields)
     let fieldOffsetsPtr = classTypeDescriptorPtr.pointee.offsetToTheFieldOffsetBuffer.buffer(metadata: typePtr, n: numberOfFields)
     let fieldDescriptorPtr = classTypeDescriptorPtr.pointee.fieldDescriptor.advanced()
@@ -38,7 +38,7 @@ func enumerateClassFields(type: Any.Type, body: (Int, Any.Type) -> Bool) -> Bool
     for i in 0..<numberOfFields {
         let offset = fieldOffsetsPtr[i]
         let recordPtr = fieldDescriptorPtr.pointee.fields[i]
-        let genericArguments = typePtr.advanced(by: classMetadataPtr.pointee.genericArgumentOffset * MemoryLayout<UnsafeRawPointer>.size).assumingMemoryBound(to: Any.Type.self)
+        let genericArguments = typePtr.advanced(by: classTypeDescriptorPtr.pointee.genericArgumentOffset * MemoryLayout<UnsafeRawPointer>.size).assumingMemoryBound(to: Any.Type.self)
         let type = recordPtr.pointee.type(genericContext: classMetadataPtr.pointee.typeDescriptor, genericArguments: genericArguments)
         if !body(offset, type) {
             return false
@@ -69,23 +69,6 @@ struct ClassMetadata {
     var classAddressPoint: UInt32
     var typeDescriptor: UnsafeMutablePointer<ClassTypeDescriptor>
     var iVarDestroyer: UnsafeRawPointer
-    
-    var hasResilientSuperclass: Bool {
-        return (classFlags & 0x4000) != 0
-    }
-    
-    var areImmediateMembersNegative: Bool {
-        return (classFlags & 0x800) != 0
-    }
-    
-    var genericArgumentOffset: Int {
-        guard !hasResilientSuperclass else {
-            fatalError("Cannot get the `genericArgumentOffset` for classes with a resilient superclass")
-        }
-        return areImmediateMembersNegative
-            ? -Int(typeDescriptor.pointee.negativeSizeAndBoundsUnion)
-            : Int(typeDescriptor.pointee.metadataPositiveSizeInWords - typeDescriptor.pointee.numImmediateMembers)
-    }
 }
 
 struct ClassTypeDescriptor {
@@ -101,6 +84,23 @@ struct ClassTypeDescriptor {
     var numberOfFields: Int32
     var offsetToTheFieldOffsetBuffer: RelativeBufferPointer<Int32, Int>
 //    var genericContextHeader: TargetTypeGenericContextDescriptorHeader
+    
+    var hasResilientSuperclass: Bool {
+        return ((flags >> 16) & 0x2000) != 0
+    }
+    
+    var areImmediateMembersNegative: Bool {
+        return ((flags >> 16) & 0x1000) != 0
+    }
+    
+    var genericArgumentOffset: Int {
+        guard !hasResilientSuperclass else {
+            fatalError("Cannot get the `genericArgumentOffset` for classes with a resilient superclass")
+        }
+        return areImmediateMembersNegative
+            ? Int(-negativeSizeAndBoundsUnion)
+            : Int(metadataPositiveSizeInWords - numImmediateMembers)
+    }
 }
 
 struct FieldDescriptor {
