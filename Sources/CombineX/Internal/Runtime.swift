@@ -1,14 +1,5 @@
 import CCombineX
 
-private var classIsSwiftMask: Int = {
-    #if canImport(Darwin)
-    if #available(macOS 10.14.4, iOS 12.2, tvOS 12.2, watchOS 5.2, *) {
-        return 2
-    }
-    #endif
-    return 1
-}()
-
 func enumerateClassFields(type: Any.Type, body: (Int, Any.Type) -> Bool) -> Bool {
     let typePtr = unsafeBitCast(type, to: UnsafeMutableRawPointer.self)
     
@@ -18,13 +9,13 @@ func enumerateClassFields(type: Any.Type, body: (Int, Any.Type) -> Bool) -> Bool
         return false
     }
     
-    let data = typePtr.assumingMemoryBound(to: AnyClassMetadataLayout.self).pointee.rodataPointer
+    let data = typePtr.assumingMemoryBound(to: AnyClassMetadata.self).pointee.rodataPointer
     guard (data & classIsSwiftMask) != 0 else {
         // pure-objc class
         return true
     }
     
-    let classMetadataPtr = typePtr.assumingMemoryBound(to: ClassMetadataLayout.self)
+    let classMetadataPtr = typePtr.assumingMemoryBound(to: ClassMetadata.self)
     guard !classMetadataPtr.pointee.hasResilientSuperclass else {
         // resilient subclass
         return true
@@ -45,10 +36,9 @@ func enumerateClassFields(type: Any.Type, body: (Int, Any.Type) -> Bool) -> Bool
     let fieldDescriptorPtr = classTypeDescriptorPtr.pointee.fieldDescriptor.advanced()
     
     for i in 0..<numberOfFields {
-        let recordPtr = fieldDescriptorPtr.pointee.fields.element(at: i)
-        
         let offset = fieldOffsetsPtr[i]
-        let genericArguments = typePtr.advanced(by: classMetadataPtr.pointee.genericArgumentOffset * MemoryLayout<UnsafeRawPointer>.size).assumingMemoryBound(to: Buffer<Any.Type>.self).pointee.element(at: 0)
+        let recordPtr = fieldDescriptorPtr.pointee.fields[i]
+        let genericArguments = typePtr.advanced(by: classMetadataPtr.pointee.genericArgumentOffset * MemoryLayout<UnsafeRawPointer>.size).assumingMemoryBound(to: Any.Type.self)
         let type = recordPtr.pointee.type(genericContext: classMetadataPtr.pointee.typeDescriptor, genericArguments: genericArguments)
         if !body(offset, type) {
             return false
@@ -58,14 +48,14 @@ func enumerateClassFields(type: Any.Type, body: (Int, Any.Type) -> Bool) -> Bool
     return true
 }
 
-struct AnyClassMetadataLayout {
+struct AnyClassMetadata {
     var _kind: Int // isaPointer for classes
     var superClass: Any.Type
     var cacheData: (Int, Int)
     var rodataPointer: Int
 }
 
-struct ClassMetadataLayout {
+struct ClassMetadata {
     var _kind: Int // isaPointer for classes
     var superClass: Any.Type
     var cacheData: (Int, Int)
@@ -85,29 +75,16 @@ struct ClassMetadataLayout {
     }
     
     var areImmediateMembersNegative: Bool {
-        return (0x800 & classFlags) != 0
+        return (classFlags & 0x800) != 0
     }
     
     var genericArgumentOffset: Int {
-        if !hasResilientSuperclass {
-            return areImmediateMembersNegative
-                ? -Int(typeDescriptor.pointee.negativeSizeAndBoundsUnion)
-                : Int(typeDescriptor.pointee.metadataPositiveSizeInWords - typeDescriptor.pointee.numImmediateMembers)
+        guard !hasResilientSuperclass else {
+            fatalError("Cannot get the `genericArgumentOffset` for classes with a resilient superclass")
         }
-        
-        /*
-        let storedBounds = typeDescriptor.pointee
-            .negativeSizeAndBoundsUnion
-            .resilientMetadataBounds()
-            .pointee
-            .advanced()
-            .pointee
-        */
-        
-        // To do this something like `computeMetadataBoundsFromSuperclass` in Metadata.cpp
-        // will need to be implemented. To do that we also need to get the resilient superclass
-        // from the trailing objects.
-        fatalError("Cannot get the `genericArgumentOffset` for classes with a resilient superclass")
+        return areImmediateMembersNegative
+            ? -Int(typeDescriptor.pointee.negativeSizeAndBoundsUnion)
+            : Int(typeDescriptor.pointee.metadataPositiveSizeInWords - typeDescriptor.pointee.numImmediateMembers)
     }
 }
 
@@ -126,50 +103,6 @@ struct ClassTypeDescriptor {
 //    var genericContextHeader: TargetTypeGenericContextDescriptorHeader
 }
 
-struct Buffer<Element> {
-    
-    var element: Element
-    
-    mutating func buffer(n: Int) -> UnsafeBufferPointer<Element> {
-        return withUnsafePointer(to: &self) {
-            return UnsafeBufferPointer(start: UnsafeRawPointer($0).assumingMemoryBound(to: Element.self), count: n)
-        }
-    }
-    
-    mutating func element(at i: Int) -> UnsafeMutablePointer<Element> {
-        return withUnsafePointer(to: &self) {
-            return UnsafeMutablePointer(mutating: UnsafeRawPointer($0).assumingMemoryBound(to: Element.self).advanced(by: i))
-        }
-    }
-}
-
-struct RelativePointer<Offset: FixedWidthInteger, Pointee> {
-    
-    var offset: Offset
-    
-    mutating func pointee() -> Pointee {
-        return advanced().pointee
-    }
-    
-    mutating func advanced() -> UnsafeMutablePointer<Pointee> {
-        let offset = self.offset
-        return withUnsafePointer(to: &self) { p in
-            return UnsafeMutableRawPointer(mutating: p).advanced(by: numericCast(offset))
-                .assumingMemoryBound(to: Pointee.self)
-        }
-    }
-}
-
-struct RelativeBufferPointer<Offset: FixedWidthInteger, Pointee> {
-    
-    var offset: Offset
-    
-    func buffer(metadata: UnsafeRawPointer, n: Int) -> UnsafeBufferPointer<Pointee> {
-        let p = metadata.advanced(by: numericCast(offset) * MemoryLayout<UnsafeRawPointer>.size).assumingMemoryBound(to: Pointee.self)
-        return UnsafeBufferPointer(start: p, count: n)
-    }
-}
-
 struct FieldDescriptor {
     var mangledTypeNameOffset: Int32
     var superClassOffset: Int32
@@ -183,18 +116,6 @@ struct FieldDescriptor {
         var fieldRecordFlags: Int32
         var _mangledTypeName: RelativePointer<Int32, Int8>
         var _fieldName: RelativePointer<Int32, UInt8>
-        
-        var isVar: Bool {
-            return (fieldRecordFlags & 0x2) == 0x2
-        }
-        
-        mutating func fieldName() -> String {
-            return String(cString: _fieldName.advanced())
-        }
-        
-        mutating func mangedTypeName() -> String {
-            return String(cString: _mangledTypeName.advanced())
-        }
         
         mutating func type(genericContext: UnsafeRawPointer?,
                            genericArguments: UnsafeRawPointer?) -> Any.Type {
@@ -219,13 +140,58 @@ struct FieldDescriptor {
                     end += MemoryLayout<Int>.size
                 }
             }
-            
             return Int32(end - base)
         }
     }
 }
 
+struct Buffer<Element> {
+    
+    var element: Element
+    
+    subscript(i: Int) -> UnsafeMutablePointer<Element> {
+        mutating get {
+            return withUnsafePointer(to: &self) {
+               return UnsafeMutablePointer(mutating: UnsafeRawPointer($0).assumingMemoryBound(to: Element.self).advanced(by: i))
+            }
+        }
+    }
+}
+
+struct RelativePointer<Offset: FixedWidthInteger, Pointee> {
+    
+    var offset: Offset
+    
+    mutating func advanced() -> UnsafeMutablePointer<Pointee> {
+        let offset = self.offset
+        return withUnsafePointer(to: &self) { p in
+            return UnsafeMutableRawPointer(mutating: p)
+                .advanced(by: numericCast(offset))
+                .assumingMemoryBound(to: Pointee.self)
+        }
+    }
+}
+
+struct RelativeBufferPointer<Offset: FixedWidthInteger, Pointee> {
+    
+    var offset: Offset
+    
+    func buffer(metadata: UnsafeRawPointer, n: Int) -> UnsafeBufferPointer<Pointee> {
+        let p = metadata.advanced(by: numericCast(offset) * MemoryLayout<UnsafeRawPointer>.size).assumingMemoryBound(to: Pointee.self)
+        return UnsafeBufferPointer(start: p, count: n)
+    }
+}
+
 private func swiftObject() -> Any.Type {
     class Temp {}
-    return unsafeBitCast(Temp.self, to: UnsafeRawPointer.self).assumingMemoryBound(to: ClassMetadataLayout.self).pointee.superClass
+    return unsafeBitCast(Temp.self, to: UnsafeRawPointer.self).assumingMemoryBound(to: ClassMetadata.self).pointee.superClass
 }
+
+private var classIsSwiftMask: Int = {
+    #if canImport(Darwin)
+    if #available(macOS 10.14.4, iOS 12.2, tvOS 12.2, watchOS 5.2, *) {
+        return 2
+    }
+    #endif
+    return 1
+}()
