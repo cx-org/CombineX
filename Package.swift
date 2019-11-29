@@ -14,16 +14,16 @@ let package = Package(
         .library(name: "CXShim", targets: ["CXShim"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/wickwirew/Runtime.git", from: "2.0.0"),
         .package(url: "https://github.com/Quick/Quick.git", from: "2.0.0"),
         // TODO: Use "8.0.2" until https://github.com/Quick/Nimble/issues/705 is fixed.
         .package(url: "https://github.com/Quick/Nimble.git", .exact("8.0.2")),
     ],
     targets: [
         .target(name: "CXLibc"),
+        .target(name: "CCombineX"),
         .target(name: "CXUtility"),
         .target(name: "CXNamespace"),
-        .target(name: "CombineX", dependencies: ["CXLibc", "CXUtility", "CXNamespace", "Runtime"]),
+        .target(name: "CombineX", dependencies: ["CXLibc", "CCombineX", "CXUtility", "CXNamespace"]),
         .target(name: "CXFoundation", dependencies: ["CXUtility", "CXNamespace", "CombineX"]),
         .target(name: "CXCompatible", dependencies: ["CXNamespace"]),
         .target(name: "CXShim", dependencies: [/* depends on combine implementation */]),

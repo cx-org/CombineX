@@ -36,56 +36,50 @@ public protocol ObservableObject: AnyObject {
     var objectWillChange: ObjectWillChangePublisher { get }
 }
 
-#if canImport(Runtime)
-import Runtime
-
 private protocol PublishedProtocol {
     var objectWillChange: ObservableObjectPublisher? { get set }
 }
+private extension PublishedProtocol {
+    static func getPublisher(for ptr: UnsafeMutableRawPointer) -> ObservableObjectPublisher? {
+        return ptr.assumingMemoryBound(to: Self.self)
+            .pointee
+            .objectWillChange
+    }
+    static func setPublisher(_ publisher: ObservableObjectPublisher, on ptr: UnsafeMutableRawPointer) {
+        ptr.assumingMemoryBound(to: Self.self)
+            .pointee
+            .objectWillChange = publisher
+    }
+}
 extension Published: PublishedProtocol {}
-
-private let publishedPropertiesCache = TypeInfoCache<UnsafeRawPointer, [PropertyInfo]>()
-private let globalObjectWillChangeCache = ObservableObjectPublisherCache<AnyObject, ObservableObjectPublisher>()
-#endif
 
 extension ObservableObject where ObjectWillChangePublisher == ObservableObjectPublisher {
     
-    #if canImport(Runtime)
-    private static func publishedProperties() throws -> [PropertyInfo] {
-        let key = unsafeBitCast(self, to: UnsafeRawPointer.self)
-        return try publishedPropertiesCache.value(for: key) {
-            let info = try typeInfo(of: self)
-            let props = info.properties.filter { $0.type is PublishedProtocol.Type }
-            return props
-        }
-    }
-    
-    private func setObservableObjectPublisher(_ objectWillChange: ObservableObjectPublisher, for publishedProperty: PropertyInfo) throws {
-        // TODO: mutate in place
-        var published = try publishedProperty.get(from: self) as! PublishedProtocol
-        published.objectWillChange = objectWillChange
-        try withUnsafePointer(to: self) { ptr in
-            let mptr = UnsafeMutablePointer(mutating: ptr)
-            try publishedProperty.set(value: published, on: &(mptr.pointee))
-        }
-    }
-    #endif
-    
     public var objectWillChange: ObservableObjectPublisher {
-        #if canImport(Runtime)
-        return globalObjectWillChangeCache.value(for: self) {
-            do {
-                let publishedProperties = try type(of: self).publishedProperties()
-                let pub = ObservableObjectPublisher()
-                try publishedProperties.forEach { try setObservableObjectPublisher(pub, for: $0) }
-                return pub
-            } catch {
-                fatalError(error.localizedDescription)
+        var installedPub: ObservableObjectPublisher?
+        _ = enumerateClassFields(type: Self.self) { offset, type in
+            guard let pType = type as? PublishedProtocol.Type else {
+                return true
             }
+            let propStorage = Unmanaged
+                .passUnretained(self)
+                .toOpaque()
+                .advanced(by: offset)
+            if let pub = pType.getPublisher(for: propStorage) {
+                installedPub = pub
+                return false
+            }
+            let pub: ObservableObjectPublisher
+            if let installedPub = installedPub {
+                pub = installedPub
+            } else {
+                pub = ObservableObjectPublisher()
+                installedPub = pub
+            }
+            pType.setPublisher(pub, on: propStorage)
+            return true
         }
-        #else
-        Global.RequiresImplementation()
-        #endif
+        return installedPub ?? ObservableObjectPublisher()
     }
 }
 

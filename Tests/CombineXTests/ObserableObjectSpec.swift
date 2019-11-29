@@ -1,5 +1,6 @@
 import CXShim
 import CXTestUtility
+import Foundation
 import Nimble
 import Quick
 
@@ -9,73 +10,222 @@ class ObserableObjectSpec: QuickSpec {
     
     override func spec() {
         
-        class X: ObservableObject {
-            @Published var name = 0
-        }
-        
-        class Y: ObservableObject {}
-        
         afterEach {
             TestResources.release()
         }
         
         // MARK: - Publish
-        describe("Observable") {
+        describe("Publish") {
             
-            // MARK: 1.1 should publish value's change
-            it("Observable") {
-                let x = X()
-                let sub = makeTestSubscriber(Void.self, Never.self, .unlimited)
-                x.objectWillChange.subscribe(sub)
-
-                expect(sub.events).to(haveCount(0))
+            // MARK: 1.1 should publish observed value's change
+            it("should publish observed value's change") {
+                let obj = ObservableDerived()
+                let sub = obj.objectWillChange.subscribeTestSubscriber()
                 
-                x.name = 1
-                x.name = 2
+                obj.x = 1
+                obj.y = "foo"
+                expect(sub.events.count) == 0
                 
-                expect(sub.events).to(haveCount(2))
+                obj.a = 1
+                expect(sub.events.count) == 1
+                
+                obj.a = 2
+                expect(sub.events.count) == 2
+                
+                obj.a += 1
+                expect(sub.events.count) == 3
+                
+                obj.d.toggle()
+                expect(sub.events.count) == 4
+                
+                obj.e.append(1)
+                expect(sub.events.count) == 5
+            }
+            
+            // MARK: 1.2 generic class should publish observed value's change
+            it("generic class should publish observed value's change") {
+                let obj = ObservableGeneric(0, 0.0)
+                let sub = obj.objectWillChange.subscribeTestSubscriber()
+                
+                expect(sub.events.count) == 0
+                
+                obj.a = 1
+                expect(sub.events.count) == 1
+                
+                obj.b = 1.0
+                expect(sub.events.count) == 2
+            }
+            
+            // MARK: 1.3 derived class should publish non-observable base class's change
+            it("derived class should publish non-observable base class's change") {
+                let obj = ObservableDerivedWithNonObservableBase()
+                let sub = obj.objectWillChange.subscribeTestSubscriber()
+                
+                expect(sub.events.count) == 0
+                
+                obj.a += 1
+                expect(sub.events.count) == 1
+                
+                obj.b += 1
+                expect(sub.events.count) == 2
+                
+                obj.c += 1
+                expect(sub.events.count) == 3
+                
+                obj.d += 1
+                expect(sub.events.count) == 4
+            }
+            
+            // MARK: class derived from objc should publish observed value's change
+            it("class derived from objc should publish observed value's change") {
+                let obj = ObservableDerivedObjc()
+                let sub = obj.objectWillChange.subscribeTestSubscriber()
+                
+                expect(sub.events.count) == 0
+                
+                obj.a += 1
+                expect(sub.events.count) == 1
+                
+                obj.b += 1
+                expect(sub.events.count) == 2
             }
         }
         
         // MARK: - Lifetime
         describe("Lifetime") {
             
-            // MARK: 2.1 should return same objectWillChange every time
-            it("should return same objectWillChange every time") {
-                let x = X()
-                let xPub1 = x.objectWillChange
-                let xPub2 = x.objectWillChange
-                expect(xPub1) === xPub2
+            // MARK: 2.1 instance of specific kind of class should return a new objectWillChange every time
+            it("instance of specific kind of class should return a new objectWillChange every time") {
+                var objects: [ObservableObjectDefaultImplementation] = [
+                    NoFields(),             // no fields
+                    NoPublishedFields(),    // no @Published fields
+                    NSUUID(),               // objc class
+                ]
+                
+                // resilient classes on Darwin platforms
+                #if canImport(Darwin)
+                objects += [
+                    JSONEncoder(), // resilient class
+                    ObservableDerivedResilient(), // subclass of resilient class
+                    
+                    // TODO: combine crash. should move to CXInconsistentTests
+                    // ObservableDerivedGenericResilient(0, 0.0), // generic subclass of resilient class
+                ]
+                #endif
+                
+                for obj in objects {
+                    let pub1 = obj.objectWillChange
+                    let pub2 = obj.objectWillChange
+                    expect(pub1).toNot(beIdenticalTo(pub2), description: "instance of \(type(of: obj)) should return a new objectWillChange every time")
+                }
             }
             
-            // MARK: 2.2 object with @Published property should hold objectWillChange
-            it("object with @Published property should hold objectWillChange") {
-                weak var weakPub: ObservableObjectPublisher?
-                do {
-                    let x = X()
-                    weakPub = x.objectWillChange
-                    expect(weakPub).notTo(beNil())
+            // MARK: 2.2 other type should return the same objectWillChange every time
+            it("other type should return the same objectWillChange every time") {
+                var objects: [ObservableObjectDefaultImplementation] = [
+                    PublishedFieldIsConstant(),
+                    ObservableBase(),
+                    ObservableDerived(),
+                    ObservableDerivedObjc(),
+                    ObservableGeneric(0, 0.0),
+                    ObservableDerivedWithNonObservableBase(),
+                ]
+                
+                // no resilient classes on non-Darwin platforms
+                #if !canImport(Darwin)
+                objects += [
+                    JSONEncoder(), // resilient class
+                    ObservableDerivedResilient(), // subclass of resilient class
+                    ObservableDerivedGenericResilient(0, 0.0), // generic subclass of resilient class
+                ]
+                #endif
+                
+                for obj in objects {
+                    let pub1 = obj.objectWillChange
+                    let pub2 = obj.objectWillChange
+                    expect(pub1).to(beIdenticalTo(pub2), description: "instance of \(type(of: obj)) should return the same objectWillChange every time")
                 }
-                expect(weakPub).to(beNil())
-            }
-            
-            // MARK: 2.3 object without @Published property should not hold objectWillChange
-            it("object without @Published property should not hold objectWillChange") {
-                weak var weakPub: ObservableObjectPublisher?
-                do {
-                    let y = Y()
-                    
-                    weakPub = y.objectWillChange
-                    expect(weakPub).to(beNil())
-                    
-                    let strongPub = y.objectWillChange
-                    weakPub = strongPub
-                    expect(weakPub).notTo(beNil())
-                }
-                expect(weakPub).to(beNil())
             }
         }
     }
 
     #endif
 }
+
+#if swift(>=5.1) && (!USE_COMBINEX || canImport(Runtime))
+
+private protocol ObservableObjectDefaultImplementation {
+    var objectWillChange: ObservableObjectPublisher { get }
+}
+private typealias DefaultImplementedObservableObject = ObservableObject & ObservableObjectDefaultImplementation
+
+private class ObservableBase: DefaultImplementedObservableObject {
+    @Published var a = 0
+    var b = Published(initialValue: 0.0)
+    let c = Published(initialValue: "")
+    var x = 0
+    var y = ""
+}
+
+private final class ObservableDerived: ObservableBase {
+    @Published var d = false
+    @Published var e = [Int]()
+}
+
+private class ObservableGeneric<A, B>: DefaultImplementedObservableObject {
+    @Published var a: A
+    @Published var b: B
+    init(_ a: A, _ b: B) {
+        self.a = a
+        self.b = b
+    }
+}
+
+private class NonObservableBase {
+    @Published var a = 0
+    @Published var b = 0
+}
+
+private final class ObservableDerivedWithNonObservableBase: NonObservableBase, DefaultImplementedObservableObject {
+    @Published var c = 0
+    @Published var d = 0
+}
+
+private final class ObservableDerivedObjc: NSDate, DefaultImplementedObservableObject {
+    @Published var a = 0
+    @Published var b = 0
+}
+
+// MARK: -
+
+private final class NoFields: DefaultImplementedObservableObject {}
+
+private final class NoPublishedFields: DefaultImplementedObservableObject {
+    var x = 0
+    var y = ""
+}
+
+private final class PublishedFieldIsConstant: DefaultImplementedObservableObject {
+    let a = Published(initialValue: 0)
+}
+
+extension NSUUID: DefaultImplementedObservableObject {}
+
+extension JSONEncoder: DefaultImplementedObservableObject {}
+
+private final class ObservableDerivedResilient: JSONDecoder, DefaultImplementedObservableObject {
+    @Published var a = 0
+    @Published var b = 0.0
+}
+
+private final class ObservableDerivedGenericResilient<A, B>: JSONDecoder, DefaultImplementedObservableObject {
+    @Published var a: A
+    @Published var b: B
+
+    init(_ a: A, _ b: B) {
+        self.a = a
+        self.b = b
+    }
+}
+
+#endif
