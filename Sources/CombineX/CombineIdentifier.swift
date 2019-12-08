@@ -2,33 +2,33 @@
 import CXUtility
 #endif
 
-private let counter = Atom<UInt>(val: 0)
+private let counter = Atom<UInt64>(val: 0)
 
 public struct CombineIdentifier: Hashable, CustomStringConvertible {
     
-    private let id: UInt
+    private let value: UInt64
     
     public init() {
-        self.id = counter.add(1)
+        self.value = counter.add(1)
     }
     
     public init(_ obj: AnyObject) {
-        self.id = UInt(bitPattern: ObjectIdentifier(obj))
+        self.value = UInt64(truncatingIfNeeded: UInt(bitPattern: ObjectIdentifier(obj)))
     }
     
     public var description: String {
-        return "0x" + String(self.id, radix: 16)
+        return "0x" + String(self.value, radix: 16)
     }
     
     public var hashValue: Int {
-        return self.id.hashValue
+        return self.value.hashValue
     }
     
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(self.id)
+        hasher.combine(self.value)
     }
     
     public static func == (a: CombineIdentifier, b: CombineIdentifier) -> Bool {
-        return a.id == b.id
+        return a.value == b.value
     }
 }
