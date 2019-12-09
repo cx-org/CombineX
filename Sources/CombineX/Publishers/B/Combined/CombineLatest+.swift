@@ -95,12 +95,7 @@ extension Publisher {
 ///   - rhs: Another combineLatest publisher to compare for equality.
 /// - Returns: `true` if the corresponding upstream publishers of each combineLatest publisher are
 /// equal, `false` otherwise.
-extension Publishers.CombineLatest3: Equatable where A: Equatable, B: Equatable, C: Equatable {
-    
-    public static func == (lhs: Publishers.CombineLatest3<A, B, C>, rhs: Publishers.CombineLatest3<A, B, C>) -> Bool {
-        return lhs.a == rhs.a && lhs.b == rhs.b && lhs.c == rhs.c
-    }
-}
+extension Publishers.CombineLatest3: Equatable where A: Equatable, B: Equatable, C: Equatable {}
 
 /// Returns a Boolean value that indicates whether two publishers are equivalent.
 ///
@@ -109,12 +104,7 @@ extension Publishers.CombineLatest3: Equatable where A: Equatable, B: Equatable,
 ///   - rhs: Another combineLatest publisher to compare for equality.
 /// - Returns: `true` if the corresponding upstream publishers of each combineLatest publisher are
 /// equal, `false` otherwise.
-extension Publishers.CombineLatest4: Equatable where A: Equatable, B: Equatable, C: Equatable, D: Equatable {
-    
-    public static func == (lhs: Publishers.CombineLatest4<A, B, C, D>, rhs: Publishers.CombineLatest4<A, B, C, D>) -> Bool {
-        return lhs.a == rhs.a && lhs.b == rhs.b && lhs.c == rhs.c && lhs.d == rhs.d
-    }
-}
+extension Publishers.CombineLatest4: Equatable where A: Equatable, B: Equatable, C: Equatable, D: Equatable {}
 
 extension Publishers {
     

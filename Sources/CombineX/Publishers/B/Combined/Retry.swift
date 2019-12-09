@@ -10,12 +10,7 @@ extension Publisher {
     }
 }
 
-extension Publishers.Retry: Equatable where Upstream: Equatable {
-    
-    public static func == (lhs: Publishers.Retry<Upstream>, rhs: Publishers.Retry<Upstream>) -> Bool {
-        return lhs.upstream == rhs.upstream && lhs.retries == rhs.retries
-    }
-}
+extension Publishers.Retry: Equatable where Upstream: Equatable {}
 
 extension Publishers {
     

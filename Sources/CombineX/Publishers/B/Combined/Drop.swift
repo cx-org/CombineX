@@ -9,18 +9,7 @@ extension Publisher {
     }
 }
 
-extension Publishers.Drop: Equatable where Upstream: Equatable {
-    
-    /// Returns a Boolean value that indicates whether the two publishers are equivalent.
-    ///
-    /// - Parameters:
-    ///   - lhs: A drop publisher to compare for equality..
-    ///   - rhs: Another drop publisher to compare for equality..
-    /// - Returns: `true` if the publishers have equal upstream and count properties, `false` otherwise.
-    public static func == (lhs: Publishers.Drop<Upstream>, rhs: Publishers.Drop<Upstream>) -> Bool {
-        return lhs.upstream == rhs.upstream && lhs.count == rhs.count
-    }
-}
+extension Publishers.Drop: Equatable where Upstream: Equatable {}
 
 extension Publishers {
     

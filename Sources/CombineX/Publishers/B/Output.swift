@@ -24,12 +24,7 @@ extension Publisher {
     }
 }
 
-extension Publishers.Output: Equatable where Upstream: Equatable {
-    
-    public static func == (lhs: Publishers.Output<Upstream>, rhs: Publishers.Output<Upstream>) -> Bool {
-        return lhs.upstream == rhs.upstream && lhs.range == rhs.range
-    }
-}
+extension Publishers.Output: Equatable where Upstream: Equatable {}
 
 extension Publisher {
     

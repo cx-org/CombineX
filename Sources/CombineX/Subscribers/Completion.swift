@@ -12,31 +12,9 @@ extension Subscribers {
     }
 }
 
-extension Subscribers.Completion: Equatable where Failure: Equatable {
-    
-    public static func == (a: Subscribers.Completion<Failure>, b: Subscribers.Completion<Failure>) -> Bool {
-        switch (a, b) {
-        case (.finished, .finished):
-            return true
-        case (.failure(let e0), .failure(let e1)):
-            return e0 == e1
-        default:
-            return false
-        }
-    }
-}
+extension Subscribers.Completion: Equatable where Failure: Equatable {}
 
-extension Subscribers.Completion: Hashable where Failure: Hashable {
-    
-    public func hash(into hasher: inout Hasher) {
-        switch self {
-        case .failure(let e):
-            hasher.combine(e)
-        case .finished:
-            break
-        }
-    }
-}
+extension Subscribers.Completion: Hashable where Failure: Hashable {}
 
 extension Subscribers.Completion {
     

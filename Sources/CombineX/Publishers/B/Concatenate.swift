@@ -47,18 +47,7 @@ extension Publisher {
     }
 }
 
-extension Publishers.Concatenate: Equatable where Prefix: Equatable, Suffix: Equatable {
-    
-    /// Returns a Boolean value that indicates whether two publishers are equivalent.
-    ///
-    /// - Parameters:
-    ///   - lhs: A concatenate publisher to compare for equality.
-    ///   - rhs: Another concatenate publisher to compare for equality.
-    /// - Returns: `true` if the two publishers’ prefix and suffix properties are equal, `false` otherwise.
-    public static func == (lhs: Publishers.Concatenate<Prefix, Suffix>, rhs: Publishers.Concatenate<Prefix, Suffix>) -> Bool {
-        return lhs.prefix == rhs.prefix && lhs.suffix == rhs.suffix
-    }
-}
+extension Publishers.Concatenate: Equatable where Prefix: Equatable, Suffix: Equatable {}
 
 extension Publishers {
     

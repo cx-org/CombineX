@@ -90,12 +90,7 @@ extension Publisher {
 ///   - lhs: A zip publisher to compare for equality.
 ///   - rhs: Another zip publisher to compare for equality.
 /// - Returns: `true` if the corresponding upstream publishers of each zip publisher are equal, `false` otherwise.
-extension Publishers.Zip3: Equatable where A: Equatable, B: Equatable, C: Equatable {
-    
-    public static func == (lhs: Publishers.Zip3<A, B, C>, rhs: Publishers.Zip3<A, B, C>) -> Bool {
-        return lhs.a == rhs.a && lhs.b == rhs.b && lhs.c == rhs.c
-    }
-}
+extension Publishers.Zip3: Equatable where A: Equatable, B: Equatable, C: Equatable {}
 
 /// Returns a Boolean value that indicates whether two publishers are equivalent.
 ///
@@ -103,12 +98,7 @@ extension Publishers.Zip3: Equatable where A: Equatable, B: Equatable, C: Equata
 ///   - lhs: A zip publisher to compare for equality.
 ///   - rhs: Another zip publisher to compare for equality.
 /// - Returns: `true` if the corresponding upstream publishers of each zip publisher are equal, `false` otherwise.
-extension Publishers.Zip4: Equatable where A: Equatable, B: Equatable, C: Equatable, D: Equatable {
-    
-    public static func == (lhs: Publishers.Zip4<A, B, C, D>, rhs: Publishers.Zip4<A, B, C, D>) -> Bool {
-        return lhs.a == rhs.a && lhs.b == rhs.b && lhs.c == rhs.c && lhs.d == rhs.d
-    }
-}
+extension Publishers.Zip4: Equatable where A: Equatable, B: Equatable, C: Equatable, D: Equatable {}
 
 extension Publishers {
     

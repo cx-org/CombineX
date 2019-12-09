@@ -12,12 +12,7 @@ extension Publisher {
     }
 }
 
-extension Publishers.Collect: Equatable where Upstream: Equatable {
-    
-    public static func == (lhs: Publishers.Collect<Upstream>, rhs: Publishers.Collect<Upstream>) -> Bool {
-        return lhs.upstream == rhs.upstream
-    }
-}
+extension Publishers.Collect: Equatable where Upstream: Equatable {}
 
 extension Publishers {
     

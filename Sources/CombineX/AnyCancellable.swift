@@ -31,11 +31,7 @@ public final class AnyCancellable: Cancellable, Hashable {
     }
     
     public static func == (lhs: AnyCancellable, rhs: AnyCancellable) -> Bool {
-        return ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
-    }
-    
-    public var hashValue: Int {
-        return ObjectIdentifier(self).hashValue
+        return lhs === rhs
     }
 }
 

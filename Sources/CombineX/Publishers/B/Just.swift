@@ -171,12 +171,7 @@ extension Just {
     }
 }
 
-extension Just: Equatable where Output: Equatable {
-    
-    public static func == (lhs: Just<Output>, rhs: Just<Output>) -> Bool {
-        return lhs.output == rhs.output
-    }
-}
+extension Just: Equatable where Output: Equatable {}
 
 extension Just where Output: Comparable {
     
