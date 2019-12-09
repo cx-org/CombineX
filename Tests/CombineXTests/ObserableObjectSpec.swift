@@ -6,7 +6,7 @@ import Quick
 
 class ObserableObjectSpec: QuickSpec {
 
-    #if swift(>=5.1) && (!USE_COMBINEX || canImport(Runtime))
+    #if swift(>=5.1)
     
     override func spec() {
         
@@ -152,7 +152,7 @@ class ObserableObjectSpec: QuickSpec {
     #endif
 }
 
-#if swift(>=5.1) && (!USE_COMBINEX || canImport(Runtime))
+#if swift(>=5.1)
 
 private protocol ObservableObjectDefaultImplementation {
     var objectWillChange: ObservableObjectPublisher { get }
