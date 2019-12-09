@@ -2,64 +2,75 @@
 
 import CCombineX
 
-struct PublishedFieldsIterator: IteratorProtocol {
+struct PublishedFieldsEnumerator: Sequence {
     
-    typealias Element = (storage: UnsafeMutableRawPointer, type: _PublishedProtocol.Type)
+    fileprivate typealias InheritanceSequence = UnfoldSequence<Any.Type, Any.Type>
+    
+    struct Iterator: IteratorProtocol {
+        
+        typealias Element = (storage: UnsafeMutableRawPointer, type: _PublishedProtocol.Type)
+        
+        private let object: UnsafeMutableRawPointer
+        private var inheritanceIterator: InheritanceSequence.Iterator
+        private var fieldsIterator: SwiftClassFieldsEnumerator.Iterator?
+        
+        fileprivate init(object: UnsafeMutableRawPointer, inheritance: InheritanceSequence.Iterator) {
+            self.object = object
+            self.inheritanceIterator = inheritance
+        }
+        
+        mutating func next() -> Element? {
+            while let (offset, type) = nextField() {
+                if let pType = type as? _PublishedProtocol.Type {
+                    let storage = object.advanced(by: offset)
+                    return (storage, pType)
+                }
+            }
+            return nil
+        }
+        
+        private mutating func nextField() -> (Int, Any.Type)? {
+            if let next = fieldsIterator?.next() {
+                return next
+            }
+            guard let type = inheritanceIterator.next() else {
+                return nil
+            }
+            fieldsIterator = SwiftClassFieldsEnumerator(type).makeIterator()
+            return nextField()
+        }
+    }
     
     private let object: UnsafeMutableRawPointer
-    private var inheritanceIterator: UnfoldSequence<Any.Type, Any.Type?>.Iterator
-    private var fieldsIterator: SwiftClassFieldsEnumerator.Iterator?
+    private let type: Any.Type
     
     init(object: UnsafeMutableRawPointer, type: Any.Type) {
         self.object = object
-        self.inheritanceIterator = inheritance(type: type).makeIterator()
+        self.type = type
     }
     
-    mutating func next() -> Element? {
-        while let (offset, type) = nextField() {
-            if let pType = type as? _PublishedProtocol.Type {
-                let storage = object.advanced(by: offset)
-                return (storage, pType)
+    func makeIterator() -> Iterator {
+        return Iterator(object: object, inheritance: inheritance().makeIterator())
+    }
+    
+    private func inheritance() -> InheritanceSequence {
+        return sequence(state: type) { state in
+            let typePtr = unsafeBitCast(state, to: UnsafeMutableRawPointer.self)
+            guard state != swiftObject,
+                typePtr.assumingMemoryBound(to: AnyMetadata.self).pointee.isClass,
+                typePtr.assumingMemoryBound(to: AnyClassMetadata.self).pointee.isSwiftClass else {
+                return nil
             }
+            let classMetadataPtr = typePtr.assumingMemoryBound(to: ClassMetadata.self)
+            guard !classMetadataPtr.pointee.typeDescriptor.pointee.hasResilientSuperclass else {
+                // resilient subclass
+                return nil
+            }
+            defer {
+                state = classMetadataPtr.pointee.superClass
+            }
+            return state
         }
-        return nil
-    }
-    
-    private mutating func nextField() -> (Int, Any.Type)? {
-        if let next = fieldsIterator?.next() {
-            return next
-        }
-        guard let type = inheritanceIterator.next() else {
-            return nil
-        }
-        fieldsIterator = SwiftClassFieldsEnumerator(type: type).makeIterator()
-        return nextField()
-    }
-}
-
-private func inheritance(type: Any.Type) -> UnfoldSequence<Any.Type, Any.Type?> {
-    return sequence(state: Optional(type)) { type -> Any.Type? in
-        guard let unwrappedType = type else {
-            return nil
-        }
-        let typePtr = unsafeBitCast(unwrappedType, to: UnsafeMutableRawPointer.self)
-        guard typePtr.assumingMemoryBound(to: AnyMetadata.self).pointee.isClass,
-            typePtr.assumingMemoryBound(to: AnyClassMetadata.self).pointee.isSwiftClass else {
-            return nil
-        }
-        
-        let classMetadataPtr = typePtr.assumingMemoryBound(to: ClassMetadata.self)
-        guard !classMetadataPtr.pointee.typeDescriptor.pointee.hasResilientSuperclass else {
-            // resilient subclass
-            return nil
-        }
-        
-        defer {
-            let superClass = classMetadataPtr.pointee.superClass
-            type = (superClass == swiftObject) ? nil : superClass
-        }
-        
-        return unwrappedType
     }
 }
 
@@ -73,16 +84,7 @@ private struct SwiftClassFieldsEnumerator: RandomAccessCollection {
     let startIndex = 0
     let endIndex: Int
     
-    subscript(position: Int) -> (Int, Any.Type) {
-        let offset = fieldOffsets[position]
-        let type = fieldRecords
-            .advanced(by: position)
-            .pointee
-            .type(genericContext: genericContext, genericArguments: genericArguments)
-        return (offset, type)
-    }
-    
-    init(type: Any.Type) {
+    init(_ type: Any.Type) {
         let typePtr = unsafeBitCast(type, to: UnsafeMutableRawPointer.self)
         let metadata = typePtr.assumingMemoryBound(to: ClassMetadata.self)
         let typeDescriptor = metadata.pointee.typeDescriptor
@@ -93,6 +95,15 @@ private struct SwiftClassFieldsEnumerator: RandomAccessCollection {
         genericArguments = typePtr
             .advanced(by: typeDescriptor.pointee.genericArgumentOffset)
             .assumingMemoryBound(to: Any.Type.self)
+    }
+    
+    subscript(position: Int) -> (Int, Any.Type) {
+        let offset = fieldOffsets[position]
+        let type = fieldRecords
+            .advanced(by: position)
+            .pointee
+            .type(genericContext: genericContext, genericArguments: genericArguments)
+        return (offset, type)
     }
 }
 
@@ -246,9 +257,9 @@ private struct RelativeBufferPointer<Offset: FixedWidthInteger, Pointee> {
     }
 }
 
-// MARK: -
+// MARK: - Const
 
-private var swiftObject: Any.Type = {
+private let swiftObject: Any.Type = {
     class Temp {}
     return unsafeBitCast(Temp.self, to: UnsafeRawPointer.self)
         .assumingMemoryBound(to: ClassMetadata.self)
@@ -256,7 +267,7 @@ private var swiftObject: Any.Type = {
         .superClass
 }()
 
-private var classIsSwiftMask: Int = {
+private let classIsSwiftMask: Int = {
     #if canImport(Darwin)
     if #available(macOS 10.14.4, iOS 12.2, tvOS 12.2, watchOS 5.2, *) {
         return 2

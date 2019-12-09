@@ -38,8 +38,8 @@ extension ObservableObject where ObjectWillChangePublisher == ObservableObjectPu
     public var objectWillChange: ObservableObjectPublisher {
         #if swift(>=5.1)
         let obj = Unmanaged.passUnretained(self).toOpaque()
-        var publishedFieldsIterator = PublishedFieldsIterator(object: obj, type: Self.self)
-        guard let first = publishedFieldsIterator.next() else {
+        var iterator = PublishedFieldsEnumerator(object: obj, type: Self.self).makeIterator()
+        guard let first = iterator.next() else {
             return ObservableObjectPublisher()
         }
         if let installedPub = first.type.getPublisher(for: first.storage) {
@@ -47,7 +47,7 @@ extension ObservableObject where ObjectWillChangePublisher == ObservableObjectPu
         }
         let pubToInstall = ObservableObjectPublisher()
         first.type.setPublisher(pubToInstall, on: first.storage)
-        while let (storage, type) = publishedFieldsIterator.next() {
+        while let (storage, type) = iterator.next() {
             type.setPublisher(pubToInstall, on: storage)
         }
         return pubToInstall
