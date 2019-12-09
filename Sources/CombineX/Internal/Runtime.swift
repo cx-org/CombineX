@@ -43,22 +43,13 @@ private func inheritance(type: Any.Type) -> UnfoldSequence<Any.Type, Any.Type?> 
             return nil
         }
         let typePtr = unsafeBitCast(unwrappedType, to: UnsafeMutableRawPointer.self)
-        
-        let kind = typePtr.assumingMemoryBound(to: UInt.self).pointee
-        guard kind >= 0x800 else {
-            // not a class object
-            return nil
-        }
-        
-        let data = typePtr.assumingMemoryBound(to: AnyClassMetadata.self).pointee.rodataPointer
-        guard (data & classIsSwiftMask) != 0 else {
-            // pure-objc class
+        guard typePtr.assumingMemoryBound(to: AnyMetadata.self).pointee.isClass,
+            typePtr.assumingMemoryBound(to: AnyClassMetadata.self).pointee.isSwiftClass else {
             return nil
         }
         
         let classMetadataPtr = typePtr.assumingMemoryBound(to: ClassMetadata.self)
-        let classTypeDescriptorPtr = classMetadataPtr.pointee.typeDescriptor
-        guard !classTypeDescriptorPtr.pointee.hasResilientSuperclass else {
+        guard !classMetadataPtr.pointee.typeDescriptor.pointee.hasResilientSuperclass else {
             // resilient subclass
             return nil
         }
@@ -107,15 +98,27 @@ private struct SwiftClassFieldsEnumerator: RandomAccessCollection {
 
 // MARK: - Layout
 
+private struct AnyMetadata {
+    var _kind: UInt
+    
+    var isClass: Bool {
+        return _kind == 0 || _kind >= 0x800
+    }
+}
+
 private struct AnyClassMetadata {
-    var _kind: Int // isaPointer for classes
+    var _kind: UInt // isaPointer for classes
     var superClass: Any.Type
     var cacheData: (Int, Int)
     var rodataPointer: Int
+    
+    var isSwiftClass: Bool {
+        return (rodataPointer & classIsSwiftMask) != 0
+    }
 }
 
 private struct ClassMetadata {
-    var _kind: Int // isaPointer for classes
+    var _kind: UInt // isaPointer for classes
     var superClass: Any.Type
     var cacheData: (Int, Int)
     var rodataPointer: Int

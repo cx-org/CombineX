@@ -100,12 +100,12 @@ class ObserableObjectSpec: QuickSpec {
                     NoFields(),             // no fields
                     NoPublishedFields(),    // no @Published fields
                     NSUUID(),               // objc class
+                    JSONEncoder(),          // resilient class
                 ]
                 
                 // resilient classes on Darwin platforms
                 #if canImport(Darwin)
                 objects += [
-                    JSONEncoder(), // resilient class
                     ObservableDerivedResilient(), // subclass of resilient class
                     
                     // TODO: combine crash. should move to CXInconsistentTests
@@ -134,7 +134,6 @@ class ObserableObjectSpec: QuickSpec {
                 // no resilient classes on non-Darwin platforms
                 #if !canImport(Darwin)
                 objects += [
-                    JSONEncoder(), // resilient class
                     ObservableDerivedResilient(), // subclass of resilient class
                     ObservableDerivedGenericResilient(0, 0.0), // generic subclass of resilient class
                 ]
