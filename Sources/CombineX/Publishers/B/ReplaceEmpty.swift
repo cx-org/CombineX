@@ -14,18 +14,7 @@ extension Publisher {
     }
 }
 
-extension Publishers.ReplaceEmpty: Equatable where Upstream: Equatable, Upstream.Output: Equatable {
-    
-    /// Returns a Boolean value that indicates whether two publishers are equivalent.
-    ///
-    /// - Parameters:
-    ///   - lhs: A replace empty publisher to compare for equality.
-    ///   - rhs: Another replace empty publisher to compare for equality.
-    /// - Returns: `true` if the two publishers have equal upstream publishers and output elements, `false` otherwise.
-    public static func == (lhs: Publishers.ReplaceEmpty<Upstream>, rhs: Publishers.ReplaceEmpty<Upstream>) -> Bool {
-        return lhs.upstream == rhs.upstream && lhs.output == rhs.output
-    }
-}
+extension Publishers.ReplaceEmpty: Equatable where Upstream: Equatable, Upstream.Output: Equatable {}
 
 extension Publishers {
     

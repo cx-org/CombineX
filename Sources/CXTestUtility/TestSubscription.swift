@@ -1,7 +1,7 @@
 import CXShim
 import CXUtility
 
-public enum TestSubscriptionEvent {
+public enum TestSubscriptionEvent: Equatable {
     case request(demand: Subscribers.Demand)
     case cancel
 }
@@ -45,19 +45,5 @@ public class TestSubscription: Subscription, TestLogging {
     
     deinit {
         self.trace("deinit")
-    }
-}
-
-extension TestSubscriptionEvent: Equatable {
-    
-    public static func == (a: TestSubscriptionEvent, b: TestSubscriptionEvent) -> Bool {
-        switch (a, b) {
-        case (.request(let d0), .request(let d1)):
-            return d0 == d1
-        case (.cancel, .cancel):
-            return true
-        default:
-            return false
-        }
     }
 }

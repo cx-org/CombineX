@@ -23,12 +23,7 @@ extension Publisher {
     }
 }
 
-extension Publishers.DropUntilOutput: Equatable where Upstream: Equatable, Other: Equatable {
-    
-    public static func == (lhs: Publishers.DropUntilOutput<Upstream, Other>, rhs: Publishers.DropUntilOutput<Upstream, Other>) -> Bool {
-        return lhs.upstream == rhs.upstream && lhs.other == rhs.other
-    }
-}
+extension Publishers.DropUntilOutput: Equatable where Upstream: Equatable, Other: Equatable {}
 
 extension Publishers {
     

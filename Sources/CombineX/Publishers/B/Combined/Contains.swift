@@ -1,15 +1,4 @@
-extension Publishers.Contains: Equatable where Upstream: Equatable {
-    
-    /// Returns a Boolean value that indicates whether two publishers are equivalent.
-    ///
-    /// - Parameters:
-    ///   - lhs: A contains publisher to compare for equality.
-    ///   - rhs: Another contains publisher to compare for equality.
-    /// - Returns: `true` if the two publishers’ upstream and output properties are equal, `false` otherwise.
-    public static func == (lhs: Publishers.Contains<Upstream>, rhs: Publishers.Contains<Upstream>) -> Bool {
-        return lhs.upstream == rhs.upstream && lhs.output == rhs.output
-    }
-}
+extension Publishers.Contains: Equatable where Upstream: Equatable {}
 
 extension Publisher where Output: Equatable {
     

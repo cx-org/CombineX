@@ -48,20 +48,6 @@ extension NSObject.CX {
             self.keyPath = keyPath
             self.options = options
         }
-
-        /// Returns a Boolean value indicating whether two values are equal.
-        ///
-        /// Equality is the inverse of inequality. For any values `a` and `b`,
-        /// `a == b` implies that `a != b` is `false`.
-        ///
-        /// - Parameters:
-        ///   - lhs: A value to compare.
-        ///   - rhs: Another value to compare.
-        public static func == (lhs: KeyValueObservingPublisher<Subject, Value>, rhs: KeyValueObservingPublisher<Subject, Value>) -> Bool {
-            return lhs.object == rhs.object
-                && lhs.keyPath == rhs.keyPath
-                && lhs.options == rhs.options
-        }
     }
 }
 

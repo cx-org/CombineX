@@ -13,12 +13,7 @@ extension Publisher {
     }
 }
 
-extension Publishers.Count: Equatable where Upstream: Equatable {
-    
-    public static func == (lhs: Publishers.Count<Upstream>, rhs: Publishers.Count<Upstream>) -> Bool {
-        return lhs.upstream == rhs.upstream
-    }
-}
+extension Publishers.Count: Equatable where Upstream: Equatable {}
 
 extension Publishers {
     

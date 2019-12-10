@@ -46,21 +46,7 @@ public extension TestSubscriberEvent where Input: Equatable {
     }
 }
 
-extension TestSubscriberEvent: Equatable where Input: Equatable, Failure: Equatable {
-    
-    public static func == (lhs: TestSubscriberEvent, rhs: TestSubscriberEvent) -> Bool {
-        switch (lhs, rhs) {
-        case (.value(let a), .value(let b)):            return a == b
-        case (.completion(let a), .completion(let b)):
-            switch (a, b) {
-            case (.finished, .finished):                return true
-            case (.failure(let e0), .failure(let e1)):  return e0 == e1
-            default:                                    return false
-            }
-        default:                                        return false
-        }
-    }
-}
+extension TestSubscriberEvent: Equatable where Input: Equatable, Failure: Equatable {}
 
 extension TestSubscriberEvent: CustomStringConvertible {
     

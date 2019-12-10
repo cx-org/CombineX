@@ -93,10 +93,6 @@ public struct ImmediateScheduler: Scheduler {
             public static func nanoseconds(_ ns: Int) -> Stride {
                 return Stride(0)
             }
-            
-            public static func == (a: Stride, b: Stride) -> Bool {
-                return a.magnitude == b.magnitude
-            }
         }
     }
     

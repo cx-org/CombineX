@@ -19,16 +19,4 @@ public struct CombineIdentifier: Hashable, CustomStringConvertible {
     public var description: String {
         return "0x" + String(self.value, radix: 16)
     }
-    
-    public var hashValue: Int {
-        return self.value.hashValue
-    }
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(self.value)
-    }
-    
-    public static func == (a: CombineIdentifier, b: CombineIdentifier) -> Bool {
-        return a.value == b.value
-    }
 }

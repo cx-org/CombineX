@@ -44,18 +44,7 @@ extension Publisher {
     }
 }
 
-extension Publishers.CombineLatest: Equatable where A: Equatable, B: Equatable {
-    
-    /// Returns a Boolean value that indicates whether two publishers are equivalent.
-    ///
-    /// - Parameters:
-    ///   - lhs: A combineLatest publisher to compare for equality.
-    ///   - rhs: Another combineLatest publisher to compare for equality.
-    /// - Returns: `true` if the corresponding upstream publishers of each combineLatest publisher are equal, `false` otherwise.
-    public static func == (lhs: Publishers.CombineLatest<A, B>, rhs: Publishers.CombineLatest<A, B>) -> Bool {
-        return lhs.a == rhs.a && lhs.b == rhs.b
-    }
-}
+extension Publishers.CombineLatest: Equatable where A: Equatable, B: Equatable {}
 
 extension Publishers {
     

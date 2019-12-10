@@ -32,8 +32,4 @@ public struct Empty<Output, Failure: Error>: Publisher, Equatable {
             subscriber.receive(completion: .finished)
         }
     }
-    
-    public static func == (lhs: Empty<Output, Failure>, rhs: Empty<Output, Failure>) -> Bool {
-        return lhs.completeImmediately == rhs.completeImmediately
-    }
 }

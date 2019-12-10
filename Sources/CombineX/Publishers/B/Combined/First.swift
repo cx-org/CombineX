@@ -9,18 +9,7 @@ extension Publisher {
     }
 }
 
-extension Publishers.First: Equatable where Upstream: Equatable {
-    
-    /// Returns a Boolean value that indicates whether two first publishers have equal upstream publishers.
-    ///
-    /// - Parameters:
-    ///   - lhs: A drop publisher to compare for equality.
-    ///   - rhs: Another drop publisher to compare for equality.
-    /// - Returns: `true` if the two publishers have equal upstream publishers, `false` otherwise.
-    public static func == (lhs: Publishers.First<Upstream>, rhs: Publishers.First<Upstream>) -> Bool {
-        return lhs.upstream == rhs.upstream
-    }
-}
+extension Publishers.First: Equatable where Upstream: Equatable {}
 
 extension Publishers {
     

@@ -9,18 +9,7 @@ extension Publisher {
     }
 }
 
-extension Publishers.IgnoreOutput: Equatable where Upstream: Equatable {
-    
-    /// Returns a Boolean value that indicates whether two publishers are equivalent.
-    ///
-    /// - Parameters:
-    ///   - lhs: An ignore output publisher to compare for equality.
-    ///   - rhs: Another ignore output publisher to compare for equality.
-    /// - Returns: `true` if the two publishers have equal upstream publishers, `false` otherwise.
-    public static func == (lhs: Publishers.IgnoreOutput<Upstream>, rhs: Publishers.IgnoreOutput<Upstream>) -> Bool {
-        return lhs.upstream == rhs.upstream
-    }
-}
+extension Publishers.IgnoreOutput: Equatable where Upstream: Equatable {}
 
 extension Publishers {
     

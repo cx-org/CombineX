@@ -224,12 +224,7 @@ extension Publishers.Sequence where Elements: RangeReplaceableCollection {
     }
 }
 
-extension Publishers.Sequence: Equatable where Elements: Equatable {
-    
-    public static func == (lhs: Publishers.Sequence<Elements, Failure>, rhs: Publishers.Sequence<Elements, Failure>) -> Bool {
-        return lhs.sequence == rhs.sequence
-    }
-}
+extension Publishers.Sequence: Equatable where Elements: Equatable {}
 
 extension Publishers {
     

@@ -14,18 +14,7 @@ extension Publisher {
     }
 }
 
-extension Publishers.ReplaceError: Equatable where Upstream: Equatable, Upstream.Output: Equatable {
-    
-    /// Returns a Boolean value that indicates whether two publishers are equivalent.
-    ///
-    /// - Parameters:
-    ///   - lhs: A replace error publisher to compare for equality.
-    ///   - rhs: Another replace error publisher to compare for equality.
-    /// - Returns: `true` if the two publishers have equal upstream publishers and output elements, `false` otherwise.
-    public static func == (lhs: Publishers.ReplaceError<Upstream>, rhs: Publishers.ReplaceError<Upstream>) -> Bool {
-        return lhs.upstream == rhs.upstream && lhs.output == rhs.output
-    }
-}
+extension Publishers.ReplaceError: Equatable where Upstream: Equatable, Upstream.Output: Equatable {}
 
 extension Publishers {
     
