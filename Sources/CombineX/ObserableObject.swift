@@ -1,6 +1,3 @@
-// `ObservableObject` depends on property wrapper(`@Published`), which is only available since Swift 5.1.
-#if swift(>=5.1)
-
 /// A type of object with a publisher that emits before the object has changed.
 ///
 /// By default an `ObservableObject` will synthesize an `objectWillChange`
@@ -36,50 +33,27 @@ public protocol ObservableObject: AnyObject {
     var objectWillChange: ObjectWillChangePublisher { get }
 }
 
-private protocol PublishedProtocol {
-    var objectWillChange: ObservableObjectPublisher? { get set }
-}
-private extension PublishedProtocol {
-    static func getPublisher(for ptr: UnsafeMutableRawPointer) -> ObservableObjectPublisher? {
-        return ptr.assumingMemoryBound(to: Self.self)
-            .pointee
-            .objectWillChange
-    }
-    static func setPublisher(_ publisher: ObservableObjectPublisher, on ptr: UnsafeMutableRawPointer) {
-        ptr.assumingMemoryBound(to: Self.self)
-            .pointee
-            .objectWillChange = publisher
-    }
-}
-extension Published: PublishedProtocol {}
-
 extension ObservableObject where ObjectWillChangePublisher == ObservableObjectPublisher {
     
     public var objectWillChange: ObservableObjectPublisher {
-        var installedPub: ObservableObjectPublisher?
-        _ = enumerateClassFields(type: Self.self) { offset, type in
-            guard let pType = type as? PublishedProtocol.Type else {
-                return true
-            }
-            let propStorage = Unmanaged
-                .passUnretained(self)
-                .toOpaque()
-                .advanced(by: offset)
-            if let pub = pType.getPublisher(for: propStorage) {
-                installedPub = pub
-                return false
-            }
-            let pub: ObservableObjectPublisher
-            if let installedPub = installedPub {
-                pub = installedPub
-            } else {
-                pub = ObservableObjectPublisher()
-                installedPub = pub
-            }
-            pType.setPublisher(pub, on: propStorage)
-            return true
+        #if swift(>=5.1)
+        let obj = Unmanaged.passUnretained(self).toOpaque()
+        var iterator = PublishedFieldsEnumerator(object: obj, type: Self.self).makeIterator()
+        guard let first = iterator.next() else {
+            return ObservableObjectPublisher()
         }
-        return installedPub ?? ObservableObjectPublisher()
+        if let installedPub = first.type.getPublisher(for: first.storage) {
+            return installedPub
+        }
+        let pubToInstall = ObservableObjectPublisher()
+        first.type.setPublisher(pubToInstall, on: first.storage)
+        while let (storage, type) = iterator.next() {
+            type.setPublisher(pubToInstall, on: storage)
+        }
+        return pubToInstall
+        #else
+        return ObservableObjectPublisher()
+        #endif
     }
 }
 
@@ -92,11 +66,9 @@ public final class ObservableObjectPublisher: Publisher {
     
     private let subject = PassthroughSubject<Output, Failure>()
 
-    public init() {
-        // Do nothing
-    }
+    public init() {}
 
-    public final func receive<S: Subscriber>(subscriber: S) where S.Failure == ObservableObjectPublisher.Failure, S.Input == ObservableObjectPublisher.Output {
+    public final func receive<S: Subscriber>(subscriber: S) where S.Failure == Failure, S.Input == Output {
         self.subject.receive(subscriber: subscriber)
     }
 
@@ -104,5 +76,3 @@ public final class ObservableObjectPublisher: Publisher {
         self.subject.send()
     }
 }
-
-#endif

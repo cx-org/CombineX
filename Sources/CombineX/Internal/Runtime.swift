@@ -1,62 +1,135 @@
+// This file is based largely on the Runtime package - https://github.com/wickwirew/Runtime
+
 import CCombineX
 
-func enumerateClassFields(type: Any.Type, body: (Int, Any.Type) -> Bool) -> Bool {
-    let typePtr = unsafeBitCast(type, to: UnsafeMutableRawPointer.self)
+struct PublishedFieldsEnumerator: Sequence {
     
-    let kind = typePtr.assumingMemoryBound(to: UInt.self).pointee
-    guard kind >= 0x800 else {
-        // not a class object
-        return false
-    }
+    fileprivate typealias InheritanceSequence = UnfoldSequence<Any.Type, Any.Type>
     
-    let data = typePtr.assumingMemoryBound(to: AnyClassMetadata.self).pointee.rodataPointer
-    guard (data & classIsSwiftMask) != 0 else {
-        // pure-objc class
-        return true
-    }
-    
-    let classMetadataPtr = typePtr.assumingMemoryBound(to: ClassMetadata.self)
-    let classTypeDescriptorPtr = classMetadataPtr.pointee.typeDescriptor
-    guard !classTypeDescriptorPtr.pointee.hasResilientSuperclass else {
-        // resilient subclass
-        return false
-    }
-    
-    let superClass = classMetadataPtr.pointee.superClass
-    // type comparison directly to NSObject.self does not work.
-    // just compare the type name instead.
-    if superClass != swiftObject() && "\(superClass)" != "NSObject" {
-        if !enumerateClassFields(type: superClass, body: body) {
-            return false
+    struct Iterator: IteratorProtocol {
+        
+        typealias Element = (storage: UnsafeMutableRawPointer, type: _PublishedProtocol.Type)
+        
+        private let object: UnsafeMutableRawPointer
+        private var inheritanceIterator: InheritanceSequence.Iterator
+        private var fieldsIterator: SwiftClassFieldsEnumerator.Iterator?
+        
+        fileprivate init(object: UnsafeMutableRawPointer, inheritance: InheritanceSequence.Iterator) {
+            self.object = object
+            self.inheritanceIterator = inheritance
+        }
+        
+        mutating func next() -> Element? {
+            while let (offset, type) = nextField() {
+                if let pType = type as? _PublishedProtocol.Type {
+                    let storage = object.advanced(by: offset)
+                    return (storage, pType)
+                }
+            }
+            return nil
+        }
+        
+        private mutating func nextField() -> (Int, Any.Type)? {
+            if let next = fieldsIterator?.next() {
+                return next
+            }
+            guard let type = inheritanceIterator.next() else {
+                return nil
+            }
+            fieldsIterator = SwiftClassFieldsEnumerator(type).makeIterator()
+            return nextField()
         }
     }
     
-    let numberOfFields = Int(classTypeDescriptorPtr.pointee.numberOfFields)
-    let fieldOffsetsPtr = classTypeDescriptorPtr.pointee.offsetToTheFieldOffsetBuffer.buffer(metadata: typePtr, n: numberOfFields)
-    let fieldDescriptorPtr = classTypeDescriptorPtr.pointee.fieldDescriptor.advanced()
+    private let object: UnsafeMutableRawPointer
+    private let type: Any.Type
     
-    for i in 0..<numberOfFields {
-        let offset = fieldOffsetsPtr[i]
-        let recordPtr = fieldDescriptorPtr.pointee.fields[i]
-        let genericArguments = typePtr.advanced(by: classTypeDescriptorPtr.pointee.genericArgumentOffset * MemoryLayout<UnsafeRawPointer>.size).assumingMemoryBound(to: Any.Type.self)
-        let type = recordPtr.pointee.type(genericContext: classMetadataPtr.pointee.typeDescriptor, genericArguments: genericArguments)
-        if !body(offset, type) {
-            return false
-        }
+    init(object: UnsafeMutableRawPointer, type: Any.Type) {
+        self.object = object
+        self.type = type
     }
     
-    return true
+    func makeIterator() -> Iterator {
+        return Iterator(object: object, inheritance: inheritance().makeIterator())
+    }
+    
+    private func inheritance() -> InheritanceSequence {
+        return sequence(state: type) { state in
+            let typePtr = unsafeBitCast(state, to: UnsafeMutableRawPointer.self)
+            guard state != swiftObject,
+                typePtr.assumingMemoryBound(to: AnyMetadata.self).pointee.isClass,
+                typePtr.assumingMemoryBound(to: AnyClassMetadata.self).pointee.isSwiftClass else {
+                return nil
+            }
+            let classMetadataPtr = typePtr.assumingMemoryBound(to: ClassMetadata.self)
+            guard !classMetadataPtr.pointee.typeDescriptor.pointee.hasResilientSuperclass else {
+                // resilient subclass
+                return nil
+            }
+            defer {
+                state = classMetadataPtr.pointee.superClass
+            }
+            return state
+        }
+    }
 }
 
-struct AnyClassMetadata {
-    var _kind: Int // isaPointer for classes
+private struct SwiftClassFieldsEnumerator: RandomAccessCollection {
+    
+    private let fieldOffsets: UnsafePointer<Int>
+    private let fieldRecords: UnsafeMutablePointer<FieldDescriptor.Record>
+    private let genericContext: UnsafeMutablePointer<ClassTypeDescriptor>
+    private let genericArguments: UnsafeMutablePointer<Any.Type>
+    
+    let startIndex = 0
+    let endIndex: Int
+    
+    init(_ type: Any.Type) {
+        let typePtr = unsafeBitCast(type, to: UnsafeMutableRawPointer.self)
+        let metadata = typePtr.assumingMemoryBound(to: ClassMetadata.self)
+        let typeDescriptor = metadata.pointee.typeDescriptor
+        endIndex = Int(typeDescriptor.pointee.numberOfFields)
+        fieldOffsets = typeDescriptor.pointee.offsetToTheFieldOffsetBuffer.pointer(metadata: typePtr)
+        fieldRecords = typeDescriptor.pointee.fieldDescriptor.advanced().pointee.fields.pointer()
+        genericContext = metadata.pointee.typeDescriptor
+        genericArguments = typePtr
+            .advanced(by: typeDescriptor.pointee.genericArgumentOffset)
+            .assumingMemoryBound(to: Any.Type.self)
+    }
+    
+    subscript(position: Int) -> (Int, Any.Type) {
+        let offset = fieldOffsets[position]
+        let type = fieldRecords
+            .advanced(by: position)
+            .pointee
+            .type(genericContext: genericContext, genericArguments: genericArguments)
+        return (offset, type)
+    }
+}
+
+// MARK: - Layout
+
+private struct AnyMetadata {
+    var _kind: UInt
+    
+    var isClass: Bool {
+        return _kind == 0 || _kind >= 0x800
+    }
+}
+
+private struct AnyClassMetadata {
+    var _kind: UInt // isaPointer for classes
     var superClass: Any.Type
     var cacheData: (Int, Int)
     var rodataPointer: Int
+    
+    var isSwiftClass: Bool {
+        return (rodataPointer & classIsSwiftMask) != 0
+    }
 }
 
-struct ClassMetadata {
-    var _kind: Int // isaPointer for classes
+private struct ClassMetadata {
+    var _kind: UInt // isaPointer for classes
     var superClass: Any.Type
     var cacheData: (Int, Int)
     var rodataPointer: Int
@@ -71,7 +144,7 @@ struct ClassMetadata {
     var iVarDestroyer: UnsafeRawPointer
 }
 
-struct ClassTypeDescriptor {
+private struct ClassTypeDescriptor {
     var flags: Int32
     var parent: Int32
     var mangledName: RelativePointer<Int32, CChar>
@@ -97,13 +170,14 @@ struct ClassTypeDescriptor {
         guard !hasResilientSuperclass else {
             fatalError("Cannot get the `genericArgumentOffset` for classes with a resilient superclass")
         }
-        return areImmediateMembersNegative
+        let strides = areImmediateMembersNegative
             ? Int(-negativeSizeAndBoundsUnion)
             : Int(metadataPositiveSizeInWords - numImmediateMembers)
+        return strides * MemoryLayout<UnsafeRawPointer>.size
     }
 }
 
-struct FieldDescriptor {
+private struct FieldDescriptor {
     var mangledTypeNameOffset: Int32
     var superClassOffset: Int32
     var _kind: UInt16
@@ -145,20 +219,21 @@ struct FieldDescriptor {
     }
 }
 
-struct Buffer<Element> {
+// MARK: - Pointers
+
+private struct Buffer<Element> {
     
     var element: Element
     
-    subscript(i: Int) -> UnsafeMutablePointer<Element> {
-        mutating get {
-            return withUnsafePointer(to: &self) {
-               return UnsafeMutablePointer(mutating: UnsafeRawPointer($0).assumingMemoryBound(to: Element.self).advanced(by: i))
-            }
+    mutating func pointer() -> UnsafeMutablePointer<Element> {
+        return withUnsafePointer(to: &self) {
+            return UnsafeMutableRawPointer(mutating: UnsafeRawPointer($0))
+                .assumingMemoryBound(to: Element.self)
         }
     }
 }
 
-struct RelativePointer<Offset: FixedWidthInteger, Pointee> {
+private struct RelativePointer<Offset: FixedWidthInteger, Pointee> {
     
     var offset: Offset
     
@@ -172,22 +247,27 @@ struct RelativePointer<Offset: FixedWidthInteger, Pointee> {
     }
 }
 
-struct RelativeBufferPointer<Offset: FixedWidthInteger, Pointee> {
+private struct RelativeBufferPointer<Offset: FixedWidthInteger, Pointee> {
     
-    var offset: Offset
+    var strides: Offset
     
-    func buffer(metadata: UnsafeRawPointer, n: Int) -> UnsafeBufferPointer<Pointee> {
-        let p = metadata.advanced(by: numericCast(offset) * MemoryLayout<UnsafeRawPointer>.size).assumingMemoryBound(to: Pointee.self)
-        return UnsafeBufferPointer(start: p, count: n)
+    func pointer(metadata: UnsafeRawPointer) -> UnsafePointer<Pointee> {
+        let offset = numericCast(strides) * MemoryLayout<UnsafeRawPointer>.size
+        return metadata.advanced(by: offset).assumingMemoryBound(to: Pointee.self)
     }
 }
 
-private func swiftObject() -> Any.Type {
-    class Temp {}
-    return unsafeBitCast(Temp.self, to: UnsafeRawPointer.self).assumingMemoryBound(to: ClassMetadata.self).pointee.superClass
-}
+// MARK: - Const
 
-private var classIsSwiftMask: Int = {
+private let swiftObject: Any.Type = {
+    class Temp {}
+    return unsafeBitCast(Temp.self, to: UnsafeRawPointer.self)
+        .assumingMemoryBound(to: ClassMetadata.self)
+        .pointee
+        .superClass
+}()
+
+private let classIsSwiftMask: Int = {
     #if canImport(Darwin)
     if #available(macOS 10.14.4, iOS 12.2, tvOS 12.2, watchOS 5.2, *) {
         return 2
