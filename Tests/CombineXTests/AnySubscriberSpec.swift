@@ -11,65 +11,65 @@ class AnySubscriberSpec: QuickSpec {
             TestResources.release()
         }
         
-        // MARK: - Subject
-        describe("Subject") {
+        // MARK: - Erase
+        describe("Erase") {
             
-            // MARK: 1.1 should cancel the new subscription if there is already one
-            it("should cancel the new subscription if there is already one") {
-                let subject = PassthroughSubject<Int, Error>()
-                let sub = AnySubscriber(subject)
+            // MARK: 1.1 should preserve combine identifier
+            it("should preserve combine identifier") {
+                let sub1 = makeTestSubscriber(Int.self, TestError.self)
+                let sub2 = makeTestSubscriber(Int.self, TestError.self)
                 
-                let s0 = TestSubscription(name: "s0")
-                let s1 = TestSubscription(name: "s1")
+                let erased1 = AnySubscriber(sub1)
+                let erased2 = AnySubscriber(sub2)
                 
-                sub.receive(subscription: s0)
-                sub.receive(subscription: s1)
+                expect(sub1.combineIdentifier) == erased1.combineIdentifier
+                expect(sub2.combineIdentifier) == erased2.combineIdentifier
+                expect(sub1.combineIdentifier) != erased2.combineIdentifier
                 
-                expect(s0.events) == []
-                expect(s1.events) == [.cancel]
+                let erased1_2 = AnySubscriber(sub1)
+                
+                expect(erased1.combineIdentifier) == erased1_2.combineIdentifier
+                
+                let emptyErased = AnySubscriber<Int, TestError>()
+                
+                expect(emptyErased.combineIdentifier) == emptyErased.combineIdentifier
             }
             
-            // MARK: 1.2 should request none when receive values
-            it("should request none when receive values") {
-                let subject = PassthroughSubject<Int, Error>()
-                let sub = AnySubscriber(subject)
-
-                sub.receive(subscription: TestSubscription())
-
-                expect(sub.receive(1)) == .max(0)
-            }
-            
-            // MARK: 1.3 should not cancel subscription when receive completion
-            it("should not cancel subscription when receive completion") {
-                let subject = PassthroughSubject<Int, TestError>()
-                let sub = AnySubscriber(subject)
+            // MARK: 1.2 should preserve description
+            it("should preserve description and mirror") {
+                let emptyErased = AnySubscriber<Int, TestError>()
                 
-                let subscription = TestSubscription()
-                sub.receive(subscription: subscription)
+                expect(emptyErased.description) == "Anonymous AnySubscriber"
+                expect(emptyErased.playgroundDescription as? String) == "Anonymous AnySubscriber"
                 
-                sub.receive(completion: .finished)
-                expect(subscription.events) == []
+                let sub = makeTestSubscriber(Int.self, TestError.self)
+                let erased = AnySubscriber(sub)
+                
+                expect(sub.description) == erased.description
+                
+                expect(sub.playgroundDescription as? String) == sub.description
+                expect(erased.playgroundDescription as? String) == erased.description
+                
+                expect(sub.customMirror.description) == erased.customMirror.description
             }
+        }
+        
+        // MARK: - Events
+        describe("Events") {
             
-            #if !SWIFT_PACKAGE
-            // MARK: 1.4 should fatal error when receiving values before receiving a subscription
-            it("should fatal error when receiving values before receiving a subscription") {
-                let subject = PassthroughSubject<Int, Error>()
-                let sub = AnySubscriber(subject)
-                expect {
-                    _ = sub.receive(1)
-                }.to(throwAssertion())
+            // MARK: 2.1 shoud forward events to underlying subscriber
+            it("shoud forward events to underlying subscriber") {
+                let pub = PassthroughSubject<Int, TestError>()
+                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
+                let erased = AnySubscriber(sub)
+                pub.subscribe(erased)
+                
+                pub.send(1)
+                pub.send(2)
+                pub.send(completion: .failure(.e0))
+                
+                expect(sub.events) == [.value(1), .value(2), .completion(.failure(.e0))]
             }
-            
-            // MARK: 1.5 should fatal error when receiving completion before receiving a subscription
-            it("should fatal error when receiving completion before receiving a subscription") {
-                let subject = PassthroughSubject<Int, Error>()
-                let sub = AnySubscriber(subject)
-                expect {
-                    sub.receive(completion: .finished)
-                }.to(throwAssertion())
-            }
-            #endif
         }
     }
 }
