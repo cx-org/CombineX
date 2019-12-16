@@ -27,7 +27,7 @@ extension CXWrappers.NotificationCenter {
     ///   - name: The name of the notification to publish.
     ///   - object: The object posting the named notfication. If `nil`, the publisher emits elements for any object producing a notification with the given name.
     /// - Returns: A publisher that emits events when broadcasting notifications.
-    public func publisher(for name: Notification.Name, object: AnyObject? = nil) -> CXWrappers.NotificationCenter.NotificationPublisher {
+    public func publisher(for name: Notification.Name, object: AnyObject? = nil) -> CXWrappers.NotificationCenter.Publisher {
         return .init(center: self.base, name: name, object: object)
     }
 }
@@ -35,7 +35,7 @@ extension CXWrappers.NotificationCenter {
 extension CXWrappers.NotificationCenter {
     
     /// A publisher that emits elements when broadcasting notifications.
-    public struct NotificationPublisher: CombineX.Publisher {
+    public struct Publisher: CombineX.Publisher {
 
         public typealias Output = Notification
 
@@ -62,7 +62,7 @@ extension CXWrappers.NotificationCenter {
             self.object = object
         }
 
-        public func receive<S: Subscriber>(subscriber: S) where S.Failure == NotificationPublisher.Failure, S.Input == NotificationPublisher.Output {
+        public func receive<S: Subscriber>(subscriber: S) where S.Failure == Publisher.Failure, S.Input == Publisher.Output {
             let subject = PassthroughSubject<Output, Failure>()
             let observer = self.center.addObserver(forName: self.name, object: self.object, queue: nil) { n in
                 subject.send(n)
@@ -73,5 +73,14 @@ extension CXWrappers.NotificationCenter {
                 })
                 .receive(subscriber: subscriber)
         }
+    }
+}
+
+extension CXWrappers.NotificationCenter.Publisher: Equatable {
+    
+    public static func == (lhs: CXWrappers.NotificationCenter.Publisher, rhs: CXWrappers.NotificationCenter.Publisher) -> Bool {
+        return lhs.center == rhs.center &&
+            lhs.name == rhs.name &&
+            lhs.object === rhs.object
     }
 }
