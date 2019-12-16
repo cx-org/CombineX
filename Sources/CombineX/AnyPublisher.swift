@@ -8,30 +8,13 @@ extension Publisher {
     }
 }
 
-extension AnyPublisher: Publisher {
-    
-    @inlinable
-    public func receive<S: Subscriber>(subscriber: S) where Output == S.Input, Failure == S.Failure {
-        self.subscribeBody(subscriber.eraseToAnySubscriber())
-    }
-}
-
 /// A type-erasing publisher.
 ///
 /// Use `AnyPublisher` to wrap a publisher whose type has details you don’t want to expose to subscribers or other publishers.
 public struct AnyPublisher<Output, Failure: Error>: CustomStringConvertible, CustomPlaygroundDisplayConvertible {
     
     @usableFromInline
-    let subscribeBody: (AnySubscriber<Output, Failure>) -> Void
-    
-    public var description: String {
-        return "AnyPublisher"
-    }
-
-    /// A custom playground description for this instance.
-    public var playgroundDescription: Any {
-        return self.description
-    }
+    let box: PublisherBoxBase<Output, Failure>
     
     /// Creates a type-erasing publisher to wrap the provided publisher.
     ///
@@ -39,6 +22,53 @@ public struct AnyPublisher<Output, Failure: Error>: CustomStringConvertible, Cus
     ///   - publisher: A publisher to wrap with a type-eraser.
     @inlinable
     public init<P: Publisher>(_ publisher: P) where Output == P.Output, Failure == P.Failure {
-        self.subscribeBody = publisher.subscribe(_:)
+        box = PublisherBox(publisher)
+    }
+    
+    public var description: String {
+        return "AnyPublisher"
+    }
+    
+    public var playgroundDescription: Any {
+        return self.description
+    }
+}
+
+extension AnyPublisher: Publisher {
+    
+    @inlinable
+    public func receive<S: Subscriber>(subscriber: S) where Output == S.Input, Failure == S.Failure {
+        self.box.receive(subscriber: subscriber)
+    }
+}
+
+// MARK: - Implementation
+
+@usableFromInline
+class PublisherBoxBase<Output, Failure: Error>: Publisher {
+    
+    @inlinable
+    init() {}
+    
+    @usableFromInline
+    func receive<S: Subscriber>(subscriber: S) where Output == S.Input, Failure == S.Failure {
+        Global.RequiresConcreteImplementation()
+    }
+}
+
+@usableFromInline
+final class PublisherBox<Base: Publisher>: PublisherBoxBase<Base.Output, Base.Failure> {
+    
+    @usableFromInline
+    let base: Base
+    
+    @inlinable
+    init(_ base: Base) {
+        self.base = base
+    }
+    
+    @inlinable
+    override func receive<S: Subscriber>(subscriber: S) where Output == S.Input, Failure == S.Failure {
+        base.receive(subscriber: subscriber)
     }
 }

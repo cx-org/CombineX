@@ -28,10 +28,8 @@ extension Subject where Output == Void {
 extension Publisher {
     
     public func subscribe<S: Subject>(_ subject: S) -> AnyCancellable where Failure == S.Failure, Output == S.Output {
-        let sub = AnySubscriber(subject)
+        let sub = SubjectSubscriberBox(subject)
         self.subscribe(sub)
-        return AnyCancellable {
-            sub.box.cancel()
-        }
+        return AnyCancellable(sub.cancel)
     }
 }

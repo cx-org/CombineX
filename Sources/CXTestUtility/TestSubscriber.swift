@@ -27,7 +27,7 @@ public extension Publisher {
     }
 }
 
-public class TestSubscriber<Input, Failure: Error>: Subscriber {
+public class TestSubscriber<Input, Failure: Error>: Subscriber, CustomStringConvertible, CustomReflectable, CustomPlaygroundDisplayConvertible {
     
     public typealias Event = TestSubscriberEvent<Input, Failure>
     
@@ -75,6 +75,25 @@ public class TestSubscriber<Input, Failure: Error>: Subscriber {
             self._subscription = nil
         }
         self.receiveCompletionBody?(completion)
+    }
+    
+    public var description: String {
+        return "\(type(of: self))"
+    }
+    
+    public var playgroundDescription: Any {
+        return description
+    }
+    
+    public var customMirror: Mirror {
+        return Mirror(self, children: [
+            "receiveSubscriptionBody": receiveSubscriptionBody,
+            "receiveValueBody": receiveValueBody,
+            "receiveCompletionBody": receiveCompletionBody,
+            "lock": lock,
+            "_subscription": _subscription,
+            "_events": _events,
+        ])
     }
 }
 
