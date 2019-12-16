@@ -34,31 +34,64 @@ class DemandSpec: QuickSpec {
             it("should add as expected") {
                 expect(Demand.max(1) + Demand.max(1)) == .max(2)
                 expect(Demand.max(1) + 1) == .max(2)
-                expect(Demand.max(1) + Demand.max(.max)) == .unlimited
                 expect(Demand.max(1) + Demand.unlimited) == .unlimited
-                
-                var d = Demand.max(1)
-                d += .max(2)
-                expect(d) == .max(3)
-                
                 expect(Demand.max(1) + (-1)) == .max(0)
                 
                 expect(Demand.unlimited + 1) == .unlimited
                 expect(Demand.unlimited + .unlimited) == .unlimited
+                
+                expect(Demand.max(1) + Demand.max(.max)) == .unlimited
+                
+                var d = Demand.max(1)
+                d += .max(2)
+                expect(d) == .max(3)
+                d += 3
+                expect(d) == .max(6)
+                d += .unlimited
+                expect(d) == .unlimited
+                d += Int.max
+                expect(d) == .unlimited
+                d += Int.min
+                expect(d) == .unlimited
+                d += 42
+                expect(d) == .unlimited
+                
             }
             
             // MARK: 2.2 should sub as expected
             it("should sub as expected") {
                 expect(Demand.max(2) - Demand.max(1)) == .max(1)
                 expect(Demand.max(2) - 1) == .max(1)
-                expect(Demand.unlimited - Demand.max(1)) == .unlimited
                 expect(Demand.max(1) - Demand.unlimited) == .max(0)
-                
-                var d = Demand.max(2)
-                d -= .max(1)
-                expect(d) == .max(1)
-                
                 expect(Demand.max(1) - 1) == .max(0)
+                expect(Demand.unlimited - Demand.max(1)) == .unlimited
+                expect(Demand.unlimited - Demand.unlimited) == .unlimited
+                
+                var d = Demand.max(10)
+                d -= .max(1)
+                expect(d) == .max(9)
+                d -= .max(2)
+                expect(d) == .max(7)
+                d -= 3
+                expect(d) == .max(4)
+                d -= (-1)
+                expect(d) == .max(5)
+                d -= .unlimited
+                expect(d) == .max(0)
+                
+                d = .unlimited
+                d -= .max(1)
+                expect(d) == .unlimited
+                d -= .max(.max)
+                expect(d) == .unlimited
+                d -= Int.max
+                expect(d) == .unlimited
+                d -= (-1)
+                expect(d) == .unlimited
+                d -= Int.min
+                expect(d) == .unlimited
+                d -= .unlimited
+                expect(d) == .unlimited
             }
             
             // MARK: 2.3 should multiply as expected
@@ -68,6 +101,19 @@ class DemandSpec: QuickSpec {
                 
                 expect(Demand.unlimited * 2) == .unlimited
                 expect(Demand.unlimited * Int.max) == .unlimited
+                expect(Demand.unlimited * 0) == .unlimited
+                
+                var d = Demand.max(5)
+                d *= 1
+                expect(d) == .max(5)
+                d *= 2
+                expect(d) == .max(10)
+                d *= Int.max
+                expect(d) == .unlimited
+                d *= 42
+                expect(d) == .unlimited
+                d *= 0
+                expect(d) == .unlimited
                 
                 #if !SWIFT_PACKAGE
                 expect {
@@ -82,21 +128,95 @@ class DemandSpec: QuickSpec {
             
             // MARK: 3.1 should compare as expecte
             it("should compare as expected") {
-                expect(Demand.max(1)) > .max(0)
-                expect(Demand.max(1)) >= .max(1)
-                
-                expect(Demand.max(1) < 2) == true
-                expect(Demand.max(1) <= 1) == true
-                
-                expect(Demand.unlimited) > .max(Int.max)
-                expect(Demand.max(Int.max)) < .unlimited
-                expect(Demand.unlimited) == .unlimited
-                
-                expect(Demand.unlimited) >= .unlimited
-                expect(Demand.unlimited) <= .unlimited
-                
-                expect(Demand.max(1) > -1) == true
-                expect(Demand.max(1) < -1) == false
+                expect(Demand.unlimited == .unlimited) == true
+                expect(Demand.unlimited != .unlimited) == false
+                expect(Demand.unlimited <  .unlimited) == false
+                expect(Demand.unlimited <= .unlimited) == true
+                expect(Demand.unlimited >= .unlimited) == true
+                expect(Demand.unlimited >  .unlimited) == false
+
+                expect(Demand.unlimited == .max(42)) == false
+                expect(Demand.unlimited != .max(42)) == true
+                expect(Demand.unlimited <  .max(42)) == false
+                expect(Demand.unlimited <= .max(42)) == false
+                expect(Demand.unlimited >= .max(42)) == true
+                expect(Demand.unlimited >  .max(42)) == true
+                expect(Demand.unlimited == 42) == false
+                expect(Demand.unlimited != 42) == true
+                expect(Demand.unlimited <  42) == false
+                expect(Demand.unlimited <= 42) == false
+                expect(Demand.unlimited >= 42) == true
+                expect(Demand.unlimited >  42) == true
+
+                expect(Demand.max(42) == .unlimited) == false
+                expect(Demand.max(42) != .unlimited) == true
+                expect(Demand.max(42) <  .unlimited) == true
+                expect(Demand.max(42) <= .unlimited) == true
+                expect(Demand.max(42) >= .unlimited) == false
+                expect(Demand.max(42) >  .unlimited) == false
+                expect(42 == Demand.unlimited) == false
+                expect(42 != Demand.unlimited) == true
+                expect(42 <  Demand.unlimited) == true
+                expect(42 <= Demand.unlimited) == true
+                expect(42 >= Demand.unlimited) == false
+                expect(42 >  Demand.unlimited) == false
+
+                expect(Demand.max(42) == .max(42)) == true
+                expect(Demand.max(42) != .max(42)) == false
+                expect(Demand.max(42) <  .max(42)) == false
+                expect(Demand.max(42) <= .max(42)) == true
+                expect(Demand.max(42) >= .max(42)) == true
+                expect(Demand.max(42) >  .max(42)) == false
+                expect(Demand.max(42) == 42) == true
+                expect(Demand.max(42) != 42) == false
+                expect(Demand.max(42) <  42) == false
+                expect(Demand.max(42) <= 42) == true
+                expect(Demand.max(42) >= 42) == true
+                expect(Demand.max(42) >  42) == false
+                expect(42 == Demand.max(42)) == true
+                expect(42 != Demand.max(42)) == false
+                expect(42 <  Demand.max(42)) == false
+                expect(42 <= Demand.max(42)) == true
+                expect(42 >= Demand.max(42)) == true
+                expect(42 >  Demand.max(42)) == false
+
+                expect(Demand.max(0) == .max(42)) == false
+                expect(Demand.max(0) != .max(42)) == true
+                expect(Demand.max(0) <  .max(42)) == true
+                expect(Demand.max(0) <= .max(42)) == true
+                expect(Demand.max(0) >= .max(42)) == false
+                expect(Demand.max(0) >  .max(42)) == false
+                expect(Demand.max(0) == 42) == false
+                expect(Demand.max(0) != 42) == true
+                expect(Demand.max(0) <  42) == true
+                expect(Demand.max(0) <= 42) == true
+                expect(Demand.max(0) >= 42) == false
+                expect(Demand.max(0) >  42) == false
+                expect(0 == Demand.max(42)) == false
+                expect(0 != Demand.max(42)) == true
+                expect(0 <  Demand.max(42)) == true
+                expect(0 <= Demand.max(42)) == true
+                expect(0 >= Demand.max(42)) == false
+                expect(0 >  Demand.max(42)) == false
+
+                expect(Demand.max(42) == .max(233)) == false
+                expect(Demand.max(42) != .max(233)) == true
+                expect(Demand.max(42) <  .max(233)) == true
+                expect(Demand.max(42) <= .max(233)) == true
+                expect(Demand.max(42) >= .max(233)) == false
+                expect(Demand.max(42) >  .max(233)) == false
+                expect(Demand.max(42) == 233) == false
+                expect(Demand.max(42) != 233) == true
+                expect(Demand.max(42) <  233) == true
+                expect(Demand.max(42) <= 233) == true
+                expect(Demand.max(42) >= 233) == false
+                expect(Demand.max(42) >  233) == false
+                expect(42 == Demand.max(233)) == false
+                expect(42 != Demand.max(233)) == true
+                expect(42 <  Demand.max(233)) == true
+                expect(42 <= Demand.max(233)) == true
+                expect(42 >= Demand.max(233)) == false
+                expect(42 >  Demand.max(233)) == false
             }
         }
         
