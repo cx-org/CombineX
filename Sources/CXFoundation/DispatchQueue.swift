@@ -216,22 +216,17 @@ extension CXWrappers.DispatchQueue: CombineX.Scheduler {
     }
     
     public func schedule(options: SchedulerOptions?, _ action: @escaping () -> Void) {
-        self.base.async(group: options?.group, qos: options?.qos ?? .unspecified, flags: options?.flags ?? [], execute: action)
+        self.base.async(group: options?.group,
+                        qos: options?.qos ?? .unspecified,
+                        flags: options?.flags ?? [],
+                        execute: action)
     }
     
     public func schedule(after date: SchedulerTimeType, tolerance: SchedulerTimeType.Stride, options: SchedulerOptions?, _ action: @escaping () -> Void) {
-        let timer = DispatchSource.makeTimerSource(queue: self.base)
-        var ref: DispatchSourceTimer? = timer
-        
-        timer.setEventHandler {
-            action()
-            
-            ref?.cancel()
-            ref = nil
-        }
-        
-        timer.schedule(deadline: date.dispatchTime, leeway: Swift.max(self.minimumTolerance, tolerance).timeInterval)
-        timer.resume()
+        self.base.asyncAfter(deadline: date.dispatchTime,
+                             qos: options?.qos ?? .unspecified,
+                             flags: options?.flags ?? [],
+                             execute: action)
     }
     
     public func schedule(
@@ -242,16 +237,13 @@ extension CXWrappers.DispatchQueue: CombineX.Scheduler {
         _ action: @escaping () -> Void
     ) -> Cancellable {
         let timer = DispatchSource.makeTimerSource(queue: self.base)
-        
-        timer.setEventHandler {
-            action()
-        }
-        
-        timer.schedule(deadline: date.dispatchTime, repeating: interval.timeInterval, leeway: Swift.max(self.minimumTolerance, tolerance).timeInterval)
+        timer.setEventHandler(qos: options?.qos ?? .unspecified,
+                              flags: options?.flags ?? [],
+                              handler: action)
+        timer.schedule(deadline: date.dispatchTime,
+                       repeating: interval.timeInterval,
+                       leeway: Swift.max(self.minimumTolerance, tolerance).timeInterval)
         timer.resume()
-        
-        return AnyCancellable {
-            timer.cancel()
-        }
+        return AnyCancellable(timer.cancel)
     }
 }
