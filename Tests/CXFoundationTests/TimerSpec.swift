@@ -14,7 +14,7 @@ class TimerSpec: QuickSpec {
 
         // MARK: 1.1 should not send values before connect
         it("should not send values before connect") {
-            let pub = CXWrappers.Timer.publish(every: 0.1, on: RunLoop.main, in: .common)
+            let pub = CXWrappers.Timer.publish(every: 0.1, on: .main, in: .common)
             let sub = makeTestSubscriber(Date.self, Never.self, .unlimited)
             pub.subscribe(sub)
             
@@ -28,7 +28,7 @@ class TimerSpec: QuickSpec {
         
         // MARK: 1.2 should send values repeatedly
         it("should send values repeatedly") {
-            let pub = CXWrappers.Timer.publish(every: 0.1, on: RunLoop.main, in: .common)
+            let pub = CXWrappers.Timer.publish(every: 0.1, on: .main, in: .common)
             let sub = makeTestSubscriber(Date.self, Never.self, .unlimited)
             pub.subscribe(sub)
             
@@ -37,6 +37,24 @@ class TimerSpec: QuickSpec {
             expect(sub.events).toEventually(haveCount(5))
             
             _ = connection
-        }        
+        }
+        
+        // MARK: 1.3 should add demands up from multiple subscriber
+        it("should add demands up from multiple subscriber") {
+            let pub = CXWrappers.Timer.publish(every: 0.1, on: .current, in: .common)
+            let sub1 = makeTestSubscriber(Date.self, Never.self, .max(1))
+            let sub2 = makeTestSubscriber(Date.self, Never.self, .max(2))
+            pub.subscribe(sub1)
+            pub.subscribe(sub2)
+            
+            let connection = pub.connect()
+            
+            RunLoop.current.run(until: Date().advanced(by: 1))
+            
+            expect(sub1.events.count) == 3
+            expect(sub2.events.count) == 3
+            
+            connection.cancel()
+        }
     }
 }
