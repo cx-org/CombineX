@@ -57,7 +57,10 @@ extension CXWrappers.DispatchQueue: CombineX.Scheduler {
         /// - Parameter other: Another dispatch queue time.
         /// - Returns: The time interval between this time and the provided time.
         public func distance(to other: SchedulerTimeType) -> SchedulerTimeType.Stride {
-            return .nanoseconds(Int(other.dispatchTime.uptimeNanoseconds - self.dispatchTime.uptimeNanoseconds))
+            let start = dispatchTime.rawValue
+            let end = other.dispatchTime.rawValue
+            let nsec = end >= start ? Int64(bitPattern: end - start) : -Int64(bitPattern: start - end)
+            return .nanoseconds(nsec)
         }
         
         /// Returns a dispatch queue scheduler time calculated by advancing this instance’s time by the given interval.
@@ -105,7 +108,7 @@ extension CXWrappers.DispatchQueue: CombineX.Scheduler {
                     self.magnitude = .max
                 @unknown default:
                     let now = DispatchTime.now()
-                    self.magnitude = Int((now + timeInterval).uptimeNanoseconds - now.uptimeNanoseconds)
+                    self.magnitude = Int((now + timeInterval).rawValue - now.rawValue)
                 }
             }
             
