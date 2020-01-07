@@ -169,7 +169,9 @@ private extension CXWrappers.Timer.TimerPublisher {
             guard let parent = parent else {
                 return nil
             }
-            let timer = Timer.init(timeInterval: parent.interval, target: self, selector: #selector(timerFired), userInfo: nil, repeats: true)
+            let timer = Timer.cx_init(timeInterval: parent.interval, repeats: true) { [weak self] _ in
+                self?.timerFired()
+            }
             if let tolerance = parent.tolerance {
                 timer.tolerance = tolerance
             }
@@ -223,7 +225,7 @@ private extension CXWrappers.Timer.TimerPublisher {
             parent.runLoop.add(timer, forMode: parent.mode)
         }
         
-        @objc func timerFired(arg: Any) {
+        func timerFired() {
             lock.lock()
             guard demand > 0 else {
                 lock.unlock()

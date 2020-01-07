@@ -34,7 +34,7 @@ class TimerSpec: QuickSpec {
             
             let connection = pub.connect()
             
-            expect(sub.events).toEventually(haveCount(5))
+            expect(sub.events).toEventually(haveCount(4))
             
             _ = connection
         }
@@ -49,7 +49,7 @@ class TimerSpec: QuickSpec {
             
             let connection = pub.connect()
             
-            RunLoop.current.run(until: Date().advanced(by: 1))
+            RunLoop.current.run(until: Date().addingTimeInterval(1))
             
             expect(sub1.events.count) == 3
             expect(sub2.events.count) == 3
