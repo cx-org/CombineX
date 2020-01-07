@@ -136,6 +136,8 @@ private extension CXWrappers.Timer.TimerPublisher {
         
         func receive(_ input: Input) -> Subscribers.Demand {
             return lock.withLockGet(self.subscribers).reduce(into: Subscribers.Demand.none) { result, sub in
+                // Not locked.
+                // It's locked in Combine, but I don't think it's necessary. The whole invocation is locked by `Inner` anyway.
                 result += sub.receive(input)
             }
         }
@@ -233,6 +235,8 @@ private extension CXWrappers.Timer.TimerPublisher {
             }
             demand -= 1
             if let downstream = self.downstream {
+                // Should it be locked?
+                // It's locked in Combine when receiving value, and result in surprising behaviour (to me).
                 demand += downstream.receive(Date())
             }
             lock.unlock()
