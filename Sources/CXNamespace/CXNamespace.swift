@@ -9,12 +9,12 @@ public protocol CXWrapper {
 
 public protocol CXWrapping {
     
-    associatedtype CX: CXWrapper where CX.Base == Self
+    associatedtype CX
     
     var cx: CX { get }
 }
 
-public extension CXWrapping {
+public extension CXWrapping where CX: CXWrapper, CX.Base == Self {
     
     var cx: CX {
         return CX(wrapping: self)
