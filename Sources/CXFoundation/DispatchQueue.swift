@@ -170,15 +170,15 @@ extension CXWrappers.DispatchQueue: CombineX.Scheduler {
             }
 
             public static func seconds(_ s: Int) -> Stride {
-                return Stride(magnitude: s * Const.nsec_per_sec)
+                return Stride(magnitude: s.multipliedClamping(by: Const.nsec_per_sec))
             }
             
             public static func milliseconds(_ ms: Int) -> Stride {
-                return Stride(magnitude: ms * Const.nsec_per_msec)
+                return Stride(magnitude: ms.multipliedClamping(by: Const.nsec_per_msec))
             }
             
             public static func microseconds(_ us: Int) -> Stride {
-                return Stride(magnitude: us * Const.nsec_per_usec)
+                return Stride(magnitude: us.multipliedClamping(by: Const.nsec_per_usec))
             }
             
             public static func nanoseconds(_ ns: Int) -> Stride {
