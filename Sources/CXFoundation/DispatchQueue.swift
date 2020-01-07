@@ -60,7 +60,7 @@ extension CXWrappers.DispatchQueue: CombineX.Scheduler {
             let start = dispatchTime.rawValue
             let end = other.dispatchTime.rawValue
             let nsec = end >= start ? Int64(bitPattern: end - start) : -Int64(bitPattern: start - end)
-            return .nanoseconds(nsec)
+            return .nanoseconds(Int(nsec))
         }
         
         /// Returns a dispatch queue scheduler time calculated by advancing this instance’s time by the given interval.
@@ -96,14 +96,14 @@ extension CXWrappers.DispatchQueue: CombineX.Scheduler {
             /// - Parameter timeInterval: A dispatch time interval.
             public init(_ timeInterval: DispatchTimeInterval) {
                 switch timeInterval {
-                case let .seconds(n):
-                    self.magnitude = n.multipliedClamping(by: Const.nsec_per_sec)
-                case let .milliseconds(n):
-                    self.magnitude = n.multipliedClamping(by: Const.nsec_per_msec)
-                case let .microseconds(n):
-                    self.magnitude = n.multipliedClamping(by: Const.nsec_per_usec)
-                case let .nanoseconds(n):
-                    self.magnitude = n
+                case let .seconds(s):
+                    self.magnitude = s.multipliedClamping(by: Const.nsec_per_sec)
+                case let .milliseconds(ms):
+                    self.magnitude = ms.multipliedClamping(by: Const.nsec_per_msec)
+                case let .microseconds(us):
+                    self.magnitude = us.multipliedClamping(by: Const.nsec_per_usec)
+                case let .nanoseconds(ns):
+                    self.magnitude = ns
                 case .never:
                     self.magnitude = .max
                 @unknown default:
@@ -123,7 +123,7 @@ extension CXWrappers.DispatchQueue: CombineX.Scheduler {
             ///
             /// - Parameter value: The number of seconds, as an `Int`.
             public init(integerLiteral value: Int) {
-                self.init(.seconds(value))
+                self.magnitude = value * Const.nsec_per_sec
             }
             
             /// Creates a dispatch queue time interval from a binary integer type.
@@ -166,28 +166,28 @@ extension CXWrappers.DispatchQueue: CombineX.Scheduler {
             }
             
             public static func seconds(_ s: Double) -> Stride {
-                return .init(floatLiteral: s)
+                return Stride(magnitude: Int(s * Double(Const.nsec_per_sec)))
             }
 
             public static func seconds(_ s: Int) -> Stride {
-                return .init(integerLiteral: s)
+                return Stride(magnitude: s * Const.nsec_per_sec)
             }
-
+            
             public static func milliseconds(_ ms: Int) -> Stride {
-                return .init(.milliseconds(ms))
+                return Stride(magnitude: ms * Const.nsec_per_msec)
             }
-
+            
             public static func microseconds(_ us: Int) -> Stride {
-                return .init(.microseconds(us))
+                return Stride(magnitude: us * Const.nsec_per_usec)
             }
-
+            
             public static func nanoseconds(_ ns: Int) -> Stride {
-                return .init(.nanoseconds(ns))
+                return Stride(magnitude: ns)
             }
         }
         
         public func hash(into hasher: inout Hasher) {
-            hasher.combine(self.dispatchTime.uptimeNanoseconds)
+            hasher.combine(self.dispatchTime.rawValue)
         }
     }
 
