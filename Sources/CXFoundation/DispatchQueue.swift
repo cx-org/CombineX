@@ -57,7 +57,10 @@ extension CXWrappers.DispatchQueue: CombineX.Scheduler {
         /// - Parameter other: Another dispatch queue time.
         /// - Returns: The time interval between this time and the provided time.
         public func distance(to other: SchedulerTimeType) -> SchedulerTimeType.Stride {
-            return .nanoseconds(Int(other.dispatchTime.uptimeNanoseconds - self.dispatchTime.uptimeNanoseconds))
+            let start = dispatchTime.rawValue
+            let end = other.dispatchTime.rawValue
+            let nsec = end >= start ? Int64(bitPattern: end - start) : -Int64(bitPattern: start - end)
+            return .nanoseconds(Int(nsec))
         }
         
         /// Returns a dispatch queue scheduler time calculated by advancing this instance’s time by the given interval.
@@ -93,19 +96,19 @@ extension CXWrappers.DispatchQueue: CombineX.Scheduler {
             /// - Parameter timeInterval: A dispatch time interval.
             public init(_ timeInterval: DispatchTimeInterval) {
                 switch timeInterval {
-                case let .seconds(n):
-                    self.magnitude = n.multipliedClamping(by: Const.nsec_per_sec)
-                case let .milliseconds(n):
-                    self.magnitude = n.multipliedClamping(by: Const.nsec_per_msec)
-                case let .microseconds(n):
-                    self.magnitude = n.multipliedClamping(by: Const.nsec_per_usec)
-                case let .nanoseconds(n):
-                    self.magnitude = n
+                case let .seconds(s):
+                    self.magnitude = s.multipliedClamping(by: Const.nsec_per_sec)
+                case let .milliseconds(ms):
+                    self.magnitude = ms.multipliedClamping(by: Const.nsec_per_msec)
+                case let .microseconds(us):
+                    self.magnitude = us.multipliedClamping(by: Const.nsec_per_usec)
+                case let .nanoseconds(ns):
+                    self.magnitude = ns
                 case .never:
                     self.magnitude = .max
                 @unknown default:
                     let now = DispatchTime.now()
-                    self.magnitude = Int((now + timeInterval).uptimeNanoseconds - now.uptimeNanoseconds)
+                    self.magnitude = Int((now + timeInterval).rawValue - now.rawValue)
                 }
             }
             
@@ -120,7 +123,7 @@ extension CXWrappers.DispatchQueue: CombineX.Scheduler {
             ///
             /// - Parameter value: The number of seconds, as an `Int`.
             public init(integerLiteral value: Int) {
-                self.init(.seconds(value))
+                self.magnitude = value * Const.nsec_per_sec
             }
             
             /// Creates a dispatch queue time interval from a binary integer type.
@@ -163,28 +166,28 @@ extension CXWrappers.DispatchQueue: CombineX.Scheduler {
             }
             
             public static func seconds(_ s: Double) -> Stride {
-                return .init(floatLiteral: s)
+                return Stride(magnitude: Int(s * Double(Const.nsec_per_sec)))
             }
 
             public static func seconds(_ s: Int) -> Stride {
-                return .init(integerLiteral: s)
+                return Stride(magnitude: s.multipliedClamping(by: Const.nsec_per_sec))
             }
-
+            
             public static func milliseconds(_ ms: Int) -> Stride {
-                return .init(.milliseconds(ms))
+                return Stride(magnitude: ms.multipliedClamping(by: Const.nsec_per_msec))
             }
-
+            
             public static func microseconds(_ us: Int) -> Stride {
-                return .init(.microseconds(us))
+                return Stride(magnitude: us.multipliedClamping(by: Const.nsec_per_usec))
             }
-
+            
             public static func nanoseconds(_ ns: Int) -> Stride {
-                return .init(.nanoseconds(ns))
+                return Stride(magnitude: ns)
             }
         }
         
         public func hash(into hasher: inout Hasher) {
-            hasher.combine(self.dispatchTime.uptimeNanoseconds)
+            hasher.combine(self.dispatchTime.rawValue)
         }
     }
 
@@ -216,22 +219,17 @@ extension CXWrappers.DispatchQueue: CombineX.Scheduler {
     }
     
     public func schedule(options: SchedulerOptions?, _ action: @escaping () -> Void) {
-        self.base.async(group: options?.group, qos: options?.qos ?? .unspecified, flags: options?.flags ?? [], execute: action)
+        self.base.async(group: options?.group,
+                        qos: options?.qos ?? .unspecified,
+                        flags: options?.flags ?? [],
+                        execute: action)
     }
     
     public func schedule(after date: SchedulerTimeType, tolerance: SchedulerTimeType.Stride, options: SchedulerOptions?, _ action: @escaping () -> Void) {
-        let timer = DispatchSource.makeTimerSource(queue: self.base)
-        var ref: DispatchSourceTimer? = timer
-        
-        timer.setEventHandler {
-            action()
-            
-            ref?.cancel()
-            ref = nil
-        }
-        
-        timer.schedule(deadline: date.dispatchTime, leeway: Swift.max(self.minimumTolerance, tolerance).timeInterval)
-        timer.resume()
+        self.base.asyncAfter(deadline: date.dispatchTime,
+                             qos: options?.qos ?? .unspecified,
+                             flags: options?.flags ?? [],
+                             execute: action)
     }
     
     public func schedule(
@@ -242,16 +240,13 @@ extension CXWrappers.DispatchQueue: CombineX.Scheduler {
         _ action: @escaping () -> Void
     ) -> Cancellable {
         let timer = DispatchSource.makeTimerSource(queue: self.base)
-        
-        timer.setEventHandler {
-            action()
-        }
-        
-        timer.schedule(deadline: date.dispatchTime, repeating: interval.timeInterval, leeway: Swift.max(self.minimumTolerance, tolerance).timeInterval)
+        timer.setEventHandler(qos: options?.qos ?? .unspecified,
+                              flags: options?.flags ?? [],
+                              handler: action)
+        timer.schedule(deadline: date.dispatchTime,
+                       repeating: interval.timeInterval,
+                       leeway: Swift.max(self.minimumTolerance, tolerance).timeInterval)
         timer.resume()
-        
-        return AnyCancellable {
-            timer.cancel()
-        }
+        return AnyCancellable(timer.cancel)
     }
 }

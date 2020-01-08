@@ -87,11 +87,11 @@ public class TestSubscriber<Input, Failure: Error>: Subscriber, CustomStringConv
     
     public var customMirror: Mirror {
         return Mirror(self, children: [
-            "receiveSubscriptionBody": receiveSubscriptionBody,
-            "receiveValueBody": receiveValueBody,
-            "receiveCompletionBody": receiveCompletionBody,
+            "receiveSubscriptionBody": receiveSubscriptionBody as Any,
+            "receiveValueBody": receiveValueBody as Any,
+            "receiveCompletionBody": receiveCompletionBody as Any,
             "lock": lock,
-            "_subscription": _subscription,
+            "_subscription": _subscription as Any,
             "_events": _events,
         ])
     }

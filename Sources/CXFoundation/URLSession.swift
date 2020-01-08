@@ -1,4 +1,5 @@
 import CombineX
+import CXUtility
 import Foundation
 
 #if canImport(FoundationNetworking)
@@ -37,7 +38,7 @@ extension CXWrappers.URLSession {
     public func dataTaskPublisher(for url: URL) -> DataTaskPublisher {
         return self.dataTaskPublisher(for: URLRequest(url: url))
     }
-
+    
     /// Returns a publisher that wraps a URL session data task for a given URL request.
     ///
     /// The publisher publishes data when the task completes, or terminates if the task fails with an error.
@@ -51,41 +52,97 @@ extension CXWrappers.URLSession {
 extension CXWrappers.URLSession {
     
     public struct DataTaskPublisher: Publisher {
-
+        
         public typealias Output = (data: Data, response: URLResponse)
-
+        
         public typealias Failure = URLError
-
+        
         public let request: URLRequest
-
+        
         public let session: URLSession
-
+        
         public init(request: URLRequest, session: URLSession) {
             self.request = request
             self.session = session
         }
-
+        
         public func receive<S: Subscriber>(subscriber: S) where S.Failure == Failure, S.Input == Output {
-            let subject = PassthroughSubject<Output, Failure>()
-            let task = self.session.dataTask(with: self.request) { data, response, error in
-                if let e = error as? URLError {
-                    subject.send(completion: .failure(e))
-                    return
-                }
+            let subscription = Inner(parent: self, downstream: subscriber)
+            subscriber.receive(subscription: subscription)
+        }
+    }
+}
 
-                guard let d = data, let r = response else {
-                    fatalError()
+private extension CXWrappers.URLSession.DataTaskPublisher {
+    
+    final class Inner<Downstream: Subscriber>: Subscription where Downstream.Input == (data: Data, response: URLResponse),
+              Downstream.Failure == URLError {
+        
+        let lock = Lock()
+        
+        var parent: CXWrappers.URLSession.DataTaskPublisher?
+        
+        var downstream: Downstream?
+        
+        var demand = Subscribers.Demand.none
+        
+        var task: URLSessionDataTask?
+        
+        init(parent: CXWrappers.URLSession.DataTaskPublisher, downstream: Downstream) {
+            self.parent = parent
+            self.downstream = downstream
+        }
+        
+        func request(_ demand: Subscribers.Demand) {
+            lock.withLock { () -> URLSessionDataTask? in
+                guard let parent = self.parent else {
+                    return nil
                 }
-                subject.send((d, r))
-                subject.send(completion: .finished)
+                self.demand += demand
+                if self.demand > 0, task == nil {
+                    task = parent.session.dataTask(with: parent.request, completionHandler: handleResponse)
+                    return task
+                } else {
+                    return nil
+                }
+            }?.resume()
+        }
+        
+        func cancel() {
+            lock.withLock { () -> URLSessionDataTask? in
+                guard parent != nil else {
+                    return nil
+                }
+                defer {
+                    parent = nil
+                    downstream = nil
+                    task = nil
+                }
+                return task
+            }?.cancel()
+        }
+        
+        func handleResponse(data: Data?, response: URLResponse?, error: Error?) {
+            lock.lock()
+            guard demand > 0, parent != nil, let downstream = self.downstream else {
+                lock.unlock()
+                return
             }
-            task.resume()
+            self.demand = .none
+            self.parent = nil
+            self.downstream = nil
+            self.task = nil
+            lock.unlock()
             
-            subject
-                .handleEvents(receiveCancel: {
-                    task.cancel()
-                })
-                .receive(subscriber: subscriber)
+            switch (data, response, error) {
+            case let (_, response?, nil):
+                _ = downstream.receive((data ?? Data(), response))
+                downstream.receive(completion: .finished)
+            case let (_, _, error as URLError):
+                downstream.receive(completion: .failure(error))
+            default:
+                downstream.receive(completion: .failure(URLError(.unknown)))
+            }
         }
     }
 }
