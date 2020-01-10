@@ -15,9 +15,7 @@ class VersioningReceiveOnSpec: QuickSpec {
             let subject = PassthroughSubject<Int, Never>()
             let scheduler = TestDispatchQueueScheduler.serial()
             let pub = subject.receive(on: scheduler)
-            var received = false
             let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
-                received = true
                 expect(scheduler.isCurrent).toVersioning([
                     .v11_0: beTrue(),
                     .v11_3: beFalse(),

@@ -115,7 +115,7 @@ var combineImp = env[impkey].flatMap(CombineImplementation.init) ?? .default
 var isCI = env[isCIKey] != nil
 
 // uncommenet the following two lines if you want to test against combine
-combineImp = .combine; isCI = true
+//combineImp = .combine; isCI = true
 
 package.dependencies.append(contentsOf: combineImp.extraPackageDependencies)
 
