@@ -96,28 +96,7 @@ class ObserableObjectSpec: QuickSpec {
             
             // MARK: 2.1 instance of specific kind of class should return a new objectWillChange every time
             it("instance of specific kind of class should return a new objectWillChange every time") {
-                var objects: [ObservableObjectDefaultImplementation] = [
-                    NoFields(),             // no fields
-                    NoPublishedFields(),    // no @Published fields
-                    NSUUID(),               // objc class
-                    JSONEncoder(),          // resilient class
-                ]
-                
-                // resilient classes on Darwin platforms
-                #if canImport(Darwin)
-                objects += [
-                    ObservableDerivedResilient(), // subclass of resilient class
-                    
-                    // TODO: combine crash. should move to CXInconsistentTests
-                    // ObservableDerivedGenericResilient(0, 0.0), // generic subclass of resilient class
-                ]
-                #endif
-                
-                for obj in objects {
-                    let pub1 = obj.objectWillChange
-                    let pub2 = obj.objectWillChange
-                    expect(pub1).toNot(beIdenticalTo(pub2), description: "instance of \(type(of: obj)) should return a new objectWillChange every time")
-                }
+                // Versioning: see VersioningObserableObjectSpec
             }
             
             // MARK: 2.2 other type should return the same objectWillChange every time

@@ -31,3 +31,27 @@ public func beNotNil<T>() -> Predicate<T> {
         return PredicateStatus(bool: actualValue != nil)
     }
 }
+
+public func beNotIdenticalTo(_ expected: Any?) -> Predicate<Any> {
+    return Predicate.define { actualExpression in
+        let actual = try actualExpression.evaluate() as AnyObject?
+
+        let bool = actual !== (expected as AnyObject?) && actual !== nil
+        return PredicateResult(
+            bool: bool,
+            message: .expectedCustomValueTo(
+                "be not identical to \(identityAsString(expected))",
+                "\(identityAsString(actual))"
+            )
+        )
+    }
+}
+
+private func identityAsString(_ value: Any?) -> String {
+    let anyObject = value as AnyObject?
+    if let value = anyObject {
+        return NSString(format: "<%p>", unsafeBitCast(value, to: Int.self)).description
+    } else {
+        return "nil"
+    }
+}
