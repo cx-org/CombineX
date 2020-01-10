@@ -88,4 +88,5 @@ QCKMain([
     VersioningDelaySpec.self,
     VersioningReceiveOnSpec.self,
     VersioningObserableObjectSpec.self,
+    VersioningCollectByTimeSpec.self,
 ])
