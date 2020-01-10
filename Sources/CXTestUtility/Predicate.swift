@@ -24,3 +24,10 @@ public func beAllEqual<S: Sequence, T: Equatable>() -> Predicate<S>
         return .matches
     }
 }
+
+public func beNotNil<T>() -> Predicate<T> {
+    return Predicate.simpleNilable("be not nil") { actualExpression in
+        let actualValue = try actualExpression.evaluate()
+        return PredicateStatus(bool: actualValue != nil)
+    }
+}

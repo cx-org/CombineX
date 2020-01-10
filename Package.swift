@@ -17,6 +17,7 @@ let package = Package(
         .package(url: "https://github.com/Quick/Quick.git", from: "2.0.0"),
         // TODO: Use "8.0.2" until https://github.com/Quick/Nimble/issues/705 is fixed.
         .package(url: "https://github.com/Quick/Nimble.git", .exact("8.0.2")),
+        .package(url: "https://github.com/ddddxxx/Semver.git", .upToNextMinor(from: "0.2.1")),
     ],
     targets: [
         .target(name: "CXLibc"),
@@ -27,7 +28,7 @@ let package = Package(
         .target(name: "CXFoundation", dependencies: ["CXUtility", "CXNamespace", "CombineX"]),
         .target(name: "CXCompatible", dependencies: ["CXNamespace"]),
         .target(name: "CXShim", dependencies: [/* depends on combine implementation */]),
-        .target(name: "CXTestUtility", dependencies: ["CXUtility", "CXShim", "Nimble"]),
+        .target(name: "CXTestUtility", dependencies: ["CXUtility", "Semver", "CXShim", "Nimble"]),
         .testTarget(name: "CombineXTests", dependencies: ["CXTestUtility", "CXUtility", "CXShim", "Quick", "Nimble"]),
         .testTarget(name: "CXFoundationTests", dependencies: ["CXTestUtility", "CXShim", "Quick", "Nimble"]),
         .testTarget(name: "CXInconsistentTests", dependencies: ["CXTestUtility", "CXUtility", "CXShim", "Quick", "Nimble"]),
