@@ -82,4 +82,6 @@ QCKMain([
     SuspiciousDemandSpec.self,
     
     FixedSpec.self,
+    
+    VersioningReceiveOnSpec.self
 ])
