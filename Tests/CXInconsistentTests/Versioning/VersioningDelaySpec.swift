@@ -3,7 +3,7 @@ import CXTestUtility
 import Nimble
 import Quick
 
-class VersioningReceiveOnSpec: QuickSpec {
+class VersioningDelaySpec: QuickSpec {
 
     override func spec() {
         
@@ -14,7 +14,7 @@ class VersioningReceiveOnSpec: QuickSpec {
         it("should not schedule subscription") {
             let subject = PassthroughSubject<Int, Never>()
             let scheduler = TestDispatchQueueScheduler.serial()
-            let pub = subject.receive(on: scheduler)
+            let pub = subject.delay(for: .seconds(1), scheduler: scheduler)
             var received = false
             let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
                 received = true
