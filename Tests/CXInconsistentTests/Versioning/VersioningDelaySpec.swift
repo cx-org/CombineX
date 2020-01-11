@@ -27,6 +27,7 @@ class VersioningDelaySpec: QuickSpec {
                 .v11_0: beNil(),
                 .v11_3: beNotNil(),
             ])
+            expect(sub.subscription).toEventuallyNot(beNil())
         }
     }
 }

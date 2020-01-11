@@ -10,9 +10,9 @@ public extension Expectation {
     
     func toVersioning(_ predicates: [XcodeVersion: Predicate<T>], description: String? = nil) {
         precondition(!predicates.isEmpty)
-        let osVersion = ProcessInfo.processInfo.operatingSystemSemanticVersion
-        let versions = predicates.keys.sorted { $0.systemVersion > $1.systemVersion }
+        let versions = predicates.keys.sorted(by: >)
         #if USE_COMBINE
+        let osVersion = ProcessInfo.processInfo.operatingSystemSemanticVersion
         guard let targetVersion = versions.first(where: { osVersion >= $0.systemVersion }) else {
             // no available predicate for current system version
             // should we fail here?
@@ -27,13 +27,14 @@ public extension Expectation {
 }
 
 // assume combine change its behaviour with xcode release, along with system update.
-public enum XcodeVersion {
+public enum XcodeVersion: Comparable {
     
     case v11_0
     case v11_1
     case v11_2
     case v11_3
     
+    #if canImport(Darwin)
     var systemVersion: Semver {
         #if os(macOS)
         return macOSVersion
@@ -45,6 +46,7 @@ public enum XcodeVersion {
         return watchOSVersion
         #endif
     }
+    #endif
     
     var macOSVersion: Semver {
         switch self {
@@ -80,5 +82,18 @@ public enum XcodeVersion {
         case .v11_2: return "6.1.0"
         case .v11_3: return "6.1.1"
         }
+    }
+    
+    var version: Semver {
+        switch self {
+        case .v11_0: return "11.0.0"
+        case .v11_1: return "11.1.0"
+        case .v11_2: return "11.2.0"
+        case .v11_3: return "11.3.0"
+        }
+    }
+    
+    public static func < (lhs: XcodeVersion, rhs: XcodeVersion) -> Bool {
+        return lhs.version < rhs.version
     }
 }

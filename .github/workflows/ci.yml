@@ -57,12 +57,13 @@ jobs:
     strategy:
       matrix:
         versions:
-          - xcode: '11'
-            ios: '13.0'
-          - xcode: '11.1'
-            ios: '13.1'
-          - xcode: '11.2'
-            ios: '13.2'
+          # FIXME: versioning tests
+          # - xcode: '11'
+          #   ios: '13.0'
+          # - xcode: '11.1'
+          #   ios: '13.1'
+          # - xcode: '11.2'
+          #   ios: '13.2'
           - xcode: '11.3'
             ios: '13.3'
     runs-on: macOS-latest
