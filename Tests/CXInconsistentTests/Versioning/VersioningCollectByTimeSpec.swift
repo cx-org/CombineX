@@ -11,46 +11,49 @@ class VersioningCollectByTimeSpec: QuickSpec {
             TestResources.release()
         }
         
-        it("should schedule failure") {
-            let subject = PassthroughSubject<Int, TestError>()
-            let scheduler = TestScheduler()
-            let pub = subject.collect(.byTime(scheduler, .seconds(2)))
-            let sub = makeTestSubscriber([Int].self, TestError.self, .unlimited)
-            
-            pub.subscribe(sub)
-            
-            subject.send(1)
-            subject.send(completion: .failure(.e0))
-            
-            expect(sub.events).toVersioning([
-                .v11_0: equal([.completion(.failure(.e0))]),
-                .v11_3: equal([]),
-            ])
-            
-            scheduler.advance(by: .zero)
-            
-            expect(sub.events) == [.completion(.failure(.e0))]
-        }
+        describe("should schedule completion since iOS 13.3") {
         
-        it("should schedule finish") {
-            let subject = PassthroughSubject<Int, TestError>()
-            let scheduler = TestScheduler()
-            let pub = subject.collect(.byTime(scheduler, .seconds(2)))
-            let sub = makeTestSubscriber([Int].self, TestError.self, .unlimited)
+            it("should schedule failure") {
+                let subject = PassthroughSubject<Int, TestError>()
+                let scheduler = TestScheduler()
+                let pub = subject.collect(.byTime(scheduler, .seconds(2)))
+                let sub = makeTestSubscriber([Int].self, TestError.self, .unlimited)
+                
+                pub.subscribe(sub)
+                
+                subject.send(1)
+                subject.send(completion: .failure(.e0))
+                
+                expect(sub.events).toVersioning([
+                    .v11_0: equal([.completion(.failure(.e0))]),
+                    .v11_3: equal([]),
+                ])
+                
+                scheduler.advance(by: .zero)
+                
+                expect(sub.events) == [.completion(.failure(.e0))]
+            }
             
-            pub.subscribe(sub)
-            
-            subject.send(1)
-            subject.send(completion: .finished)
-            
-            expect(sub.events).toVersioning([
-                .v11_0: equal([.completion(.finished)]),
-                .v11_3: equal([]),
-            ])
-            
-            scheduler.advance(by: .zero)
-            
-            expect(sub.events) == [.value([1]), .completion(.finished)]
+            it("should schedule finish") {
+                let subject = PassthroughSubject<Int, TestError>()
+                let scheduler = TestScheduler()
+                let pub = subject.collect(.byTime(scheduler, .seconds(2)))
+                let sub = makeTestSubscriber([Int].self, TestError.self, .unlimited)
+                
+                pub.subscribe(sub)
+                
+                subject.send(1)
+                subject.send(completion: .finished)
+                
+                expect(sub.events).toVersioning([
+                    .v11_0: equal([.value([1]), .completion(.finished)]),
+                    .v11_3: equal([]),
+                ])
+                
+                scheduler.advance(by: .zero)
+                
+                expect(sub.events) == [.value([1]), .completion(.finished)]
+            }
         }
         
         it("should ignore sync backpresure from scheduling sending when strategy is byTimeOrCount") {

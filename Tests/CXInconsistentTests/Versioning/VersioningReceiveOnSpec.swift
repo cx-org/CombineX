@@ -11,7 +11,7 @@ class VersioningReceiveOnSpec: QuickSpec {
             TestResources.release()
         }
         
-        it("should not schedule subscription") {
+        it("should not schedule subscription since iOS 13.3") {
             let subject = PassthroughSubject<Int, Never>()
             let scheduler = TestDispatchQueueScheduler.serial()
             let pub = subject.receive(on: scheduler)
@@ -27,6 +27,7 @@ class VersioningReceiveOnSpec: QuickSpec {
                 .v11_0: beNil(),
                 .v11_3: beNotNil(),
             ])
+            expect(sub.subscription).toEventuallyNot(beNil())
         }
     }
 }
