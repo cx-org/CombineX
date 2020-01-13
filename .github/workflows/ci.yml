@@ -19,17 +19,15 @@ jobs:
     strategy:
       matrix:
         xcode_version: ['11', '11.1', '11.2', '11.3']
-        combine_impl: ['CombineX', 'Combine']
     runs-on: macOS-latest
     env:
       DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode_version }}.app/Contents/Developer
-      CX_COMBINE_IMPLEMENTATION: ${{ matrix.combine_impl }}
+      CX_COMBINE_IMPLEMENTATION: CombineX
       CX_CONTINUOUS_INTEGRATION: "YES"
     steps:
       - uses: actions/checkout@v1
       - name: Swift Version
         run: |
-          sw_vers -productVersion
           swift -version
           swift package --version
       - name: Build and Test
@@ -51,6 +49,22 @@ jobs:
           swift package --version
       # FIXME: suppress warning for Nimble
       - name: Build and Test
+        run: swift test -Xswiftc -suppress-warnings
+
+  combine:
+    runs-on: macOS-latest
+    env:
+      CX_COMBINE_IMPLEMENTATION: Combine
+      CX_CONTINUOUS_INTEGRATION: "YES"
+    steps:
+      - uses: actions/checkout@v1
+      - name: Swift Version
+        run: |
+          sw_vers -productVersion
+          swift -version
+          swift package --version
+      - name: Build and Test
+        # FIXME: suppress warning for Nimble
         run: swift test -Xswiftc -suppress-warnings
 
   combine_versioning_ios:
