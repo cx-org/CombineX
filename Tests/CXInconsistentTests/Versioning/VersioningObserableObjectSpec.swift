@@ -82,6 +82,9 @@ class VersioningObserableObjectSpec: QuickSpec {
 
 // TODO: duplicate code of ObserableObjectSpec
 
+private typealias Published = CXShim.Published
+private typealias ObservableObject = CXShim.ObservableObject
+
 private protocol ObservableObjectDefaultImplementation {
     var objectWillChange: ObservableObjectPublisher { get }
 }
