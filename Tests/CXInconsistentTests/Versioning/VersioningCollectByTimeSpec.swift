@@ -11,7 +11,8 @@ class VersioningCollectByTimeSpec: QuickSpec {
             TestResources.release()
         }
         
-        describe("should schedule completion since iOS 13.3") {
+        // FIXME: Versioning: out of sync
+        pending("should schedule completion since iOS 13.3") {
         
             it("should schedule failure") {
                 let subject = PassthroughSubject<Int, TestError>()
@@ -56,7 +57,8 @@ class VersioningCollectByTimeSpec: QuickSpec {
             }
         }
         
-        it("should ignore sync backpresure from scheduling sending when strategy is byTimeOrCount") {
+        // FIXME: Versioning: out of sync
+        xit("should ignore sync backpresure from scheduling sending when strategy is byTimeOrCount") {
             let subject = TestSubject<Int, TestError>()
             let scheduler = TestScheduler()
             let pub = subject.collect(.byTimeOrCount(scheduler, .seconds(1), 2))
