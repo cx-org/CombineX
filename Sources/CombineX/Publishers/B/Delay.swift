@@ -102,9 +102,7 @@ extension Publishers.Delay {
                 subscription.cancel()
                 return
             }
-            self.scheduler.schedule(options: self.options) {
-                self.sub.receive(subscription: self)
-            }
+            self.sub.receive(subscription: self)
         }
         
         private func delay(_ action: @escaping () -> Void) {
