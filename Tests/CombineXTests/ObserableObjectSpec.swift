@@ -77,48 +77,14 @@ class ObserableObjectSpec: QuickSpec {
             }
             
             // MARK: class derived from objc should publish observed value's change
-            it("class derived from objc should publish observed value's change") {
-                let obj = ObservableDerivedObjc()
-                let sub = obj.objectWillChange.subscribeTestSubscriber()
-                
-                expect(sub.events.count) == 0
-                
-                obj.a += 1
-                expect(sub.events.count) == 1
-                
-                obj.b += 1
-                expect(sub.events.count) == 2
-            }
+            // Versioning: see VersioningObserableObjectSpec
         }
         
         // MARK: - Lifetime
         describe("Lifetime") {
             
             // MARK: 2.1 instance of specific kind of class should return a new objectWillChange every time
-            it("instance of specific kind of class should return a new objectWillChange every time") {
-                var objects: [ObservableObjectDefaultImplementation] = [
-                    NoFields(),             // no fields
-                    NoPublishedFields(),    // no @Published fields
-                    NSUUID(),               // objc class
-                    JSONEncoder(),          // resilient class
-                ]
-                
-                // resilient classes on Darwin platforms
-                #if canImport(Darwin)
-                objects += [
-                    ObservableDerivedResilient(), // subclass of resilient class
-                    
-                    // TODO: combine crash. should move to CXInconsistentTests
-                    // ObservableDerivedGenericResilient(0, 0.0), // generic subclass of resilient class
-                ]
-                #endif
-                
-                for obj in objects {
-                    let pub1 = obj.objectWillChange
-                    let pub2 = obj.objectWillChange
-                    expect(pub1).toNot(beIdenticalTo(pub2), description: "instance of \(type(of: obj)) should return a new objectWillChange every time")
-                }
-            }
+            // Versioning: see VersioningObserableObjectSpec
             
             // MARK: 2.2 other type should return the same objectWillChange every time
             it("other type should return the same objectWillChange every time") {
@@ -126,7 +92,8 @@ class ObserableObjectSpec: QuickSpec {
                     PublishedFieldIsConstant(),
                     ObservableBase(),
                     ObservableDerived(),
-                    ObservableDerivedObjc(),
+                    // Versioning: see VersioningObserableObjectSpec
+                    // ObservableDerivedObjc(),
                     ObservableGeneric(0, 0.0),
                     ObservableDerivedWithNonObservableBase(),
                 ]

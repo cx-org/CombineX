@@ -79,7 +79,14 @@ QCKMain([
     
     FailingSubjectSpec.self,
     
+    SuspiciousBufferSpec.self,
     SuspiciousDemandSpec.self,
+    SuspiciousSwitchToLatestSpec.self,
     
     FixedSpec.self,
+    
+    VersioningDelaySpec.self,
+    VersioningReceiveOnSpec.self,
+    VersioningObserableObjectSpec.self,
+    VersioningCollectByTimeSpec.self,
 ])

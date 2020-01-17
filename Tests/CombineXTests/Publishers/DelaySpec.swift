@@ -57,7 +57,7 @@ class DelaySpec: QuickSpec {
                 scheduler.advance(by: .seconds(5))
                 
                 expect(sendS.isCloseTo(to: receiveS)) == true
-
+                
                 expect(sendV.delayed(1).isCloseTo(to: receiveV)).toEventually(beTrue())
                 expect(sendB.delayed(1).isCloseTo(to: receiveC)).toEventually(beTrue())
             }
@@ -71,7 +71,8 @@ class DelaySpec: QuickSpec {
                 var executed = (subscription: false, value: false, completion: false)
                 let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.unlimited)
-                    expect(scheduler.isCurrent) == true
+                    // Versioning: see VersioningDelaySpec
+                    // expect(scheduler.isCurrent) == false
                     executed.subscription = true
                 }, receiveValue: { _ in
                     expect(scheduler.isCurrent) == true

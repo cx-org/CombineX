@@ -30,7 +30,8 @@ class ReceiveOnSpec: QuickSpec {
                 let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
                     s.request(.max(100))
                     received.subscription = true
-                    expect(scheduler.isCurrent) == true
+                    // Versioning: see VersioningReceiveOnSpec
+                    // expect(scheduler.isCurrent) == false
                 }, receiveValue: { _ in
                     received.value = true
                     expect(scheduler.isCurrent) == true
@@ -42,6 +43,7 @@ class ReceiveOnSpec: QuickSpec {
                 
                 pub.subscribe(sub)
                 
+                // Versioning: see VersioningReceiveOnSpec
                 expect(sub.subscription).toEventuallyNot(beNil())
                 
                 1000.times {

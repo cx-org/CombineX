@@ -18,12 +18,11 @@ jobs:
   mac:
     strategy:
       matrix:
-        xcode_version: ['11', '11.1']
-        combine_impl: ['CombineX', 'Combine']
+        xcode_version: ['11', '11.1', '11.2', '11.3']
     runs-on: macOS-latest
     env:
       DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode_version }}.app/Contents/Developer
-      CX_COMBINE_IMPLEMENTATION: ${{ matrix.combine_impl }}
+      CX_COMBINE_IMPLEMENTATION: CombineX
       CX_CONTINUOUS_INTEGRATION: "YES"
     steps:
       - uses: actions/checkout@v1
@@ -51,3 +50,52 @@ jobs:
       # FIXME: suppress warning for Nimble
       - name: Build and Test
         run: swift test -Xswiftc -suppress-warnings
+
+  combine:
+    runs-on: macOS-latest
+    env:
+      CX_COMBINE_IMPLEMENTATION: Combine
+      CX_CONTINUOUS_INTEGRATION: "YES"
+    steps:
+      - uses: actions/checkout@v1
+      - name: Swift Version
+        run: |
+          sw_vers -productVersion
+          swift -version
+          swift package --version
+      - name: Build and Test
+        # FIXME: suppress warning for Nimble
+        run: swift test -Xswiftc -suppress-warnings
+
+  combine_versioning_ios:
+    strategy:
+      matrix:
+        versions:
+          # FIXME: versioning tests
+          # - xcode: '11'
+          #   ios: '13.0'
+          # - xcode: '11.1'
+          #   ios: '13.1'
+          # - xcode: '11.2'
+          #   ios: '13.2'
+          - xcode: '11.3'
+            ios: '13.3'
+    runs-on: macOS-latest
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_${{ matrix.versions.xcode }}.app/Contents/Developer
+      CX_COMBINE_IMPLEMENTATION: Combine
+      CX_CONTINUOUS_INTEGRATION: "YES"
+      PROJECT: CombineX.xcodeproj
+      SCHEME: CombineX-Package
+      DESTINATION: "platform=iOS Simulator,name=iPhone 11,OS=${{ matrix.versions.ios }}"
+    steps:
+      - uses: actions/checkout@v1
+      - name: Generate Xcode Project
+        run: swift package generate-xcodeproj
+      - name: Build and Test
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -project "$PROJECT" \
+            -scheme "$SCHEME" \
+            -destination "$DESTINATION" | xcpretty
