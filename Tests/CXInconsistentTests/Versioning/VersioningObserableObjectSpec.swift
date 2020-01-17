@@ -15,7 +15,7 @@ class VersioningObserableObjectSpec: QuickSpec {
         }
         
         // FIXME: Versioning: out of sync
-        xit("instance of specific kind of class should return the same objectWillChange every time since iOS 13.3") {
+        it("instance of specific kind of class should return the same objectWillChange every time since iOS 13.3") {
             var objects: [ObservableObjectDefaultImplementation] = [
                 NoFields(),             // no fields
                 NoPublishedFields(),    // no @Published fields
@@ -39,39 +39,6 @@ class VersioningObserableObjectSpec: QuickSpec {
                 expect(pub1).toVersioning([
                     .v11_0: beNotIdenticalTo(pub2),
                     .v11_3: beIdenticalTo(pub2),
-                ])
-            }
-        }
-        
-        // FIXME: Versioning: out of sync
-        pending("ObservableObject support class derived from objc since iOS 13.1") {
-            
-            it("class derived from objc should publish observed value's change") {
-                let obj = ObservableDerivedObjc()
-                let sub = obj.objectWillChange.subscribeTestSubscriber()
-                
-                expect(sub.events.count) == 0
-                
-                obj.a += 1
-                expect(sub.events.count).toVersioning([
-                    .v11_0: equal(0),
-                    .v11_1: equal(1),
-                ])
-                
-                obj.b += 1
-                expect(sub.events.count).toVersioning([
-                    .v11_0: equal(0),
-                    .v11_1: equal(2),
-                ])
-            }
-            
-            it("class derived from objc should return the same objectWillChange every time") {
-                let obj = ObservableDerivedObjc()
-                let pub1 = obj.objectWillChange
-                let pub2 = obj.objectWillChange
-                expect(pub1).toVersioning([
-                    .v11_0: beNotIdenticalTo(pub2),
-                    .v11_1: beIdenticalTo(pub2),
                 ])
             }
         }

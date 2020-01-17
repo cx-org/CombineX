@@ -77,7 +77,18 @@ class ObserableObjectSpec: QuickSpec {
             }
             
             // MARK: class derived from objc should publish observed value's change
-            // Versioning: see VersioningObserableObjectSpec
+            it("class derived from objc should publish observed value's change") {
+                let obj = ObservableDerivedObjc()
+                let sub = obj.objectWillChange.subscribeTestSubscriber()
+                
+                expect(sub.events.count) == 0
+                
+                obj.a += 1
+                expect(sub.events.count) == 1
+                
+                obj.b += 1
+                expect(sub.events.count) == 2
+            }
         }
         
         // MARK: - Lifetime
@@ -92,8 +103,7 @@ class ObserableObjectSpec: QuickSpec {
                     PublishedFieldIsConstant(),
                     ObservableBase(),
                     ObservableDerived(),
-                    // Versioning: see VersioningObserableObjectSpec
-                    // ObservableDerivedObjc(),
+                    ObservableDerivedObjc(),
                     ObservableGeneric(0, 0.0),
                     ObservableDerivedWithNonObservableBase(),
                 ]
