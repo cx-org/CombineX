@@ -110,9 +110,7 @@ extension Publishers.ReceiveOn {
                 subscription.cancel()
                 return
             }
-            self.schedule {
-                self.sub.receive(subscription: self)
-            }
+            self.sub.receive(subscription: self)
         }
         
         func receive(_ input: Input) -> Subscribers.Demand {
