@@ -163,17 +163,22 @@ extension Publishers.CollectByTime {
             
             self.buffer.append(input)
             
-            switch self.buffer.count {
-            case self.count:
-                let output = self.buffer
-                self.buffer.removeAll(keepingCapacity: true)
+            guard self.buffer.count == self.count else {
                 self.lock.unlock()
-                self.rescheduleTimeoutTask()
-                return self.sub.receive(output) * self.count
-            default:
-                self.lock.unlock()
-                return .max(0)
+                return .none
             }
+            
+            let output = self.buffer
+            self.buffer.removeAll(keepingCapacity: true)
+            self.lock.unlock()
+            self.rescheduleTimeoutTask()
+            self.context.schedule {
+                let newDemand = self.sub.receive(output)
+                if newDemand > 0 {
+                    self.request(newDemand)
+                }
+            }
+            return .none
         }
         
         func receive(completion: Subscribers.Completion<Failure>) {
@@ -190,16 +195,16 @@ extension Publishers.CollectByTime {
             subscription.cancel()
             task?.cancel()
             
-            switch completion {
-            case .finished:
-                let output = self.buffer
-                self.buffer = []
-                if !output.isEmpty {
+            var output: [Input]?
+            if case .finished = completion, !self.buffer.isEmpty {
+                output = self.buffer
+            }
+            self.buffer = []
+            
+            self.context.schedule {
+                if let output = output {
                     _ = self.sub.receive(output)
                 }
-                self.sub.receive(completion: completion)
-            case .failure:
-                self.buffer = []
                 self.sub.receive(completion: completion)
             }
         }
@@ -348,16 +353,16 @@ extension Publishers.CollectByTime {
             subscription.cancel()
             task?.cancel()
             
-            switch completion {
-            case .finished:
-                let output = self.buffer
-                self.buffer = []
-                if !output.isEmpty {
+            var output: [Input]?
+            if case .finished = completion, !self.buffer.isEmpty {
+                output = self.buffer
+            }
+            self.buffer = []
+            
+            self.context.schedule {
+                if let output = output {
                     _ = self.sub.receive(output)
                 }
-                self.sub.receive(completion: completion)
-            case .failure:
-                self.buffer = []
                 self.sub.receive(completion: completion)
             }
         }
