@@ -1,7 +1,5 @@
 // This file is based largely on the Runtime package - https://github.com/wickwirew/Runtime
 
-import CCombineX
-
 struct PublishedFieldsEnumerator: Sequence {
     
     fileprivate typealias InheritanceSequence = UnfoldSequence<Any.Type, Any.Type>
@@ -188,23 +186,21 @@ private struct FieldDescriptor {
     struct Record {
         
         var fieldRecordFlags: Int32
-        var _mangledTypeName: RelativePointer<Int32, Int8>
+        var _mangledTypeName: RelativePointer<Int32, UInt8>
         var _fieldName: RelativePointer<Int32, UInt8>
         
         mutating func type(genericContext: UnsafeRawPointer?,
                            genericArguments: UnsafeRawPointer?) -> Any.Type {
             let typeName = _mangledTypeName.advanced()
-            let metadataPtr = swift_getTypeByMangledNameInContext(
+            let metadataPtr = _getTypeByMangledNameInContext(
                 typeName,
                 getSymbolicMangledNameLength(typeName),
-                genericContext,
-                genericArguments?.assumingMemoryBound(to: Optional<UnsafeRawPointer>.self)
-            )!
-            
-            return unsafeBitCast(metadataPtr, to: Any.Type.self)
+                genericContext: genericContext,
+                genericArguments: genericArguments)
+            return metadataPtr!
         }
         
-        func getSymbolicMangledNameLength(_ base: UnsafeRawPointer) -> Int32 {
+        func getSymbolicMangledNameLength(_ base: UnsafeRawPointer) -> UInt {
             var end = base
             while let current = Optional(end.load(as: UInt8.self)), current != 0 {
                 end += 1
@@ -214,7 +210,7 @@ private struct FieldDescriptor {
                     end += MemoryLayout<Int>.size
                 }
             }
-            return Int32(end - base)
+            return UInt(end - base)
         }
     }
 }
@@ -275,3 +271,11 @@ private let classIsSwiftMask: Int = {
     #endif
     return 1
 }()
+
+@_silgen_name("swift_getTypeByMangledNameInContext")
+private func _getTypeByMangledNameInContext(
+    _ name: UnsafePointer<UInt8>,
+    _ nameLength: UInt,
+    genericContext: UnsafeRawPointer?,
+    genericArguments: UnsafeRawPointer?)
+    -> Any.Type?

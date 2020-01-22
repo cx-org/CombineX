@@ -21,10 +21,9 @@ let package = Package(
     ],
     targets: [
         .target(name: "CXLibc"),
-        .target(name: "CCombineX"),
         .target(name: "CXUtility"),
         .target(name: "CXNamespace"),
-        .target(name: "CombineX", dependencies: ["CXLibc", "CCombineX", "CXUtility", "CXNamespace"]),
+        .target(name: "CombineX", dependencies: ["CXLibc", "CXUtility", "CXNamespace"]),
         .target(name: "CXFoundation", dependencies: ["CXUtility", "CXNamespace", "CombineX"]),
         .target(name: "CXCompatible", dependencies: ["CXNamespace"]),
         .target(name: "CXShim", dependencies: [/* depends on combine implementation */]),
