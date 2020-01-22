@@ -17,21 +17,6 @@ class ObservableObjectPublisherCache<Key: AnyObject, Value: AnyObject> {
         }
     }
     
-    func value(for key: Key) -> Value? {
-        let wkey = WeakHashBox(key)
-        guard let valueBox = storage[wkey] else {
-            return nil
-        }
-        if let boxedValue = valueBox.value {
-            return boxedValue
-        } else {
-            lock.lock()
-            storage.removeValue(forKey: wkey)
-            lock.unlock()
-            return nil
-        }
-    }
-    
     func value(for key: Key, make: () throws -> Value) rethrows -> Value {
         let wkey = WeakHashBox(key)
         if let value = storage[wkey]?.value {
