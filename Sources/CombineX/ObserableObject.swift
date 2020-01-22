@@ -33,14 +33,21 @@ public protocol ObservableObject: AnyObject {
     var objectWillChange: ObjectWillChangePublisher { get }
 }
 
+private let globalObjectWillChangeCache = ObservableObjectPublisherCache<AnyObject, ObservableObjectPublisher>()
+
 extension ObservableObject where ObjectWillChangePublisher == ObservableObjectPublisher {
     
     public var objectWillChange: ObservableObjectPublisher {
+        func getFallbackCachedPub() -> ObservableObjectPublisher {
+            return globalObjectWillChangeCache.value(for: self) {
+                return ObservableObjectPublisher()
+            }
+        }
         #if swift(>=5.1)
         let obj = Unmanaged.passUnretained(self).toOpaque()
         var iterator = PublishedFieldsEnumerator(object: obj, type: Self.self).makeIterator()
         guard let first = iterator.next() else {
-            return ObservableObjectPublisher()
+            return getFallbackCachedPub()
         }
         if let installedPub = first.type.getPublisher(for: first.storage) {
             return installedPub
@@ -52,7 +59,7 @@ extension ObservableObject where ObjectWillChangePublisher == ObservableObjectPu
         }
         return pubToInstall
         #else
-        return ObservableObjectPublisher()
+        return getFallbackCachedPub()
         #endif
     }
 }
