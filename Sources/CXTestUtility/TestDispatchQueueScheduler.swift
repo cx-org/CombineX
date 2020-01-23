@@ -4,7 +4,7 @@ import Foundation
 
 public class TestDispatchQueueScheduler: Scheduler {
     
-    public typealias SchedulerTimeType = TestSchedulerTime
+    public typealias SchedulerTimeType = VirtualTime
     public typealias SchedulerOptions = Never
     
     public let dispatchQueue: DispatchQueue

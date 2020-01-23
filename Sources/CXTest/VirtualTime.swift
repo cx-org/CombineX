@@ -2,7 +2,7 @@ import CXShim
 import CXUtility
 import Foundation
 
-public struct TestSchedulerTime: Strideable {
+public struct VirtualTime: Strideable {
     
     public let time: Date
     
@@ -10,18 +10,18 @@ public struct TestSchedulerTime: Strideable {
         self.time = time
     }
     
-    public func distance(to other: TestSchedulerTime) -> Stride {
+    public func distance(to other: VirtualTime) -> Stride {
         let distance = other.time.timeIntervalSince(self.time)
         return Stride.seconds(distance)
     }
     
-    public func advanced(by n: Stride) -> TestSchedulerTime {
+    public func advanced(by n: Stride) -> VirtualTime {
         let advanced = self.time + n.seconds
-        return TestSchedulerTime(time: advanced)
+        return VirtualTime(time: advanced)
     }
     
-    public static var now: TestSchedulerTime {
-        return TestSchedulerTime(time: Date())
+    public static var now: VirtualTime {
+        return VirtualTime(time: Date())
     }
     
     public struct Stride: ExpressibleByFloatLiteral, Comparable, SignedNumeric, Codable, SchedulerTimeIntervalConvertible {
@@ -105,14 +105,14 @@ public struct TestSchedulerTime: Strideable {
     }
 }
 
-extension TestSchedulerTime: CustomStringConvertible {
+extension VirtualTime: CustomStringConvertible {
     
     public var description: String {
         return self.time.timeIntervalSinceReferenceDate.description
     }
 }
 
-extension TestSchedulerTime.Stride: CustomStringConvertible {
+extension VirtualTime.Stride: CustomStringConvertible {
     
     public var description: String {
         return self.seconds.description

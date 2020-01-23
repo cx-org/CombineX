@@ -17,7 +17,7 @@ class DebounceSpec: QuickSpec {
             // MARK: 1.1 should ignore the values before the due time is passed
             it("should ignore the values before the due time is passed") {
                 let subject = PassthroughSubject<Int, TestError>()
-                let scheduler = TestScheduler()
+                let scheduler = VirtualTimeScheduler()
                 let pub = subject.debounce(for: .seconds(1), scheduler: scheduler)
                 let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
                 pub.subscribe(sub)
@@ -50,7 +50,7 @@ class DebounceSpec: QuickSpec {
             // MARK: 1.2 should send last value repeatedly
             it("should send the last value repeatedly") {
                 let subject = PassthroughSubject<Int, TestError>()
-                let scheduler = TestScheduler()
+                let scheduler = VirtualTimeScheduler()
                 let pub = subject.debounce(for: .seconds(1), scheduler: scheduler)
                 let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
                 pub.subscribe(sub)
@@ -64,7 +64,7 @@ class DebounceSpec: QuickSpec {
             // MARK: 1.3 should send as many values as demand
             it("should send as many values as demand") {
                 let subject = PassthroughSubject<Int, TestError>()
-                let scheduler = TestScheduler()
+                let scheduler = VirtualTimeScheduler()
                 let pub = subject.debounce(for: .seconds(1), scheduler: scheduler)
                 let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.max(10))
@@ -89,7 +89,7 @@ class DebounceSpec: QuickSpec {
             // MARK: 2.1 should request unlimited at the beginning
             it("should request unlimited at the beginning") {
                 let subject = TestSubject<Int, TestError>()
-                let scheduler = TestScheduler()
+                let scheduler = VirtualTimeScheduler()
                 let pub = subject.debounce(for: .seconds(1), scheduler: scheduler)
                 let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.max(10))

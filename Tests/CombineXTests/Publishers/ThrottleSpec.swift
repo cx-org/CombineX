@@ -19,7 +19,7 @@ class ThrottleSpec: QuickSpec {
                 // MARK: 1.1 should sent the latest value
                 it("should sent the latest value") {
                     let subject = TestSubject<Int, Never>()
-                    let scheduler = TestScheduler()
+                    let scheduler = VirtualTimeScheduler()
                     let pub = subject.throttle(for: .seconds(1), scheduler: scheduler, latest: true)
                     let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
                     
@@ -48,7 +48,7 @@ class ThrottleSpec: QuickSpec {
                 // MARK: 1.2 should send as many values as demand
                 it("should send as many values as demand") {
                     let subject = PassthroughSubject<Int, TestError>()
-                    let scheduler = TestScheduler()
+                    let scheduler = VirtualTimeScheduler()
                     let pub = subject.throttle(for: .seconds(1), scheduler: scheduler, latest: true)
                     let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
                         s.request(.max(10))
@@ -72,7 +72,7 @@ class ThrottleSpec: QuickSpec {
                 // MARK: 1.3 should sent the latest value
                 it("should sent the latest value") {
                     let subject = TestSubject<Int, Never>()
-                    let scheduler = TestScheduler()
+                    let scheduler = VirtualTimeScheduler()
                     let pub = subject.throttle(for: .seconds(1), scheduler: scheduler, latest: false)
                     let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
                     
@@ -101,7 +101,7 @@ class ThrottleSpec: QuickSpec {
                 // MARK: 1.4 should send as many values as demand
                 it("should send as many values as demand") {
                     let subject = PassthroughSubject<Int, TestError>()
-                    let scheduler = TestScheduler()
+                    let scheduler = VirtualTimeScheduler()
                     let pub = subject.throttle(for: .seconds(1), scheduler: scheduler, latest: true)
                     let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
                         s.request(.max(10))
@@ -129,7 +129,7 @@ class ThrottleSpec: QuickSpec {
                 // MARK: 2.1 should request unlimited at the beginning
                 it("should request unlimited at the beginning") {
                     let subject = TestSubject<Int, TestError>()
-                    let scheduler = TestScheduler()
+                    let scheduler = VirtualTimeScheduler()
                     let pub = subject.throttle(for: .seconds(1), scheduler: scheduler, latest: true)
                     let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
                         s.request(.max(10))
@@ -153,7 +153,7 @@ class ThrottleSpec: QuickSpec {
                 // MARK: 2.2 should request unlimited at the beginning
                 it("should request unlimited at the beginning") {
                     let subject = TestSubject<Int, TestError>()
-                    let scheduler = TestScheduler()
+                    let scheduler = VirtualTimeScheduler()
                     let pub = subject.throttle(for: .seconds(1), scheduler: scheduler, latest: false)
                     let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
                         s.request(.max(10))

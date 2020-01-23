@@ -17,7 +17,7 @@ class DelaySpec: QuickSpec {
             // 1.1 should delay events
             it("should delay events") {
                 let subject = PassthroughSubject<Int, TestError>()
-                let scheduler = TestScheduler()
+                let scheduler = VirtualTimeScheduler()
                 let pub = subject.delay(for: .seconds(1), scheduler: scheduler)
 
                 let receiveS = TestTimeline(context: scheduler)

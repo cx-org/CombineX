@@ -15,7 +15,7 @@ class VersioningCollectByTimeSpec: QuickSpec {
             
             it("should schedule value") {
                 let subject = PassthroughSubject<Int, TestError>()
-                let scheduler = TestScheduler()
+                let scheduler = VirtualTimeScheduler()
                 let pub = subject.collect(.byTimeOrCount(scheduler, .seconds(1), 2))
                 let sub = makeTestSubscriber([Int].self, TestError.self, .unlimited)
                 
@@ -36,7 +36,7 @@ class VersioningCollectByTimeSpec: QuickSpec {
         
             it("should schedule failure") {
                 let subject = PassthroughSubject<Int, TestError>()
-                let scheduler = TestScheduler()
+                let scheduler = VirtualTimeScheduler()
                 let pub = subject.collect(.byTime(scheduler, .seconds(2)))
                 let sub = makeTestSubscriber([Int].self, TestError.self, .unlimited)
                 
@@ -57,7 +57,7 @@ class VersioningCollectByTimeSpec: QuickSpec {
             
             it("should schedule finish") {
                 let subject = PassthroughSubject<Int, TestError>()
-                let scheduler = TestScheduler()
+                let scheduler = VirtualTimeScheduler()
                 let pub = subject.collect(.byTime(scheduler, .seconds(2)))
                 let sub = makeTestSubscriber([Int].self, TestError.self, .unlimited)
                 
@@ -80,7 +80,7 @@ class VersioningCollectByTimeSpec: QuickSpec {
         // FIXME: Versioning: out of sync
         it("should ignore sync backpresure from scheduling sending when strategy is byTimeOrCount") {
             let subject = TestSubject<Int, TestError>()
-            let scheduler = TestScheduler()
+            let scheduler = VirtualTimeScheduler()
             let pub = subject.collect(.byTimeOrCount(scheduler, .seconds(1), 2))
             
             let sub = TracingSubscriber<[Int], TestError>(receiveSubscription: { s in

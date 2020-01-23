@@ -17,7 +17,7 @@ class TimeoutSpec: QuickSpec {
             // MARK: 1.1 should fail after the specified interval
             it("should fail after the specified interval") {
                 let subject = PassthroughSubject<Int, TestError>()
-                let scheduler = TestScheduler()
+                let scheduler = VirtualTimeScheduler()
                 
                 let pub = subject.timeout(.seconds(5), scheduler: scheduler, customError: { TestError.e0 })
                 let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
@@ -34,7 +34,7 @@ class TimeoutSpec: QuickSpec {
             // MARK: 1.2 should finish if `customError` is nil
             it("should finish if `customError` is nil") {
                 let subject = PassthroughSubject<Int, TestError>()
-                let scheduler = TestScheduler()
+                let scheduler = VirtualTimeScheduler()
                 
                 let pub = subject.timeout(.seconds(5), scheduler: scheduler)
                 let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
