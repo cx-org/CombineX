@@ -24,7 +24,7 @@ class TryCatchSpec: QuickSpec {
                 
                 pub.subscribe(sub)
                 
-                let got = sub.events.mapError { $0 as! TestError }
+                let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 
                 let valueEvents = [1, 2, 3].map { TracingSubscriberEvent<Int, TestError>.value($0) }
                 let expected = valueEvents + [.completion(.failure(.e0))]
@@ -47,7 +47,7 @@ class TryCatchSpec: QuickSpec {
                 
                 pub.subscribe(sub)
                 
-                let got = sub.events.mapError { $0 as! TestError }
+                let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 let events = (0..<12).map { TracingSubscriberEvent<Int, TestError>.value($0) }
                 expect(got) == events
             }
@@ -63,7 +63,7 @@ class TryCatchSpec: QuickSpec {
                 
                 pub.subscribe(sub)
                 
-                let got = sub.events.mapError { $0 as! TestError }
+                let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 expect(got) == [.completion(.failure(.e2))]
             }
         }

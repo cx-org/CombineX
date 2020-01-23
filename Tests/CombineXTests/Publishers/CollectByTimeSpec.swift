@@ -33,7 +33,7 @@ class CollectByTimeSpec: QuickSpec {
                 subject.send(completion: .failure(.e0))
                 scheduler.advance(by: .zero)
                 
-                expect(sub.events) == [.value([1, 2]), .completion(.failure(.e0))]
+                expect(sub.eventsWithoutSubscription) == [.value([1, 2]), .completion(.failure(.e0))]
             }
             
             // MARK: 1.2 should collect by time then send unsent values if upstream finishes
@@ -55,7 +55,7 @@ class CollectByTimeSpec: QuickSpec {
                 subject.send(completion: .finished)
                 scheduler.advance(by: .zero)
                 
-                expect(sub.events) == [
+                expect(sub.eventsWithoutSubscription) == [
                     .value([1, 2]),
                     .value([3, 4, 5]),
                     .completion(.finished)
@@ -84,7 +84,7 @@ class CollectByTimeSpec: QuickSpec {
                 subject.send(completion: .finished)
                 scheduler.advance(by: .zero)
                 
-                expect(sub.events) == [
+                expect(sub.eventsWithoutSubscription) == [
                     .value([1, 2]),
                     .value([3]),
                     .value([4, 5]),
@@ -120,7 +120,7 @@ class CollectByTimeSpec: QuickSpec {
                     subject.send($0)
                 }
 
-                expect(sub.events.count) == 4
+                expect(sub.eventsWithoutSubscription.count) == 4
             }
             
             // MARK: 1.5 should always request 1 when strategy is by time

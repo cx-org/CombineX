@@ -32,7 +32,7 @@ class ZipSpec: QuickSpec {
                 subject1.send("c")
                 
                 let expected = ["0a", "1b", "2c"].map { TracingSubscriberEvent<String, TestError>.value($0) }
-                expect(sub.events) == expected
+                expect(sub.eventsWithoutSubscription) == expected
             }
             
             // MARK: 1.2 should zip of 3
@@ -60,7 +60,7 @@ class ZipSpec: QuickSpec {
                 subject2.send("D")
                 
                 let expected = ["0aA", "1bB", "2cC", "3dD"].map { TracingSubscriberEvent<String, TestError>.value($0) }
-                expect(sub.events) == expected
+                expect(sub.eventsWithoutSubscription) == expected
             }
             
             // MARK: 1.3 should finish when one sends a finish
@@ -76,7 +76,7 @@ class ZipSpec: QuickSpec {
                     subjects[$0 % 4].send($0)
                 }
                 subjects[3].send(completion: .finished)
-                expect(sub.events) == [.value(6), .value(22), .completion(.finished)]
+                expect(sub.eventsWithoutSubscription) == [.value(6), .value(22), .completion(.finished)]
             }
             
             // MARK: 1.4 should fail when one sends an error
@@ -92,7 +92,7 @@ class ZipSpec: QuickSpec {
                     subjects[$0 % 4].send($0)
                 }
                 subjects[3].send(completion: .failure(.e0))
-                expect(sub.events) == [.value(6), .value(22), .completion(.failure(.e0))]
+                expect(sub.eventsWithoutSubscription) == [.value(6), .value(22), .completion(.failure(.e0))]
             }
             
             // MARK: 1.5 should send as many as demands
@@ -119,7 +119,7 @@ class ZipSpec: QuickSpec {
                     subject1.send("\($0)")
                 }
                 
-                expect(sub.events.count) == 12
+                expect(sub.eventsWithoutSubscription.count) == 12
             }
         }
     }

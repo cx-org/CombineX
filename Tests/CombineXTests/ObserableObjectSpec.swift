@@ -24,22 +24,22 @@ class ObserableObjectSpec: QuickSpec {
                 
                 obj.x = 1
                 obj.y = "foo"
-                expect(sub.events.count) == 0
+                expect(sub.eventsWithoutSubscription.count) == 0
                 
                 obj.a = 1
-                expect(sub.events.count) == 1
+                expect(sub.eventsWithoutSubscription.count) == 1
                 
                 obj.a = 2
-                expect(sub.events.count) == 2
+                expect(sub.eventsWithoutSubscription.count) == 2
                 
                 obj.a += 1
-                expect(sub.events.count) == 3
+                expect(sub.eventsWithoutSubscription.count) == 3
                 
                 obj.d.toggle()
-                expect(sub.events.count) == 4
+                expect(sub.eventsWithoutSubscription.count) == 4
                 
                 obj.e.append(1)
-                expect(sub.events.count) == 5
+                expect(sub.eventsWithoutSubscription.count) == 5
             }
             
             // MARK: 1.2 generic class should publish observed value's change
@@ -47,13 +47,13 @@ class ObserableObjectSpec: QuickSpec {
                 let obj = ObservableGeneric(0, 0.0)
                 let sub = obj.objectWillChange.subscribeTestSubscriber()
                 
-                expect(sub.events.count) == 0
+                expect(sub.eventsWithoutSubscription.count) == 0
                 
                 obj.a = 1
-                expect(sub.events.count) == 1
+                expect(sub.eventsWithoutSubscription.count) == 1
                 
                 obj.b = 1.0
-                expect(sub.events.count) == 2
+                expect(sub.eventsWithoutSubscription.count) == 2
             }
             
             // MARK: 1.3 derived class should publish non-observable base class's change
@@ -61,19 +61,19 @@ class ObserableObjectSpec: QuickSpec {
                 let obj = ObservableDerivedWithNonObservableBase()
                 let sub = obj.objectWillChange.subscribeTestSubscriber()
                 
-                expect(sub.events.count) == 0
+                expect(sub.eventsWithoutSubscription.count) == 0
                 
                 obj.a += 1
-                expect(sub.events.count) == 1
+                expect(sub.eventsWithoutSubscription.count) == 1
                 
                 obj.b += 1
-                expect(sub.events.count) == 2
+                expect(sub.eventsWithoutSubscription.count) == 2
                 
                 obj.c += 1
-                expect(sub.events.count) == 3
+                expect(sub.eventsWithoutSubscription.count) == 3
                 
                 obj.d += 1
-                expect(sub.events.count) == 4
+                expect(sub.eventsWithoutSubscription.count) == 4
             }
             
             // MARK: class derived from objc should publish observed value's change
@@ -81,13 +81,13 @@ class ObserableObjectSpec: QuickSpec {
                 let obj = ObservableDerivedObjc()
                 let sub = obj.objectWillChange.subscribeTestSubscriber()
                 
-                expect(sub.events.count) == 0
+                expect(sub.eventsWithoutSubscription.count) == 0
                 
                 obj.a += 1
-                expect(sub.events.count) == 1
+                expect(sub.eventsWithoutSubscription.count) == 1
                 
                 obj.b += 1
-                expect(sub.events.count) == 2
+                expect(sub.eventsWithoutSubscription.count) == 2
             }
         }
         

@@ -23,7 +23,7 @@ class OptionalSpec: QuickSpec {
                 let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
                 pub.subscribe(sub)
                 
-                expect(sub.events) == [.value(1), .completion(.finished)]
+                expect(sub.eventsWithoutSubscription) == [.value(1), .completion(.finished)]
             }
             
             // MARK: 1.2 should send finished even no demand
@@ -33,7 +33,7 @@ class OptionalSpec: QuickSpec {
                 let sub = makeTestSubscriber(Int.self, Never.self, .max(0))
                 pub.subscribe(sub)
                 
-                expect(sub.events) == [.completion(.finished)]
+                expect(sub.eventsWithoutSubscription) == [.completion(.finished)]
             }
             
             #if !SWIFT_PACKAGE

@@ -32,7 +32,7 @@ class TryAllSatisfySpec: QuickSpec {
                 }
                 subject.send(completion: .finished)
                 
-                let got = sub.events.mapError { $0 as! TestError }
+                let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 expect(got) == [.value(true), .completion(.finished)]
             }
             
@@ -54,7 +54,7 @@ class TryAllSatisfySpec: QuickSpec {
                 }
                 subject.send(completion: .finished)
                 
-                let got = sub.events.mapError { $0 as! TestError }
+                let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 expect(got) == [.value(false), .completion(.finished)]
             }
             
@@ -81,7 +81,7 @@ class TryAllSatisfySpec: QuickSpec {
                 }
                 subject.send(completion: .finished)
                 
-                let got = sub.events.mapError { $0 as! TestError }
+                let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 expect(got) == [.completion(.failure(.e0))]
             }
         }

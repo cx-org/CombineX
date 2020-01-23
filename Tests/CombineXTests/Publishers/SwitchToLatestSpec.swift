@@ -41,7 +41,7 @@ class SwitchToLatestSpec: QuickSpec {
                 subject2.send(9)
 
                 let expected = [1, 2, 3, 7, 8, 9].map { TracingSubscriberEvent<Int, Never>.value($0) }
-                expect(sub.events) == expected
+                expect(sub.eventsWithoutSubscription) == expected
             }
             
             // MARK: 1.3 should send failure if a child send failure
@@ -66,7 +66,7 @@ class SwitchToLatestSpec: QuickSpec {
                     subject2.send($0)
                 }
                 
-                expect(sub.events) == [.completion(.failure(.e0))]
+                expect(sub.eventsWithoutSubscription) == [.completion(.failure(.e0))]
             }
             
             // MARK: 1.4 should relay finish when there are no unfinished children
@@ -81,15 +81,15 @@ class SwitchToLatestSpec: QuickSpec {
                 
                 subject.send(subject1)
                 subject1.send(completion: .finished)
-                expect(sub.events) == []
+                expect(sub.eventsWithoutSubscription) == []
                 
                 subject.send(subject2)
                 
                 subject2.send(completion: .finished)
-                expect(sub.events) == []
+                expect(sub.eventsWithoutSubscription) == []
                 
                 subject.send(completion: .finished)
-                expect(sub.events) == [.completion(.finished)]
+                expect(sub.eventsWithoutSubscription) == [.completion(.finished)]
             }
         }
         

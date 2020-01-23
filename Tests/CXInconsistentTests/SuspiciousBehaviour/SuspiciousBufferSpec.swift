@@ -23,9 +23,9 @@ class SuspiciousBufferSpec: QuickSpec {
             }
             
             // FIXME: Apple's combine doesn't receive error.
-            let valueEvents = Array(0..<5).map { TestSubscriberEvent<Int, TestError>.value($0) }
+            let valueEvents = Array(0..<5).map { TracingSubscriberEvent<Int, TestError>.value($0) }
             let expected = valueEvents + [.completion(.failure(.e1))]
-            expect(sub.events).toBranch(
+            expect(sub.eventsWithoutSubscription).toBranch(
                 combine: equal(valueEvents),
                 cx: equal(expected))
         }

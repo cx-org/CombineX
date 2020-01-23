@@ -20,8 +20,8 @@ class FixedSpec: QuickSpec {
             
             (0...10).forEach(pub.send)
             
-            expect(sub.events).to(beEmpty())
-            expect(sub.events).toEventually(equal([.value(10)]))
+            expect(sub.eventsWithoutSubscription).to(beEmpty())
+            expect(sub.eventsWithoutSubscription).toEventually(equal([.value(10)]))
         }
     }
 }

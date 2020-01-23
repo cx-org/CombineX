@@ -29,7 +29,7 @@ class DebounceSpec: QuickSpec {
                 subject.send(4)
                 scheduler.advance(by: .seconds(0.9))
                 
-                expect(sub.events) == []
+                expect(sub.eventsWithoutSubscription) == []
                 
                 subject.send(1)
                 subject.send(2)
@@ -44,7 +44,7 @@ class DebounceSpec: QuickSpec {
                 subject.send(9)
                 scheduler.advance(by: .seconds(1.8))
                 
-                expect(sub.events) == [.value(3), .value(6), .value(9)]
+                expect(sub.eventsWithoutSubscription) == [.value(3), .value(6), .value(9)]
             }
             
             // MARK: 1.2 should send last value repeatedly
@@ -58,7 +58,7 @@ class DebounceSpec: QuickSpec {
                 subject.send(1)
                 scheduler.advance(by: .seconds(10))
                 
-                expect(sub.events) == [.value(1)]
+                expect(sub.eventsWithoutSubscription) == [.value(1)]
             }
             
             // MARK: 1.3 should send as many values as demand
@@ -79,7 +79,7 @@ class DebounceSpec: QuickSpec {
                     scheduler.advance(by: .seconds(1))
                 }
                 
-                expect(sub.events.count).toEventually(equal(12))
+                expect(sub.eventsWithoutSubscription.count).toEventually(equal(12))
             }
         }
         

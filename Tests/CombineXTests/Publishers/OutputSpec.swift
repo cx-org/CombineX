@@ -26,7 +26,7 @@ class OutputSpec: QuickSpec {
                 let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
                 pub.output(in: 0..<2).subscribe(sub)
                 
-                let got = sub.events.mapError { $0 as! TestError }
+                let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 
                 // FIXME: Even if the upstream doesn't send subscription, the downstream still can receive values. 🤔.
                 expect(got) == [.value(0), .value(1)]
@@ -53,7 +53,7 @@ class OutputSpec: QuickSpec {
                     TracingSubscriberEvent<Int, Never>.value($0)
                 }
                 let expected = valueEvents + [.completion(.finished)]
-                expect(sub.events) == expected
+                expect(sub.eventsWithoutSubscription) == expected
             }
             
             // MARK: 1.2 should send values as demand
@@ -76,7 +76,7 @@ class OutputSpec: QuickSpec {
                 let expected = (10..<17).map {
                     TracingSubscriberEvent<Int, Never>.value($0)
                 }
-                expect(sub.events) == expected
+                expect(sub.eventsWithoutSubscription) == expected
             }
             
             #if !SWIFT_PACKAGE

@@ -32,7 +32,7 @@ class CombineLatestSpec: QuickSpec {
                 subject1.send("c")
                 
                 let expected = ["1a", "2a", "2b", "2c"].map { TracingSubscriberEvent<String, TestError>.value($0) }
-                expect(sub.events) == expected
+                expect(sub.eventsWithoutSubscription) == expected
             }
             
             // MARK: 1.2 should combine latest of 3
@@ -60,7 +60,7 @@ class CombineLatestSpec: QuickSpec {
                 subject2.send("D")
                 
                 let expected = ["2bA", "3bA", "3cA", "3dA", "3dB", "3dC", "3dD"].map { TracingSubscriberEvent<String, TestError>.value($0) }
-                expect(sub.events) == expected
+                expect(sub.eventsWithoutSubscription) == expected
             }
             
             // MARK: 1.3 should finish when one sends an error
@@ -79,7 +79,7 @@ class CombineLatestSpec: QuickSpec {
                 
                 let valueEvents = [6, 10, 14, 18, 22, 26, 30].map { TracingSubscriberEvent<Int, TestError>.value($0) }
                 let expected = valueEvents + [.completion(.failure(.e0))]
-                expect(sub.events) == expected
+                expect(sub.eventsWithoutSubscription) == expected
             }
             
             // MARK: 1.4 should send as many as demands
@@ -102,7 +102,7 @@ class CombineLatestSpec: QuickSpec {
                     [subject0, subject1].randomElement()!.send("\($0)")
                 }
                 
-                expect(sub.events.count) == 12
+                expect(sub.eventsWithoutSubscription.count) == 12
             }
         }
         

@@ -28,7 +28,7 @@ class SequenceSpec: QuickSpec {
                 
                 let valueEvents = values.map { Event.value($0) }
                 let expected = valueEvents + [.completion(.finished)]
-                expect(sub.events) == expected
+                expect(sub.eventsWithoutSubscription) == expected
             }
             
             // MARK: 1.2 should send as many values as demand
@@ -46,7 +46,7 @@ class SequenceSpec: QuickSpec {
                 pub.subscribe(sub)
                 
                 let events = (0..<70).map { Event.value($0) }
-                expect(sub.events) == events
+                expect(sub.eventsWithoutSubscription) == events
             }
         }
         
@@ -144,7 +144,7 @@ class SequenceSpec: QuickSpec {
             
                 g.wait()
                 
-                expect(sub.events.count) == 100
+                expect(sub.eventsWithoutSubscription.count) == 100
             }
             
             // MARK: 3.2 receiving value should not block cancel

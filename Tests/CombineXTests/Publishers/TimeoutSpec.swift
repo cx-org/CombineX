@@ -25,10 +25,10 @@ class TimeoutSpec: QuickSpec {
                 pub.subscribe(sub)
 
                 scheduler.advance(by: .seconds(4))
-                expect(sub.events) == []
+                expect(sub.eventsWithoutSubscription) == []
                 
                 scheduler.advance(by: .seconds(5))
-                expect(sub.events) == [.completion(.failure(.e0))]
+                expect(sub.eventsWithoutSubscription) == [.completion(.failure(.e0))]
             }
             
             // MARK: 1.2 should finish if `customError` is nil
@@ -42,7 +42,7 @@ class TimeoutSpec: QuickSpec {
                 pub.subscribe(sub)
                 
                 scheduler.advance(by: .seconds(6))
-                expect(sub.events) == [.completion(.finished)]
+                expect(sub.eventsWithoutSubscription) == [.completion(.finished)]
             }
             
             // MARK: 1.3 should send timeout event in scheduled action
@@ -60,7 +60,7 @@ class TimeoutSpec: QuickSpec {
                 })
                 
                 pub.subscribe(sub)
-                expect(sub.events).toEventually(equal([.completion(.failure(TestError.e0))]))
+                expect(sub.eventsWithoutSubscription).toEventually(equal([.completion(.failure(TestError.e0))]))
             }
         }
     }

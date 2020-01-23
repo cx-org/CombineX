@@ -26,7 +26,7 @@ class TryPrefixWhileSpec: QuickSpec {
                 }
                 subject.send(completion: .finished)
                 
-                let got = sub.events.mapError { $0 as! TestError }
+                let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 
                 let valueEvents = (0..<50).map {
                     TracingSubscriberEvent<Int, TestError>.value($0)
@@ -48,7 +48,7 @@ class TryPrefixWhileSpec: QuickSpec {
                 }
                 subject.send(completion: .failure(.e0))
                 
-                let got = sub.events.mapError { $0 as! TestError }
+                let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 expect(got) == [.completion(.finished)]
             }
             
@@ -62,7 +62,7 @@ class TryPrefixWhileSpec: QuickSpec {
                     pub.send(i)
                 }
                 
-                expect(sub.events.count) == 10
+                expect(sub.eventsWithoutSubscription.count) == 10
             }
             
             // MARK: 1.4 should fail if predicate throws error
@@ -79,7 +79,7 @@ class TryPrefixWhileSpec: QuickSpec {
                 
                 pub.send(completion: .finished)
                 
-                let got = sub.events.mapError { $0 as! TestError }
+                let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 expect(got) == [.completion(.failure(.e0))]
             }
         }

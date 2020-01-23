@@ -38,7 +38,7 @@ class MergeSpec: QuickSpec {
                 let events = (0..<100).map {
                     TracingSubscriberEvent<Int, TestError>.value($0)
                 }
-                expect(sub.events) == events
+                expect(sub.eventsWithoutSubscription) == events
             }
             
             // MARK: It should merge many upstreams
@@ -62,7 +62,7 @@ class MergeSpec: QuickSpec {
                 let events = (0..<100).map {
                     TracingSubscriberEvent<Int, TestError>.value($0)
                 }
-                expect(sub.events) == events
+                expect(sub.eventsWithoutSubscription) == events
             }
         }
     }

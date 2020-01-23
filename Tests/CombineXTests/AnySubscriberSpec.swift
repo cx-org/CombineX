@@ -68,7 +68,7 @@ class AnySubscriberSpec: QuickSpec {
                 pub.send(2)
                 pub.send(completion: .failure(.e0))
                 
-                expect(sub.events) == [.value(1), .value(2), .completion(.failure(.e0))]
+                expect(sub.eventsWithoutSubscription) == [.value(1), .value(2), .completion(.failure(.e0))]
             }
         }
     }

@@ -42,9 +42,9 @@ class MeasureIntervalSpec: QuickSpec {
                 
                 subject.send(completion: .finished)
                 
-                expect(sub.events).to(haveCount(dts.count + 1))
-                expect(sub.events.last) == .completion(.finished)
-                for (event, dt) in zip(sub.events.dropLast(), dts) {
+                expect(sub.eventsWithoutSubscription).to(haveCount(dts.count + 1))
+                expect(sub.eventsWithoutSubscription.last) == .completion(.finished)
+                for (event, dt) in zip(sub.eventsWithoutSubscription.dropLast(), dts) {
                     expect(event.value?.seconds).to(beCloseTo(dt, within: 0.1))
                 }
             }

@@ -30,7 +30,7 @@ class AutoconnectSpec: QuickSpec {
                 subject.send(2)
                 subject.send(3)
                 
-                expect(sub.events) == [.value(1), .value(2), .value(3)]
+                expect(sub.eventsWithoutSubscription) == [.value(1), .value(2), .value(3)]
                 
                 subscription?.cancel()
                 
@@ -38,7 +38,7 @@ class AutoconnectSpec: QuickSpec {
                 subject.send(5)
                 subject.send(6)
                 
-                expect(sub.events) == [.value(1), .value(2), .value(3)]
+                expect(sub.eventsWithoutSubscription) == [.value(1), .value(2), .value(3)]
             }
         }
     }

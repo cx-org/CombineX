@@ -82,7 +82,7 @@ class ReceiveOnSpec: QuickSpec {
                     subject.send($0)
                 }
                 
-                expect(sub.events.count).toEventually(equal(10))
+                expect(sub.eventsWithoutSubscription.count).toEventually(equal(10))
             }
         }
     }

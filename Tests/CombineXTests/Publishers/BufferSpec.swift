@@ -52,7 +52,7 @@ class BufferSpec: QuickSpec {
                 sub.subscription?.request(.max(5))
                 
                 let expected = (Array(0..<5) + Array(6..<11)).map { TracingSubscriberEvent<Int, TestError>.value($0) }
-                expect(sub.events) == expected
+                expect(sub.eventsWithoutSubscription) == expected
             }
             
             // MARK: 1.3 should drop newest
@@ -69,7 +69,7 @@ class BufferSpec: QuickSpec {
                 sub.subscription?.request(.max(5))
                 
                 let expected = Array(0..<10).map { TracingSubscriberEvent<Int, TestError>.value($0) }
-                expect(sub.events) == expected
+                expect(sub.eventsWithoutSubscription) == expected
             }
         }
          

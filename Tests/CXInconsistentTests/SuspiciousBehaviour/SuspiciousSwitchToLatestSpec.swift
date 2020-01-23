@@ -53,17 +53,17 @@ class SuspiciousSwitchToLatestSpec: QuickSpec {
             
             subject.send(subject1)
             subject1.send(completion: .finished)
-            expect(sub.events) == []
+            expect(sub.eventsWithoutSubscription) == []
             
             subject.send(subject2)
-            expect(sub.events) == []
+            expect(sub.eventsWithoutSubscription) == []
             
             subject.send(completion: .finished)
-            expect(sub.events) == []
+            expect(sub.eventsWithoutSubscription) == []
             
             // FIXME: Combine won't get any event when the last child finish.
             subject2.send(completion: .finished)
-            expect(sub.events).toBranch(
+            expect(sub.eventsWithoutSubscription).toBranch(
                 combine: beEmpty(),
                 cx: equal([.completion(.finished)]))
         }
@@ -93,7 +93,7 @@ class SuspiciousSwitchToLatestSpec: QuickSpec {
             (11...20).forEach(subject2.send)
             
             // FIXME: Combine will get only 10 values (demand 12).
-            expect(sub.events).toBranch(
+            expect(sub.eventsWithoutSubscription).toBranch(
                 combine: haveCount(10),
                 cx: haveCount(12))
         }

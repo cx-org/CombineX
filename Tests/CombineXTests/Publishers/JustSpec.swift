@@ -22,7 +22,7 @@ class JustSpec: QuickSpec {
                 let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
                 pub.subscribe(sub)
                 
-                expect(sub.events) == [.value(1), .completion(.finished)]
+                expect(sub.eventsWithoutSubscription) == [.value(1), .completion(.finished)]
             }
             
             #if !SWIFT_PACKAGE
@@ -186,7 +186,7 @@ class JustSpec: QuickSpec {
                 }
                 g.wait()
                 
-                expect(sub.events) == [.value(1), .completion(.finished)]
+                expect(sub.eventsWithoutSubscription) == [.value(1), .completion(.finished)]
             }
         }
     }

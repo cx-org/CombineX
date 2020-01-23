@@ -28,7 +28,7 @@ class RetrySpec: QuickSpec {
                 let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
                 pub.retry(5).subscribe(sub)
                 
-                expect(sub.events) == [.completion(.finished)]
+                expect(sub.eventsWithoutSubscription) == [.completion(.finished)]
             }
             
             // MARK: 1.2 should retry specified times then fail
@@ -45,7 +45,7 @@ class RetrySpec: QuickSpec {
                 let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
                 pub.retry(1).subscribe(sub)
                 
-                expect(sub.events) == [.completion(.failure(.e1))]
+                expect(sub.eventsWithoutSubscription) == [.completion(.failure(.e1))]
             }
         }
         
@@ -61,7 +61,7 @@ class RetrySpec: QuickSpec {
                 let sub = makeTestSubscriber(Int.self, TestError.self, .max(5))
                 pub.retry(1).subscribe(sub)
                 
-                expect(sub.events) == [.value(1), .value(2), .value(3), .value(1), .value(2)]
+                expect(sub.eventsWithoutSubscription) == [.value(1), .value(2), .value(3), .value(1), .value(2)]
             }
         }
     }

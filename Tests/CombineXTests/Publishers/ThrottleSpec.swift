@@ -39,10 +39,10 @@ class ThrottleSpec: QuickSpec {
                     
                     subject.send(7)
                     
-                    expect(sub.events) == [.value(2), .value(4), .value(6)]
+                    expect(sub.eventsWithoutSubscription) == [.value(2), .value(4), .value(6)]
                     
                     scheduler.advance(by: .seconds(0.5))
-                    expect(sub.events) == [.value(2), .value(4), .value(6), .value(7)]
+                    expect(sub.eventsWithoutSubscription) == [.value(2), .value(4), .value(6), .value(7)]
                 }
                 
                 // MARK: 1.2 should send as many values as demand
@@ -63,7 +63,7 @@ class ThrottleSpec: QuickSpec {
                         scheduler.advance(by: .seconds(1))
                     }
                     
-                    expect(sub.events.count).toEventually(equal(12))
+                    expect(sub.eventsWithoutSubscription.count).toEventually(equal(12))
                 }
             }
             
@@ -92,10 +92,10 @@ class ThrottleSpec: QuickSpec {
                     
                     subject.send(7)
                     
-                    expect(sub.events) == [.value(1), .value(3), .value(5)]
+                    expect(sub.eventsWithoutSubscription) == [.value(1), .value(3), .value(5)]
                     
                     scheduler.advance(by: .seconds(0.5))
-                    expect(sub.events) == [.value(1), .value(3), .value(5), .value(7)]
+                    expect(sub.eventsWithoutSubscription) == [.value(1), .value(3), .value(5), .value(7)]
                 }
                 
                 // MARK: 1.4 should send as many values as demand
@@ -116,7 +116,7 @@ class ThrottleSpec: QuickSpec {
                         scheduler.advance(by: .seconds(1))
                     }
                     
-                    expect(sub.events.count).toEventually(equal(12))
+                    expect(sub.eventsWithoutSubscription.count).toEventually(equal(12))
                 }
             }
         }

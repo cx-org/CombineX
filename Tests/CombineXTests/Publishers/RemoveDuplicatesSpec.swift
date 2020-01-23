@@ -34,7 +34,7 @@ class RemoveDuplicatesSpec: QuickSpec {
             
             let events = [1, 2, 1].map { TracingSubscriber<Int, Never>.Event.value($0) }
             let expected = events + [.completion(.finished)]
-            expect(sub.events) == expected
+            expect(sub.eventsWithoutSubscription) == expected
         }
     }
 }

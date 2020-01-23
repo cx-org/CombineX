@@ -35,7 +35,7 @@ class FlatMapSpec: QuickSpec {
                 
                 let events = [1, 2, 3].flatMap { [$0, $0, $0] }.map { TracingSubscriberEvent<Int, Never>.value($0) }
                 let expected = events + [.completion(.finished)]
-                expect(sub.events) == expected
+                expect(sub.eventsWithoutSubscription) == expected
             }
             
             // MARK: 1.2 should send values as demand
@@ -59,7 +59,7 @@ class FlatMapSpec: QuickSpec {
                 
                 pub.subscribe(sub)
                 
-                expect(sub.events.count) == 19
+                expect(sub.eventsWithoutSubscription.count) == 19
             }
             
             // MARK: 1.3 should complete when a sub-publisher sends an error
@@ -96,12 +96,12 @@ class FlatMapSpec: QuickSpec {
                 
                 subjects[1].send(completion: .failure(.e1))
                 
-                expect(sub.events.count) == 10
+                expect(sub.eventsWithoutSubscription.count) == 10
                 
                 var events = [0, 1, 2].flatMap { _ in [0, 1, 2] }.map { Sub.Event.value($0) }
                 events.append(Sub.Event.completion(.failure(.e1)))
                 
-                expect(sub.events) == events
+                expect(sub.eventsWithoutSubscription) == events
             }
             
             // MARK: 1.4 should buffer one output for each sub-publisher if there is no demand
@@ -138,7 +138,7 @@ class FlatMapSpec: QuickSpec {
                 
                 subscription?.request(.unlimited)
                 
-                expect(sub.events) == [.value(0), .value(0), .value(2), .value(3)]
+                expect(sub.eventsWithoutSubscription) == [.value(0), .value(0), .value(2), .value(3)]
             }
         }
         
@@ -177,7 +177,7 @@ class FlatMapSpec: QuickSpec {
                 
                 g.wait()
                 
-                expect(sub.events.count) == 10
+                expect(sub.eventsWithoutSubscription.count) == 10
             }
         }
     }

@@ -25,7 +25,7 @@ class CollectByCountSpec: QuickSpec {
                 }
                 pub.send(completion: .failure(.e0))
                 
-                expect(sub.events) == [
+                expect(sub.eventsWithoutSubscription) == [
                     .value([0, 1]),
                     .value([2, 3]),
                     .completion(.failure(.e0))
@@ -43,7 +43,7 @@ class CollectByCountSpec: QuickSpec {
                 }
                 pub.send(completion: .finished)
                 
-                expect(sub.events) == [
+                expect(sub.eventsWithoutSubscription) == [
                     .value([0, 1]),
                     .value([2, 3]),
                     .value([4]),
@@ -68,7 +68,7 @@ class CollectByCountSpec: QuickSpec {
                 }
                 pub.send(completion: .finished)
                 
-                expect(sub.events) == [.value([0, 1]), .value([2, 3]), .completion(.finished)]
+                expect(sub.eventsWithoutSubscription) == [.value([0, 1]), .value([2, 3]), .completion(.finished)]
             }
         }
     }
