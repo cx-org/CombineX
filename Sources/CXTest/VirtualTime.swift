@@ -92,7 +92,7 @@ public struct VirtualTime: Strideable, Hashable, Comparable {
     }
     
     public func advanced(by n: Stride) -> VirtualTime {
-        return VirtualTime(nanoseconds: time + n.magnitude)
+        return VirtualTime(nanoseconds: time.addingClamping(by: n.magnitude))
     }
     
     public static let zero = VirtualTime(nanoseconds: 0)
