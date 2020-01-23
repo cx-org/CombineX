@@ -130,7 +130,7 @@ class SinkSpec: QuickSpec {
                 var cancelled = false
                 
                 do {
-                    let s = TracingSubscription(cancel: {
+                    let s = TracingSubscription(receiveCancel: {
                         cancelled = true
                     })
                     sink.receive(subscription: s)
@@ -154,7 +154,7 @@ class SinkSpec: QuickSpec {
                 var cancelled = false
                 
                 do {
-                    let s = TracingSubscription(cancel: {
+                    let s = TracingSubscription(receiveCancel: {
                         cancelled = true
                     })
                     sink.receive(subscription: s)
@@ -180,7 +180,7 @@ class SinkSpec: QuickSpec {
                 var cancelled = false
                 
                 do {
-                    let s = TracingSubscription(cancel: {
+                    let s = TracingSubscription(receiveCancel: {
                         cancelled = true
                     })
                     sink.receive(subscription: s)

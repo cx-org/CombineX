@@ -1,43 +1,41 @@
 import CXShim
 import CXUtility
 
-public enum TracingSubscriptionEvent: Equatable {
-    case request(demand: Subscribers.Demand)
-    case cancel
-}
-
 public class TracingSubscription: Subscription {
     
-    public typealias Event = TracingSubscriptionEvent
-    
-    public let name: String?
-    let requestBody: ((Subscribers.Demand) -> Void)?
-    let cancelBody: (() -> Void)?
-    
-    private let lock = Lock()
-    private var _events: [Event] = []
-    
-    public var events: [Event] {
-        return self.lock.withLockGet(self._events)
+    public enum Event: Equatable, Hashable {
+        case request(demand: Subscribers.Demand)
+        case cancel
     }
     
-    public init(name: String? = nil, request: ((Subscribers.Demand) -> Void)? = nil, cancel: (() -> Void)? = nil) {
-        self.name = name
-        self.requestBody = request
-        self.cancelBody = cancel
+    private let _lock = Lock()
+    private var _events: [Event] = []
+    
+    private let _rcvRequest: ((Subscribers.Demand) -> Void)?
+    private let _rcvCancel: (() -> Void)?
+    private let _onDeinit: (() -> Void)?
+    
+    public var events: [Event] {
+        return self._lock.withLockGet(self._events)
+    }
+    
+    public init(receiveRequest: ((Subscribers.Demand) -> Void)? = nil, receiveCancel: (() -> Void)? = nil, onDeinit: (() -> Void)? = nil) {
+        self._rcvRequest = receiveRequest
+        self._rcvCancel = receiveCancel
+        self._onDeinit = onDeinit
     }
     
     public func request(_ demand: Subscribers.Demand) {
-        self.lock.withLock {
+        self._lock.withLock {
             self._events.append(.request(demand: demand))
         }
-        self.requestBody?(demand)
+        self._rcvRequest?(demand)
     }
     
     public func cancel() {
-        self.lock.withLock {
+        self._lock.withLock {
             self._events.append(.cancel)
         }
-        self.cancelBody?()
+        self._rcvCancel?()
     }
 }

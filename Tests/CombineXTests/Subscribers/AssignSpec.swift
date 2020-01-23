@@ -128,7 +128,7 @@ class AssignSpec: QuickSpec {
                     
                     assign = Subscribers.Assign<Object, Int>(object: obj, keyPath: \Object.value)
                     
-                    let s = TracingSubscription(cancel: {
+                    let s = TracingSubscription(receiveCancel: {
                         cancelled = true
                     })
                     assign.receive(subscription: s)
@@ -158,7 +158,7 @@ class AssignSpec: QuickSpec {
                     
                     assign = Subscribers.Assign<Object, Int>(object: obj, keyPath: \Object.value)
                     
-                    let s = TracingSubscription(cancel: {
+                    let s = TracingSubscription(receiveCancel: {
                         cancelled = true
                     })
                     assign.receive(subscription: s)

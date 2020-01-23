@@ -22,8 +22,8 @@ class PassthroughSubjectSpec: QuickSpec {
                 weak var subscriptionB: AnyObject?
                 
                 do {
-                    let sA = TracingSubscription(name: "A")
-                    let sB = TracingSubscription(name: "B")
+                    let sA = TracingSubscription()
+                    let sB = TracingSubscription()
                     subject.send(subscription: sA)
                     subject.send(subscription: sB)
                     subscriptionA = sA
@@ -42,8 +42,8 @@ class PassthroughSubjectSpec: QuickSpec {
                 weak var subscriptionB: AnyObject?
                 
                 do {
-                    let sA = TracingSubscription(name: "A")
-                    let sB = TracingSubscription(name: "B")
+                    let sA = TracingSubscription()
+                    let sB = TracingSubscription()
                     subject.send(subscription: sA)
                     subject.send(subscription: sB)
                     subscriptionA = sA
@@ -63,7 +63,7 @@ class PassthroughSubjectSpec: QuickSpec {
             it("should request unlimited to upstream when a subscriber request") {
                 let subject = PassthroughSubject<Int, TestError>()
                 
-                let sA = TracingSubscription(name: "A")
+                let sA = TracingSubscription()
                 subject.send(subscription: sA)
                 expect(sA.events) == []
                 
@@ -76,7 +76,7 @@ class PassthroughSubjectSpec: QuickSpec {
                 
                 sub.subscription?.cancel()
                 
-                let sB = TracingSubscription(name: "B")
+                let sB = TracingSubscription()
                 
                 subject.send(subscription: sB)
                 expect(sB.events) == [.request(demand: .unlimited)]
