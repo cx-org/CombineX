@@ -126,11 +126,11 @@ class SinkSpec: QuickSpec {
                 }, receiveValue: { _ in
                 })
                 
-                weak var subscription: TestSubscription?
+                weak var subscription: TracingSubscription?
                 var cancelled = false
                 
                 do {
-                    let s = TestSubscription(cancel: {
+                    let s = TracingSubscription(cancel: {
                         cancelled = true
                     })
                     sink.receive(subscription: s)
@@ -150,11 +150,11 @@ class SinkSpec: QuickSpec {
                 }, receiveValue: { _ in
                 })
                 
-                weak var subscription: TestSubscription?
+                weak var subscription: TracingSubscription?
                 var cancelled = false
                 
                 do {
-                    let s = TestSubscription(cancel: {
+                    let s = TracingSubscription(cancel: {
                         cancelled = true
                     })
                     sink.receive(subscription: s)
@@ -176,11 +176,11 @@ class SinkSpec: QuickSpec {
                 
                 sink.receive(subscription: Subscriptions.empty)
                 
-                weak var subscription: TestSubscription?
+                weak var subscription: TracingSubscription?
                 var cancelled = false
                 
                 do {
-                    let s = TestSubscription(cancel: {
+                    let s = TracingSubscription(cancel: {
                         cancelled = true
                     })
                     sink.receive(subscription: s)

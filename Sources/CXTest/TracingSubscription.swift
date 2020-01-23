@@ -1,14 +1,14 @@
 import CXShim
 import CXUtility
 
-public enum TestSubscriptionEvent: Equatable {
+public enum TracingSubscriptionEvent: Equatable {
     case request(demand: Subscribers.Demand)
     case cancel
 }
 
-public class TestSubscription: Subscription, TestLogging {
+public class TracingSubscription: Subscription {
     
-    public typealias Event = TestSubscriptionEvent
+    public typealias Event = TracingSubscriptionEvent
     
     public let name: String?
     let requestBody: ((Subscribers.Demand) -> Void)?
@@ -28,7 +28,6 @@ public class TestSubscription: Subscription, TestLogging {
     }
     
     public func request(_ demand: Subscribers.Demand) {
-        self.trace("request demand", demand)
         self.lock.withLock {
             self._events.append(.request(demand: demand))
         }
@@ -36,14 +35,9 @@ public class TestSubscription: Subscription, TestLogging {
     }
     
     public func cancel() {
-        self.trace("cancel")
         self.lock.withLock {
             self._events.append(.cancel)
         }
         self.cancelBody?()
-    }
-    
-    deinit {
-        self.trace("deinit")
     }
 }

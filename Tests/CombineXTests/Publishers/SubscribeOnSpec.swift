@@ -22,7 +22,7 @@ class SubscribeOnSpec: QuickSpec {
                 var executed = false
                 
                 let upstream = TestPublisher<Int, TestError> { s in
-                    let subscription = TestSubscription(request: { _ in
+                    let subscription = TracingSubscription(request: { _ in
                         expect(scheduler.isCurrent) == true
                         executed = true
                     })
@@ -42,7 +42,7 @@ class SubscribeOnSpec: QuickSpec {
                 var executed = false
                 
                 let upstream = TestPublisher<Int, TestError> { s in
-                    let subscription = TestSubscription(request: { _ in
+                    let subscription = TracingSubscription(request: { _ in
                         expect(scheduler.isCurrent) == true
                     })
                     s.receive(subscription: subscription)
@@ -73,7 +73,7 @@ class SubscribeOnSpec: QuickSpec {
                 
                 let executedCount = Atom(val: 0)
                 let upstream = TestPublisher<Int, TestError> { s in
-                    let subscription = TestSubscription(request: { _ in
+                    let subscription = TracingSubscription(request: { _ in
                         expect(scheduler.isCurrent) == true
                         _ = executedCount.add(1)
                     })

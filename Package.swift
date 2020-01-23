@@ -12,6 +12,7 @@ let package = Package(
     products: [
         .library(name: "CombineX", targets: ["CombineX", "CXFoundation"]),
         .library(name: "CXShim", targets: ["CXShim"]),
+        .library(name: "CXTest", targets: ["CXTest"])
     ],
     dependencies: [
         .package(url: "https://github.com/Quick/Quick.git", from: "2.0.0"),
@@ -27,7 +28,8 @@ let package = Package(
         .target(name: "CXFoundation", dependencies: ["CXUtility", "CXNamespace", "CombineX"]),
         .target(name: "CXCompatible", dependencies: ["CXNamespace"]),
         .target(name: "CXShim", dependencies: [/* depends on combine implementation */]),
-        .target(name: "CXTestUtility", dependencies: ["CXUtility", "Semver", "CXShim", "Nimble"]),
+        .target(name: "CXTest", dependencies: ["CXUtility", "CXShim"]),
+        .target(name: "CXTestUtility", dependencies: ["CXUtility", "CXTest", "Semver", "CXShim", "Nimble"]),
         .testTarget(name: "CombineXTests", dependencies: ["CXTestUtility", "CXUtility", "CXShim", "Quick", "Nimble"]),
         .testTarget(name: "CXFoundationTests", dependencies: ["CXTestUtility", "CXShim", "Quick", "Nimble"]),
         .testTarget(name: "CXInconsistentTests", dependencies: ["CXTestUtility", "CXUtility", "CXShim", "Quick", "Nimble"]),
@@ -122,7 +124,7 @@ let shimTarget = package.targets.first(where: { $0.name == "CXShim" })!
 shimTarget.dependencies = combineImp.shimTargetDependencies
 shimTarget.swiftSettings.append(contentsOf: combineImp.swiftSettings)
 
-for target in package.targets where target.isTest || target.name == "CXTestUtility" {
+for target in package.targets where target.isTest || target.name == "CXTestUtility" || target.name == "CXTest" {
     target.swiftSettings.append(contentsOf: combineImp.swiftSettings)
 }
 
