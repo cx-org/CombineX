@@ -18,7 +18,7 @@ class ReceiveOnSpec: QuickSpec {
             // MARK: 1.1 should receive events on the specified queue
             it("should receive events on the specified queue") {
                 let subject = PassthroughSubject<Int, Never>()
-                let scheduler = TestDispatchQueueScheduler.serial()
+                let scheduler = DispatchQueue(label: UUID().uuidString).cx
                 let pub = subject.receive(on: scheduler)
                 
                 var received = (
@@ -34,11 +34,11 @@ class ReceiveOnSpec: QuickSpec {
                     // expect(scheduler.isCurrent) == false
                 }, receiveValue: { _ in
                     received.value = true
-                    expect(scheduler.isCurrent) == true
+                    expect(scheduler.base.isCurrent) == true
                     return .none
                 }, receiveCompletion: { _ in
                     received.completion = true
-                    expect(scheduler.isCurrent) == true
+                    expect(scheduler.base.isCurrent) == true
                 })
                 
                 pub.subscribe(sub)
@@ -63,7 +63,7 @@ class ReceiveOnSpec: QuickSpec {
             // MARK: 1.2 should send values as many as demand
             it("should send values as many as demand") {
                 let subject = PassthroughSubject<Int, Never>()
-                let scheduler = TestDispatchQueueScheduler.serial()
+                let scheduler = DispatchQueue(label: UUID().uuidString).cx
                 let pub = subject.receive(on: scheduler)
                 
                 let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in

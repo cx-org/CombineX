@@ -1,4 +1,5 @@
 import CXShim
+import CXUtility
 import Foundation
 
 public extension Array {
@@ -71,5 +72,12 @@ public extension Optional {
     
     var isNotNil: Bool {
         return self != nil
+    }
+}
+
+extension CXWrappers.DispatchQueue.SchedulerTimeType.Stride {
+    
+    public var seconds: TimeInterval {
+        return TimeInterval(magnitude) / TimeInterval(Const.nsec_per_sec)
     }
 }

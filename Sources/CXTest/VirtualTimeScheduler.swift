@@ -1,6 +1,5 @@
 import CXShim
 import CXUtility
-import Foundation
 
 private let counter = Atom<Int>(val: 0)
 
@@ -39,8 +38,8 @@ public final class VirtualTimeScheduler: Scheduler {
     
     public let minimumTolerance: VirtualTime.Stride = .seconds(0)
     
-    public init() {
-        self._now = SchedulerTimeType(time: Date())
+    public init(time: VirtualTime = .zero) {
+        self._now = time
     }
     
     public func schedule(options: VirtualTimeScheduler.SchedulerOptions?, _ action: @escaping () -> Void) {
@@ -102,7 +101,7 @@ public final class VirtualTimeScheduler: Scheduler {
         return AnyCancellable(box)
     }
     
-    public func advance(to time: SchedulerTimeType) {
+    private func advance(to time: SchedulerTimeType) {
         self.lock.lock()
         defer {
             self.lock.unlock()

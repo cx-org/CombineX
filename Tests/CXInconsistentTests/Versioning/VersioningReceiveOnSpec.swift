@@ -13,7 +13,7 @@ class VersioningReceiveOnSpec: QuickSpec {
         
         it("should not schedule subscription since iOS 13.3") {
             let subject = PassthroughSubject<Int, Never>()
-            let scheduler = TestDispatchQueueScheduler.serial()
+            let scheduler = DispatchQueue(label: UUID().uuidString).cx
             let pub = subject.receive(on: scheduler)
             let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
                 expect(scheduler.isCurrent).toVersioning([

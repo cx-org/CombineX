@@ -1,5 +1,6 @@
 import CXShim
 import CXTestUtility
+import Foundation
 import Nimble
 import Quick
 
@@ -48,7 +49,7 @@ class TimeoutSpec: QuickSpec {
             // MARK: 1.3 should send timeout event in scheduled action
             it("should send timeout error in scheduled action") {
                 let subject = PassthroughSubject<Int, TestError>()
-                let scheduler = TestDispatchQueueScheduler.serial()
+                let scheduler = DispatchQueue(label: UUID().uuidString).cx
                 
                 let pub = subject.timeout(.seconds(0.01), scheduler: scheduler, customError: { TestError.e0 })
                 let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
@@ -56,7 +57,7 @@ class TimeoutSpec: QuickSpec {
                 }, receiveValue: { _ in
                     return .none
                 }, receiveCompletion: { _ in
-                    expect(scheduler.isCurrent) == true
+                    expect(scheduler.base.isCurrent) == true
                 })
                 
                 pub.subscribe(sub)

@@ -1,5 +1,6 @@
 import CXShim
 import CXTestUtility
+import Foundation
 import Nimble
 import Quick
 
@@ -65,7 +66,7 @@ class DelaySpec: QuickSpec {
             // MARK: 1.2 should send events with scheduler
             it("should send events with scheduler") {
                 let subject = PassthroughSubject<Int, TestError>()
-                let scheduler = TestDispatchQueueScheduler.serial()
+                let scheduler = DispatchQueue(label: UUID().uuidString).cx
                 let pub = subject.delay(for: .seconds(0.1), scheduler: scheduler)
                 
                 var executed = (subscription: false, value: false, completion: false)
@@ -75,11 +76,11 @@ class DelaySpec: QuickSpec {
                     // expect(scheduler.isCurrent) == false
                     executed.subscription = true
                 }, receiveValue: { _ in
-                    expect(scheduler.isCurrent) == true
+                    expect(scheduler.base.isCurrent) == true
                     executed.value = true
                     return .none
                 }, receiveCompletion: { _ in
-                    expect(scheduler.isCurrent) == true
+                    expect(scheduler.base.isCurrent) == true
                     executed.completion = true
                 })
                 

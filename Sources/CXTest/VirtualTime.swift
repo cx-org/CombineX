@@ -1,120 +1,99 @@
 import CXShim
 import CXUtility
-import Foundation
 
-public struct VirtualTime: Strideable {
+public struct VirtualTime: Strideable, Hashable, Comparable {
     
-    public let time: Date
-    
-    public init(time: Date) {
-        self.time = time
-    }
-    
-    public func distance(to other: VirtualTime) -> Stride {
-        let distance = other.time.timeIntervalSince(self.time)
-        return Stride.seconds(distance)
-    }
-    
-    public func advanced(by n: Stride) -> VirtualTime {
-        let advanced = self.time + n.seconds
-        return VirtualTime(time: advanced)
-    }
-    
-    public static var now: VirtualTime {
-        return VirtualTime(time: Date())
-    }
-    
-    public struct Stride: ExpressibleByFloatLiteral, Comparable, SignedNumeric, Codable, SchedulerTimeIntervalConvertible {
+    public struct Stride: ExpressibleByFloatLiteral, Comparable, SignedNumeric, SchedulerTimeIntervalConvertible {
         
-        public var seconds: Double
+        /// Time interval in nanoseconds.
+        public var magnitude: Int
         
-        public init(seconds: Double) {
-            self.seconds = seconds
-        }
-        
-        public var magnitude: Double {
-            return self.seconds.magnitude
+        init(magnitude: Int) {
+            self.magnitude = magnitude
         }
         
         public init(integerLiteral value: Int) {
-            self.seconds = Double(value)
+            self.magnitude = value * Const.nsec_per_sec
         }
         
         public init(floatLiteral value: Double) {
-            self.seconds = value
+            self.magnitude = Int(value * Double(Const.nsec_per_sec))
         }
         
         public init?<T: BinaryInteger>(exactly source: T) {
-            guard let v = Double(exactly: source) else {
+            guard let value = Int(exactly: source) else {
                 return nil
             }
-            self.seconds = v
+            self.init(integerLiteral: value)
         }
         
         public static func < (lhs: Stride, rhs: Stride) -> Bool {
-            return lhs.seconds < rhs.seconds
+            return lhs.magnitude < rhs.magnitude
         }
         
         public static func + (lhs: Stride, rhs: Stride) -> Stride {
-            return Stride(floatLiteral: lhs.seconds + rhs.seconds)
+            return Stride(magnitude: lhs.magnitude + rhs.magnitude)
         }
         
         public static func += (lhs: inout Stride, rhs: Stride) {
-            lhs.seconds += rhs.seconds
+            lhs.magnitude += rhs.magnitude
         }
         
         public static func - (lhs: Stride, rhs: Stride) -> Stride {
-            return Stride(floatLiteral: lhs.seconds - rhs.seconds)
+            return Stride(magnitude: lhs.magnitude - rhs.magnitude)
         }
         
         public static func -= (lhs: inout Stride, rhs: Stride) {
-            lhs.seconds -= rhs.seconds
+            lhs.magnitude -= rhs.magnitude
         }
         
         public static func * (lhs: Stride, rhs: Stride) -> Stride {
-            return Stride(floatLiteral: lhs.seconds * rhs.seconds)
+            return Stride(magnitude: lhs.magnitude * rhs.magnitude)
         }
         
         public static func *= (lhs: inout Stride, rhs: Stride) {
-            lhs.seconds *= rhs.seconds
-        }
-        
-        public static func seconds(_ s: Int) -> Stride {
-            return Stride(integerLiteral: s)
+            lhs.magnitude *= rhs.magnitude
         }
         
         public static func seconds(_ s: Double) -> Stride {
-            return Stride(floatLiteral: s)
+            return Stride(magnitude: Int(s * Double(Const.nsec_per_sec)))
+        }
+        
+        public static func seconds(_ s: Int) -> Stride {
+            return Stride(magnitude: s.multipliedClamping(by: Const.nsec_per_sec))
         }
         
         public static func milliseconds(_ ms: Int) -> Stride {
-            return Stride(floatLiteral: Double(ms) / Double(Const.usec_per_sec))
+            return Stride(magnitude: ms.multipliedClamping(by: Const.nsec_per_msec))
         }
         
         public static func microseconds(_ us: Int) -> Stride {
-            return Stride(floatLiteral: Double(us) / Double(Const.msec_per_sec))
+            return Stride(magnitude: us.multipliedClamping(by: Const.nsec_per_usec))
         }
         
         public static func nanoseconds(_ ns: Int) -> Stride {
-            return Stride(floatLiteral: Double(ns) / Double(Const.nsec_per_sec))
+            return Stride(magnitude: ns)
         }
         
         public static var zero: Stride {
             return Stride.seconds(0)
         }
     }
-}
-
-extension VirtualTime: CustomStringConvertible {
     
-    public var description: String {
-        return self.time.timeIntervalSinceReferenceDate.description
-    }
-}
-
-extension VirtualTime.Stride: CustomStringConvertible {
+    /// Time in nanoseconds.
+    private let time: Int
     
-    public var description: String {
-        return self.seconds.description
+    private init(nanoseconds time: Int) {
+        self.time = time
     }
+    
+    public func distance(to other: VirtualTime) -> Stride {
+        return Stride(magnitude: other.time - time)
+    }
+    
+    public func advanced(by n: Stride) -> VirtualTime {
+        return VirtualTime(nanoseconds: time + n.magnitude)
+    }
+    
+    public static let zero = VirtualTime(nanoseconds: 0)
 }
