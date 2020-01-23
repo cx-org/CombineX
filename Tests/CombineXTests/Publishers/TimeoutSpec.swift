@@ -51,7 +51,7 @@ class TimeoutSpec: QuickSpec {
                 let scheduler = TestDispatchQueueScheduler.serial()
                 
                 let pub = subject.timeout(.seconds(0.01), scheduler: scheduler, customError: { TestError.e0 })
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.unlimited)
                 }, receiveValue: { _ in
                     return .none

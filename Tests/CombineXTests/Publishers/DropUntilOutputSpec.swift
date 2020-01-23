@@ -33,7 +33,7 @@ class DropUntilOutputSpec: QuickSpec {
                     pub0.send(i)
                 }
                  
-                let expected = (10..<20).map { TestSubscriberEvent<Int, TestError>.value($0) }
+                let expected = (10..<20).map { TracingSubscriberEvent<Int, TestError>.value($0) }
                 expect(sub.events) == expected
             }
             

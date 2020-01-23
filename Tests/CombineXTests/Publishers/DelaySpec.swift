@@ -24,7 +24,7 @@ class DelaySpec: QuickSpec {
                 let receiveV = TestTimeline(context: scheduler)
                 let receiveC = TestTimeline(context: scheduler)
                 
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
                     receiveS.record()
                     s.request(.unlimited)
                 }, receiveValue: { _ in
@@ -69,7 +69,7 @@ class DelaySpec: QuickSpec {
                 let pub = subject.delay(for: .seconds(0.1), scheduler: scheduler)
                 
                 var executed = (subscription: false, value: false, completion: false)
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.unlimited)
                     // Versioning: see VersioningDelaySpec
                     // expect(scheduler.isCurrent) == false

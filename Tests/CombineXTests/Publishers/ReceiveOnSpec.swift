@@ -27,7 +27,7 @@ class ReceiveOnSpec: QuickSpec {
                     completion: false
                 )
                 
-                let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
                     s.request(.max(100))
                     received.subscription = true
                     // Versioning: see VersioningReceiveOnSpec
@@ -66,7 +66,7 @@ class ReceiveOnSpec: QuickSpec {
                 let scheduler = TestDispatchQueueScheduler.serial()
                 let pub = subject.receive(on: scheduler)
                 
-                let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
                     s.request(.max(10))
                 }, receiveValue: { _ in
                     // FIXME: Apple's Combine doesn't seems to strictly support sync backpressure.

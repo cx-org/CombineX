@@ -31,7 +31,7 @@ class CombineLatestSpec: QuickSpec {
                 subject1.send("b")
                 subject1.send("c")
                 
-                let expected = ["1a", "2a", "2b", "2c"].map { TestSubscriberEvent<String, TestError>.value($0) }
+                let expected = ["1a", "2a", "2b", "2c"].map { TracingSubscriberEvent<String, TestError>.value($0) }
                 expect(sub.events) == expected
             }
             
@@ -59,7 +59,7 @@ class CombineLatestSpec: QuickSpec {
                 subject2.send("C")
                 subject2.send("D")
                 
-                let expected = ["2bA", "3bA", "3cA", "3dA", "3dB", "3dC", "3dD"].map { TestSubscriberEvent<String, TestError>.value($0) }
+                let expected = ["2bA", "3bA", "3cA", "3dA", "3dB", "3dC", "3dD"].map { TracingSubscriberEvent<String, TestError>.value($0) }
                 expect(sub.events) == expected
             }
             
@@ -77,7 +77,7 @@ class CombineLatestSpec: QuickSpec {
                 }
                 subjects[3].send(completion: .failure(.e0))
                 
-                let valueEvents = [6, 10, 14, 18, 22, 26, 30].map { TestSubscriberEvent<Int, TestError>.value($0) }
+                let valueEvents = [6, 10, 14, 18, 22, 26, 30].map { TracingSubscriberEvent<Int, TestError>.value($0) }
                 let expected = valueEvents + [.completion(.failure(.e0))]
                 expect(sub.events) == expected
             }
@@ -89,7 +89,7 @@ class CombineLatestSpec: QuickSpec {
                 
                 var counter = 0
                 let pub = subject0.combineLatest(subject1, +)
-                let sub = TestSubscriber<String, TestError>(receiveSubscription: { s in
+                let sub = TracingSubscriber<String, TestError>(receiveSubscription: { s in
                     s.request(.max(10))
                 }, receiveValue: { _ in
                     defer { counter += 1 }

@@ -56,7 +56,7 @@ class SubscribeOnSpec: QuickSpec {
                 }
                 
                 let pub = upstream.subscribe(on: scheduler)
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.max(10))
                 }, receiveValue: { _ in
                     return .max(2)
@@ -81,7 +81,7 @@ class SubscribeOnSpec: QuickSpec {
                 }
                 
                 let pub = upstream.subscribe(on: scheduler)
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.max(10))
                 }, receiveValue: { _ in
                     return .max(2)

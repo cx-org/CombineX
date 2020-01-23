@@ -18,7 +18,7 @@ class SuspiciousSwitchToLatestSpec: QuickSpec {
             let subject = PassthroughSubject<PassthroughSubject<Int, Never>, Never>()
             
             let pub = subject.switchToLatest()
-            let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
+            let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
                 s.request(.max(10))
             }, receiveValue: { v in
                 return [0, 10].contains(v) ? .max(1) : .none
@@ -76,7 +76,7 @@ class SuspiciousSwitchToLatestSpec: QuickSpec {
             let subject = PassthroughSubject<PassthroughSubject<Int, Never>, Never>()
             
             let pub = subject.switchToLatest()
-            let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
+            let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
                 s.request(.max(10))
             }, receiveValue: { v in
                 return [1, 11].contains(v) ? .max(1) : .none

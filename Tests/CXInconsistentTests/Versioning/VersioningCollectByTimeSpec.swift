@@ -24,14 +24,14 @@ class VersioningCollectByTimeSpec: QuickSpec {
                 subject.send(1)
                 subject.send(2)
                 
-                expect(sub.events).toVersioning([
+                expect(sub.eventsWithoutSubscription).toVersioning([
                     .v11_0: equal([.value([1, 2])]),
                     .v11_3: equal([]),
                 ])
                 
                 scheduler.advance(by: .zero)
                 
-                expect(sub.events) == [.value([1, 2])]
+                expect(sub.eventsWithoutSubscription) == [.value([1, 2])]
             }
         
             it("should schedule failure") {
@@ -45,14 +45,14 @@ class VersioningCollectByTimeSpec: QuickSpec {
                 subject.send(1)
                 subject.send(completion: .failure(.e0))
                 
-                expect(sub.events).toVersioning([
+                expect(sub.eventsWithoutSubscription).toVersioning([
                     .v11_0: equal([.completion(.failure(.e0))]),
                     .v11_3: equal([]),
                 ])
                 
                 scheduler.advance(by: .zero)
                 
-                expect(sub.events) == [.completion(.failure(.e0))]
+                expect(sub.eventsWithoutSubscription) == [.completion(.failure(.e0))]
             }
             
             it("should schedule finish") {
@@ -66,14 +66,14 @@ class VersioningCollectByTimeSpec: QuickSpec {
                 subject.send(1)
                 subject.send(completion: .finished)
                 
-                expect(sub.events).toVersioning([
+                expect(sub.eventsWithoutSubscription).toVersioning([
                     .v11_0: equal([.value([1]), .completion(.finished)]),
                     .v11_3: equal([]),
                 ])
                 
                 scheduler.advance(by: .zero)
                 
-                expect(sub.events) == [.value([1]), .completion(.finished)]
+                expect(sub.eventsWithoutSubscription) == [.value([1]), .completion(.finished)]
             }
         }
         
@@ -83,7 +83,7 @@ class VersioningCollectByTimeSpec: QuickSpec {
             let scheduler = TestScheduler()
             let pub = subject.collect(.byTimeOrCount(scheduler, .seconds(1), 2))
             
-            let sub = TestSubscriber<[Int], TestError>(receiveSubscription: { s in
+            let sub = TracingSubscriber<[Int], TestError>(receiveSubscription: { s in
                 s.request(.max(2))
             }, receiveValue: { v in
                 if v.contains(0) { return .max(1) }
@@ -110,7 +110,7 @@ class VersioningCollectByTimeSpec: QuickSpec {
                 .v11_3: equal([.max(4), .max(2)]),
             ])
             
-            expect(sub.events).toEventually(equal([
+            expect(sub.eventsWithoutSubscription).toEventually(equal([
                 .value([0, 1]),
                 .value([2]),
                 .value([3, 4]),

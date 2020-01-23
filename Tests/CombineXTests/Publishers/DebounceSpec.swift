@@ -66,7 +66,7 @@ class DebounceSpec: QuickSpec {
                 let subject = PassthroughSubject<Int, TestError>()
                 let scheduler = TestScheduler()
                 let pub = subject.debounce(for: .seconds(1), scheduler: scheduler)
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.max(10))
                 }, receiveValue: { v in
                     return [0, 5].contains(v) ? .max(1) : .none
@@ -91,7 +91,7 @@ class DebounceSpec: QuickSpec {
                 let subject = TestSubject<Int, TestError>()
                 let scheduler = TestScheduler()
                 let pub = subject.debounce(for: .seconds(1), scheduler: scheduler)
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.max(10))
                 }, receiveValue: { v in
                     return [1].contains(v) ? .max(1) : .none

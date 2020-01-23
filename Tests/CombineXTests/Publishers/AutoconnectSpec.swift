@@ -20,7 +20,7 @@ class AutoconnectSpec: QuickSpec {
                 let connectable = subject.makeConnectable().autoconnect()
                 
                 var subscription: Subscription?
-                let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
                     subscription = s
                     s.request(.unlimited)
                 })

@@ -31,7 +31,7 @@ class ZipSpec: QuickSpec {
                 subject1.send("b")
                 subject1.send("c")
                 
-                let expected = ["0a", "1b", "2c"].map { TestSubscriberEvent<String, TestError>.value($0) }
+                let expected = ["0a", "1b", "2c"].map { TracingSubscriberEvent<String, TestError>.value($0) }
                 expect(sub.events) == expected
             }
             
@@ -59,7 +59,7 @@ class ZipSpec: QuickSpec {
                 subject2.send("C")
                 subject2.send("D")
                 
-                let expected = ["0aA", "1bB", "2cC", "3dD"].map { TestSubscriberEvent<String, TestError>.value($0) }
+                let expected = ["0aA", "1bB", "2cC", "3dD"].map { TracingSubscriberEvent<String, TestError>.value($0) }
                 expect(sub.events) == expected
             }
             
@@ -102,7 +102,7 @@ class ZipSpec: QuickSpec {
                 
                 var counter = 0
                 let pub = subject0.zip(subject1)
-                let sub = TestSubscriber<(String, String), TestError>(receiveSubscription: { s in
+                let sub = TracingSubscriber<(String, String), TestError>(receiveSubscription: { s in
                     s.request(.max(10))
                 }, receiveValue: { _ in
                     defer {

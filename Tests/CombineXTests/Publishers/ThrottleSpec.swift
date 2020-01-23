@@ -50,7 +50,7 @@ class ThrottleSpec: QuickSpec {
                     let subject = PassthroughSubject<Int, TestError>()
                     let scheduler = TestScheduler()
                     let pub = subject.throttle(for: .seconds(1), scheduler: scheduler, latest: true)
-                    let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
+                    let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
                         s.request(.max(10))
                     }, receiveValue: { v in
                         return [0, 5].contains(v) ? .max(1) : .none
@@ -103,7 +103,7 @@ class ThrottleSpec: QuickSpec {
                     let subject = PassthroughSubject<Int, TestError>()
                     let scheduler = TestScheduler()
                     let pub = subject.throttle(for: .seconds(1), scheduler: scheduler, latest: true)
-                    let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
+                    let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
                         s.request(.max(10))
                     }, receiveValue: { v in
                         return [0, 5].contains(v) ? .max(1) : .none
@@ -131,7 +131,7 @@ class ThrottleSpec: QuickSpec {
                     let subject = TestSubject<Int, TestError>()
                     let scheduler = TestScheduler()
                     let pub = subject.throttle(for: .seconds(1), scheduler: scheduler, latest: true)
-                    let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
+                    let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
                         s.request(.max(10))
                     }, receiveValue: { v in
                         return [1].contains(v) ? .max(1) : .none
@@ -155,7 +155,7 @@ class ThrottleSpec: QuickSpec {
                     let subject = TestSubject<Int, TestError>()
                     let scheduler = TestScheduler()
                     let pub = subject.throttle(for: .seconds(1), scheduler: scheduler, latest: false)
-                    let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
+                    let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
                         s.request(.max(10))
                     }, receiveValue: { v in
                         return [1].contains(v) ? .max(1) : .none

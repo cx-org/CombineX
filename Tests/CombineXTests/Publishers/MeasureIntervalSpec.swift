@@ -22,7 +22,7 @@ class MeasureIntervalSpec: QuickSpec {
                 let pub = subject.measureInterval(using: TestDispatchQueueScheduler.main)
                 var t = Date()
                 var dts: [TimeInterval] = []
-                let sub = TestSubscriber<TestDispatchQueueScheduler.SchedulerTimeType.Stride, Never>(receiveSubscription: { s in
+                let sub = TracingSubscriber<TestDispatchQueueScheduler.SchedulerTimeType.Stride, Never>(receiveSubscription: { s in
                     s.request(.unlimited)
                     t = Date()
                 }, receiveValue: { _ in

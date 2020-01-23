@@ -31,9 +31,9 @@ class TryScanSpec: QuickSpec {
                 let got = sub.events.mapError { $0 as! TestError }
                 
                 var initial = 0
-                let valueEvents = (0..<100).map { n -> TestSubscriberEvent<Int, TestError> in
+                let valueEvents = (0..<100).map { n -> TracingSubscriberEvent<Int, TestError> in
                     initial += n
-                    return TestSubscriberEvent<Int, TestError>.value(initial)
+                    return TracingSubscriberEvent<Int, TestError>.value(initial)
                 }
                 let expected = valueEvents + [.completion(.finished)]
 

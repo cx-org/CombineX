@@ -43,7 +43,7 @@ class PublishedSpec: QuickSpec {
                     @Published var name = 0
                 }
                 let x = X()
-                let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
                     s.request(.max(10))
                 }, receiveValue: { v in
                     return [0, 10].contains(v) ? .max(1) : .max(0)

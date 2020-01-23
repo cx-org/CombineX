@@ -54,7 +54,7 @@ class CollectByCountSpec: QuickSpec {
             // MARK: 1.3 should relay as many values as demand
             it("should relay as many values as demand") {
                 let pub = PassthroughSubject<Int, TestError>()
-                let sub = TestSubscriber<[Int], TestError>(receiveSubscription: { s in
+                let sub = TracingSubscriber<[Int], TestError>(receiveSubscription: { s in
                     s.request(.max(1))
                 }, receiveValue: { v in
                     v == [0, 1] ? .max(1) : .none

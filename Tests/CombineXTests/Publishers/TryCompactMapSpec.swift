@@ -27,7 +27,7 @@ class TryCompactMapSpec: QuickSpec {
                 }
                 pub.send(completion: .finished)
                 
-                let valueEvents = (0..<50).map { TestSubscriberEvent<Int, Never>.value(2 * $0) }
+                let valueEvents = (0..<50).map { TracingSubscriberEvent<Int, Never>.value(2 * $0) }
                 let expected = valueEvents + [.completion(.finished)]
                 
                 let got = sub.events.map {
@@ -72,7 +72,7 @@ class TryCompactMapSpec: QuickSpec {
                 
                 pub.send(completion: .finished)
                 
-                let valueEvents = (0..<10).map { TestSubscriberEvent<Int, TestError>.value($0) }
+                let valueEvents = (0..<10).map { TracingSubscriberEvent<Int, TestError>.value($0) }
                 let expected = valueEvents + [.completion(.failure(.e0))]
                 
                 let got = sub.events.mapError { $0 as! TestError }
@@ -128,7 +128,7 @@ class TryCompactMapSpec: QuickSpec {
                     let obj = TestObject()
                     closureObj = obj
                     
-                    let sub = TestSubscriber<Int, Error>(receiveSubscription: { s in
+                    let sub = TracingSubscriber<Int, Error>(receiveSubscription: { s in
                         subscription = s
                     }, receiveValue: { _ in
                         return .none
@@ -165,7 +165,7 @@ class TryCompactMapSpec: QuickSpec {
                     let obj = TestObject()
                     closureObj = obj
                     
-                    let sub = TestSubscriber<Int, Error>(receiveSubscription: { s in
+                    let sub = TracingSubscriber<Int, Error>(receiveSubscription: { s in
                         subscription = s
                     }, receiveValue: { _ in
                         return .none

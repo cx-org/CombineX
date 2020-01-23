@@ -36,7 +36,7 @@ class OutputSpec: QuickSpec {
             it("should only send values in the specified range") {
                 let subject = PassthroughSubject<Int, Never>()
                 let pub = subject.output(in: 10..<20)
-                let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
                     s.request(.unlimited)
                 }, receiveValue: { _ in
                     return .none
@@ -50,7 +50,7 @@ class OutputSpec: QuickSpec {
                 }
                 
                 let valueEvents = (10..<20).map {
-                    TestSubscriberEvent<Int, Never>.value($0)
+                    TracingSubscriberEvent<Int, Never>.value($0)
                 }
                 let expected = valueEvents + [.completion(.finished)]
                 expect(sub.events) == expected
@@ -60,7 +60,7 @@ class OutputSpec: QuickSpec {
             it("should send values as demand") {
                 let subject = PassthroughSubject<Int, Never>()
                 let pub = subject.output(in: 10..<20)
-                let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
                     s.request(.max(5))
                 }, receiveValue: { v in
                     [10, 15].contains(v) ? .max(1) : .none
@@ -74,7 +74,7 @@ class OutputSpec: QuickSpec {
                 }
                 
                 let expected = (10..<17).map {
-                    TestSubscriberEvent<Int, Never>.value($0)
+                    TracingSubscriberEvent<Int, Never>.value($0)
                 }
                 expect(sub.events) == expected
             }

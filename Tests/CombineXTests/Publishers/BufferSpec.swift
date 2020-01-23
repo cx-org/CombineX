@@ -19,7 +19,7 @@ class BufferSpec: QuickSpec {
                 let subject = TestSubject<Int, TestError>()
                 let pub = subject.buffer(size: 5, prefetch: .byRequest, whenFull: .dropOldest)
                 
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.max(2))
                 }, receiveValue: { v in
                     return [5].contains(v) ? .max(5) : .max(0)
@@ -51,7 +51,7 @@ class BufferSpec: QuickSpec {
                 
                 sub.subscription?.request(.max(5))
                 
-                let expected = (Array(0..<5) + Array(6..<11)).map { TestSubscriberEvent<Int, TestError>.value($0) }
+                let expected = (Array(0..<5) + Array(6..<11)).map { TracingSubscriberEvent<Int, TestError>.value($0) }
                 expect(sub.events) == expected
             }
             
@@ -68,7 +68,7 @@ class BufferSpec: QuickSpec {
                 
                 sub.subscription?.request(.max(5))
                 
-                let expected = Array(0..<10).map { TestSubscriberEvent<Int, TestError>.value($0) }
+                let expected = Array(0..<10).map { TracingSubscriberEvent<Int, TestError>.value($0) }
                 expect(sub.events) == expected
             }
         }
@@ -81,7 +81,7 @@ class BufferSpec: QuickSpec {
                 let subject = TestSubject<Int, TestError>()
                 let pub = subject.buffer(size: 10, prefetch: .keepFull, whenFull: .dropOldest)
                 
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.max(5))
                 }, receiveValue: { v in
                     return [5, 10].contains(v) ? .max(5) : .max(0)

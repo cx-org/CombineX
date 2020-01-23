@@ -100,7 +100,7 @@ class CollectByTimeSpec: QuickSpec {
                 let scheduler = TestScheduler()
                 let pub = subject.collect(.byTime(scheduler, .seconds(1)))
                 
-                let sub = TestSubscriber<[Int], TestError>(receiveSubscription: { s in
+                let sub = TracingSubscriber<[Int], TestError>(receiveSubscription: { s in
                     s.request(.max(2))
                 }, receiveValue: { v in
                     if Set(v).isDisjoint(with: [0, 5]) {
@@ -129,7 +129,7 @@ class CollectByTimeSpec: QuickSpec {
                 let scheduler = TestScheduler()
                 let pub = subject.collect(.byTime(scheduler, .seconds(1)))
                 
-                let sub = TestSubscriber<[Int], TestError>(receiveSubscription: { s in
+                let sub = TracingSubscriber<[Int], TestError>(receiveSubscription: { s in
                     s.request(.max(2))
                 }, receiveValue: { v in
                     if Set(v).isDisjoint(with: [0, 5]) {

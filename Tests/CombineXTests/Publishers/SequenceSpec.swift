@@ -15,8 +15,8 @@ class SequenceSpec: QuickSpec {
         
         // MARK: - Send Values
         describe("Send Values") {
-            typealias Sub = TestSubscriber<Int, TestError>
-            typealias Event = TestSubscriberEvent<Int, TestError>
+            typealias Sub = TracingSubscriber<Int, TestError>
+            typealias Event = TracingSubscriberEvent<Int, TestError>
             
             // MARK: 1.1 should send values then send finished
             it("should send values then send finished") {
@@ -36,7 +36,7 @@ class SequenceSpec: QuickSpec {
                 let values = Array(0..<100)
                 
                 let pub = Publishers.Sequence<[Int], TestError>(sequence: values)
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.max(50))
                 }, receiveValue: { v in
                     [0, 10].contains(v) ? .max(10) : .none
@@ -61,7 +61,7 @@ class SequenceSpec: QuickSpec {
                 do {
                     let values = Array(0..<10)
                     let pub = Publishers.Sequence<[Int], Never>(sequence: values)
-                    let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
+                    let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
                         subscription = s
                     }, receiveValue: { _ in
                         return .none
@@ -89,7 +89,7 @@ class SequenceSpec: QuickSpec {
                     let values = Array(0..<10)
                     let pub = Publishers.Sequence<[Int], Never>(sequence: values)
                     
-                    let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
+                    let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
                         subscription = s
                     }, receiveValue: { _ in
                         return .none
@@ -127,7 +127,7 @@ class SequenceSpec: QuickSpec {
                 let pub = Publishers.Sequence<Seq, Never>(sequence: Seq())
                 
                 var subscription: Subscription?
-                let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
                     subscription = s
                 }, receiveValue: { _ in
                     return .none
@@ -152,7 +152,7 @@ class SequenceSpec: QuickSpec {
                 let pub = Publishers.Sequence<Seq, Never>(sequence: Seq())
                 
                 var subscription: Subscription?
-                let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
                     subscription = s
                 }, receiveValue: { _ in
                     Thread.sleep(forTimeInterval: 0.1)

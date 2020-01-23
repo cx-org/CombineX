@@ -46,7 +46,7 @@ class SinkSpec: QuickSpec {
                     s.receive(completion: .finished)
                 }
                 
-                var events: [TestSubscriberEvent<Int, Never>] = []
+                var events: [TracingSubscriberEvent<Int, Never>] = []
                 let sink = pub.sink(receiveCompletion: { c in
                     events.append(.completion(c))
                 }, receiveValue: { v in
@@ -66,7 +66,7 @@ class SinkSpec: QuickSpec {
                     _ = s.receive(2)
                 }
                 
-                var events: [TestSubscriberEvent<Int, Never>] = []
+                var events: [TracingSubscriberEvent<Int, Never>] = []
                 let sink = pub.sink(receiveCompletion: { c in
                     events.append(.completion(c))
                 }, receiveValue: { v in
@@ -82,7 +82,7 @@ class SinkSpec: QuickSpec {
             it("should not receive vaules when re-activated") {
                 let pub = PassthroughSubject<Int, Never>()
 
-                var events = [TestSubscriberEvent<Int, Never>]()
+                var events = [TracingSubscriberEvent<Int, Never>]()
                 let sink = Subscribers.Sink<Int, Never>(receiveCompletion: { c in
                     events.append(.completion(c))
                 }, receiveValue: { v in
@@ -106,7 +106,7 @@ class SinkSpec: QuickSpec {
             // MARK: 1.5 should not receive vaules if it was cancelled
             it("should not receive vaules if it was cancelled") {
                 let pub = PassthroughSubject<Int, Never>()
-                var events = [TestSubscriberEvent<Int, Never>]()
+                var events = [TracingSubscriberEvent<Int, Never>]()
 
                 let cancellable = pub.sink { events.append(.value($0)) }
 

@@ -1,11 +1,11 @@
 import CXShim
 
-public enum TestSubscriberEvent<Input, Failure: Error> {
+public enum TracingSubscriberEvent<Input, Failure: Error> {
     case value(Input)
     case completion(Subscribers.Completion<Failure>)
 }
 
-public extension TestSubscriberEvent {
+public extension TracingSubscriberEvent {
     
     func isFinished() -> Bool {
         switch self {
@@ -28,7 +28,7 @@ public extension TestSubscriberEvent {
         return e
     }
     
-    func mapError<NewFailure: Error>(_ transform: (Failure) -> NewFailure) -> TestSubscriberEvent<Input, NewFailure> {
+    func mapError<NewFailure: Error>(_ transform: (Failure) -> NewFailure) -> TracingSubscriberEvent<Input, NewFailure> {
         switch self {
         case .value(let i):         return .value(i)
         case .completion(let c):    return .completion(c.mapError(transform))
@@ -36,7 +36,7 @@ public extension TestSubscriberEvent {
     }
 }
 
-public extension TestSubscriberEvent where Input: Equatable {
+public extension TracingSubscriberEvent where Input: Equatable {
     
     func isValue(_ value: Input) -> Bool {
         switch self {
@@ -46,9 +46,9 @@ public extension TestSubscriberEvent where Input: Equatable {
     }
 }
 
-extension TestSubscriberEvent: Equatable where Input: Equatable, Failure: Equatable {}
+extension TracingSubscriberEvent: Equatable where Input: Equatable, Failure: Equatable {}
 
-extension TestSubscriberEvent: CustomStringConvertible {
+extension TracingSubscriberEvent: CustomStringConvertible {
     
     public var description: String {
         switch self {
@@ -64,14 +64,14 @@ public protocol TestEventProtocol {
     associatedtype Input
     associatedtype Failure: Error
     
-    var testEvent: TestSubscriberEvent<Input, Failure> {
+    var testEvent: TracingSubscriberEvent<Input, Failure> {
         get set
     }
 }
 
-extension TestSubscriberEvent: TestEventProtocol {
+extension TracingSubscriberEvent: TestEventProtocol {
     
-    public var testEvent: TestSubscriberEvent<Input, Failure> {
+    public var testEvent: TracingSubscriberEvent<Input, Failure> {
         get {
             return self
         }
@@ -83,7 +83,7 @@ extension TestSubscriberEvent: TestEventProtocol {
 
 extension Collection where Element: TestEventProtocol {
     
-    public func mapError<NewFailure: Error>(_ transform: (Element.Failure) -> NewFailure) -> [TestSubscriberEvent<Element.Input, NewFailure>] {
+    public func mapError<NewFailure: Error>(_ transform: (Element.Failure) -> NewFailure) -> [TracingSubscriberEvent<Element.Input, NewFailure>] {
         return self.map {
             $0.testEvent.mapError(transform)
         }

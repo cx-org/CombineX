@@ -24,7 +24,7 @@ class FlatMapSpec: QuickSpec {
                         Publishers.Sequence<[Int], Never>(sequence: [$0, $0, $0])
                     }
                 
-                let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
                     s.request(.unlimited)
                 }, receiveValue: { _ in
                     return .none
@@ -33,7 +33,7 @@ class FlatMapSpec: QuickSpec {
                 
                 pub.subscribe(sub)
                 
-                let events = [1, 2, 3].flatMap { [$0, $0, $0] }.map { TestSubscriberEvent<Int, Never>.value($0) }
+                let events = [1, 2, 3].flatMap { [$0, $0, $0] }.map { TracingSubscriberEvent<Int, Never>.value($0) }
                 let expected = events + [.completion(.finished)]
                 expect(sub.events) == expected
             }
@@ -50,7 +50,7 @@ class FlatMapSpec: QuickSpec {
                         Publishers.Sequence<[Int], Never>(sequence: [$0, $0, $0])
                     }
                 
-                let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
                     s.request(.max(10))
                 }, receiveValue: { v in
                     [1, 5].contains(v) ? .max(1) : .none
@@ -64,7 +64,7 @@ class FlatMapSpec: QuickSpec {
             
             // MARK: 1.3 should complete when a sub-publisher sends an error
             it("should complete when a sub-publisher sends an error") {
-                typealias Sub = TestSubscriber<Int, TestError>
+                typealias Sub = TracingSubscriber<Int, TestError>
                 
                 let sequence = Publishers.Sequence<[Int], TestError>(sequence: [0, 1, 2])
                 
@@ -106,7 +106,7 @@ class FlatMapSpec: QuickSpec {
             
             // MARK: 1.4 should buffer one output for each sub-publisher if there is no demand
             it("should buffer one output for each sub-publisher if there is no demand") {
-                typealias Sub = TestSubscriber<Int, Never>
+                typealias Sub = TracingSubscriber<Int, Never>
                 
                 let subjects = [
                     PassthroughSubject<Int, Never>(),
@@ -158,7 +158,7 @@ class FlatMapSpec: QuickSpec {
                     return subjects[i]
                 }
                 
-                let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
                     s.request(.max(10))
                 }, receiveValue: { _ in
                     return .none

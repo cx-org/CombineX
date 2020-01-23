@@ -40,7 +40,7 @@ class SwitchToLatestSpec: QuickSpec {
                 subject2.send(8)
                 subject2.send(9)
 
-                let expected = [1, 2, 3, 7, 8, 9].map { TestSubscriberEvent<Int, Never>.value($0) }
+                let expected = [1, 2, 3, 7, 8, 9].map { TracingSubscriberEvent<Int, Never>.value($0) }
                 expect(sub.events) == expected
             }
             

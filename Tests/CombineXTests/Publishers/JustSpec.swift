@@ -66,7 +66,7 @@ class JustSpec: QuickSpec {
                 
                 do {
                     let pub = Just<Int>(1)
-                    let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
+                    let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
                         subscription = s
                     }, receiveValue: { _ in
                         return .none
@@ -90,7 +90,7 @@ class JustSpec: QuickSpec {
                 
                 do {
                     let pub = Just<Int>(1)
-                    let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
+                    let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
                         subscription = s
                     }, receiveValue: { _ in
                         return .none
@@ -118,7 +118,7 @@ class JustSpec: QuickSpec {
                     testObj = obj
                     
                     let pub = Just<TestObject>(obj)
-                    let sub = TestSubscriber<TestObject, Never>(receiveSubscription: { s in
+                    let sub = TracingSubscriber<TestObject, Never>(receiveSubscription: { s in
                         subscription = s
                     }, receiveValue: { _ in
                         return .none
@@ -145,7 +145,7 @@ class JustSpec: QuickSpec {
                     testObj = obj
                     
                     let pub = Just<TestObject>(obj)
-                    let sub = TestSubscriber<TestObject, Never>(receiveSubscription: { s in
+                    let sub = TracingSubscriber<TestObject, Never>(receiveSubscription: { s in
                         subscription = s
                     }, receiveValue: { _ in
                         return .none
@@ -169,7 +169,7 @@ class JustSpec: QuickSpec {
                 var subscription: Subscription?
                 
                 let pub = Just<Int>(1)
-                let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
                     subscription = s
                 }, receiveValue: { _ in
                     return .none
