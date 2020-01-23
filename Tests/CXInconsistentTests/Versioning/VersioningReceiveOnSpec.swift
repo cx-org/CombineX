@@ -1,5 +1,6 @@
 import CXShim
 import CXTestUtility
+import Foundation
 import Nimble
 import Quick
 
@@ -16,7 +17,7 @@ class VersioningReceiveOnSpec: QuickSpec {
             let scheduler = DispatchQueue(label: UUID().uuidString).cx
             let pub = subject.receive(on: scheduler)
             let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
-                expect(scheduler.isCurrent).toVersioning([
+                expect(scheduler.base.isCurrent).toVersioning([
                     .v11_0: beTrue(),
                     .v11_3: beFalse(),
                 ])
