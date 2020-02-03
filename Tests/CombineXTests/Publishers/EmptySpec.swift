@@ -20,7 +20,7 @@ class EmptySpec: QuickSpec {
                 let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
                 empty.subscribe(sub)
                 
-                expect(sub.events) == [.completion(.finished)]
+                expect(sub.eventsWithoutSubscription) == [.completion(.finished)]
             }
             
             // MARK: 1.2 should send nothing
@@ -28,7 +28,7 @@ class EmptySpec: QuickSpec {
                 let empty = Empty<Int, Never>(completeImmediately: false)
                 let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
                 empty.subscribe(sub)
-                expect(sub.events) == []
+                expect(sub.eventsWithoutSubscription) == []
             }
         }
         

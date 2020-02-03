@@ -22,7 +22,7 @@ class PrintSpec: QuickSpec {
                 let subject = PassthroughSubject<Int, TestError>()
                 let pub = subject.print("[Q]", to: stream)
                 var subscription: Subscription?
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
                     subscription = s
                 }, receiveValue: { _ in
                     return .none
@@ -45,7 +45,7 @@ class PrintSpec: QuickSpec {
                 let subject = PassthroughSubject<Int, TestError>()
                 let pub = subject.print("[Q]", to: stream)
                 var subscription: Subscription?
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
                     subscription = s
                 }, receiveValue: { _ in
                     return .none
@@ -68,7 +68,7 @@ class PrintSpec: QuickSpec {
                 let subject = PassthroughSubject<Int, TestError>()
                 let pub = subject.print("[Q]", to: stream)
                 var subscription: Subscription?
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
                     subscription = s
                 }, receiveValue: { _ in
                     return .none
@@ -99,7 +99,7 @@ class PrintSpec: QuickSpec {
                 let pub = subject.print("[Q]", to: stream)
                 
                 var subscription: Subscription?
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.unlimited)
                     subscription = s
                 }, receiveValue: { _ in

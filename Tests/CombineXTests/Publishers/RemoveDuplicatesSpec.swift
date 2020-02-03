@@ -15,7 +15,7 @@ class RemoveDuplicatesSpec: QuickSpec {
             let subject = PassthroughSubject<Int, Never>()
             let pub = subject.removeDuplicates()
             
-            let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
+            let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
                 s.request(.unlimited)
             }, receiveValue: { _ in
                 return .none
@@ -32,9 +32,9 @@ class RemoveDuplicatesSpec: QuickSpec {
             subject.send(1)
             subject.send(completion: .finished)
             
-            let events = [1, 2, 1].map { TestSubscriber<Int, Never>.Event.value($0) }
+            let events = [1, 2, 1].map { TracingSubscriber<Int, Never>.Event.value($0) }
             let expected = events + [.completion(.finished)]
-            expect(sub.events) == expected
+            expect(sub.eventsWithoutSubscription) == expected
         }
     }
 }

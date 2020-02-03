@@ -24,9 +24,9 @@ class ConcatenateSpec: QuickSpec {
                 
                 pub.subscribe(sub)
                 
-                let valueEvents = (1...5).map { TestSubscriberEvent<Int, Never>.value($0) }
+                let valueEvents = (1...5).map { TracingSubscriberEvent<Int, Never>.value($0) }
                 let expected = valueEvents + [.completion(.finished)]
-                expect(sub.events) == expected
+                expect(sub.eventsWithoutSubscription) == expected
             }
             
             // MARK: 1.2 should send as many value as demand
@@ -35,7 +35,7 @@ class ConcatenateSpec: QuickSpec {
                 let p1 = Publishers.Sequence<[Int], Never>(sequence: Array(10..<20))
                 
                 let pub = Publishers.Concatenate(prefix: p0, suffix: p1)
-                let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
                     s.request(.max(10))
                 }, receiveValue: { v in
                     [0, 10].contains(v) ? .max(1) : .none
@@ -44,8 +44,8 @@ class ConcatenateSpec: QuickSpec {
                 
                 pub.subscribe(sub)
                 
-                let events = (0..<12).map { TestSubscriberEvent<Int, Never>.value($0) }
-                expect(sub.events) == events
+                let events = (0..<12).map { TracingSubscriberEvent<Int, Never>.value($0) }
+                expect(sub.eventsWithoutSubscription) == events
             }
             
             // MARK: 1.3 should subscribe suffix after the finish of prefix

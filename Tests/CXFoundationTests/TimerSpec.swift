@@ -21,7 +21,7 @@ class TimerSpec: QuickSpec {
             waitUntil(timeout: 3) { done in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     done()
-                    expect(sub.events).to(beEmpty())
+                    expect(sub.eventsWithoutSubscription).to(beEmpty())
                 }
             }
         }
@@ -34,7 +34,7 @@ class TimerSpec: QuickSpec {
             
             let connection = pub.connect()
             
-            expect(sub.events).toEventually(haveCount(4))
+            expect(sub.eventsWithoutSubscription).toEventually(haveCount(4))
             
             _ = connection
         }
@@ -51,8 +51,8 @@ class TimerSpec: QuickSpec {
             
             RunLoop.current.run(until: Date().addingTimeInterval(1))
             
-            expect(sub1.events.count) == 3
-            expect(sub2.events.count) == 3
+            expect(sub1.eventsWithoutSubscription.count) == 3
+            expect(sub2.eventsWithoutSubscription.count) == 3
             
             connection.cancel()
         }

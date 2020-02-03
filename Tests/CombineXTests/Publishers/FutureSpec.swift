@@ -26,8 +26,8 @@ class FutureSpec: QuickSpec {
                 let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
                 f.subscribe(sub)
                 
-                expect(sub.events) == []
-                expect(sub.events).toEventually(equal([.value(1), .completion(.finished)]))
+                expect(sub.eventsWithoutSubscription) == []
+                expect(sub.eventsWithoutSubscription).toEventually(equal([.value(1), .completion(.finished)]))
             }
             
             // MARK: 1.2 should send failure when promise fail
@@ -41,8 +41,8 @@ class FutureSpec: QuickSpec {
                 let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
                 f.subscribe(sub)
                 
-                expect(sub.events) == []
-                expect(sub.events).toEventually(equal([.completion(.failure(.e0))]))
+                expect(sub.eventsWithoutSubscription) == []
+                expect(sub.eventsWithoutSubscription).toEventually(equal([.completion(.failure(.e0))]))
             }
             
             // MAKR: 1.3 should send events immediately if promise is completed
@@ -53,7 +53,7 @@ class FutureSpec: QuickSpec {
                 
                 let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
                 f.subscribe(sub)
-                expect(sub.events) == [.value(1), .completion(.finished)]
+                expect(sub.eventsWithoutSubscription) == [.value(1), .completion(.finished)]
             }
         }
         
@@ -80,7 +80,7 @@ class FutureSpec: QuickSpec {
                 g.wait()
                 
                 for sub in subs {
-                    expect(sub.events) == [.completion(.failure(.e0))]
+                    expect(sub.eventsWithoutSubscription) == [.completion(.failure(.e0))]
                 }
             }
         }

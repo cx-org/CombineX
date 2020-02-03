@@ -33,9 +33,9 @@ class PrefixUntilOutputSpec: QuickSpec {
                     pub0.send(i)
                 }
                  
-                let valueEvents = (0..<10).map { TestSubscriberEvent<Int, TestError>.value($0) }
+                let valueEvents = (0..<10).map { TracingSubscriberEvent<Int, TestError>.value($0) }
                 let expected = valueEvents + [.completion(.finished)]
-                expect(sub.events) == expected
+                expect(sub.eventsWithoutSubscription) == expected
             }
             
             // MARK: 1.2 should complete when other complete
@@ -57,9 +57,9 @@ class PrefixUntilOutputSpec: QuickSpec {
                 }
                 
                 let expected = (0..<20).map {
-                    TestSubscriberEvent<Int, TestError>.value($0)
+                    TracingSubscriberEvent<Int, TestError>.value($0)
                 }
-                expect(sub.events) == expected
+                expect(sub.eventsWithoutSubscription) == expected
             }
         }
     }

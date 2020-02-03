@@ -28,12 +28,12 @@ class TryScanSpec: QuickSpec {
                 }
                 subject.send(completion: .finished)
                 
-                let got = sub.events.mapError { $0 as! TestError }
+                let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 
                 var initial = 0
-                let valueEvents = (0..<100).map { n -> TestSubscriberEvent<Int, TestError> in
+                let valueEvents = (0..<100).map { n -> TracingSubscriberEvent<Int, TestError> in
                     initial += n
-                    return TestSubscriberEvent<Int, TestError>.value(initial)
+                    return TracingSubscriberEvent<Int, TestError>.value(initial)
                 }
                 let expected = valueEvents + [.completion(.finished)]
 
@@ -53,7 +53,7 @@ class TryScanSpec: QuickSpec {
                     subject.send($0)
                 }
                 
-                let got = sub.events.mapError { $0 as! TestError }
+                let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 expect(got) == [.completion(.failure(.e0))]
             }
             

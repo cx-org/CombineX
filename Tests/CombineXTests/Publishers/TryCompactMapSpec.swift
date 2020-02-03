@@ -27,10 +27,10 @@ class TryCompactMapSpec: QuickSpec {
                 }
                 pub.send(completion: .finished)
                 
-                let valueEvents = (0..<50).map { TestSubscriberEvent<Int, Never>.value(2 * $0) }
+                let valueEvents = (0..<50).map { TracingSubscriberEvent<Int, Never>.value(2 * $0) }
                 let expected = valueEvents + [.completion(.finished)]
                 
-                let got = sub.events.map {
+                let got = sub.eventsWithoutSubscription.map {
                     $0.mapError { _ -> Never in
                         fatalError("never happen")
                     }
@@ -50,7 +50,7 @@ class TryCompactMapSpec: QuickSpec {
                     pub.send(i)
                 }
                 
-                expect(sub.events.count) == 10
+                expect(sub.eventsWithoutSubscription.count) == 10
             }
             
             // MARK: 1.3 should fail if transform throws an error
@@ -72,10 +72,10 @@ class TryCompactMapSpec: QuickSpec {
                 
                 pub.send(completion: .finished)
                 
-                let valueEvents = (0..<10).map { TestSubscriberEvent<Int, TestError>.value($0) }
+                let valueEvents = (0..<10).map { TracingSubscriberEvent<Int, TestError>.value($0) }
                 let expected = valueEvents + [.completion(.failure(.e0))]
                 
-                let got = sub.events.mapError { $0 as! TestError }
+                let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 
                 expect(got) == expected
             }
@@ -128,7 +128,7 @@ class TryCompactMapSpec: QuickSpec {
                     let obj = TestObject()
                     closureObj = obj
                     
-                    let sub = TestSubscriber<Int, Error>(receiveSubscription: { s in
+                    let sub = TracingSubscriber<Int, Error>(receiveSubscription: { s in
                         subscription = s
                     }, receiveValue: { _ in
                         return .none
@@ -165,7 +165,7 @@ class TryCompactMapSpec: QuickSpec {
                     let obj = TestObject()
                     closureObj = obj
                     
-                    let sub = TestSubscriber<Int, Error>(receiveSubscription: { s in
+                    let sub = TracingSubscriber<Int, Error>(receiveSubscription: { s in
                         subscription = s
                     }, receiveValue: { _ in
                         return .none

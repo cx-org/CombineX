@@ -19,10 +19,10 @@ class MeasureIntervalSpec: QuickSpec {
             it("should measure interval as expected") {
                 let subject = PassthroughSubject<Int, Never>()
                 
-                let pub = subject.measureInterval(using: TestDispatchQueueScheduler.main)
+                let pub = subject.measureInterval(using: DispatchQueue.main.cx)
                 var t = Date()
                 var dts: [TimeInterval] = []
-                let sub = TestSubscriber<TestDispatchQueueScheduler.SchedulerTimeType.Stride, Never>(receiveSubscription: { s in
+                let sub = TracingSubscriber<CXWrappers.DispatchQueue.SchedulerTimeType.Stride, Never>(receiveSubscription: { s in
                     s.request(.unlimited)
                     t = Date()
                 }, receiveValue: { _ in
@@ -42,9 +42,9 @@ class MeasureIntervalSpec: QuickSpec {
                 
                 subject.send(completion: .finished)
                 
-                expect(sub.events).to(haveCount(dts.count + 1))
-                expect(sub.events.last) == .completion(.finished)
-                for (event, dt) in zip(sub.events.dropLast(), dts) {
+                expect(sub.eventsWithoutSubscription).to(haveCount(dts.count + 1))
+                expect(sub.eventsWithoutSubscription.last) == .completion(.finished)
+                for (event, dt) in zip(sub.eventsWithoutSubscription.dropLast(), dts) {
                     expect(event.value?.seconds).to(beCloseTo(dt, within: 0.1))
                 }
             }

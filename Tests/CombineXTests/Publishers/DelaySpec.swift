@@ -1,5 +1,6 @@
 import CXShim
 import CXTestUtility
+import Foundation
 import Nimble
 import Quick
 
@@ -17,14 +18,14 @@ class DelaySpec: QuickSpec {
             // 1.1 should delay events
             it("should delay events") {
                 let subject = PassthroughSubject<Int, TestError>()
-                let scheduler = TestScheduler()
+                let scheduler = VirtualTimeScheduler()
                 let pub = subject.delay(for: .seconds(1), scheduler: scheduler)
 
                 let receiveS = TestTimeline(context: scheduler)
                 let receiveV = TestTimeline(context: scheduler)
                 let receiveC = TestTimeline(context: scheduler)
                 
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
                     receiveS.record()
                     s.request(.unlimited)
                 }, receiveValue: { _ in
@@ -65,21 +66,21 @@ class DelaySpec: QuickSpec {
             // MARK: 1.2 should send events with scheduler
             it("should send events with scheduler") {
                 let subject = PassthroughSubject<Int, TestError>()
-                let scheduler = TestDispatchQueueScheduler.serial()
+                let scheduler = DispatchQueue(label: UUID().uuidString).cx
                 let pub = subject.delay(for: .seconds(0.1), scheduler: scheduler)
                 
                 var executed = (subscription: false, value: false, completion: false)
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.unlimited)
                     // Versioning: see VersioningDelaySpec
                     // expect(scheduler.isCurrent) == false
                     executed.subscription = true
                 }, receiveValue: { _ in
-                    expect(scheduler.isCurrent) == true
+                    expect(scheduler.base.isCurrent) == true
                     executed.value = true
                     return .none
                 }, receiveCompletion: { _ in
-                    expect(scheduler.isCurrent) == true
+                    expect(scheduler.base.isCurrent) == true
                     executed.completion = true
                 })
                 

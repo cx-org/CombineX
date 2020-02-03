@@ -29,7 +29,7 @@ class TryRemoveDuplicatesSpec: QuickSpec {
                 pub.send(3)
                 pub.send(3)
                 
-                let got = sub.events.mapError { $0 as! TestError }
+                let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 
                 expect(got) == [.value(1), .value(2), .value(3)]
             }
@@ -44,7 +44,7 @@ class TryRemoveDuplicatesSpec: QuickSpec {
                     pub.send(Int.random(in: 0..<100))
                 }
                 
-                expect(sub.events.count) == 10
+                expect(sub.eventsWithoutSubscription.count) == 10
             }
             
             // MARK: 1.3 should fail if closure throws error
@@ -59,7 +59,7 @@ class TryRemoveDuplicatesSpec: QuickSpec {
                 pub.send(1)
                 pub.send(1)
                 
-                let got = sub.events.mapError { $0 as! TestError }
+                let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 
                 expect(got) == [.value(1), .completion(.failure(.e0))]
             }

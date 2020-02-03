@@ -22,7 +22,7 @@ class MergeSpec: QuickSpec {
                     subjects[4], subjects[5], subjects[6], subjects[7]
                     )
 
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.unlimited)
                 }, receiveValue: { _ in
                     return .none
@@ -36,9 +36,9 @@ class MergeSpec: QuickSpec {
                 }
 
                 let events = (0..<100).map {
-                    TestSubscriberEvent<Int, TestError>.value($0)
+                    TracingSubscriberEvent<Int, TestError>.value($0)
                 }
-                expect(sub.events) == events
+                expect(sub.eventsWithoutSubscription) == events
             }
             
             // MARK: It should merge many upstreams
@@ -46,7 +46,7 @@ class MergeSpec: QuickSpec {
                 let subjects = Array.make(count: 9, make: PassthroughSubject<Int, TestError>())
 
                 let merge = Publishers.MergeMany(subjects)
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.unlimited)
                 }, receiveValue: { _ in
                     return .none
@@ -60,9 +60,9 @@ class MergeSpec: QuickSpec {
                 }
 
                 let events = (0..<100).map {
-                    TestSubscriberEvent<Int, TestError>.value($0)
+                    TracingSubscriberEvent<Int, TestError>.value($0)
                 }
-                expect(sub.events) == events
+                expect(sub.eventsWithoutSubscription) == events
             }
         }
     }

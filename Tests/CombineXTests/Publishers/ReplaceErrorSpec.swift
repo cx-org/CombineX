@@ -19,7 +19,7 @@ class ReplaceErrorSpec: QuickSpec {
                 let pub = Fail<Int, TestError>(error: .e0).replaceError(with: 1)
                 let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
                 pub.subscribe(sub)
-                expect(sub.events) == [.value(1), .completion(.finished)]
+                expect(sub.eventsWithoutSubscription) == [.value(1), .completion(.finished)]
             }
             
             #if !SWIFT_PACKAGE

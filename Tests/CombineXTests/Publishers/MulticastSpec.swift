@@ -24,14 +24,14 @@ class MulticastSpec: QuickSpec {
                 10.times {
                     subject.send($0)
                 }
-                expect(sub.events) == []
+                expect(sub.eventsWithoutSubscription) == []
                 
                 let cancel = pub.connect()
                 
                 10.times {
                     subject.send($0)
                 }
-                expect(sub.events) == (0..<10).map { .value($0) }
+                expect(sub.eventsWithoutSubscription) == (0..<10).map { .value($0) }
                 
                 cancel.cancel()
                 
@@ -39,7 +39,7 @@ class MulticastSpec: QuickSpec {
                     subject.send($0)
                 }
                 
-                expect(sub.events) == (0..<10).map { .value($0) }
+                expect(sub.eventsWithoutSubscription) == (0..<10).map { .value($0) }
             }
         }
     }

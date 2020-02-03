@@ -1,12 +1,11 @@
 import CXShim
 import CXUtility
-import Foundation
 
 private let counter = Atom<Int>(val: 0)
 
-public final class TestScheduler: Scheduler {
+public final class VirtualTimeScheduler: Scheduler {
 
-    public typealias SchedulerTimeType = TestSchedulerTime
+    public typealias SchedulerTimeType = VirtualTime
     public typealias SchedulerOptions = Never
     
     private final class ScheduledAction {
@@ -37,13 +36,13 @@ public final class TestScheduler: Scheduler {
         return self.lock.withLockGet(self._now)
     }
     
-    public let minimumTolerance: TestSchedulerTime.Stride = .seconds(0)
+    public let minimumTolerance: VirtualTime.Stride = .seconds(0)
     
-    public init() {
-        self._now = SchedulerTimeType(time: Date())
+    public init(time: VirtualTime = .zero) {
+        self._now = time
     }
     
-    public func schedule(options: TestScheduler.SchedulerOptions?, _ action: @escaping () -> Void) {
+    public func schedule(options: VirtualTimeScheduler.SchedulerOptions?, _ action: @escaping () -> Void) {
         self.lock.lock()
         let scheduledAction = ScheduledAction(time: self._now, action: action)
         self.scheduledActions.append(scheduledAction)
@@ -102,7 +101,7 @@ public final class TestScheduler: Scheduler {
         return AnyCancellable(box)
     }
     
-    public func advance(to time: SchedulerTimeType) {
+    private func advance(to time: SchedulerTimeType) {
         self.lock.lock()
         defer {
             self.lock.unlock()

@@ -22,10 +22,19 @@ public extension Subscribers.Completion {
     
     var isFailure: Bool {
         switch self {
-        case .failure:
-            return true
         case .finished:
             return false
+        case .failure:
+            return true
+        }
+    }
+    
+    var error: Failure? {
+        switch self {
+        case .finished:
+            return nil
+        case let .failure(e):
+            return e
         }
     }
 }

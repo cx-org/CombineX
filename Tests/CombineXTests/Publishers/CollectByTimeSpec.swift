@@ -17,7 +17,7 @@ class CollectByTimeSpec: QuickSpec {
             // MARK: 1.1 should collect by time
             it("should collect by time") {
                 let subject = PassthroughSubject<Int, TestError>()
-                let scheduler = TestScheduler()
+                let scheduler = VirtualTimeScheduler()
                 let pub = subject.collect(.byTime(scheduler, .seconds(2)))
                 let sub = makeTestSubscriber([Int].self, TestError.self, .unlimited)
                 
@@ -33,13 +33,13 @@ class CollectByTimeSpec: QuickSpec {
                 subject.send(completion: .failure(.e0))
                 scheduler.advance(by: .zero)
                 
-                expect(sub.events) == [.value([1, 2]), .completion(.failure(.e0))]
+                expect(sub.eventsWithoutSubscription) == [.value([1, 2]), .completion(.failure(.e0))]
             }
             
             // MARK: 1.2 should collect by time then send unsent values if upstream finishes
             it("should collect by time then send unsent values if upstream finishes") {
                 let subject = PassthroughSubject<Int, TestError>()
-                let scheduler = TestScheduler()
+                let scheduler = VirtualTimeScheduler()
                 let pub = subject.collect(.byTime(scheduler, .seconds(2)))
                 let sub = makeTestSubscriber([Int].self, TestError.self, .unlimited)
                 
@@ -55,7 +55,7 @@ class CollectByTimeSpec: QuickSpec {
                 subject.send(completion: .finished)
                 scheduler.advance(by: .zero)
                 
-                expect(sub.events) == [
+                expect(sub.eventsWithoutSubscription) == [
                     .value([1, 2]),
                     .value([3, 4, 5]),
                     .completion(.finished)
@@ -65,7 +65,7 @@ class CollectByTimeSpec: QuickSpec {
             // MARK: 1.3 should collect by count
             it("should collect by count") {
                 let subject = PassthroughSubject<Int, TestError>()
-                let scheduler = TestScheduler()
+                let scheduler = VirtualTimeScheduler()
                 let pub = subject.collect(.byTimeOrCount(scheduler, .seconds(2), 2))
                 let sub = makeTestSubscriber([Int].self, TestError.self, .unlimited)
                 
@@ -84,7 +84,7 @@ class CollectByTimeSpec: QuickSpec {
                 subject.send(completion: .finished)
                 scheduler.advance(by: .zero)
                 
-                expect(sub.events) == [
+                expect(sub.eventsWithoutSubscription) == [
                     .value([1, 2]),
                     .value([3]),
                     .value([4, 5]),
@@ -97,10 +97,10 @@ class CollectByTimeSpec: QuickSpec {
             // MARK: 1.4 should send as many as demand when strategy is by time
             it("should send as many as demand when strategy is by time") {
                 let subject = TestSubject<Int, TestError>()
-                let scheduler = TestScheduler()
+                let scheduler = VirtualTimeScheduler()
                 let pub = subject.collect(.byTime(scheduler, .seconds(1)))
                 
-                let sub = TestSubscriber<[Int], TestError>(receiveSubscription: { s in
+                let sub = TracingSubscriber<[Int], TestError>(receiveSubscription: { s in
                     s.request(.max(2))
                 }, receiveValue: { v in
                     if Set(v).isDisjoint(with: [0, 5]) {
@@ -120,16 +120,16 @@ class CollectByTimeSpec: QuickSpec {
                     subject.send($0)
                 }
 
-                expect(sub.events.count) == 4
+                expect(sub.eventsWithoutSubscription.count) == 4
             }
             
             // MARK: 1.5 should always request 1 when strategy is by time
             it("should always request 1 when strategy is by time") {
                 let subject = TestSubject<Int, TestError>()
-                let scheduler = TestScheduler()
+                let scheduler = VirtualTimeScheduler()
                 let pub = subject.collect(.byTime(scheduler, .seconds(1)))
                 
-                let sub = TestSubscriber<[Int], TestError>(receiveSubscription: { s in
+                let sub = TracingSubscriber<[Int], TestError>(receiveSubscription: { s in
                     s.request(.max(2))
                 }, receiveValue: { v in
                     if Set(v).isDisjoint(with: [0, 5]) {

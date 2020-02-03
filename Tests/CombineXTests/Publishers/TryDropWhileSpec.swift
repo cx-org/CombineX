@@ -26,10 +26,10 @@ class TryDropWhileSpec: QuickSpec {
                 }
                 subject.send(completion: .finished)
                 
-                let got = sub.events.mapError { $0 as! TestError }
+                let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 
                 let valueEvents = (50..<100).map {
-                    TestSubscriberEvent<Int, TestError>.value($0)
+                    TracingSubscriberEvent<Int, TestError>.value($0)
                 }
                 let expected = valueEvents + [.completion(.finished)]
                 
@@ -46,7 +46,7 @@ class TryDropWhileSpec: QuickSpec {
                     pub.send(i)
                 }
                 
-                expect(sub.events.count) == 10
+                expect(sub.eventsWithoutSubscription.count) == 10
             }
             
             // MARK: 1.3 should fail if predicate throws error
@@ -63,7 +63,7 @@ class TryDropWhileSpec: QuickSpec {
                 
                 pub.send(completion: .finished)
                 
-                let got = sub.events.mapError { $0 as! TestError }
+                let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 expect(got) == [.completion(.failure(.e0))]
             }
             

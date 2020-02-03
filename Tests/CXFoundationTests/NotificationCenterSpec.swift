@@ -23,7 +23,7 @@ class NotificationCenterSpec: QuickSpec {
             NotificationCenter.default.post(name: name, object: nil)
             NotificationCenter.default.post(name: name, object: nil)
             
-            expect(sub.events).toEventually(haveCount(3))
+            expect(sub.eventsWithoutSubscription).toEventually(haveCount(3))
         }
         
         // MARK: 1.2 should stop sending values after cancel
@@ -39,7 +39,7 @@ class NotificationCenterSpec: QuickSpec {
             NotificationCenter.default.post(name: name, object: nil)
             NotificationCenter.default.post(name: name, object: nil)
             
-            expect(sub.events).toEventually(beEmpty())
+            expect(sub.eventsWithoutSubscription).toEventually(beEmpty())
         }
     }
 }

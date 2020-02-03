@@ -17,7 +17,7 @@ class DebounceSpec: QuickSpec {
             // MARK: 1.1 should ignore the values before the due time is passed
             it("should ignore the values before the due time is passed") {
                 let subject = PassthroughSubject<Int, TestError>()
-                let scheduler = TestScheduler()
+                let scheduler = VirtualTimeScheduler()
                 let pub = subject.debounce(for: .seconds(1), scheduler: scheduler)
                 let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
                 pub.subscribe(sub)
@@ -29,7 +29,7 @@ class DebounceSpec: QuickSpec {
                 subject.send(4)
                 scheduler.advance(by: .seconds(0.9))
                 
-                expect(sub.events) == []
+                expect(sub.eventsWithoutSubscription) == []
                 
                 subject.send(1)
                 subject.send(2)
@@ -44,13 +44,13 @@ class DebounceSpec: QuickSpec {
                 subject.send(9)
                 scheduler.advance(by: .seconds(1.8))
                 
-                expect(sub.events) == [.value(3), .value(6), .value(9)]
+                expect(sub.eventsWithoutSubscription) == [.value(3), .value(6), .value(9)]
             }
             
             // MARK: 1.2 should send last value repeatedly
             it("should send the last value repeatedly") {
                 let subject = PassthroughSubject<Int, TestError>()
-                let scheduler = TestScheduler()
+                let scheduler = VirtualTimeScheduler()
                 let pub = subject.debounce(for: .seconds(1), scheduler: scheduler)
                 let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
                 pub.subscribe(sub)
@@ -58,15 +58,15 @@ class DebounceSpec: QuickSpec {
                 subject.send(1)
                 scheduler.advance(by: .seconds(10))
                 
-                expect(sub.events) == [.value(1)]
+                expect(sub.eventsWithoutSubscription) == [.value(1)]
             }
             
             // MARK: 1.3 should send as many values as demand
             it("should send as many values as demand") {
                 let subject = PassthroughSubject<Int, TestError>()
-                let scheduler = TestScheduler()
+                let scheduler = VirtualTimeScheduler()
                 let pub = subject.debounce(for: .seconds(1), scheduler: scheduler)
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.max(10))
                 }, receiveValue: { v in
                     return [0, 5].contains(v) ? .max(1) : .none
@@ -79,7 +79,7 @@ class DebounceSpec: QuickSpec {
                     scheduler.advance(by: .seconds(1))
                 }
                 
-                expect(sub.events.count).toEventually(equal(12))
+                expect(sub.eventsWithoutSubscription.count).toEventually(equal(12))
             }
         }
         
@@ -89,9 +89,9 @@ class DebounceSpec: QuickSpec {
             // MARK: 2.1 should request unlimited at the beginning
             it("should request unlimited at the beginning") {
                 let subject = TestSubject<Int, TestError>()
-                let scheduler = TestScheduler()
+                let scheduler = VirtualTimeScheduler()
                 let pub = subject.debounce(for: .seconds(1), scheduler: scheduler)
-                let sub = TestSubscriber<Int, TestError>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.max(10))
                 }, receiveValue: { v in
                     return [1].contains(v) ? .max(1) : .none

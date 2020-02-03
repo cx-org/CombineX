@@ -33,8 +33,8 @@ class DropUntilOutputSpec: QuickSpec {
                     pub0.send(i)
                 }
                  
-                let expected = (10..<20).map { TestSubscriberEvent<Int, TestError>.value($0) }
-                expect(sub.events) == expected
+                let expected = (10..<20).map { TracingSubscriberEvent<Int, TestError>.value($0) }
+                expect(sub.eventsWithoutSubscription) == expected
             }
             
             // MARK: 1.2 should complete when other complete
@@ -55,7 +55,7 @@ class DropUntilOutputSpec: QuickSpec {
                     pub0.send($0)
                 }
                 
-                expect(sub.events) == [.completion(.finished)]
+                expect(sub.eventsWithoutSubscription) == [.completion(.finished)]
             }
             
             // MARK: 1.3 should complete if self complete
@@ -73,7 +73,7 @@ class DropUntilOutputSpec: QuickSpec {
                 }
                 pub0.send(completion: .finished)
                 
-                expect(sub.events) == [.completion(.finished)]
+                expect(sub.eventsWithoutSubscription) == [.completion(.finished)]
             }
         }
     }

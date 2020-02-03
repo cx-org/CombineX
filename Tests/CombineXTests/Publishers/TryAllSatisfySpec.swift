@@ -18,7 +18,7 @@ class TryAllSatisfySpec: QuickSpec {
             it("should send true then send finished") {
                 let subject = PassthroughSubject<Int, Never>()
                 let pub = subject.tryAllSatisfy { $0 < 100 }
-                let sub = TestSubscriber<Bool, Error>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Bool, Error>(receiveSubscription: { s in
                     s.request(.unlimited)
                 }, receiveValue: { _ in
                     return .none
@@ -32,7 +32,7 @@ class TryAllSatisfySpec: QuickSpec {
                 }
                 subject.send(completion: .finished)
                 
-                let got = sub.events.mapError { $0 as! TestError }
+                let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 expect(got) == [.value(true), .completion(.finished)]
             }
             
@@ -40,7 +40,7 @@ class TryAllSatisfySpec: QuickSpec {
             it("should send false then send finished") {
                 let subject = PassthroughSubject<Int, Never>()
                 let pub = subject.tryAllSatisfy { $0 < 5 }
-                let sub = TestSubscriber<Bool, Error>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Bool, Error>(receiveSubscription: { s in
                     s.request(.unlimited)
                 }, receiveValue: { _ in
                     return .none
@@ -54,7 +54,7 @@ class TryAllSatisfySpec: QuickSpec {
                 }
                 subject.send(completion: .finished)
                 
-                let got = sub.events.mapError { $0 as! TestError }
+                let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 expect(got) == [.value(false), .completion(.finished)]
             }
             
@@ -67,7 +67,7 @@ class TryAllSatisfySpec: QuickSpec {
                     }
                     return true
                 }
-                let sub = TestSubscriber<Bool, Error>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Bool, Error>(receiveSubscription: { s in
                     s.request(.unlimited)
                 }, receiveValue: { _ in
                     return .none
@@ -81,7 +81,7 @@ class TryAllSatisfySpec: QuickSpec {
                 }
                 subject.send(completion: .finished)
                 
-                let got = sub.events.mapError { $0 as! TestError }
+                let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 expect(got) == [.completion(.failure(.e0))]
             }
         }
