@@ -19,9 +19,9 @@ extension RunLoop {
         return CXWrappers.RunLoop(wrapping: self)
     }
 }
-    
+
 extension CXWrappers.RunLoop: CombineX.Scheduler {
-        
+    
     /// The scheduler time type used by the run loop.
     public struct SchedulerTimeType: Strideable, Codable, Hashable {
         
@@ -130,7 +130,7 @@ extension CXWrappers.RunLoop: CombineX.Scheduler {
             }
         }
     }
-
+    
     /// Options that affect the operation of the run loop scheduler.
     ///
     /// The run loop doesn’t support any scheduler options.
@@ -144,9 +144,10 @@ extension CXWrappers.RunLoop: CombineX.Scheduler {
     }
     
     public func schedule(after date: SchedulerTimeType, tolerance: SchedulerTimeType.Stride, options: SchedulerOptions?, _ action: @escaping () -> Void) {
-        Timer.cx_scheduledTimer(withTimeInterval: self.now.distance(to: date).timeInterval, repeats: false) { _ in
+        let timer = Timer.cx_scheduledTimer(withTimeInterval: self.now.distance(to: date).timeInterval, repeats: false) { _ in
             action()
         }
+        timer.tolerance = tolerance.timeInterval
     }
     
     public func schedule(
@@ -159,6 +160,7 @@ extension CXWrappers.RunLoop: CombineX.Scheduler {
         let timer = Timer.cx_init(fire: date.date, interval: interval.timeInterval, repeats: true) { _ in
             action()
         }
+        timer.tolerance = tolerance.timeInterval
         self.base.add(timer, forMode: .default)
         return AnyCancellable {
             timer.invalidate()
