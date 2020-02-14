@@ -116,7 +116,7 @@ extension Publishers.CollectByTime {
             self.timeoutTask?.cancel()
             self.timeoutTask = self.context.schedule(
                 after: self.context.now.advanced(by: self.time),
-                interval: .seconds(Int.max)) {
+                interval: self.time) {
                 self.lock.lock()
                 guard self.state.isRelaying else {
                     self.lock.unlock()
@@ -265,7 +265,7 @@ extension Publishers.CollectByTime {
             self.timeoutTask?.cancel()
             self.timeoutTask = self.context.schedule(
                 after: self.context.now.advanced(by: self.time),
-                interval: .seconds(Int.max)) {
+                interval: self.time) {
                 self.lock.lock()
                 guard self.state.isRelaying else {
                     self.lock.unlock()

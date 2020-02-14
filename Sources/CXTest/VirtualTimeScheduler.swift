@@ -1,14 +1,15 @@
 import CXShim
 import CXUtility
 
-private let counter = Atom<Int>(val: 0)
-
 public final class VirtualTimeScheduler: Scheduler {
 
     public typealias SchedulerTimeType = VirtualTime
     public typealias SchedulerOptions = Never
     
     private final class ScheduledAction {
+        
+        private static let counter = Atom<Int>(val: 0)
+        
         let time: SchedulerTimeType
         let id: Int
         let action: () -> Void
@@ -16,10 +17,10 @@ public final class VirtualTimeScheduler: Scheduler {
         init(time: SchedulerTimeType, action: @escaping () -> Void) {
             self.time = time
             self.action = action
-            self.id = counter.add(1)
+            self.id = ScheduledAction.counter.add(1)
         }
         
-        static func < (_ a: ScheduledAction, _ b: ScheduledAction) -> Bool {
+        static func <(_ a: ScheduledAction, _ b: ScheduledAction) -> Bool {
             if a.time == b.time {
                 return a.id < b.id
             }
@@ -28,7 +29,7 @@ public final class VirtualTimeScheduler: Scheduler {
     }
     
     private let lock = Lock(recursive: true)
-    private var scheduledActions: [ScheduledAction] = []
+    private var scheduledActions = BinaryHeap<ScheduledAction>(sort: <)
     
     private var _now: SchedulerTimeType
     
@@ -45,16 +46,14 @@ public final class VirtualTimeScheduler: Scheduler {
     public func schedule(options: VirtualTimeScheduler.SchedulerOptions?, _ action: @escaping () -> Void) {
         self.lock.lock()
         let scheduledAction = ScheduledAction(time: self._now, action: action)
-        self.scheduledActions.append(scheduledAction)
-        self.scheduledActions.sort(by: <)
+        self.scheduledActions.insert(scheduledAction)
         self.lock.unlock()
     }
     
     public func schedule(after date: SchedulerTimeType, tolerance: SchedulerTimeType.Stride, options: SchedulerOptions?, _ action: @escaping () -> Void) {
         self.lock.lock()
         let scheduledAction = ScheduledAction(time: date, action: action)
-        self.scheduledActions.append(scheduledAction)
-        self.scheduledActions.sort(by: <)
+        self.scheduledActions.insert(scheduledAction)
         self.lock.unlock()
     }
     
@@ -88,13 +87,12 @@ public final class VirtualTimeScheduler: Scheduler {
                 cancel.cancel()
             }
         }
-        self.scheduledActions.append(scheduledAction)
-        self.scheduledActions.sort(by: <)
+        self.scheduledActions.insert(scheduledAction)
         self.lock.unlock()
         
         box.body = {
             self.lock.lock()
-            self.scheduledActions = self.scheduledActions.filter { $0 !== scheduledAction }
+            self.scheduledActions.remove { $0 === scheduledAction }
             self.lock.unlock()
         }
 
@@ -107,12 +105,10 @@ public final class VirtualTimeScheduler: Scheduler {
             self.lock.unlock()
         }
 
-        while let first = self.scheduledActions.first {
-            if time < first.time { break }
-            
+        while let first = self.scheduledActions.peek(), first.time <= time {
+            assert(first === self.scheduledActions.remove())
             self._now = first.time
-        
-            self.scheduledActions.remove(at: 0).action()
+            first.action()
         }
         
         self._now = time
