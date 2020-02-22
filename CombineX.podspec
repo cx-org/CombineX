@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "CombineX"
-  s.version      = "0.1.1"
+  s.version      = "0.2.0"
   s.summary      = "Open source implementation for Apple's Combine."
   s.homepage     = "https://github.com/cx-org/CombineX"
   s.license      = { :type => "MIT", :file => "LICENSE" }

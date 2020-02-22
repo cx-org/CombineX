@@ -10,8 +10,11 @@ let package = Package(
         .macOS(.v10_10), .iOS(.v8), .tvOS(.v9), .watchOS(.v2),
     ],
     products: [
+        // Open source implementation of Combine.
         .library(name: "CombineX", targets: ["CombineX", "CXFoundation"]),
+        // Virtual Combine interface.
         .library(name: "CXShim", targets: ["CXShim"]),
+        // Test infrastructure for Combine, built on CXShim.
         .library(name: "CXTest", targets: ["CXTest"])
     ],
     dependencies: [
@@ -64,10 +67,18 @@ enum CombineImplementation {
         default:            return nil
         }
     }
-
+    
+    var swiftSettings: [SwiftSetting] {
+        switch self {
+        case .combine:      return [.define("USE_COMBINE")]
+        case .combineX:     return [.define("USE_COMBINEX")]
+        case .openCombine:  return [.define("USE_OPEN_COMBINE")]
+        }
+    }
+    
     var extraPackageDependencies: [Package.Dependency] {
         switch self {
-        case .openCombine:  return [.package(url: "https://github.com/broadwaylamb/OpenCombine", .exact("0.5.0"))]
+        case .openCombine:  return [.package(url: "https://github.com/broadwaylamb/OpenCombine", .upToNextMinor(from: "0.8.0"))]
         default:            return []
         }
     }
@@ -79,17 +90,20 @@ enum CombineImplementation {
         case .openCombine:  return ["OpenCombine", "OpenCombineDispatch"]
         }
     }
-    
-    var swiftSettings: [SwiftSetting] {
-        switch self {
-        case .combine:      return [.define("USE_COMBINE")]
-        case .combineX:     return [.define("USE_COMBINEX")]
-        case .openCombine:  return [.define("USE_OPEN_COMBINE")]
-        }
-    }
 }
 
 // MARK: - Helpers
+
+extension ProcessInfo {
+    
+    var combineImplementation: CombineImplementation {
+        return environment["CX_COMBINE_IMPLEMENTATION"].flatMap(CombineImplementation.init) ?? .default
+    }
+    
+    var isCI: Bool {
+        return (environment["CX_CONTINUOUS_INTEGRATION"] as NSString?)?.boolValue ?? false
+    }
+}
 
 extension Optional where Wrapped: RangeReplaceableCollection {
     
@@ -108,14 +122,10 @@ extension Optional where Wrapped: RangeReplaceableCollection {
 
 import Foundation
 
-let env = ProcessInfo.processInfo.environment
-let impkey = "CX_COMBINE_IMPLEMENTATION"
-let isCIKey = "CX_CONTINUOUS_INTEGRATION"
+var combineImp = ProcessInfo.processInfo.combineImplementation
+var isCI = ProcessInfo.processInfo.isCI
 
-var combineImp = env[impkey].flatMap(CombineImplementation.init) ?? .default
-var isCI = env[isCIKey] != nil
-
-// uncommenet the following two lines if you want to test against combine
+// uncommenet the following line to test against combine
 //combineImp = .combine; isCI = true
 
 package.dependencies.append(contentsOf: combineImp.extraPackageDependencies)
