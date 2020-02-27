@@ -19,7 +19,7 @@ public final class Lock {
     }
     
     @inlinable
-    public func lock(file: StaticString = #file, line: UInt = #line) {
+    public func lock() {
         self.locking.lock()
     }
     
@@ -29,7 +29,7 @@ public final class Lock {
     }
     
     @inlinable
-    public func unlock(file: StaticString = #file, line: UInt = #line) {
+    public func unlock() {
         self.locking.unlock()
     }
     
