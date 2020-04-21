@@ -70,6 +70,7 @@ QCKMain([
     // MARK: - CXFoundation
     
     CoderSpec.self,
+    KeyValueObservingSpec.self,
     NotificationCenterSpec.self,
     SchedulerSpec.self,
     TimerSpec.self,
