@@ -5,7 +5,7 @@ import Nimble
 import Quick
 
 class KeyValueObservingSpec: QuickSpec {
-    #if swift(>=5.1)
+    #if swift(>=5.1) && canImport(ObjectiveC)
 
     override func spec() {
 
@@ -104,5 +104,5 @@ class KeyValueObservingSpec: QuickSpec {
         @objc dynamic var p = 0
     }
 
-    #endif
+    #endif /* swift(>=5.1) && canImport(ObjectiveC) */
 }
