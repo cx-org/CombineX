@@ -4,6 +4,10 @@ import Foundation
 import Nimble
 import Quick
 
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
+
 class KeyValueObservingSpec: QuickSpec {
     #if swift(>=5.1) && canImport(ObjectiveC)
 
@@ -21,7 +25,7 @@ class KeyValueObservingSpec: QuickSpec {
             it("should publish on assignments") {
                 let x = X()
                 let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
-                x.publisher(for: \.p, options: []).subscribe(sub)
+                x.cx.publisher(for: \.p, options: []).subscribe(sub)
                 expect(sub.eventsWithoutSubscription) == []
                 x.p = 1
                 x.p = 2
@@ -32,7 +36,7 @@ class KeyValueObservingSpec: QuickSpec {
             it("should publish immediately if .initial") {
                 let x = X()
                 let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
-                x.publisher(for: \.p, options: [.initial]).subscribe(sub)
+                x.cx.publisher(for: \.p, options: [.initial]).subscribe(sub)
                 expect(sub.eventsWithoutSubscription) == [.value(0)]
             }
 
@@ -41,7 +45,7 @@ class KeyValueObservingSpec: QuickSpec {
             it("should publish before also if .prior") {
                 let x = X()
                 let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
-                x.publisher(for: \.p, options: [.prior]).subscribe(sub)
+                x.cx.publisher(for: \.p, options: [.prior]).subscribe(sub)
                 expect(sub.eventsWithoutSubscription) == []
                 x.p = 1
                 x.p = 2
@@ -52,7 +56,7 @@ class KeyValueObservingSpec: QuickSpec {
             it("should publish immediately and before also if .initial and .prior") {
                 let x = X()
                 let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
-                x.publisher(for: \.p, options: [.initial, .prior]).subscribe(sub)
+                x.cx.publisher(for: \.p, options: [.initial, .prior]).subscribe(sub)
                 expect(sub.eventsWithoutSubscription) == [.value(0)]
                 x.p = 1
                 x.p = 2
@@ -72,7 +76,7 @@ class KeyValueObservingSpec: QuickSpec {
                 )
 
                 // With .initial, the publisher caches the property value at subscription time until it receives its first non-zero demand.
-                x.publisher(for: \.p, options: [.initial]).subscribe(sub)
+                x.cx.publisher(for: \.p, options: [.initial]).subscribe(sub)
 
                 expect(sub.eventsWithoutSubscription) == []
                 x.p = 1
@@ -96,6 +100,29 @@ class KeyValueObservingSpec: QuickSpec {
                 // But Apple's implementation is buggy! It always decrements the value given to `request(_:)` by 1. If you request 1, you get nothing. If you request 2, you get 1. And so on.
                 // I did not fix that bug when I adapted Apple's implementation for CombineX, so we exhibit the same bug. Here's the expectation that matches the buggy behavior:
                 expect(sub.eventsWithoutSubscription) == [.value(0), .value(5), .value(6)]
+            }
+        }
+
+        // MARK: - Subclasses
+        describe("Subclasses") {
+            // MARK: 3.1 should support the KVO publisher and their own customizations
+            it("should support the KVO publisher and their own customizations") {
+                // This method won't compile if .cx doesn't produce something that supports both the KVO publisher and the type-specification customizations. It doesn't have to actually test anything at runtime.
+
+                _ = NotificationCenter.default.cx.publisher(for: \.self, options: [])
+                _ = NotificationCenter.default.cx.publisher(for: Notification.Name("x"), object: nil)
+
+                _ = OperationQueue.main.cx.publisher(for: \.isSuspended, options: [])
+                OperationQueue.main.cx.schedule { }
+
+                _ = RunLoop.main.cx.publisher(for: \.self, options: [])
+                RunLoop.main.cx.schedule { }
+
+                _ = DispatchQueue.main.cx.publisher(for: \.self, options: [])
+                DispatchQueue.main.cx.schedule { }
+
+                _ = URLSession.shared.cx.publisher(for: \.self, options: [])
+                _ = URLSession.shared.cx.dataTaskPublisher(for: URL(string: "https://localhost/")!)
             }
         }
     }

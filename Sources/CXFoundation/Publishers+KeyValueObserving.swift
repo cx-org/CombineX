@@ -25,23 +25,23 @@ import CXUtility
 // below. This is based on a trick used in the the standard library's
 // implementation of `NSObject.observe(key path)`
 //@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-public protocol _KeyValueCodingAndObservingPublishing {}
+//public protocol _KeyValueCodingAndObservingPublishing {}
 
 //@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-extension NSObject: _KeyValueCodingAndObservingPublishing {}
+//extension NSObject: _KeyValueCodingAndObservingPublishing {}
 
 //@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-extension _KeyValueCodingAndObservingPublishing where Self: NSObject {
+extension CXWrappers.NSObject {
     /// Publish values when the value identified by a KVO-compliant keypath changes.
     ///
     /// - Parameters:
     ///   - keyPath: The keypath of the property to publish.
     ///   - options: Key-value observing options.
     /// - Returns: A publisher that emits elements each time the property’s value changes.
-    public func publisher<Value>(for keyPath: KeyPath<Self, Value>,
+    public func publisher<Value>(for keyPath: KeyPath<Base, Value>,
                                  options: NSKeyValueObservingOptions = [.initial, .new])
-        -> CXWrappers.KeyValueObservingPublisher<Self, Value> {
-        return CXWrappers.KeyValueObservingPublisher(object: self, keyPath: keyPath, options: options)
+        -> CXWrappers.KeyValueObservingPublisher<Base, Value> {
+        return CXWrappers.KeyValueObservingPublisher(object: base, keyPath: keyPath, options: options)
     }
 }
 
@@ -57,7 +57,7 @@ extension CXWrappers.KeyValueObservingPublisher {
 }
 
 //@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-extension CXWrappers{
+extension CXWrappers {
     /// A publisher that emits events when the value of a KVO-compliant property changes.
     public struct KeyValueObservingPublisher<Subject: Foundation.NSObject, Value> : Equatable {
         public let object: Subject
