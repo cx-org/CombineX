@@ -40,24 +40,24 @@ extension CXWrappers.NSObject {
     /// - Returns: A publisher that emits elements each time the property’s value changes.
     public func publisher<Value>(for keyPath: KeyPath<Base, Value>,
                                  options: NSKeyValueObservingOptions = [.initial, .new])
-        -> CXWrappers.KeyValueObservingPublisher<Base, Value> {
-        return CXWrappers.KeyValueObservingPublisher(object: base, keyPath: keyPath, options: options)
+        -> CXWrappers.NSObject<Base>.KeyValueObservingPublisher<Base, Value> {
+        return CXWrappers.NSObject<Base>.KeyValueObservingPublisher(object: base, keyPath: keyPath, options: options)
     }
 }
 
 //@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-extension CXWrappers.KeyValueObservingPublisher {
+extension CXWrappers.NSObject.KeyValueObservingPublisher {
     /// Returns a publisher that emits values when a KVO-compliant property changes.
     ///
     /// - Returns: A key-value observing publisher.
     public func didChange()
-        -> Publishers.Map<CXWrappers.KeyValueObservingPublisher<Subject, Value>, Void> {
+        -> Publishers.Map<CXWrappers.NSObject<Base>.KeyValueObservingPublisher<Subject, Value>, Void> {
         return map { _ in () }
     }
 }
 
 //@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-extension CXWrappers {
+extension CXWrappers.NSObject {
     /// A publisher that emits events when the value of a KVO-compliant property changes.
     public struct KeyValueObservingPublisher<Subject: Foundation.NSObject, Value> : Equatable {
         public let object: Subject
@@ -86,18 +86,18 @@ extension CXWrappers {
 }
 
 //@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-extension CXWrappers.KeyValueObservingPublisher: Publisher {
+extension CXWrappers.NSObject.KeyValueObservingPublisher: Publisher {
     public typealias Output = Value
     public typealias Failure = Never
 
     public func receive<S: Subscriber>(subscriber: S) where S.Input == Output, S.Failure == Failure {
-        let s = CXWrappers.KVOSubscription(object, keyPath, options, subscriber)
+        let s = CXWrappers.NSObject.KVOSubscription(object, keyPath, options, subscriber)
         subscriber.receive(subscription: s)
     }
 }
 
 //@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-extension CXWrappers {
+extension CXWrappers.NSObject {
     private final class KVOSubscription<Subject: Foundation.NSObject, Value>: Subscription, CustomStringConvertible, CustomReflectable, CustomPlaygroundDisplayConvertible {
         private var observation: NSKeyValueObservation?         // GuardedBy(lock)
         private var demand: Subscribers.Demand                  // GuardedBy(lock)
