@@ -72,8 +72,6 @@ extension Publishers.CollectByCount {
         init(pub: Pub, sub: Sub) {
             self.count = pub.count
             self.sub = sub
-        
-            self.buffer.reserveCapacity(self.count)
         }
         
         func request(_ demand: Subscribers.Demand) {
