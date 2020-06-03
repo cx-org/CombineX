@@ -106,8 +106,6 @@ extension Publishers.CollectByTime {
             self.context = context
             self.time = time
             self.count = count
-            
-            self.buffer.reserveCapacity(self.count)
             self.rescheduleTimeoutTask()
         }
         
