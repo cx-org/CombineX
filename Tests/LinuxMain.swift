@@ -83,6 +83,7 @@ QCKMain([
     SuspiciousBufferSpec.self,
     SuspiciousDemandSpec.self,
     SuspiciousSwitchToLatestSpec.self,
+    SuspiciousTimeoutSpec.self,
     
     FixedSpec.self,
     

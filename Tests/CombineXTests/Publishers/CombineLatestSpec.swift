@@ -98,6 +98,8 @@ class CombineLatestSpec: QuickSpec {
                 })
                 pub.subscribe(sub)
                 
+                subject0.send("A")
+                subject1.send("A")
                 100.times {
                     [subject0, subject1].randomElement()!.send("\($0)")
                 }
