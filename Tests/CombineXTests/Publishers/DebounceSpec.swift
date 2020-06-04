@@ -82,7 +82,7 @@ class DebounceSpec: QuickSpec {
             
             // MARK: 2.1 should request unlimited at the beginning
             it("should request unlimited at the beginning") {
-                let subject = TestSubject<Int, TestError>()
+                let subject = TracingSubject<Int, TestError>()
                 let scheduler = VirtualTimeScheduler()
                 let pub = subject.debounce(for: .seconds(1), scheduler: scheduler)
                 let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in

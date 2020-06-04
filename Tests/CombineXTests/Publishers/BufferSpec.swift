@@ -12,7 +12,7 @@ class BufferSpec: QuickSpec {
             
             // MARK: 1.1 should request unlimit at beginning if strategy is by request
             it("should request unlimit at beginning if strategy is by request") {
-                let subject = TestSubject<Int, TestError>()
+                let subject = TracingSubject<Int, TestError>()
                 let pub = subject.buffer(size: 5, prefetch: .byRequest, whenFull: .dropOldest)
                 
                 let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
@@ -72,7 +72,7 @@ class BufferSpec: QuickSpec {
             
             // MARK: 1.1 should request buffer count at beginning if strategy is keep full
             it("should request buffer count at beginning if strategy is keep full") {
-                let subject = TestSubject<Int, TestError>()
+                let subject = TracingSubject<Int, TestError>()
                 let pub = subject.buffer(size: 10, prefetch: .keepFull, whenFull: .dropOldest)
                 
                 let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in

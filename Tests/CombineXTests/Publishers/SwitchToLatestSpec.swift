@@ -91,7 +91,7 @@ class SwitchToLatestSpec: QuickSpec {
             
             // MARK: 2.1 should always request .unlimited when subscribing
             it("should always request .unlimited when subscribing") {
-                let pub = TestSubject<Just<Int>, Never>()
+                let pub = TracingSubject<Just<Int>, Never>()
                 
                 let sub = pub
                     .switchToLatest()

@@ -14,7 +14,7 @@ class ThrottleSpec: QuickSpec {
                 
                 // MARK: 1.1 should sent the latest value
                 it("should sent the latest value") {
-                    let subject = TestSubject<Int, Never>()
+                    let subject = TracingSubject<Int, Never>()
                     let scheduler = VirtualTimeScheduler()
                     let pub = subject.throttle(for: .seconds(1), scheduler: scheduler, latest: true)
                     let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
@@ -65,7 +65,7 @@ class ThrottleSpec: QuickSpec {
                 
                 // MARK: 1.3 should sent the latest value
                 it("should sent the latest value") {
-                    let subject = TestSubject<Int, Never>()
+                    let subject = TracingSubject<Int, Never>()
                     let scheduler = VirtualTimeScheduler()
                     let pub = subject.throttle(for: .seconds(1), scheduler: scheduler, latest: false)
                     let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
@@ -120,7 +120,7 @@ class ThrottleSpec: QuickSpec {
                 
                 // MARK: 2.1 should request unlimited at the beginning
                 it("should request unlimited at the beginning") {
-                    let subject = TestSubject<Int, TestError>()
+                    let subject = TracingSubject<Int, TestError>()
                     let scheduler = VirtualTimeScheduler()
                     let pub = subject.throttle(for: .seconds(1), scheduler: scheduler, latest: true)
                     let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
@@ -144,7 +144,7 @@ class ThrottleSpec: QuickSpec {
                 
                 // MARK: 2.2 should request unlimited at the beginning
                 it("should request unlimited at the beginning") {
-                    let subject = TestSubject<Int, TestError>()
+                    let subject = TracingSubject<Int, TestError>()
                     let scheduler = VirtualTimeScheduler()
                     let pub = subject.throttle(for: .seconds(1), scheduler: scheduler, latest: false)
                     let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in

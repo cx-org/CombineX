@@ -69,7 +69,7 @@ class VersioningCollectByTimeSpec: QuickSpec {
         
         // FIXME: Versioning: out of sync
         it("should ignore sync backpresure from scheduling sending when strategy is byTimeOrCount") {
-            let subject = TestSubject<Int, TestError>()
+            let subject = TracingSubject<Int, TestError>()
             let scheduler = VirtualTimeScheduler()
             let pub = subject.collect(.byTimeOrCount(scheduler, .seconds(1), 2))
             

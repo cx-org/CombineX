@@ -1,27 +1,24 @@
 import CXShim
 import CXUtility
 
-public class TestSubject<Output, Failure: Error>: Subject {
+// TODO: move to CXTest
+public class TracingSubject<Output, Failure: Error>: Subject {
     
     private let downstreamLock = Lock()
     private var completion: Subscribers.Completion<Failure>?
-    private var downstreamSubscriptions: [Inner] = []
+    private var downstreamSubscriptions: [Subscription] = []
     
     private let upstreamLock = Lock()
     private var isRequested = false
-    private var upstreamSubscriptions: [Subscription] = []
+    private var upstreamSubscriptions: [CXShim.Subscription] = []
     
-    public let name: String?
+    public init() {}
     
-    public init(name: String? = nil) {
-        self.name = name
-    }
-    
-    public var subscriptions: [Inner] {
+    public var subscriptions: [Subscription] {
         return self.downstreamLock.withLockGet(self.downstreamSubscriptions)
     }
     
-    public var subscription: Inner {
+    public var subscription: Subscription {
         return self.subscriptions[0]
     }
     
@@ -35,7 +32,7 @@ public class TestSubject<Output, Failure: Error>: Subject {
             return
         }
         
-        let subscription = Inner(pub: self, sub: AnySubscriber(subscriber))
+        let subscription = Subscription(pub: self, sub: AnySubscriber(subscriber))
         self.downstreamSubscriptions.append(subscription)
         self.downstreamLock.unlock()
         
@@ -72,13 +69,13 @@ public class TestSubject<Output, Failure: Error>: Subject {
         }
     }
     
-    private func removeDownstreamSubscription(_ subscription: Inner) {
+    private func removeDownstreamSubscription(_ subscription: Subscription) {
         self.downstreamLock.lock()
         self.downstreamSubscriptions.removeAll(where: { $0 === subscription })
         self.downstreamLock.unlock()
     }
     
-    public func send(subscription: Subscription) {
+    public func send(subscription: CXShim.Subscription) {
         self.upstreamLock.lock()
         self.upstreamSubscriptions.append(subscription)
         let isRequested = self.isRequested
@@ -106,16 +103,14 @@ public class TestSubject<Output, Failure: Error>: Subject {
     }
 }
 
-extension TestSubject {
+extension TracingSubject {
     
-    public final class Inner: Subscription, CustomStringConvertible, CustomDebugStringConvertible {
+    public final class Subscription: CXShim.Subscription, CustomStringConvertible, CustomDebugStringConvertible {
         
-        typealias Pub = TestSubject<Output, Failure>
+        typealias Pub = TracingSubject<Output, Failure>
         typealias Sub = AnySubscriber<Output, Failure>
         
         let lock = Lock(recursive: true)
-        
-        public var name: String?
        
         var pub: Pub?
         var sub: Sub?
@@ -225,11 +220,11 @@ extension TestSubject {
         }
         
         public var description: String {
-            return "TestSubject"
+            return "TracingSubject"
         }
         
         public var debugDescription: String {
-            return "TestSubject"
+            return "TracingSubject"
         }
     }
 }
