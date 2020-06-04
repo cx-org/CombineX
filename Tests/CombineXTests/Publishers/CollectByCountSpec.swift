@@ -17,8 +17,7 @@ class CollectByCountSpec: QuickSpec {
             // MARK: 1.1 should relay values by collection
             it("should relay values by collection") {
                 let pub = PassthroughSubject<Int, TestError>()
-                let sub = makeTestSubscriber([Int].self, TestError.self, .unlimited)
-                pub.collect(2).subscribe(sub)
+                let sub = pub.collect(2).subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 5.times {
                     pub.send($0)
@@ -35,8 +34,7 @@ class CollectByCountSpec: QuickSpec {
             // MARK: 1.2 should send unsent values if upstream finishes
             it("should send unsent values if upstream finishes") {
                 let pub = PassthroughSubject<Int, TestError>()
-                let sub = makeTestSubscriber([Int].self, TestError.self, .unlimited)
-                pub.collect(2).subscribe(sub)
+                let sub = pub.collect(2).subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 5.times {
                     pub.send($0)

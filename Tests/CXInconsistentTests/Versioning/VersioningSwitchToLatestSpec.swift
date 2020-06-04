@@ -18,8 +18,7 @@ class VersioningSwitchToLatestSpec: QuickSpec {
             
             let subject = PassthroughSubject<PassthroughSubject<Int, TestError>, TestError>()
             let pub = subject.switchToLatest()
-            let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-            pub.subscribe(sub)
+            let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
             
             subject.send(subject1)
             subject1.send(completion: .finished)

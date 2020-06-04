@@ -16,8 +16,7 @@ class NotificationCenterSpec: QuickSpec {
         it("should send as many notications as demand") {
             let name = Notification.Name(rawValue: UUID().uuidString)
             let pub = NotificationCenter.default.cx.publisher(for: name)
-            let sub = makeTestSubscriber(Notification.self, Never.self, .unlimited)
-            pub.subscribe(sub)
+            let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
             
             NotificationCenter.default.post(name: name, object: nil)
             NotificationCenter.default.post(name: name, object: nil)
@@ -30,8 +29,7 @@ class NotificationCenterSpec: QuickSpec {
         it("should stop sending values after cancel") {
             let name = Notification.Name(rawValue: UUID().uuidString)
             let pub = NotificationCenter.default.cx.publisher(for: name)
-            let sub = makeTestSubscriber(Notification.self, Never.self, .unlimited)
-            pub.subscribe(sub)
+            let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
             
             sub.subscription?.cancel()
             

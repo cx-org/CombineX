@@ -22,9 +22,7 @@ class SequenceSpec: QuickSpec {
             it("should send values then send finished") {
                 let values = Array(0..<100)
                 let pub = Publishers.Sequence<[Int], TestError>(sequence: values)
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 let valueEvents = values.map { Event.value($0) }
                 let expected = valueEvents + [.completion(.finished)]

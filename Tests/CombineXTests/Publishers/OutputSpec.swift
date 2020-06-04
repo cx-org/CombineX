@@ -23,8 +23,9 @@ class OutputSpec: QuickSpec {
                     _ = s.receive(4)
                 }
                 
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
-                pub.output(in: 0..<2).subscribe(sub)
+                let sub = pub
+                    .output(in: 0..<2)
+                    .subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 
@@ -87,10 +88,9 @@ class OutputSpec: QuickSpec {
                 }
                 
                 let pub = upstream.output(in: 0..<10)
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
                 
                 expect {
-                    pub.subscribe(sub)
+                    pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 }.toNot(throwAssertion())
             }
             
@@ -101,10 +101,9 @@ class OutputSpec: QuickSpec {
                 }
                 
                 let pub = upstream.output(in: 0..<10)
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
                 
                 expect {
-                    pub.subscribe(sub)
+                    pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 }.toNot(throwAssertion())
             }
             #endif

@@ -15,8 +15,7 @@ class SuspiciousBufferSpec: QuickSpec {
         it("should throw an error when full") {
             let subject = PassthroughSubject<Int, TestError>()
             let pub = subject.buffer(size: 5, prefetch: .byRequest, whenFull: .customError({ TestError.e1 }))
-            let sub = makeTestSubscriber(Int.self, TestError.self, .max(5))
-            pub.subscribe(sub)
+            let sub = pub.subscribeTracingSubscriber(initialDemand: .max(5))
             
             100.times {
                 subject.send($0)

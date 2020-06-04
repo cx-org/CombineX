@@ -22,8 +22,7 @@ class PublishedSpec: QuickSpec {
                     @Published var name = 0
                 }
                 let x = X()
-                let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
-                x.$name.subscribe(sub)
+                let sub = x.$name.subscribeTracingSubscriber(initialDemand: .unlimited)
 
                 expect(sub.eventsWithoutSubscription) == [.value(0)]
                 

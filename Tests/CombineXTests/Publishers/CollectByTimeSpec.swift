@@ -19,9 +19,7 @@ class CollectByTimeSpec: QuickSpec {
                 let subject = PassthroughSubject<Int, TestError>()
                 let scheduler = VirtualTimeScheduler()
                 let pub = subject.collect(.byTime(scheduler, .seconds(2)))
-                let sub = makeTestSubscriber([Int].self, TestError.self, .unlimited)
-                
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 subject.send(1)
                 subject.send(2)
@@ -41,9 +39,7 @@ class CollectByTimeSpec: QuickSpec {
                 let subject = PassthroughSubject<Int, TestError>()
                 let scheduler = VirtualTimeScheduler()
                 let pub = subject.collect(.byTime(scheduler, .seconds(2)))
-                let sub = makeTestSubscriber([Int].self, TestError.self, .unlimited)
-                
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 subject.send(1)
                 subject.send(2)
@@ -67,9 +63,7 @@ class CollectByTimeSpec: QuickSpec {
                 let subject = PassthroughSubject<Int, TestError>()
                 let scheduler = VirtualTimeScheduler()
                 let pub = subject.collect(.byTimeOrCount(scheduler, .seconds(2), 2))
-                let sub = makeTestSubscriber([Int].self, TestError.self, .unlimited)
-                
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 subject.send(1)
                 subject.send(2)

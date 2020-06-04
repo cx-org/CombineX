@@ -20,9 +20,7 @@ class ConcatenateSpec: QuickSpec {
                 let p1 = Just(5)
                 
                 let pub = Publishers.Concatenate(prefix: p0, suffix: p1)
-                let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
-                
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 let valueEvents = (1...5).map { TracingSubscriberEvent<Int, Never>.value($0) }
                 let expected = valueEvents + [.completion(.finished)]
@@ -71,9 +69,7 @@ class ConcatenateSpec: QuickSpec {
                 }
                 
                 let pub = pub1.append(pub2)
-                let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
-                
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 expect(events) == [
                     .subscribeToPrefix,
@@ -81,6 +77,8 @@ class ConcatenateSpec: QuickSpec {
                     .subscribeToSuffix,
                     .afterPrefixFinish
                 ]
+                
+                withExtendedLifetime(sub) {}
             }
         }
     }

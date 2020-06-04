@@ -21,9 +21,7 @@ class TimeoutSpec: QuickSpec {
                 let scheduler = VirtualTimeScheduler()
                 
                 let pub = subject.timeout(.seconds(5), scheduler: scheduler, customError: { TestError.e0 })
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
 
                 scheduler.advance(by: .seconds(4))
                 expect(sub.eventsWithoutSubscription) == []
@@ -38,9 +36,7 @@ class TimeoutSpec: QuickSpec {
                 let scheduler = VirtualTimeScheduler()
                 
                 let pub = subject.timeout(.seconds(5), scheduler: scheduler)
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 scheduler.advance(by: .seconds(6))
                 expect(sub.eventsWithoutSubscription) == [.completion(.finished)]

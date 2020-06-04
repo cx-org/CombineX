@@ -18,8 +18,7 @@ class CurrentValueSubjectSpec: QuickSpec {
             // MARK: 1.1 should not send values to subscribers after sending completion
             it("should not send values to subscribers after sending completion") {
                 let subject = CurrentValueSubject<Int, TestError>(-1)
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                subject.subscribe(sub)
+                let sub = subject.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 subject.send(completion: .finished)
                 
@@ -34,8 +33,7 @@ class CurrentValueSubjectSpec: QuickSpec {
             // MARK: 1.2 should not send completion to subscribers after sending completion
             it("should not send completion to subscribers after sending completion") {
                 let subject = CurrentValueSubject<Int, TestError>(-1)
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                subject.subscribe(sub)
+                let sub = subject.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 subject.send(completion: .failure(.e0))
                 subject.send(completion: .failure(.e1))
@@ -103,8 +101,7 @@ class CurrentValueSubjectSpec: QuickSpec {
                 let subject = CurrentValueSubject<Int, TestError>(-1)
                 subject.send(completion: .finished)
                 
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                subject.subscribe(sub)
+                let sub = subject.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 expect(sub.eventsWithoutSubscription) == [.completion(.finished)]
             }
@@ -147,9 +144,8 @@ class CurrentValueSubjectSpec: QuickSpec {
                 let nums = (0..<10).map { _ in Int.random(in: 1..<10) }
                 
                 for i in nums {
-                    let sub = makeTestSubscriber(Int.self, Error.self, .max(i))
+                    let sub = subject.subscribeTracingSubscriber(initialDemand: .max(i))
                     subs.append(sub)
-                    subject.subscribe(sub)
                 }
                 
                 10.times {
@@ -165,10 +161,9 @@ class CurrentValueSubjectSpec: QuickSpec {
             // MARK: 2.3 should fatal error when less than one demand is requested
             it("should fatal error when less than one demand is requested") {
                 let subject = CurrentValueSubject<Int, Never>(-1)
-                let sub = makeTestSubscriber(Int.self, Never.self, .max(0))
                 
                 expect {
-                    subject.subscribe(sub)
+                    subject.subscribeTracingSubscriber(initialDemand: .max(0))
                 }.to(throwAssertion())
             }
             #endif
@@ -180,8 +175,7 @@ class CurrentValueSubjectSpec: QuickSpec {
             // MARK: 3.1 should retain subscriptions then release them after sending completion
             it("should retain subscriptions then release them after sending completion") {
                 let pub = CurrentValueSubject<Int, Never>(-1)
-                let sub = makeTestSubscriber(Int.self, Never.self, .max(1))
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .max(1))
 
                 weak var subscription = sub.subscription as AnyObject
                 
@@ -199,8 +193,7 @@ class CurrentValueSubjectSpec: QuickSpec {
                 weak var subObj: AnyObject?
                 
                 do {
-                    let sub = makeTestSubscriber(Int.self, Never.self, .max(1))
-                    pub.subscribe(sub)
+                    let sub = pub.subscribeTracingSubscriber(initialDemand: .max(1))
                     subObj = sub
                 }
                 
@@ -212,8 +205,7 @@ class CurrentValueSubjectSpec: QuickSpec {
             // MARK: 3.3 should retain subscriptions then release them after them are cancelled
             it("should retain subscriptions then release them after them are cancelled") {
                 let pub = CurrentValueSubject<Int, Never>(-1)
-                let sub = makeTestSubscriber(Int.self, Never.self, .max(1))
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .max(1))
 
                 weak var subscription = sub.subscription as AnyObject
                 
@@ -232,8 +224,7 @@ class CurrentValueSubjectSpec: QuickSpec {
                 weak var subObj: AnyObject?
                 
                 do {
-                    let sub = makeTestSubscriber(Int.self, Never.self, .max(1))
-                    pub.subscribe(sub)
+                    let sub = pub.subscribeTracingSubscriber(initialDemand: .max(1))
                     subObj = sub
                 }
                 
@@ -250,10 +241,8 @@ class CurrentValueSubjectSpec: QuickSpec {
                     let pub = CurrentValueSubject<Int, Never>(-1)
                     pubObj = pub
                     
-                    let sub = makeTestSubscriber(Int.self, Never.self, .max(1))
+                    let sub = pub.subscribeTracingSubscriber(initialDemand: .max(1))
                     subObj = sub
-                    
-                    pub.subscribe(sub)
                     
                     subscription = sub.subscription
                 }
@@ -279,10 +268,8 @@ class CurrentValueSubjectSpec: QuickSpec {
                     let pub = CurrentValueSubject<Int, Never>(-1)
                     pubObj = pub
                     
-                    let sub = makeTestSubscriber(Int.self, Never.self, .max(1))
+                    let sub = pub.subscribeTracingSubscriber(initialDemand: .max(1))
                     subObj = sub
-                    
-                    pub.subscribe(sub)
                     
                     subscription = sub.subscription
                 }

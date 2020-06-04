@@ -21,8 +21,7 @@ class DropUntilOutputSpec: QuickSpec {
                 let pub1 = PassthroughSubject<Int, TestError>()
                 
                 let pub = pub0.drop(untilOutputFrom: pub1)
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 10.times {
                     pub0.send($0)
@@ -44,8 +43,7 @@ class DropUntilOutputSpec: QuickSpec {
                 let pub1 = PassthroughSubject<Int, TestError>()
                 
                 let pub = pub0.drop(untilOutputFrom: pub1)
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 10.times {
                     pub0.send($0)
@@ -65,8 +63,7 @@ class DropUntilOutputSpec: QuickSpec {
                 let pub1 = PassthroughSubject<Int, TestError>()
                 
                 let pub = pub0.drop(untilOutputFrom: pub1)
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 10.times {
                     pub0.send($0)

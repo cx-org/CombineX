@@ -1,5 +1,6 @@
 import CXShim
 import CXTestUtility
+import Foundation
 import Nimble
 import Quick
 
@@ -18,9 +19,9 @@ class TryCompactMapSpec: QuickSpec {
             it("should compact map values from upstream") {
                 let pub = PassthroughSubject<Int, TestError>()
                 
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
-                
-                pub.tryCompactMap { $0 % 2 == 0 ? $0 : nil }.subscribe(sub)
+                let sub = pub
+                    .tryCompactMap { $0 % 2 == 0 ? $0 : nil }
+                    .subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 for i in 0..<100 {
                     pub.send(i)
@@ -42,9 +43,9 @@ class TryCompactMapSpec: QuickSpec {
             // MARK: 1.2 should send as many values as demand
             it("should send as many values as demand") {
                 let pub = PassthroughSubject<Int, Never>()
-                let sub = makeTestSubscriber(Int.self, Error.self, .max(10))
-                
-                pub.tryCompactMap { $0 % 2 == 0 ? $0 : nil }.subscribe(sub)
+                let sub = pub
+                    .tryCompactMap { $0 % 2 == 0 ? $0 : nil }
+                    .subscribeTracingSubscriber(initialDemand: .max(10))
                 
                 for i in 0..<100 {
                     pub.send(i)
@@ -56,15 +57,12 @@ class TryCompactMapSpec: QuickSpec {
             // MARK: 1.3 should fail if transform throws an error
             it("should fail if transform throws an error") {
                 let pub = PassthroughSubject<Int, TestError>()
-                
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
-                
-                pub.tryCompactMap {
-                    if $0 == 10 {
+                let sub = pub.tryCompactMap { v -> Int in
+                    if v == 10 {
                         throw TestError.e0
                     }
-                    return $0
-                }.subscribe(sub)
+                    return v
+                }.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 for i in 0..<100 {
                     pub.send(i)
@@ -87,10 +85,9 @@ class TryCompactMapSpec: QuickSpec {
                     _ = s.receive(1)
                 }
                 let pub = upstream.tryCompactMap { $0 }
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
                 
                 expect {
-                    pub.subscribe(sub)
+                    pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 }.to(throwAssertion())
             }
             
@@ -100,10 +97,9 @@ class TryCompactMapSpec: QuickSpec {
                     s.receive(completion: .finished)
                 }
                 let pub = upstream.tryCompactMap { $0 }
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
 
                 expect {
-                    pub.subscribe(sub)
+                    pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 }.to(throwAssertion())
             }
             #endif
@@ -115,7 +111,7 @@ class TryCompactMapSpec: QuickSpec {
             // MARK: 2.1 subscription should not release downstream and transform closure after finish
             it("subscription should not release downstream and transform closure after finish") {
                 weak var downstreamObj: AnyObject?
-                weak var closureObj: TestObject?
+                weak var closureObj: NSObject?
                 
                 var subscription: Subscription?
                 
@@ -125,7 +121,7 @@ class TryCompactMapSpec: QuickSpec {
                         s.receive(completion: .finished)
                     }
                     
-                    let obj = TestObject()
+                    let obj = NSObject()
                     closureObj = obj
                     
                     let sub = TracingSubscriber<Int, Error>(receiveSubscription: { s in
@@ -138,7 +134,7 @@ class TryCompactMapSpec: QuickSpec {
                     
                     testPub
                         .tryCompactMap { i -> Int in
-                            obj.run()
+                            withExtendedLifetime(obj) {}
                             return i
                         }
                     .subscribe(sub)
@@ -153,7 +149,7 @@ class TryCompactMapSpec: QuickSpec {
             // MARK: 2.3 subscription should not release downstream and transform closure after cancel
             it("subscription should not release downstream and transform closure after cancel") {
                 weak var downstreamObj: AnyObject?
-                weak var closureObj: TestObject?
+                weak var closureObj: NSObject?
                 
                 var subscription: Subscription?
                 
@@ -162,7 +158,7 @@ class TryCompactMapSpec: QuickSpec {
                         s.receive(subscription: Subscriptions.empty)
                     }
                     
-                    let obj = TestObject()
+                    let obj = NSObject()
                     closureObj = obj
                     
                     let sub = TracingSubscriber<Int, Error>(receiveSubscription: { s in
@@ -175,7 +171,7 @@ class TryCompactMapSpec: QuickSpec {
                     
                     testPub
                         .tryCompactMap { i -> Int in
-                            obj.run()
+                            withExtendedLifetime(obj) {}
                             return i
                         }
                         .subscribe(sub)

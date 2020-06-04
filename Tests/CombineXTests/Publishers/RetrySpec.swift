@@ -25,8 +25,7 @@ class RetrySpec: QuickSpec {
                         s.receive(completion: .failure(errs.removeFirst()))
                     }
                 }
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                pub.retry(5).subscribe(sub)
+                let sub = pub.retry(5).subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 expect(sub.eventsWithoutSubscription) == [.completion(.finished)]
             }
@@ -42,8 +41,7 @@ class RetrySpec: QuickSpec {
                         s.receive(completion: .failure(errs.removeFirst()))
                     }
                 }
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                pub.retry(1).subscribe(sub)
+                let sub = pub.retry(1).subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 expect(sub.eventsWithoutSubscription) == [.completion(.failure(.e1))]
             }
@@ -57,9 +55,7 @@ class RetrySpec: QuickSpec {
                 let pub0 = Publishers.Sequence<[Int], TestError>(sequence: [1, 2, 3])
                 let pub1 = Fail<Int, TestError>(error: .e0)
                 let pub = pub0.append(pub1)
-
-                let sub = makeTestSubscriber(Int.self, TestError.self, .max(5))
-                pub.retry(1).subscribe(sub)
+                let sub = pub.retry(1).subscribeTracingSubscriber(initialDemand: .max(5))
                 
                 expect(sub.eventsWithoutSubscription) == [.value(1), .value(2), .value(3), .value(1), .value(2)]
             }

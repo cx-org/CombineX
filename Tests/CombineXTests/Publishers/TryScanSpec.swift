@@ -17,11 +17,9 @@ class TryScanSpec: QuickSpec {
             // MARK: 1.1 should scan values from upstream
             it("should scan values from upstream") {
                 let subject = PassthroughSubject<Int, Never>()
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
-                
-                subject.tryScan(0) {
-                    $0 + $1
-                }.subscribe(sub)
+                let sub = subject
+                    .tryScan(0) { $0 + $1 }
+                    .subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 100.times {
                     subject.send($0)
@@ -43,11 +41,9 @@ class TryScanSpec: QuickSpec {
             // MARK: 1.2 should fail if closure throws an error
             it("should fail if closure throws an error") {
                 let subject = PassthroughSubject<Int, Never>()
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
-                
-                subject.tryScan(0) { _, _ in
-                    throw TestError.e0
-                }.subscribe(sub)
+                let sub = subject
+                    .tryScan(0) { _, _ in throw TestError.e0 }
+                    .subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 100.times {
                     subject.send($0)
@@ -65,10 +61,9 @@ class TryScanSpec: QuickSpec {
                 }
                 
                 let pub = upstream.tryScan(0) { $0 + $1 }
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
                 
                 expect {
-                    pub.subscribe(sub)
+                    pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 }.toNot(throwAssertion())
             }
             
@@ -79,10 +74,9 @@ class TryScanSpec: QuickSpec {
                 }
                 
                 let pub = upstream.tryScan(0) { $0 + $1 }
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
 
                 expect {
-                    pub.subscribe(sub)
+                    pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 }.toNot(throwAssertion())
             }
             #endif

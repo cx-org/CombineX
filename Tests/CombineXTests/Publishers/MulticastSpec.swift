@@ -18,8 +18,7 @@ class MulticastSpec: QuickSpec {
                 let subject = PassthroughSubject<Int, TestError>()
                 let pub = subject.multicast(subject: PassthroughSubject<Int, TestError>())
                 
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 10.times {
                     subject.send($0)

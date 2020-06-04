@@ -1,27 +1,14 @@
 import CXShim
 import CXUtility
 
-public func makeTestSubscriber<Input, Failure: Error>(_ input: Input.Type, _ failure: Failure.Type, _ demand: Subscribers.Demand) -> TracingSubscriber<Input, Failure> {
-    return TracingSubscriber<Input, Failure>(receiveSubscription: { s in
-         s.request(demand)
-    }, receiveValue: { _ in
-        return .none
-    }, receiveCompletion: { _ in
-    })
-}
-
-public func makeTestSubscriber<Input, Failure: Error>(_ input: Input.Type, _ failure: Failure.Type) -> TracingSubscriber<Input, Failure> {
-    return TracingSubscriber<Input, Failure>(receiveSubscription: { _ in
-    }, receiveValue: { _ in
-        return .none
-    }, receiveCompletion: { _ in
-    })
-}
-
 public extension Publisher {
     
-    func subscribeTestSubscriber(initialDemand: Subscribers.Demand = .unlimited) -> TracingSubscriber<Output, Failure> {
-        let sub = makeTestSubscriber(Output.self, Failure.self, initialDemand)
+    func subscribeTracingSubscriber(initialDemand: Subscribers.Demand? = nil, subsequentDemand: ((Output) -> Demand)? = nil) -> TracingSubscriber<Output, Failure> {
+        let sub = TracingSubscriber<Output, Failure>(receiveSubscription: { s in
+            initialDemand.map(s.request)
+        }, receiveValue: { v -> Subscribers.Demand in
+            return subsequentDemand?(v) ?? .none
+        })
         subscribe(sub)
         return sub
     }

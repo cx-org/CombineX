@@ -15,8 +15,9 @@ class FixedSpec: QuickSpec {
         // MARK: should fix https://github.com/cx-org/CombineX/issues/44
         it("should fix #44") {
             let pub = PassthroughSubject<Int, Never>()
-            let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
-            pub.debounce(for: 0.5, scheduler: DispatchQueue.global().cx).receive(subscriber: sub)
+            let sub = pub
+                .debounce(for: 0.5, scheduler: DispatchQueue.global().cx)
+                .subscribeTracingSubscriber(initialDemand: .unlimited)
             
             (0...10).forEach(pub.send)
             

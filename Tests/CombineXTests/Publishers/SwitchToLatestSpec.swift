@@ -22,8 +22,7 @@ class SwitchToLatestSpec: QuickSpec {
                 let subject = PassthroughSubject<PassthroughSubject<Int, Never>, Never>()
                 
                 let pub = subject.switchToLatest()
-                let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 subject.send(subject1)
                 
@@ -51,8 +50,7 @@ class SwitchToLatestSpec: QuickSpec {
                 
                 let subject = PassthroughSubject<PassthroughSubject<Int, TestError>, TestError>()
                 let pub = subject.switchToLatest()
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 subject.send(subject1)
                 subject1.send(completion: .failure(.e0))
@@ -76,8 +74,7 @@ class SwitchToLatestSpec: QuickSpec {
                 
                 let subject = PassthroughSubject<PassthroughSubject<Int, TestError>, TestError>()
                 let pub = subject.switchToLatest()
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 subject.send(subject1)
                 subject1.send(completion: .finished)
@@ -100,14 +97,17 @@ class SwitchToLatestSpec: QuickSpec {
             it("should always request .unlimited when subscribing") {
                 let pub = TestSubject<Just<Int>, Never>()
                 
-                let sub = makeTestSubscriber(Int.self, Never.self, .max(10))
-                pub.switchToLatest().subscribe(sub)
+                let sub = pub
+                    .switchToLatest()
+                    .subscribeTracingSubscriber(initialDemand: .max(10))
                 
                 pub.send(Just(1))
                 pub.send(Just(1))
                 
                 expect(pub.subscription.requestDemandRecords) == [.unlimited]
                 expect(pub.subscription.syncDemandRecords) == [.max(0), .max(0)]
+                
+                _ = sub
             }
         }
     }

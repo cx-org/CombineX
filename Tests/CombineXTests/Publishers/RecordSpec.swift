@@ -68,8 +68,7 @@ class RecordSpec: QuickSpec {
                     $0.receive(completion: .failure(.e2))
                 }
                 
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                record.subscribe(sub)
+                let sub = record.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 expect(sub.eventsWithoutSubscription) == [.value(1), .value(2), .completion(.failure(.e2))]
             }

@@ -20,8 +20,7 @@ class ZipSpec: QuickSpec {
                 let subject1 = PassthroughSubject<String, TestError>()
                 
                 let pub = subject0.zip(subject1, +)
-                let sub = makeTestSubscriber(String.self, TestError.self, .unlimited)
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 subject0.send("0")
                 subject0.send("1")
@@ -42,8 +41,7 @@ class ZipSpec: QuickSpec {
                 let subject2 = PassthroughSubject<String, TestError>()
                 
                 let pub = subject0.zip(subject1, subject2, { $0 + $1 + $2 })
-                let sub = makeTestSubscriber(String.self, TestError.self, .unlimited)
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 subject0.send("0")
                 subject0.send("1")
@@ -69,8 +67,7 @@ class ZipSpec: QuickSpec {
                 let pub = subjects[0].zip(subjects[1], subjects[2], subjects[3]) {
                     $0 + $1 + $2 + $3
                 }
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 10.times {
                     subjects[$0 % 4].send($0)
@@ -85,8 +82,7 @@ class ZipSpec: QuickSpec {
                 let pub = subjects[0].zip(subjects[1], subjects[2], subjects[3]) {
                     $0 + $1 + $2 + $3
                 }
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 10.times {
                     subjects[$0 % 4].send($0)

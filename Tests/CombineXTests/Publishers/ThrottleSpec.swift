@@ -21,9 +21,7 @@ class ThrottleSpec: QuickSpec {
                     let subject = TestSubject<Int, Never>()
                     let scheduler = VirtualTimeScheduler()
                     let pub = subject.throttle(for: .seconds(1), scheduler: scheduler, latest: true)
-                    let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
-                    
-                    pub.subscribe(sub)
+                    let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                     
                     subject.send(1)
                     subject.send(2)
@@ -74,9 +72,7 @@ class ThrottleSpec: QuickSpec {
                     let subject = TestSubject<Int, Never>()
                     let scheduler = VirtualTimeScheduler()
                     let pub = subject.throttle(for: .seconds(1), scheduler: scheduler, latest: false)
-                    let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
-                    
-                    pub.subscribe(sub)
+                    let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                     
                     subject.send(1)
                     subject.send(2)

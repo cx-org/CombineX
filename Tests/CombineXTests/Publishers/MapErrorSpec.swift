@@ -17,8 +17,9 @@ class MapErrorSpec: QuickSpec {
             // MARK: 1.1 should map error
             it("should map error") {
                 let pub = PassthroughSubject<Int, TestError>()
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                pub.mapError { _ in .e2 }.subscribe(sub)
+                let sub = pub
+                    .mapError { _ in TestError.e2 }
+                    .subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 for i in 0..<100 {
                     pub.send(i)
@@ -37,12 +38,10 @@ class MapErrorSpec: QuickSpec {
                 let upstream = TestPublisher<Int, TestError> { s in
                     _ = s.receive(1)
                 }
-                
                 let pub = upstream.mapError { $0 as Error }
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
                 
                 expect {
-                    pub.subscribe(sub)
+                    pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 }.toNot(throwAssertion())
             }
             
@@ -51,12 +50,10 @@ class MapErrorSpec: QuickSpec {
                 let upstream = TestPublisher<Int, TestError> { s in
                     s.receive(completion: .finished)
                 }
-                
                 let pub = upstream.mapError { $0 as Error }
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
                 
                 expect {
-                    pub.subscribe(sub)
+                    pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 }.toNot(throwAssertion())
             }
             #endif

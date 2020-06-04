@@ -1,7 +1,7 @@
 import CXShim
 import CXUtility
 
-public class TestSubject<Output, Failure: Error>: Subject, TestLogging {
+public class TestSubject<Output, Failure: Error>: Subject {
     
     private let downstreamLock = Lock()
     private var completion: Subscribers.Completion<Failure>?
@@ -108,7 +108,7 @@ public class TestSubject<Output, Failure: Error>: Subject, TestLogging {
 
 extension TestSubject {
     
-    public final class Inner: Subscription, CustomStringConvertible, CustomDebugStringConvertible, TestLogging {
+    public final class Inner: Subscription, CustomStringConvertible, CustomDebugStringConvertible {
         
         typealias Pub = TestSubject<Output, Failure>
         typealias Sub = AnySubscriber<Output, Failure>
@@ -166,7 +166,6 @@ extension TestSubject {
             let more = sub.receive(value)
             
             self._demandRecords.withLockMutating { $0.append((.sync, more)) }
-            self.trace("sync more", more)
             
             self.lock.withLock {
                 _ = self.state.add(more)
@@ -191,7 +190,6 @@ extension TestSubject {
         public func request(_ demand: Subscribers.Demand) {
             precondition(demand > 0)
             self._demandRecords.withLockMutating { $0.append((.request, demand)) }
-            self.trace("request more", demand)
             
             self.lock.lock()
             var pub: Pub?

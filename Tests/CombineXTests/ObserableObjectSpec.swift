@@ -20,7 +20,9 @@ class ObserableObjectSpec: QuickSpec {
             // MARK: 1.1 should publish observed value's change
             it("should publish observed value's change") {
                 let obj = ObservableDerived()
-                let sub = obj.objectWillChange.subscribeTestSubscriber()
+                let sub = obj
+                    .objectWillChange
+                    .subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 obj.x = 1
                 obj.y = "foo"
@@ -45,7 +47,9 @@ class ObserableObjectSpec: QuickSpec {
             // MARK: 1.2 generic class should publish observed value's change
             it("generic class should publish observed value's change") {
                 let obj = ObservableGeneric(0, 0.0)
-                let sub = obj.objectWillChange.subscribeTestSubscriber()
+                let sub = obj
+                    .objectWillChange
+                    .subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 expect(sub.eventsWithoutSubscription.count) == 0
                 
@@ -59,7 +63,9 @@ class ObserableObjectSpec: QuickSpec {
             // MARK: 1.3 derived class should publish non-observable base class's change
             it("derived class should publish non-observable base class's change") {
                 let obj = ObservableDerivedWithNonObservableBase()
-                let sub = obj.objectWillChange.subscribeTestSubscriber()
+                let sub = obj
+                    .objectWillChange
+                    .subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 expect(sub.eventsWithoutSubscription.count) == 0
                 
@@ -79,7 +85,9 @@ class ObserableObjectSpec: QuickSpec {
             // MARK: class derived from objc should publish observed value's change
             it("class derived from objc should publish observed value's change") {
                 let obj = ObservableDerivedObjc()
-                let sub = obj.objectWillChange.subscribeTestSubscriber()
+                let sub = obj
+                    .objectWillChange
+                    .subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 expect(sub.eventsWithoutSubscription.count) == 0
                 

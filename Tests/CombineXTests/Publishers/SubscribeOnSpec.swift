@@ -30,10 +30,11 @@ class SubscribeOnSpec: QuickSpec {
                 }
                 
                 let pub = upstream.subscribe(on: scheduler)
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 expect(executed).toEventually(beTrue())
+                
+                _ = sub
             }
             
             // MARK: 1.2 should not schedule sync backpressure

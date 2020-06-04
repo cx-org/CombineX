@@ -20,9 +20,7 @@ class TryCatchSpec: QuickSpec {
                 let p1 = Publishers.Sequence<[Int], TestError>(sequence: [1, 2, 3]).append(Fail(error: .e0))
                 
                 let pub = p0.tryCatch { _ in p1 }
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
-                
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 
@@ -59,9 +57,7 @@ class TryCatchSpec: QuickSpec {
                 let p0 = Pub0(error: .e0)
                 
                 let pub: Publishers.TryCatch<Pub0, Pub1> = p0.tryCatch { _ in throw TestError.e2 }
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
-                
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 expect(got) == [.completion(.failure(.e2))]

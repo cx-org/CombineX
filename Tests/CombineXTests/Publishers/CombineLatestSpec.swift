@@ -20,8 +20,7 @@ class CombineLatestSpec: QuickSpec {
                 let subject1 = PassthroughSubject<String, TestError>()
                 
                 let pub = subject0.combineLatest(subject1, +)
-                let sub = makeTestSubscriber(String.self, TestError.self, .unlimited)
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 subject0.send("0")
                 subject0.send("1")
@@ -42,8 +41,7 @@ class CombineLatestSpec: QuickSpec {
                 let subject2 = PassthroughSubject<String, TestError>()
                 
                 let pub = subject0.combineLatest(subject1, subject2, { $0 + $1 + $2 })
-                let sub = makeTestSubscriber(String.self, TestError.self, .max(10))
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .max(10))
                 
                 subject0.send("0")
                 subject0.send("1")
@@ -69,8 +67,7 @@ class CombineLatestSpec: QuickSpec {
                 let pub = subjects[0].combineLatest(subjects[1], subjects[2], subjects[3]) {
                     $0 + $1 + $2 + $3
                 }
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 10.times {
                     subjects[$0 % 4].send($0)
@@ -117,9 +114,7 @@ class CombineLatestSpec: QuickSpec {
                 let subject1 = TestSubject<Int, TestError>()
                 
                 let pub = subject0.combineLatest(subject1, +)
-                let sub = makeTestSubscriber(Int.self, TestError.self, .max(10))
-                
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .max(10))
                 
                 100.times {
                     [subject0, subject1].randomElement()!.send($0)
@@ -130,6 +125,8 @@ class CombineLatestSpec: QuickSpec {
                 
                 expect(records0.allSatisfy({ $0 == .none })) == true
                 expect(records1.allSatisfy({ $0 == .none })) == true
+                
+                _ = sub
             }
         }
     }

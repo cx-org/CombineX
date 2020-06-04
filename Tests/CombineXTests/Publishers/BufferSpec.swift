@@ -42,8 +42,7 @@ class BufferSpec: QuickSpec {
             it("should drop oldest") {
                 let subject = PassthroughSubject<Int, TestError>()
                 let pub = subject.buffer(size: 5, prefetch: .byRequest, whenFull: .dropOldest)
-                let sub = makeTestSubscriber(Int.self, TestError.self, .max(5))
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .max(5))
                 
                 11.times {
                     subject.send($0)
@@ -59,8 +58,7 @@ class BufferSpec: QuickSpec {
             it("should drop newest") {
                 let subject = PassthroughSubject<Int, TestError>()
                 let pub = subject.buffer(size: 5, prefetch: .byRequest, whenFull: .dropNewest)
-                let sub = makeTestSubscriber(Int.self, TestError.self, .max(5))
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .max(5))
                 
                 11.times {
                     subject.send($0)
