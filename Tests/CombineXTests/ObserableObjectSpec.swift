@@ -10,10 +10,6 @@ class ObserableObjectSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Publish
         describe("Publish") {
             

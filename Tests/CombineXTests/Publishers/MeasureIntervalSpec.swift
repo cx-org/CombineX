@@ -7,10 +7,6 @@ import Quick
 class MeasureIntervalSpec: QuickSpec {
     
     override func spec() {
-        
-        afterEach {
-            TestResources.release()
-        }
     
         // MARK: Measure Interval
         describe("Measure Interval") {

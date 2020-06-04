@@ -7,10 +7,6 @@ class BufferSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Relay-ByRequest
         describe("Relay-ByRequest") {
             

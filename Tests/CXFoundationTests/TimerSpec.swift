@@ -7,10 +7,6 @@ import Quick
 class TimerSpec: QuickSpec {
     
     override func spec() {
-        
-        afterEach {
-            TestResources.release()
-        }
 
         // MARK: 1.1 should not send values before connect
         it("should not send values before connect") {

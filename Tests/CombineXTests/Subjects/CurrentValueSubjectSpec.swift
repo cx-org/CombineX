@@ -8,10 +8,6 @@ class CurrentValueSubjectSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Send Events
         describe("Send Events") {
             

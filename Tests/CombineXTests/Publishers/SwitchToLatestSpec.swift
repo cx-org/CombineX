@@ -6,10 +6,6 @@ import Quick
 class SwitchToLatestSpec: QuickSpec {
     
     override func spec() {
-        
-        afterEach {
-            TestResources.release()
-        }
 
         // MARK: - Relay
         describe("Relay") {

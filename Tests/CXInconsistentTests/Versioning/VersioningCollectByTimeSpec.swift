@@ -7,10 +7,6 @@ class VersioningCollectByTimeSpec: QuickSpec {
 
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         describe("should schedule events since iOS 13.3") {
             
             it("should schedule value") {

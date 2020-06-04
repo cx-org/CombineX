@@ -8,10 +8,6 @@ class FixedSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: should fix https://github.com/cx-org/CombineX/issues/44
         it("should fix #44") {
             let pub = PassthroughSubject<Int, Never>()

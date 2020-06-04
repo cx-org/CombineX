@@ -14,10 +14,6 @@ class URLSessionSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: 1.1 should receive response from session
         it("should receive response from session") {
             var response: URLResponse?

@@ -8,10 +8,6 @@ class SuspiciousTimeoutSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         it("should not send value without demand") {
             let subject = PassthroughSubject<Int, Never>()
             let pub = subject.timeout(.milliseconds(1), scheduler: DispatchQueue.global().cx)

@@ -7,10 +7,6 @@ class MulticastSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         describe("Relay") {
             
             // MARK: 1.1 should multicase after connect

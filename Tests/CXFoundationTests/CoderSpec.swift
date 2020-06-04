@@ -8,10 +8,6 @@ class CoderSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: 1.1 should encode/decode json as expected
         it("should encode/decode json as expected") {
             struct User: Codable {

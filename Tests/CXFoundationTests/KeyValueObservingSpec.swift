@@ -13,10 +13,6 @@ class KeyValueObservingSpec: QuickSpec {
 
     override func spec() {
 
-        afterEach {
-            TestResources.release()
-        }
-
         // Note that our implementation of the KVO publisher is a copy of Apple's open source code, so its behavior should be absolutely identical.
 
         // MARK: - Publish

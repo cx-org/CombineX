@@ -10,10 +10,6 @@ class DemandSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Create
         describe("Create") {
             

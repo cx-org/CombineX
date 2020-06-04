@@ -8,10 +8,6 @@ class PrintSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Print
         describe("Print") {
             

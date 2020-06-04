@@ -8,10 +8,6 @@ class AutoconnectSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Auto Connect
         describe("Auto Connect") {
             

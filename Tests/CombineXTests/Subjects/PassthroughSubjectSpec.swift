@@ -8,10 +8,6 @@ class PassthroughSubjectSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         describe("Send Subscription") {
                
             // MARK: 5.1 should retain all upstream subscriptions

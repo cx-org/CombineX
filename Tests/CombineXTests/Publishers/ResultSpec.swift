@@ -10,10 +10,6 @@ class ResultSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Send Values
         describe("Send Values") {
             

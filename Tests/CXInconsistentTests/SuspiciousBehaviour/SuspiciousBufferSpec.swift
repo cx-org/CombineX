@@ -7,10 +7,6 @@ class SuspiciousBufferSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: 1.4 should throw an error when full
         it("should throw an error when full") {
             let subject = PassthroughSubject<Int, TestError>()

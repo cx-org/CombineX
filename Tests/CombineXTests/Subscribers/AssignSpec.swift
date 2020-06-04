@@ -8,10 +8,6 @@ class AssignSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         class Object {
             
             var value = 0 {

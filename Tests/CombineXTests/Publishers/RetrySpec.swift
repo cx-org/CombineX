@@ -7,10 +7,6 @@ class RetrySpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Retry
         describe("Retry") {
             

@@ -7,10 +7,6 @@ import Quick
 class NotificationCenterSpec: QuickSpec {
     
     override func spec() {
-        
-        afterEach {
-            TestResources.release()
-        }
 
         // MARK: 1.1 should send as many notications as demand
         it("should send as many notications as demand") {

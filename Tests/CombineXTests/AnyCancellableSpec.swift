@@ -8,10 +8,6 @@ class AnyCancellableSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Cancel
         describe("Cancel") {
             

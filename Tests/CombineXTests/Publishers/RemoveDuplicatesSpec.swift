@@ -7,10 +7,6 @@ class RemoveDuplicatesSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         it("should ignore duplicate value") {
             let subject = PassthroughSubject<Int, Never>()
             let pub = subject.removeDuplicates()

@@ -8,10 +8,6 @@ class FutureSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Future
         describe("Future") {
             

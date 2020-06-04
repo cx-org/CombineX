@@ -7,10 +7,6 @@ class RecordSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Recording
         describe("Recording") {
             

@@ -10,10 +10,6 @@ class CombineIdentifierSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Unique
         describe("Unique") {
             

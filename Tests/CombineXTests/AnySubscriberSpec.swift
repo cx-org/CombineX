@@ -7,10 +7,6 @@ class AnySubscriberSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Erase
         describe("Erase") {
             
