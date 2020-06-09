@@ -103,6 +103,8 @@ public class TracingSubject<Output, Failure: Error>: Subject {
     }
 }
 
+// MARK: - Subscription
+
 extension TracingSubject {
     
     public final class Subscription: CXShim.Subscription, CustomStringConvertible, CustomDebugStringConvertible {
@@ -115,6 +117,11 @@ extension TracingSubject {
         var pub: Pub?
         var sub: Sub?
         
+        enum DemandState: Equatable {
+            case waiting
+            case demanding(Subscribers.Demand)
+            case completed
+        }
         var state: DemandState = .waiting
         
         enum DemandType {
@@ -152,7 +159,7 @@ extension TracingSubject {
                 return
             }
             
-            _ = self.state.sub(.max(1))
+            self.state.sub(.max(1))
             
             let sub = self.sub!
             self.lock.unlock()
@@ -163,7 +170,7 @@ extension TracingSubject {
             self._demandRecords.withLockMutating { $0.append((.sync, more)) }
             
             self.lock.withLock {
-                _ = self.state.add(more)
+                self.state.add(more)
             }
         }
         
@@ -194,7 +201,7 @@ extension TracingSubject {
                 pub = self.pub
                 self.state = .demanding(demand)
             case .demanding:
-                _ = self.state.add(demand)
+                self.state.add(demand)
             case .completed:
                 break
             }
@@ -228,3 +235,41 @@ extension TracingSubject {
         }
     }
 }
+
+// MARK: - DemandState
+
+extension TracingSubject.Subscription.DemandState {
+    
+    var demand: Subscribers.Demand? {
+        switch self {
+        case .demanding(let d): return d
+        default:                return nil
+        }
+    }
+}
+
+extension TracingSubject.Subscription.DemandState {
+    
+    /// - Returns: `true` if the previous state is not `completed`.
+    mutating func complete() -> Bool {
+        if self == .completed {
+            return false
+        } else {
+            self = .completed
+            return true
+        }
+    }
+    
+    mutating func add(_ demand: Subscribers.Demand) {
+        if let old = self.demand {
+            self = .demanding(old + demand)
+        }
+    }
+    
+    mutating func sub(_ demand: Subscribers.Demand) {
+        if let old = self.demand {
+            self = .demanding(old - demand)
+        }
+    }
+}
+

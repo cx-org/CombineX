@@ -72,8 +72,8 @@ class BufferSpec: QuickSpec {
                 
                 expect(subject.subscription.requestDemandRecords) == [.max(10), .max(5), .max(19), .max(5)]
                 
-                let max1 = Array(repeating: Demand.max(1), count: 5)
-                let max0 = Array(repeating: Demand.max(0), count: 15)
+                let max1 = Array(repeating: Subscribers.Demand.max(1), count: 5)
+                let max0 = Array(repeating: Subscribers.Demand.max(0), count: 15)
                 expect(subject.subscription.syncDemandRecords) == max1 + max0
             }
         }

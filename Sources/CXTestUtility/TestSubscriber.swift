@@ -3,7 +3,7 @@ import CXUtility
 
 public extension Publisher {
     
-    func subscribeTracingSubscriber(initialDemand: Subscribers.Demand? = nil, subsequentDemand: ((Output) -> Demand)? = nil) -> TracingSubscriber<Output, Failure> {
+    func subscribeTracingSubscriber(initialDemand: Subscribers.Demand? = nil, subsequentDemand: ((Output) -> Subscribers.Demand)? = nil) -> TracingSubscriber<Output, Failure> {
         let sub = TracingSubscriber<Output, Failure>(receiveSubscription: { s in
             initialDemand.map(s.request)
         }, receiveValue: { v -> Subscribers.Demand in
