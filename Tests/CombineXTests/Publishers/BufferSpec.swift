@@ -63,8 +63,6 @@ class BufferSpec: QuickSpec {
                 let pub = subject.buffer(size: 10, prefetch: .keepFull, whenFull: .dropOldest)
                 let sub = pub.subscribeTracingSubscriber(initialDemand: .max(5), subsequentDemand: { [5, 10].contains($0) ? .max(5) : .max(0) })
                 
-                pub.subscribe(sub)
-                
                 subject.send(contentsOf: 0..<100)
                 
                 sub.subscription?.request(.max(9))
