@@ -15,9 +15,7 @@ class CollectByCountSpec: QuickSpec {
                 let pub = PassthroughSubject<Int, TestError>()
                 let sub = pub.collect(2).subscribeTracingSubscriber(initialDemand: .unlimited)
                 
-                5.times {
-                    pub.send($0)
-                }
+                pub.send(contentsOf: 0..<5)
                 pub.send(completion: .failure(.e0))
                 
                 expect(sub.eventsWithoutSubscription) == [
@@ -32,9 +30,7 @@ class CollectByCountSpec: QuickSpec {
                 let pub = PassthroughSubject<Int, TestError>()
                 let sub = pub.collect(2).subscribeTracingSubscriber(initialDemand: .unlimited)
                 
-                5.times {
-                    pub.send($0)
-                }
+                pub.send(contentsOf: 0..<5)
                 pub.send(completion: .finished)
                 
                 expect(sub.eventsWithoutSubscription) == [
@@ -57,9 +53,7 @@ class CollectByCountSpec: QuickSpec {
                 
                 pub.collect(2).subscribe(sub)
                 
-                5.times {
-                    pub.send($0)
-                }
+                pub.send(contentsOf: 0..<5)
                 pub.send(completion: .finished)
                 
                 expect(sub.eventsWithoutSubscription) == [.value([0, 1]), .value([2, 3]), .completion(.finished)]

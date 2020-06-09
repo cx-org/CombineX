@@ -14,19 +14,9 @@ class BufferSpec: QuickSpec {
             it("should request unlimit at beginning if strategy is by request") {
                 let subject = TracingSubject<Int, TestError>()
                 let pub = subject.buffer(size: 5, prefetch: .byRequest, whenFull: .dropOldest)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .max(2), subsequentDemand: { [5].contains($0) ? .max(5) : .max(0) })
                 
-                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
-                    s.request(.max(2))
-                }, receiveValue: { v in
-                    return [5].contains(v) ? .max(5) : .max(0)
-                }, receiveCompletion: { _ in
-                })
-                
-                pub.subscribe(sub)
-                
-                100.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<100)
                 
                 sub.subscription?.request(.max(2))
                 
@@ -40,9 +30,7 @@ class BufferSpec: QuickSpec {
                 let pub = subject.buffer(size: 5, prefetch: .byRequest, whenFull: .dropOldest)
                 let sub = pub.subscribeTracingSubscriber(initialDemand: .max(5))
                 
-                11.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<11)
                 
                 sub.subscription?.request(.max(5))
                 
@@ -56,9 +44,7 @@ class BufferSpec: QuickSpec {
                 let pub = subject.buffer(size: 5, prefetch: .byRequest, whenFull: .dropNewest)
                 let sub = pub.subscribeTracingSubscriber(initialDemand: .max(5))
                 
-                11.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<11)
                 
                 sub.subscription?.request(.max(5))
                 
@@ -74,19 +60,11 @@ class BufferSpec: QuickSpec {
             it("should request buffer count at beginning if strategy is keep full") {
                 let subject = TracingSubject<Int, TestError>()
                 let pub = subject.buffer(size: 10, prefetch: .keepFull, whenFull: .dropOldest)
-                
-                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
-                    s.request(.max(5))
-                }, receiveValue: { v in
-                    return [5, 10].contains(v) ? .max(5) : .max(0)
-                }, receiveCompletion: { _ in
-                })
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .max(5), subsequentDemand: { [5, 10].contains($0) ? .max(5) : .max(0) })
                 
                 pub.subscribe(sub)
                 
-                100.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<100)
                 
                 sub.subscription?.request(.max(9))
                 sub.subscription?.request(.max(5))

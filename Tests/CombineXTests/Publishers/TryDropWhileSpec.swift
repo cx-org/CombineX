@@ -16,9 +16,7 @@ class TryDropWhileSpec: QuickSpec {
                 let pub = subject.tryDrop(while: { $0 < 50 })
                 let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
-                100.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<100)
                 subject.send(completion: .finished)
                 
                 let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }

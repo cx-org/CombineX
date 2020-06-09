@@ -13,14 +13,10 @@ class AutoconnectSpec: QuickSpec {
             
             it("should auto connect and cancel") {
                 let subject = PassthroughSubject<Int, Never>()
-                let connectable = subject.makeConnectable().autoconnect()
-                
-                var subscription: Subscription?
-                let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
-                    subscription = s
-                    s.request(.unlimited)
-                })
-                connectable.receive(subscriber: sub)
+                let sub = subject
+                    .makeConnectable()
+                    .autoconnect()
+                    .subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 subject.send(1)
                 subject.send(2)
@@ -28,7 +24,7 @@ class AutoconnectSpec: QuickSpec {
                 
                 expect(sub.eventsWithoutSubscription) == [.value(1), .value(2), .value(3)]
                 
-                subscription?.cancel()
+                sub.subscription?.cancel()
                 
                 subject.send(4)
                 subject.send(5)

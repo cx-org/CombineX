@@ -30,7 +30,7 @@ class MergeSpec: QuickSpec {
                 100.times {
                     subjects.randomElement()!.send($0)
                 }
-
+                
                 let events = (0..<100).map {
                     TracingSubscriberEvent<Int, TestError>.value($0)
                 }

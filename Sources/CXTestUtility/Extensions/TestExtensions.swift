@@ -64,17 +64,6 @@ public extension Int {
     }
 }
 
-public extension Optional {
-    
-    var isNil: Bool {
-        return self == nil
-    }
-    
-    var isNotNil: Bool {
-        return self != nil
-    }
-}
-
 extension CXWrappers.DispatchQueue.SchedulerTimeType.Stride {
     
     public var seconds: TimeInterval {

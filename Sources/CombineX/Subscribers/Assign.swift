@@ -65,7 +65,7 @@ extension Subscribers {
         
         public final func receive(_ value: Input) -> Subscribers.Demand {
             self.lock.lock()
-            if self.subscription.isNil {
+            if self.subscription == nil {
                 self.lock.unlock()
             } else {
                 let obj = self.object

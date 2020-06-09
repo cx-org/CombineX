@@ -16,24 +16,17 @@ class MulticastSpec: QuickSpec {
                 
                 let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
-                10.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<10)
                 expect(sub.eventsWithoutSubscription) == []
                 
                 let cancel = pub.connect()
                 
-                10.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<10)
                 expect(sub.eventsWithoutSubscription) == (0..<10).map { .value($0) }
                 
                 cancel.cancel()
                 
-                10.times {
-                    subject.send($0)
-                }
-                
+                subject.send(contentsOf: 0..<10)
                 expect(sub.eventsWithoutSubscription) == (0..<10).map { .value($0) }
             }
         }

@@ -17,9 +17,7 @@ class TryReduceSpec: QuickSpec {
                     .tryReduce(0) { $0 + $1 }
                     .subscribeTracingSubscriber(initialDemand: .unlimited)
                 
-                100.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<100)
                 subject.send(completion: .finished)
                 
                 let reduced = (0..<100).reduce(0) { $0 + $1 }
@@ -35,9 +33,7 @@ class TryReduceSpec: QuickSpec {
                     .tryReduce(0) { _, _ in throw TestError.e0 }
                     .subscribeTracingSubscriber(initialDemand: .unlimited)
                 
-                100.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<100)
                 
                 let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 expect(got) == [.completion(.failure(.e0))]

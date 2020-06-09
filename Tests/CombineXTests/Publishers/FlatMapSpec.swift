@@ -163,15 +163,9 @@ class FlatMapSpec: QuickSpec {
                 
                 pub.subscribe(sub)
                 
-                let g = DispatchGroup()
-                
-                100.times { i in
-                    DispatchQueue.global().async(group: g) {
-                        subjects[i].send(i)
-                    }
+                DispatchQueue.global().concurrentPerform(iterations: 100) { i in
+                    subjects[i].send(i)
                 }
-                
-                g.wait()
                 
                 expect(sub.eventsWithoutSubscription.count) == 10
             }

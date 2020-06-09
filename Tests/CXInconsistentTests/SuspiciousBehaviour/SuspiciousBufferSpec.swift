@@ -13,9 +13,7 @@ class SuspiciousBufferSpec: QuickSpec {
             let pub = subject.buffer(size: 5, prefetch: .byRequest, whenFull: .customError({ TestError.e1 }))
             let sub = pub.subscribeTracingSubscriber(initialDemand: .max(5))
             
-            100.times {
-                subject.send($0)
-            }
+            subject.send(contentsOf: 0..<100)
             
             // FIXME: Apple's combine doesn't receive error.
             let valueEvents = Array(0..<5).map { TracingSubscriberEvent<Int, TestError>.value($0) }

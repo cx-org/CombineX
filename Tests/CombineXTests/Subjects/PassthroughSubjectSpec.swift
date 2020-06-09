@@ -95,9 +95,7 @@ class PassthroughSubjectSpec: QuickSpec {
                 
                 subject.send(completion: .finished)
                 
-                10.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<10)
                 expect(sub.eventsWithoutSubscription) == [.completion(.finished)]
             }
             
@@ -181,16 +179,12 @@ class PassthroughSubjectSpec: QuickSpec {
                 
                 subject.subscribe(sub)
                 
-                10.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<10)
                 
                 expect(sub.eventsWithoutSubscription.count) == 2
                 sub.subscription?.request(.max(5))
                 
-                10.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<10)
                 expect(sub.eventsWithoutSubscription.count) == 8
             }
             
@@ -206,9 +200,7 @@ class PassthroughSubjectSpec: QuickSpec {
                     subs.append(sub)
                 }
                 
-                10.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<10)
 
                 for (i, sub) in zip(nums, subs) {
                     expect(sub.eventsWithoutSubscription.count) == i
@@ -397,15 +389,7 @@ class PassthroughSubjectSpec: QuickSpec {
                 
                 subject.subscribe(sub)
                 
-                let g = DispatchGroup()
-                
-                100.times { i in
-                    DispatchQueue.global().async(group: g) {
-                        subject.send(i)
-                    }
-                }
-                
-                g.wait()
+                DispatchQueue.global().concurrentPerform(iterations: 100, execute: subject.send)
                 
                 expect(sub.eventsWithoutSubscription.count) == 10
             }
@@ -427,15 +411,7 @@ class PassthroughSubjectSpec: QuickSpec {
                 
                 subject.subscribe(sub)
                 
-                let g = DispatchGroup()
-                
-                100.times { i in
-                    DispatchQueue.global().async(group: g) {
-                        subject.send(i)
-                    }
-                }
-
-                g.wait()
+                DispatchQueue.global().concurrentPerform(iterations: 100, execute: subject.send)
                 
                 expect(sub.eventsWithoutSubscription.count) == 10
             }

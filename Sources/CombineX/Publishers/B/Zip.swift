@@ -228,7 +228,7 @@ extension Publishers.Zip {
             }
             
             func receive(_ input: Input) -> Subscribers.Demand {
-                guard self.subscription.isNotNil else {
+                guard self.subscription.get() != nil else {
                     return .none
                 }
                 return self.parent.childReceive(input, from: self.source)

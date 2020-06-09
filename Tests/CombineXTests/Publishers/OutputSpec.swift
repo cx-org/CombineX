@@ -42,9 +42,7 @@ class OutputSpec: QuickSpec {
                 
                 pub.subscribe(sub)
                 
-                100.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<100)
                 
                 let valueEvents = (10..<20).map {
                     TracingSubscriberEvent<Int, Never>.value($0)
@@ -66,9 +64,7 @@ class OutputSpec: QuickSpec {
                 
                 pub.subscribe(sub)
                 
-                100.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<100)
                 
                 let expected = (10..<17).map {
                     TracingSubscriberEvent<Int, Never>.value($0)

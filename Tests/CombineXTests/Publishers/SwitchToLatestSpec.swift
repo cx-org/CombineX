@@ -50,15 +50,11 @@ class SwitchToLatestSpec: QuickSpec {
                 
                 subject.send(subject1)
                 subject1.send(completion: .failure(.e0))
-                10.times {
-                    subject1.send($0)
-                }
+                subject1.send(contentsOf: 0..<10)
                 
                 subject.send(subject2)
                 subject2.send(completion: .failure(.e1))
-                10.times {
-                    subject2.send($0)
-                }
+                subject2.send(contentsOf: 0..<10)
                 
                 expect(sub.eventsWithoutSubscription) == [.completion(.failure(.e0))]
             }

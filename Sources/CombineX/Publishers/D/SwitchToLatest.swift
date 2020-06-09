@@ -278,7 +278,7 @@ extension Publishers.SwitchToLatest {
             }
             
             func receive(_ input: P.Output) -> Subscribers.Demand {
-                guard self.subscription.isNotNil else {
+                guard self.subscription.get() != nil else {
                     return .none
                 }
                 return self.parent.receive(input, from: self)
