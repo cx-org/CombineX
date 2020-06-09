@@ -12,7 +12,7 @@ class SequenceSpec: QuickSpec {
         // MARK: - Send Values
         describe("Send Values") {
             typealias Sub = TracingSubscriber<Int, TestError>
-            typealias Event = TracingSubscriberEvent<Int, TestError>
+            typealias Event = Sub.Event
             
             // MARK: 1.1 should send values then send finished
             it("should send values then send finished") {
@@ -20,7 +20,7 @@ class SequenceSpec: QuickSpec {
                 let pub = Publishers.Sequence<[Int], TestError>(sequence: values)
                 let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
-                let valueEvents = values.map { Event.value($0) }
+                let valueEvents = values.map(Event.value)
                 let expected = valueEvents + [.completion(.finished)]
                 expect(sub.eventsWithoutSubscription) == expected
             }

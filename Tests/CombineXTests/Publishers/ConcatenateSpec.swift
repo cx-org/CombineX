@@ -18,7 +18,7 @@ class ConcatenateSpec: QuickSpec {
                 let pub = Publishers.Concatenate(prefix: p0, suffix: p1)
                 let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
-                let valueEvents = (1...5).map { TracingSubscriberEvent<Int, Never>.value($0) }
+                let valueEvents = (1...5).map(TracingSubscriber<Int, Never>.Event.value)
                 let expected = valueEvents + [.completion(.finished)]
                 expect(sub.eventsWithoutSubscription) == expected
             }
@@ -38,7 +38,7 @@ class ConcatenateSpec: QuickSpec {
                 
                 pub.subscribe(sub)
                 
-                let events = (0..<12).map { TracingSubscriberEvent<Int, Never>.value($0) }
+                let events = (0..<12).map(TracingSubscriber<Int, Never>.Event.value)
                 expect(sub.eventsWithoutSubscription) == events
             }
             

@@ -23,7 +23,7 @@ class MapErrorSpec: QuickSpec {
                 
                 pub.send(completion: .failure(.e0))
                 
-                let valueEvents = (0..<100).map { TracingSubscriberEvent<Int, TestError>.value($0) }
+                let valueEvents = (0..<100).map(TracingSubscriber<Int, TestError>.Event.value)
                 let expected = valueEvents + [.completion(.failure(.e2))]
                 expect(sub.eventsWithoutSubscription) == expected
             }

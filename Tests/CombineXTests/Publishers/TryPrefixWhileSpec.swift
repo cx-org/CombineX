@@ -21,9 +21,7 @@ class TryPrefixWhileSpec: QuickSpec {
                 
                 let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 
-                let valueEvents = (0..<50).map {
-                    TracingSubscriberEvent<Int, TestError>.value($0)
-                }
+                let valueEvents = (0..<50).map(TracingSubscriber<Int, TestError>.Event.value)
                 let expected = valueEvents + [.completion(.finished)]
                 
                 expect(got) == expected

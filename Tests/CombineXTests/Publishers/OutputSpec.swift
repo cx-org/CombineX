@@ -44,9 +44,7 @@ class OutputSpec: QuickSpec {
                 
                 subject.send(contentsOf: 0..<100)
                 
-                let valueEvents = (10..<20).map {
-                    TracingSubscriberEvent<Int, Never>.value($0)
-                }
+                let valueEvents = (10..<20).map(TracingSubscriber<Int, Never>.Event.value)
                 let expected = valueEvents + [.completion(.finished)]
                 expect(sub.eventsWithoutSubscription) == expected
             }
@@ -66,9 +64,7 @@ class OutputSpec: QuickSpec {
                 
                 subject.send(contentsOf: 0..<100)
                 
-                let expected = (10..<17).map {
-                    TracingSubscriberEvent<Int, Never>.value($0)
-                }
+                let expected = (10..<17).map(TracingSubscriber<Int, Never>.Event.value)
                 expect(sub.eventsWithoutSubscription) == expected
             }
             

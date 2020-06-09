@@ -26,7 +26,7 @@ class PrefixUntilOutputSpec: QuickSpec {
                     pub0.send(i)
                 }
                  
-                let valueEvents = (0..<10).map { TracingSubscriberEvent<Int, TestError>.value($0) }
+                let valueEvents = (0..<10).map(TracingSubscriber<Int, TestError>.Event.value)
                 let expected = valueEvents + [.completion(.finished)]
                 expect(sub.eventsWithoutSubscription) == expected
             }
@@ -46,9 +46,7 @@ class PrefixUntilOutputSpec: QuickSpec {
                     pub0.send(i)
                 }
                 
-                let expected = (0..<20).map {
-                    TracingSubscriberEvent<Int, TestError>.value($0)
-                }
+                let expected = (0..<20).map(TracingSubscriber<Int, TestError>.Event.value)
                 expect(sub.eventsWithoutSubscription) == expected
             }
         }

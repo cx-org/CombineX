@@ -33,8 +33,6 @@ public extension TracingSubscriber.Event {
     }
 }
 
-public typealias TracingSubscriberEvent<Input, Failure: Error> = TracingSubscriber<Input, Failure>.Event
-
 public protocol TestEventProtocol {
     associatedtype Input
     associatedtype Failure: Error

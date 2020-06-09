@@ -21,9 +21,7 @@ class TryDropWhileSpec: QuickSpec {
                 
                 let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 
-                let valueEvents = (50..<100).map {
-                    TracingSubscriberEvent<Int, TestError>.value($0)
-                }
+                let valueEvents = (50..<100).map(TracingSubscriber<Int, TestError>.Event.value)
                 let expected = valueEvents + [.completion(.finished)]
                 
                 expect(got) == expected

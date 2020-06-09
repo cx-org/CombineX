@@ -31,9 +31,7 @@ class MergeSpec: QuickSpec {
                     subjects.randomElement()!.send($0)
                 }
                 
-                let events = (0..<100).map {
-                    TracingSubscriberEvent<Int, TestError>.value($0)
-                }
+                let events = (0..<100).map(TracingSubscriber<Int, TestError>.Event.value)
                 expect(sub.eventsWithoutSubscription) == events
             }
             
@@ -55,9 +53,7 @@ class MergeSpec: QuickSpec {
                     subjects.randomElement()!.send($0)
                 }
 
-                let events = (0..<100).map {
-                    TracingSubscriberEvent<Int, TestError>.value($0)
-                }
+                let events = (0..<100).map(TracingSubscriber<Int, TestError>.Event.value)
                 expect(sub.eventsWithoutSubscription) == events
             }
         }
