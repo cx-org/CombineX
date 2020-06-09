@@ -30,7 +30,7 @@ let package = Package(
         .target(name: "CombineX", dependencies: ["CXLibc", "CXUtility", "CXNamespace"]),
         .target(name: "CXFoundation", dependencies: ["CXUtility", "CXNamespace", "CombineX"]),
         .target(name: "CXCompatible", dependencies: ["CXNamespace"]),
-        .target(name: "CXShim", dependencies: [/* depends on combine implementation */]),
+        .target(name: "CXShim", dependencies: [/* depends on concrete combine implementation */]),
         .target(name: "CXTest", dependencies: ["CXUtility", "CXShim"]),
         .target(name: "CXTestUtility", dependencies: ["CXUtility", "CXTest", "Semver", "CXShim", "Nimble"]),
         .testTarget(name: "CombineXTests", dependencies: ["CXTestUtility", "CXUtility", "CXShim", "Quick", "Nimble"]),
@@ -134,9 +134,8 @@ let shimTarget = package.targets.first(where: { $0.name == "CXShim" })!
 shimTarget.dependencies = combineImp.shimTargetDependencies
 shimTarget.swiftSettings.append(contentsOf: combineImp.swiftSettings)
 
-for target in package.targets where target.isTest || target.name == "CXTestUtility" || target.name == "CXTest" {
-    target.swiftSettings.append(contentsOf: combineImp.swiftSettings)
-}
+let testUtilityTarget = package.targets.first(where: { $0.name == "CXTestUtility" })!
+testUtilityTarget.swiftSettings.append(contentsOf: combineImp.swiftSettings)
 
 if combineImp == .combine && isCI {
     package.platforms = [.macOS("10.15"), .iOS("13.0"), .tvOS("13.0"), .watchOS("6.0")]
