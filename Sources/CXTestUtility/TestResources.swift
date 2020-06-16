@@ -18,7 +18,7 @@ public enum TestResources {
         }
     }
     
-    private static let global = Atom<[TestResourceProtocol]>(val: [])
+    private static let global = LockedAtomic<[TestResourceProtocol]>([])
     
     public static func resgiter(_ resource: TestResourceProtocol) {
         let box = Box(resource)
@@ -28,7 +28,7 @@ public enum TestResources {
     }
     
     public static func release() {
-        let resources = self.global.exchange(with: [])
+        let resources = self.global.exchange([])
         resources.forEach {
             $0.release()
         }

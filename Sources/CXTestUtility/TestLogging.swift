@@ -55,7 +55,7 @@ public class Logger {
     
     public static let shared = Logger()
     
-    private let enabledList = Atom<Set<ObjectIdentifier>>(val: [])
+    private let enabledList = LockedAtomic<Set<ObjectIdentifier>>([])
     
     private init() {
     }
@@ -70,7 +70,7 @@ public class Logger {
     
     fileprivate func _output(_ level: Level, _ items: [Any], object: TestLogging? = nil) {
         if let object = object {
-            guard self.enabledList.get().contains(ObjectIdentifier(object)) else {
+            guard self.enabledList.load().contains(ObjectIdentifier(object)) else {
                 return
             }
         }
@@ -105,6 +105,6 @@ public class Logger {
     }
     
     public func reset() {
-        _ = self.enabledList.exchange(with: [])
+        _ = self.enabledList.exchange([])
     }
 }

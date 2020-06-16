@@ -47,17 +47,17 @@ extension Optional {
     }
 }
 
-extension Atom where Val: OptionalProtocol {
+extension LockedAtomic where Value: OptionalProtocol {
 
     var isNil: Bool {
-        return self.get().optional == nil
+        return self.load().optional == nil
     }
 
     var isNotNil: Bool {
         return !self.isNil
     }
 
-    func setIfNil(_ value: Val.Wrapped) -> Bool {
+    func setIfNil(_ value: Value.Wrapped) -> Bool {
         return self.withLockMutating {
             $0.optional.setIfNil(value)
         }

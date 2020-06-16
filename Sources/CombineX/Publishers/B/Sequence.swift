@@ -266,7 +266,7 @@ extension Publishers.Sequence {
         
         var iterator: PeekableIterator<Elements.Element>
         var state: DemandState = .waiting
-        var buffer = Atom(val: Queue<Output>())
+        var buffer = LockedAtomic(Queue<Output>())
         var sub: S?
         
         init(sequence: Elements, sub: S) {
