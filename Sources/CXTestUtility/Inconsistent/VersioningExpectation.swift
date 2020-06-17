@@ -34,6 +34,7 @@ public enum XcodeVersion: Comparable {
     case v11_2
     case v11_3
     case v11_4
+    case v11_5
     
     #if canImport(Darwin)
     var systemVersion: Semver {
@@ -56,6 +57,7 @@ public enum XcodeVersion: Comparable {
         case .v11_2: return "10.15.1"
         case .v11_3: return "10.15.2"
         case .v11_4: return "10.15.4"
+        case .v11_5: return "10.15.5"
         }
     }
     
@@ -66,6 +68,7 @@ public enum XcodeVersion: Comparable {
         case .v11_2: return "13.2.0"
         case .v11_3: return "13.3.0"
         case .v11_4: return "13.4.0"
+        case .v11_5: return "13.5.0"
         }
     }
     
@@ -76,6 +79,7 @@ public enum XcodeVersion: Comparable {
         case .v11_2: return "13.2.0"
         case .v11_3: return "13.3.0"
         case .v11_4: return "13.4.0"
+        case .v11_5: return "13.5.0"
         }
     }
     
@@ -86,6 +90,7 @@ public enum XcodeVersion: Comparable {
         case .v11_2: return "6.1.0"
         case .v11_3: return "6.1.1"
         case .v11_4: return "6.2.0"
+        case .v11_5: return "6.2.6"
         }
     }
     
@@ -96,6 +101,7 @@ public enum XcodeVersion: Comparable {
         case .v11_2: return "11.2.0"
         case .v11_3: return "11.3.0"
         case .v11_4: return "11.4.0"
+        case .v11_5: return "11.5.0"
         }
     }
     
