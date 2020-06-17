@@ -33,12 +33,12 @@ extension Publishers {
         
         public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, S.Input == Publishers.Count<Upstream>.Output {
             self.upstream
-                .reduce(Atom(val: 0)) { counter, _ in
-                    _ = counter.add(1)
+                .reduce(LockedAtomic(0)) { counter, _ in
+                    _ = counter.loadThenWrappingIncrement()
                     return counter
                 }
                 .map {
-                    $0.get()
+                    $0.load()
                 }
                 .receive(subscriber: subscriber)
         }

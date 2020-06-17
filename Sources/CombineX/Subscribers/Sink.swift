@@ -70,7 +70,7 @@ extension Subscribers {
             case closed
         }
 
-        private let state = Atom<State>(val: .unsubscribed)
+        private let state = LockedAtomic<State>(.unsubscribed)
         
         public final func receive(subscription: Subscription) {
             var didSet = false
@@ -97,11 +97,11 @@ extension Subscribers {
         
         public final func receive(completion: Subscribers.Completion<Failure>) {
             self.receiveCompletion(completion)
-            _ = self.state.exchange(with: .closed)
+            _ = self.state.exchange(.closed)
         }
         
         public final func cancel() {
-            let oldState = self.state.exchange(with: .closed)
+            let oldState = self.state.exchange(.closed)
             if case let .subscribed(subscription) = oldState {
                 subscription.cancel()
             }

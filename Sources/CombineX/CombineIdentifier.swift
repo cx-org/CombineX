@@ -2,14 +2,14 @@
 import CXUtility
 #endif
 
-private let counter = Atom<UInt64>(val: 0)
+private let counter = LockedAtomic<UInt64>(0)
 
 public struct CombineIdentifier: Hashable, CustomStringConvertible {
     
     private let value: UInt64
     
     public init() {
-        self.value = counter.add(1)
+        self.value = counter.loadThenWrappingIncrement()
     }
     
     public init(_ obj: AnyObject) {

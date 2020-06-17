@@ -8,7 +8,7 @@ public final class VirtualTimeScheduler: Scheduler {
     
     private final class ScheduledAction {
         
-        private static let counter = Atom<Int>(val: 0)
+        private static let counter = LockedAtomic<Int>(0)
         
         let time: SchedulerTimeType
         let id: Int
@@ -17,7 +17,7 @@ public final class VirtualTimeScheduler: Scheduler {
         init(time: SchedulerTimeType, action: @escaping () -> Void) {
             self.time = time
             self.action = action
-            self.id = ScheduledAction.counter.add(1)
+            self.id = ScheduledAction.counter.loadThenWrappingIncrement()
         }
         
         static func <(_ a: ScheduledAction, _ b: ScheduledAction) -> Bool {

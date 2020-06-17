@@ -162,16 +162,16 @@ class SequenceSpec: QuickSpec {
                 
                 pub.subscribe(sub)
                 
-                let status = Atom(val: 0)
+                let status = LockedAtomic(0)
                 DispatchQueue.global().asyncAfter(deadline: .now() + 0.2) {
                     subscription?.cancel()
-                    status.set(2)
+                    status.store(2)
                 }
                 
                 subscription?.request(.max(5))
-                status.set(1)
+                status.store(1)
                 
-                expect(status.get()) == 1
+                expect(status.load()) == 1
             }
         }
     }
