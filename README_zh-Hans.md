@@ -28,20 +28,20 @@
 
 ```swift
 package.dependencies += [
-    .package(url: "https://github.com/cx-org/CombineX", from: "0.2.0"),
+    .package(url: "https://github.com/cx-org/CombineX", from: "0.2.1"),
 ]
 ```
 
 #### CocoaPods
 
 ```ruby
-pod 'CombineX', "~> 0.2.0"
+pod 'CombineX', "~> 0.2.1"
 ```
 
 #### Carthage
 
 ```carthage
-github "cx-org/CombineX" ~> 0.2.0
+github "cx-org/CombineX" ~> 0.2.1
 ```
 
 CXShim 仅在 Swift Package Manager 下可用。
