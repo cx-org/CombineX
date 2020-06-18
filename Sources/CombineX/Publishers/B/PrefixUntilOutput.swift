@@ -149,7 +149,7 @@ extension Publishers.PrefixUntilOutput {
             typealias Input = Other.Output
             typealias Failure = Other.Failure
             
-            let subscription = Atom<Subscription?>(val: nil)
+            let subscription = LockedAtomic<Subscription?>(nil)
             let parent: Inner
             
             init(parent: Inner) {
@@ -165,7 +165,7 @@ extension Publishers.PrefixUntilOutput {
             }
             
             func receive(_ input: Input) -> Subscribers.Demand {
-                guard let subscription = self.subscription.exchange(with: nil) else {
+                guard let subscription = self.subscription.exchange(nil) else {
                     return .none
                 }
                 subscription.cancel()
@@ -175,7 +175,7 @@ extension Publishers.PrefixUntilOutput {
             }
             
             func receive(completion: Subscribers.Completion<Failure>) {
-                guard let subscription = self.subscription.exchange(with: nil) else {
+                guard let subscription = self.subscription.exchange(nil) else {
                     return
                 }
                 subscription.cancel()
@@ -183,7 +183,7 @@ extension Publishers.PrefixUntilOutput {
             }
             
             func cancel() {
-                self.subscription.exchange(with: nil)?.cancel()
+                self.subscription.exchange(nil)?.cancel()
             }
         }
     }

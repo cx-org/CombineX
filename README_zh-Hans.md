@@ -27,29 +27,24 @@
 #### Swift Package Manager (推荐)
 
 ```swift
-dependencies.append(
-    .package(url: "https://github.com/cx-org/CombineX", from: "0.1.0")
-)
+package.dependencies += [
+    .package(url: "https://github.com/cx-org/CombineX", from: "0.2.1"),
+]
 ```
 
 #### CocoaPods
 
 ```ruby
-pod 'CombineX', "~> 0.1.0"
+pod 'CombineX', "~> 0.2.1"
 ```
 
 #### Carthage
 
 ```carthage
-github "cx-org/CombineX" ~> 0.1.0
+github "cx-org/CombineX" ~> 0.2.1
 ```
 
-部分特性在某些安装方式下不可用。
-
-| | Swift PM | CocoaPods | Carthage |
-| --- | --- | --- | --- |
-| CXShim | Yes | No | No |
-| ObserableObject | Yes | No | No |
+CXShim 仅在 Swift Package Manager 下可用。
 
 ## 相关项目
 

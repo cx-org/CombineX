@@ -8,11 +8,11 @@ public class TestTimeline<Context: Scheduler>: CustomStringConvertible {
     }
     
     private let context: Context
-    private let _records: Atom<[Context.SchedulerTimeType]>
+    private let _records: LockedAtomic<[Context.SchedulerTimeType]>
     
     private init(context: Context, records: [Context.SchedulerTimeType]) {
         self.context = context
-        self._records = Atom(val: records)
+        self._records = LockedAtomic(records)
     }
     
     public convenience init(context: Context) {
@@ -20,7 +20,7 @@ public class TestTimeline<Context: Scheduler>: CustomStringConvertible {
     }
     
     public var records: [Context.SchedulerTimeType] {
-        return self._records.get()
+        return self._records.load()
     }
     
     public func record() {

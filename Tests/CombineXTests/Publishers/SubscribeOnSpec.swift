@@ -68,11 +68,11 @@ class SubscribeOnSpec: QuickSpec {
             it("should request demand on the specified queue") {
                 let scheduler = DispatchQueue(label: UUID().uuidString).cx
                 
-                let executedCount = Atom(val: 0)
+                let executedCount = LockedAtomic(0)
                 let upstream = TestPublisher<Int, TestError> { s in
                     let subscription = TracingSubscription(receiveRequest: { _ in
                         expect(scheduler.base.isCurrent) == true
-                        _ = executedCount.add(1)
+                        _ = executedCount.loadThenWrappingIncrement()
                     })
                     s.receive(subscription: subscription)
                 }
@@ -88,7 +88,7 @@ class SubscribeOnSpec: QuickSpec {
                 
                 expect(sub.subscription).toEventuallyNot(beNil())
                 sub.subscription?.request(.max(1))
-                expect(executedCount.get()).toEventually(equal(2))
+                expect(executedCount.load()).toEventually(equal(2))
             }
         }
     }

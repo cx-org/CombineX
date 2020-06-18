@@ -368,7 +368,7 @@ extension Publishers.FlatMap {
             
             let parent: Inner
             
-            let subscription = Atom<Subscription?>(val: nil)
+            let subscription = LockedAtomic<Subscription?>(nil)
             var buffer: Input?
             
             init(parent: Inner) {
@@ -391,7 +391,7 @@ extension Publishers.FlatMap {
             }
             
             func receive(completion: Subscribers.Completion<NewPublisher.Failure>) {
-                guard let subscription = self.subscription.exchange(with: nil) else {
+                guard let subscription = self.subscription.exchange(nil) else {
                     return
                 }
                 
@@ -400,11 +400,11 @@ extension Publishers.FlatMap {
             }
             
             func cancel() {
-                self.subscription.exchange(with: nil)?.cancel()
+                self.subscription.exchange(nil)?.cancel()
             }
             
             func request(_ demand: Subscribers.Demand) {
-                self.subscription.get()?.request(demand)
+                self.subscription.load()?.request(demand)
             }
             
             static func == (a: Child, b: Child) -> Bool {

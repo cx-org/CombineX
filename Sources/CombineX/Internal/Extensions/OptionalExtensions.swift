@@ -29,9 +29,9 @@ extension Optional {
     }
 }
 
-extension Atom where Val: OptionalProtocol {
-
-    func setIfNil(_ value: Val.Wrapped) -> Bool {
+extension LockedAtomic where Value: OptionalProtocol {
+    
+    func setIfNil(_ value: Value.Wrapped) -> Bool {
         return self.withLockMutating {
             if $0.optional == nil {
                 $0.optional = value

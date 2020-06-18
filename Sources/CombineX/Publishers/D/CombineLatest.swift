@@ -260,7 +260,7 @@ extension Publishers.CombineLatest {
             typealias Input = Output
             typealias Failure = A.Failure
             
-            let subscription = Atom<Subscription?>(val: nil)
+            let subscription = LockedAtomic<Subscription?>(nil)
             let parent: Parent
             let source: Source
             
@@ -284,7 +284,7 @@ extension Publishers.CombineLatest {
             }
             
             func receive(completion: Subscribers.Completion<Failure>) {
-                guard let subscription = self.subscription.exchange(with: nil) else {
+                guard let subscription = self.subscription.exchange(nil) else {
                     return
                 }
                 
@@ -293,11 +293,11 @@ extension Publishers.CombineLatest {
             }
             
             func cancel() {
-                self.subscription.exchange(with: nil)?.cancel()
+                self.subscription.exchange(nil)?.cancel()
             }
             
             func request(_ demand: Subscribers.Demand) {
-                self.subscription.get()?.request(demand)
+                self.subscription.load()?.request(demand)
             }
         }
     }

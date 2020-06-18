@@ -29,29 +29,24 @@ Open-source implementation of Apple's [Combine](https://developer.apple.com/docu
 #### Swift Package Manager (Recommended)
 
 ```swift
-dependencies.append(
-    .package(url: "https://github.com/cx-org/CombineX", from: "0.1.0")
-)
+package.dependencies += [
+    .package(url: "https://github.com/cx-org/CombineX", from: "0.2.1"),
+]
 ```
 
 #### CocoaPods
 
 ```ruby
-pod 'CombineX', "~> 0.1.0"
+pod 'CombineX', "~> 0.2.1"
 ```
 
 #### Carthage
 
 ```carthage
-github "cx-org/CombineX" ~> 0.1.0
+github "cx-org/CombineX" ~> 0.2.1
 ```
 
-Some features are not available with specific PM.
-
-| | Swift PM | CocoaPods | Carthage |
-| --- | --- | --- | --- |
-| CXShim | Yes | No | No |
-| ObserableObject | Yes | No | No |
+CXShim is only available with Swift Package Manager.
 
 ## Related Projects
 

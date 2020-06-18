@@ -128,20 +128,20 @@ extension TracingSubject {
             case request
             case sync
         }
-        private let _demandRecords = Atom<[(DemandType, Subscribers.Demand)]>(val: [])
+        private let _demandRecords = LockedAtomic<[(DemandType, Subscribers.Demand)]>([])
         
         public var demandRecords: [Subscribers.Demand] {
-            return self._demandRecords.get().map { $0.1 }
+            return self._demandRecords.load().map { $0.1 }
         }
         
         public var requestDemandRecords: [Subscribers.Demand] {
-            return self._demandRecords.get().compactMap { type, demand in
+            return self._demandRecords.load().compactMap { type, demand in
                 type == .request ? demand : nil
             }
         }
         
         public var syncDemandRecords: [Subscribers.Demand] {
-            return self._demandRecords.get().compactMap { type, demand in
+            return self._demandRecords.load().compactMap { type, demand in
                 type == .sync ? demand : nil
             }
         }

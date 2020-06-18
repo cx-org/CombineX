@@ -16,7 +16,7 @@ class FailingSubjectSpec: QuickSpec {
                 let subject = PassthroughSubject<Int, Never>()
                 let semaphore = DispatchSemaphore(value: 0)
                 
-                let total = Atom<Int>(val: 0)
+                let total = LockedAtomic<Int>(0)
                 var collision = false
                 let c = subject
                    .sink(receiveValue: { value in
@@ -43,7 +43,7 @@ class FailingSubjectSpec: QuickSpec {
                 
                 semaphore.wait()
                 c.cancel()
-                expect(total.get()) == sequenceLength
+                expect(total.load()) == sequenceLength
                 
                 // FIXME: collision should not happen
                 expect(collision).toFail(beFalse())
@@ -54,7 +54,7 @@ class FailingSubjectSpec: QuickSpec {
                 let subject = CurrentValueSubject<Int, Never>(0)
                 let semaphore = DispatchSemaphore(value: 0)
                 
-                let total = Atom<Int>(val: 0)
+                let total = LockedAtomic<Int>(0)
                 var collision = false
                 let c = subject
                    .sink(receiveValue: { value in
@@ -81,7 +81,7 @@ class FailingSubjectSpec: QuickSpec {
                 
                 semaphore.wait()
                 c.cancel()
-                expect(total.get()) == sequenceLength
+                expect(total.load()) == sequenceLength
                 
                 // FIXME: collision should not happen
                 expect(collision).toFail(beFalse())
