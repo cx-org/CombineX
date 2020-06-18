@@ -12,8 +12,8 @@ class ObservableObjectPublisherCache<Key: AnyObject, Value: AnyObject> {
     private var lock = Lock()
     
     private func cleanup() {
-        storage = storage.filter { key, value in
-            return key.value != nil && value.value != nil
+        for (key, value) in storage where key.value == nil || value.value == nil {
+            storage.removeValue(forKey: key)
         }
     }
     
