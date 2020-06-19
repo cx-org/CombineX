@@ -1,6 +1,7 @@
 import CXShim
 import CXTestUtility
 import Dispatch
+import Foundation
 import Nimble
 import Quick
 
