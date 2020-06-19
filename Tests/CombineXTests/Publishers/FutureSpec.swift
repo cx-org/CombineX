@@ -62,7 +62,7 @@ class FutureSpec: QuickSpec {
                         p(.failure(.e0))
                     }
                 }
-                let subs = Array.make(count: 100, make: TracingSubscriber<Int, TestError>(receiveSubscription: { $0.request(.max(1)) }))
+                let subs = (0..<100).map { _ in TracingSubscriber<Int, TestError>(receiveSubscription: { $0.request(.max(1)) }) }
                 
                 100.times { i in
                     DispatchQueue.global().async(group: g) {

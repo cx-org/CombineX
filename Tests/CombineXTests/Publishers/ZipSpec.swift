@@ -61,7 +61,7 @@ class ZipSpec: QuickSpec {
             
             // MARK: 1.3 should finish when one sends a finish
             it("should finish when one sends a finish") {
-                let subjects = Array.make(count: 4, make: PassthroughSubject<Int, TestError>())
+                let subjects = (0..<4).map { _ in PassthroughSubject<Int, TestError>() }
                 let pub = subjects[0].zip(subjects[1], subjects[2], subjects[3]) {
                     $0 + $1 + $2 + $3
                 }
@@ -76,7 +76,7 @@ class ZipSpec: QuickSpec {
             
             // MARK: 1.4 should fail when one sends an error
             it("should fail when one sends an error") {
-                let subjects = Array.make(count: 4, make: PassthroughSubject<Int, TestError>())
+                let subjects = (0..<4).map { _ in PassthroughSubject<Int, TestError>() }
                 let pub = subjects[0].zip(subjects[1], subjects[2], subjects[3]) {
                     $0 + $1 + $2 + $3
                 }

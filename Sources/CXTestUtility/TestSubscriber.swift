@@ -1,9 +1,9 @@
 import CXShim
 import CXUtility
 
-public extension Publisher {
+extension Publisher {
     
-    func subscribeTracingSubscriber(initialDemand: Subscribers.Demand? = nil, subsequentDemand: ((Output) -> Subscribers.Demand)? = nil) -> TracingSubscriber<Output, Failure> {
+    public func subscribeTracingSubscriber(initialDemand: Subscribers.Demand? = nil, subsequentDemand: ((Output) -> Subscribers.Demand)? = nil) -> TracingSubscriber<Output, Failure> {
         let sub = TracingSubscriber<Output, Failure>(receiveSubscription: { s in
             initialDemand.map(s.request)
         }, receiveValue: { v -> Subscribers.Demand in
@@ -14,16 +14,16 @@ public extension Publisher {
     }
 }
 
-public extension TracingSubscriber {
+extension TracingSubscriber {
     
-    var eventsWithoutSubscription: [Event] {
+    public var eventsWithoutSubscription: [Event] {
         return self.events.filter { !$0.isSubscription }
     }
 }
 
-public extension TracingSubscriber.Event {
+extension TracingSubscriber.Event {
     
-    var isSubscription: Bool {
+    public var isSubscription: Bool {
         switch self {
         case .subscription:
             return true
