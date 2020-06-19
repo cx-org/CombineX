@@ -12,7 +12,6 @@ public class TracingSubscriber<Input, Failure: Error>: Subscriber {
     private let _rcvSubscription: ((Subscription) -> Void)?
     private let _rcvValue: ((Input) -> Subscribers.Demand)?
     private let _rcvCompletion: ((Subscribers.Completion<Failure>) -> Void)?
-    private let _onDeinit: (() -> Void)?
     
     private let _lock = Lock()
     private var _subscription: Subscription?
@@ -26,15 +25,10 @@ public class TracingSubscriber<Input, Failure: Error>: Subscriber {
         return self._lock.withLockGet(self._subscription)
     }
     
-    public init(receiveSubscription: ((Subscription) -> Void)? = nil, receiveValue: ((Input) -> Subscribers.Demand)? = nil, receiveCompletion: ((Subscribers.Completion<Failure>) -> Void)? = nil, onDeinit: (() -> Void)? = nil) {
+    public init(receiveSubscription: ((Subscription) -> Void)? = nil, receiveValue: ((Input) -> Subscribers.Demand)? = nil, receiveCompletion: ((Subscribers.Completion<Failure>) -> Void)? = nil) {
         self._rcvSubscription = receiveSubscription
         self._rcvValue = receiveValue
         self._rcvCompletion = receiveCompletion
-        self._onDeinit = onDeinit
-    }
-    
-    deinit {
-        _onDeinit?()
     }
     
     public func receive(subscription: Subscription) {
