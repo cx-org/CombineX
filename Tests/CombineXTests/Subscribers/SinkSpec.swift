@@ -36,7 +36,7 @@ class SinkSpec: QuickSpec {
             
             // MARK: 1.2 should receive values whether received subscription or not
             it("should receive values whether received subscription or not") {
-                let pub = TestPublisher<Int, Never> { s in
+                let pub = AnyPublisher<Int, Never> { s in
                     _ = s.receive(1)
                     _ = s.receive(2)
                     s.receive(completion: .finished)
@@ -56,7 +56,7 @@ class SinkSpec: QuickSpec {
             
             // MARK: 1.3 should receive values even if it has received completion
             it("should receive values even if it has received completion") {
-                let pub = TestPublisher<Int, Never> { s in
+                let pub = AnyPublisher<Int, Never> { s in
                     _ = s.receive(1)
                     s.receive(completion: .finished)
                     _ = s.receive(2)

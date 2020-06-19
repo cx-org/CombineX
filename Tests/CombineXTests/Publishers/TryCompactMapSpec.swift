@@ -112,7 +112,7 @@ class TryCompactMapSpec: QuickSpec {
                 var subscription: Subscription?
                 
                 do {
-                    let testPub = TestPublisher<Int, TestError> { s in
+                    let testPub = AnyPublisher<Int, TestError> { s in
                         s.receive(subscription: Subscriptions.empty)
                         s.receive(completion: .finished)
                     }
@@ -150,7 +150,7 @@ class TryCompactMapSpec: QuickSpec {
                 var subscription: Subscription?
                 
                 do {
-                    let testPub = TestPublisher<Int, TestError> { s in
+                    let testPub = AnyPublisher<Int, TestError> { s in
                         s.receive(subscription: Subscriptions.empty)
                     }
                     

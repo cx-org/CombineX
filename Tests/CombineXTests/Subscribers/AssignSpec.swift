@@ -40,7 +40,7 @@ class AssignSpec: QuickSpec {
              
             // MARK: 1.2 should not receive values if it haven't received subscription
             it("should not receive values if it hasn't received subscription") {
-                let pub = TestPublisher<Int, Never> { s in
+                let pub = AnyPublisher<Int, Never> { s in
                     _ = s.receive(1)
                     _ = s.receive(2)
                     s.receive(completion: .finished)
@@ -56,7 +56,7 @@ class AssignSpec: QuickSpec {
             
             // MARK: 1.3 should not receive values if it has received completion
             it("should not receive values if it has received completion") {
-                let pub = TestPublisher<Int, Never> { s in
+                let pub = AnyPublisher<Int, Never> { s in
                     s.receive(subscription: Subscriptions.empty)
                     _ = s.receive(1)
                     s.receive(completion: .finished)

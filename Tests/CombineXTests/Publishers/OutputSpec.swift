@@ -11,7 +11,7 @@ class OutputSpec: QuickSpec {
         describe("Relay") {
             
             xit("should not receive values even if no subscription is received") {
-                let pub = TestPublisher<Int, Error> { s in
+                let pub = AnyPublisher<Int, Error> { s in
                     _ = s.receive(0)
                     _ = s.receive(1)
                     _ = s.receive(2)

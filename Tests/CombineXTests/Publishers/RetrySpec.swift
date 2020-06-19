@@ -13,7 +13,7 @@ class RetrySpec: QuickSpec {
             // MARK: 1.1 should retry specified times then finish
             it("should retry specified times then finish") {
                 var errs: [TestError] = [.e0, .e1, .e2]
-                let pub = TestPublisher<Int, TestError> { s in
+                let pub = AnyPublisher<Int, TestError> { s in
                     s.receive(subscription: Subscriptions.empty)
                     if errs.isEmpty {
                         s.receive(completion: .finished)
@@ -29,7 +29,7 @@ class RetrySpec: QuickSpec {
             // MARK: 1.2 should retry specified times then fail
             it("should retry specified times then fail") {
                 var errs: [TestError] = [.e0, .e1, .e2]
-                let pub = TestPublisher<Int, TestError> { s in
+                let pub = AnyPublisher<Int, TestError> { s in
                     s.receive(subscription: Subscriptions.empty)
                     if errs.isEmpty {
                         s.receive(completion: .finished)

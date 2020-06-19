@@ -17,7 +17,7 @@ class SubscribeOnSpec: QuickSpec {
                 let scheduler = DispatchQueue(label: UUID().uuidString).cx
                 var executed = false
                 
-                let upstream = TestPublisher<Int, TestError> { s in
+                let upstream = AnyPublisher<Int, TestError> { s in
                     let subscription = TracingSubscription(receiveRequest: { _ in
                         expect(scheduler.base.isCurrent) == true
                         executed = true
@@ -38,7 +38,7 @@ class SubscribeOnSpec: QuickSpec {
                 let scheduler = DispatchQueue(label: UUID().uuidString).cx
                 var executed = false
                 
-                let upstream = TestPublisher<Int, TestError> { s in
+                let upstream = AnyPublisher<Int, TestError> { s in
                     let subscription = TracingSubscription(receiveRequest: { _ in
                         expect(scheduler.base.isCurrent) == true
                     })
@@ -69,7 +69,7 @@ class SubscribeOnSpec: QuickSpec {
                 let scheduler = DispatchQueue(label: UUID().uuidString).cx
                 
                 let executedCount = LockedAtomic(0)
-                let upstream = TestPublisher<Int, TestError> { s in
+                let upstream = AnyPublisher<Int, TestError> { s in
                     let subscription = TracingSubscription(receiveRequest: { _ in
                         expect(scheduler.base.isCurrent) == true
                         _ = executedCount.loadThenWrappingIncrement()

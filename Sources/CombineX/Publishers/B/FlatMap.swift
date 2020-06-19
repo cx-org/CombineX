@@ -384,7 +384,7 @@ extension Publishers.FlatMap {
             }
             
             func receive(_ input: NewPublisher.Output) -> Subscribers.Demand {
-                guard self.subscription.get() != nil else {
+                guard self.subscription.load() != nil else {
                     return .none
                 }
                 return self.parent.receive(input, from: self)

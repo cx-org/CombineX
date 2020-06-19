@@ -52,14 +52,14 @@ class ConcatenateSpec: QuickSpec {
                 }
                 var events: [Event] = []
                 
-                let pub1 = TestPublisher<Int, Never> { s in
+                let pub1 = AnyPublisher<Int, Never> { s in
                     events.append(.subscribeToPrefix)
                     s.receive(subscription: Subscriptions.empty)
                     events.append(.beforePrefixFinish)
                     s.receive(completion: .finished)
                     events.append(.afterPrefixFinish)
                 }
-                let pub2 = TestPublisher<Int, Never> { s in
+                let pub2 = AnyPublisher<Int, Never> { s in
                     events.append(.subscribeToSuffix)
                     s.receive(subscription: Subscriptions.empty)
                 }
