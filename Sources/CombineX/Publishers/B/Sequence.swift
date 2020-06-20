@@ -285,7 +285,7 @@ extension Publishers.Sequence where Elements: RandomAccessCollection, Failure ==
     }
     
     public func output(at index: Elements.Index) -> Optional<Output>.CX.Publisher {
-        return .init(self.sequence[index])
+        return .init(self.sequence.indices.contains(index) ? self.sequence[index] : nil)
     }
 }
 
