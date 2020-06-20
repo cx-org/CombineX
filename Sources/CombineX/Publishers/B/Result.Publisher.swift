@@ -190,7 +190,7 @@ extension Result.CX.Publisher {
     }
 
     public func tryMin(by areInIncreasingOrder: (Output, Output) throws -> Bool) -> Result<Output, Error>.CX.Publisher {
-        return .init(result.erasedError)
+        return .init(result.tryMap { _ = try areInIncreasingOrder($0, $0); return $0 })
     }
 
     public func max(by areInIncreasingOrder: (Output, Output) -> Bool) -> Result<Output, Failure>.CX.Publisher {
@@ -198,7 +198,7 @@ extension Result.CX.Publisher {
     }
 
     public func tryMax(by areInIncreasingOrder: (Output, Output) throws -> Bool) -> Result<Output, Error>.CX.Publisher {
-        return .init(result.erasedError)
+        return .init(result.tryMap { _ = try areInIncreasingOrder($0, $0); return $0 })
     }
 
     public func count() -> Result<Int, Failure>.CX.Publisher {

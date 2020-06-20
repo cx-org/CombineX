@@ -47,5 +47,20 @@ class ResultSpec: QuickSpec {
             }
             #endif
         }
+        
+        // MARK: - Specializations
+        describe("Specializations") {
+            
+            // MARK: 2.1
+            it("should capture error on specialized tryMin/tryMax") {
+                let pub = ResultPublisher<Int, TestError>(1)
+                let err = TestError.e0
+                
+                let r1 = pub.tryMin(by: { _, _ in throw err }).result
+                expect { try r1.get() }.to(throwError(err))
+                let r2 = pub.tryMax(by: { _, _ in throw err }).result
+                expect { try r2.get() }.to(throwError(err))
+            }
+        }
     }
 }
