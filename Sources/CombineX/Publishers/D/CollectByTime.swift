@@ -101,7 +101,7 @@ extension Publishers.CollectByTime {
             self.sub = sub
         
             guard case .byTimeOrCount(let context, let time, let count) = pub.strategy else {
-                Global.Never()
+                Never.never()
             }
             self.context = context
             self.time = time
@@ -250,7 +250,7 @@ extension Publishers.CollectByTime {
             self.sub = sub
         
             guard case .byTime(let context, let time) = pub.strategy else {
-                Global.Never()
+                Never.never()
             }
             self.context = context
             self.time = time

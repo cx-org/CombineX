@@ -52,7 +52,7 @@ class PublisherBoxBase<Output, Failure: Error>: Publisher {
     
     @usableFromInline
     func receive<S: Subscriber>(subscriber: S) where Output == S.Input, Failure == S.Failure {
-        Global.RequiresConcreteImplementation()
+        Never.requiresConcreteImplementation()
     }
 }
 

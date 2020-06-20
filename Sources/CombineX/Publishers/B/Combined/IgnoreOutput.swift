@@ -30,7 +30,7 @@ extension Publishers {
         public func receive<S: Subscriber>(subscriber: S) where Upstream.Failure == S.Failure, S.Input == Publishers.IgnoreOutput<Upstream>.Output {
             self.upstream
                 .filter { _ in false }
-                .map { _ in fatalError() }
+                .map { _ in Never.never() }
                 .receive(subscriber: subscriber)
         }
     }
