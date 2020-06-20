@@ -126,7 +126,7 @@ class AnySubscriberBase<Input, Failure: Error>: Subscriber {
     @inlinable
     init() {}
     
-    @inlinable
+    @usableFromInline
     func receive(subscription: Subscription) {
         Never.requiresConcreteImplementation()
     }
