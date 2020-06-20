@@ -110,7 +110,7 @@ extension Publishers.Buffer {
         
         var demand: Subscribers.Demand = .none
         
-        var buffer: Queue<Output> = Queue()
+        var buffer: CircularBuffer<Output> = CircularBuffer()
         
         var state = RelayState.waiting
         
@@ -142,7 +142,7 @@ extension Publishers.Buffer {
         
         func cancel() {
             self.lock.withLockGet(self.state.complete())?.cancel()
-            self.buffer = Queue()
+            self.buffer = CircularBuffer()
         }
         
         private func drain(_ demand: Subscribers.Demand) -> Int {
@@ -220,7 +220,7 @@ extension Publishers.Buffer {
                         
                         subscription.cancel()
                         
-                        self.buffer = Queue()
+                        self.buffer = CircularBuffer()
                         self.sub.receive(completion: .failure(makeError()))
                     }
                 default:
@@ -237,7 +237,7 @@ extension Publishers.Buffer {
             }
             subscription.cancel()
             
-            self.buffer = Queue()
+            self.buffer = CircularBuffer()
             self.sub.receive(completion: completion)
         }
         
@@ -276,7 +276,7 @@ extension Publishers.Buffer {
         let whenFull: Publishers.BufferingStrategy<Upstream.Failure>
         
         var demand: Subscribers.Demand = .none
-        var buffer = Queue<Output>()
+        var buffer = CircularBuffer<Output>()
         
         var state = RelayState.waiting
         
@@ -309,7 +309,7 @@ extension Publishers.Buffer {
         
         func cancel() {
             self.lock.withLockGet(self.state.complete())?.cancel()
-            self.buffer = Queue()
+            self.buffer = CircularBuffer()
         }
         
         private func drain(_ demand: Subscribers.Demand) {
@@ -378,7 +378,7 @@ extension Publishers.Buffer {
                         self.lock.unlock()
                         
                         subscription.cancel()
-                        self.buffer = Queue()
+                        self.buffer = CircularBuffer()
                         
                         self.sub.receive(completion: .failure(makeError()))
                     }
@@ -396,7 +396,7 @@ extension Publishers.Buffer {
             }
             subscription.cancel()
             
-            self.buffer = Queue()
+            self.buffer = CircularBuffer()
             self.sub.receive(completion: completion)
         }
         

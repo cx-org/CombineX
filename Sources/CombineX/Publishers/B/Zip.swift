@@ -81,16 +81,16 @@ extension Publishers.Zip {
         var childA: Child<A.Output>?
         var childB: Child<B.Output>?
         
-        var bufferA: Queue<A.Output>
-        var bufferB: Queue<B.Output>
+        var bufferA: CircularBuffer<A.Output>
+        var bufferB: CircularBuffer<B.Output>
         
         var isCompleted = false
         
         init(pub: Pub, sub: Sub) {
             self.sub = sub
 
-            self.bufferA = Queue()
-            self.bufferB = Queue()
+            self.bufferA = CircularBuffer()
+            self.bufferB = CircularBuffer()
             
             let childA = Child<A.Output>(parent: self, source: .a)
             pub.a.subscribe(childA)
@@ -131,8 +131,8 @@ extension Publishers.Zip {
         
         private func release() -> (Child<A.Output>?, Child<B.Output>?) {
             defer {
-                self.bufferA = Queue()
-                self.bufferB = Queue()
+                self.bufferA = CircularBuffer()
+                self.bufferB = CircularBuffer()
                 
                 self.childA = nil
                 self.childB = nil
