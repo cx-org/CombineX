@@ -10,7 +10,7 @@
 
 Open-source implementation of Apple's [Combine](https://developer.apple.com/documentation/combine) for processing values over time.
 
-> Though CombineX have implemented all the Combine interface, the project is still in early development and not ready for production.
+> Though CombineX have implemented all the Combine interface, the project is still in early development.
 
 ## What is Combine
 

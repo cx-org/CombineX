@@ -8,7 +8,7 @@
 
 对 Apple [Combine](https://developer.apple.com/documentation/combine) 的开源实现。
 
-> 虽然 CombineX 已经实现了 Combine 的全部功能，但这一项目仍处于早期开发阶段，还没有准备好在生产环境下使用。
+> 虽然 CombineX 已经实现了 Combine 的全部功能，但这一项目仍处于早期开发阶段。
 
 ## 什么是 Combine
 
