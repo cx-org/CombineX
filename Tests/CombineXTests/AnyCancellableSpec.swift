@@ -1,15 +1,12 @@
 import CXShim
 import CXTestUtility
+import Foundation
 import Nimble
 import Quick
 
 class AnyCancellableSpec: QuickSpec {
     
     override func spec() {
-        
-        afterEach {
-            TestResources.release()
-        }
         
         // MARK: - Cancel
         describe("Cancel") {
@@ -62,13 +59,13 @@ class AnyCancellableSpec: QuickSpec {
             // MARK: 2.1 should release closure after cancelled
             it("should release closure after cancelled") {
                 var cancel: Cancellable?
-                weak var object: TestObject?
+                weak var object: NSObject?
                 
                 do {
-                    let obj = TestObject()
+                    let obj = NSObject()
                     
                     cancel = AnyCancellable {
-                        obj.run()
+                        withExtendedLifetime(obj) {}
                     }
                     
                     object = obj

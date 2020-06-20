@@ -8,10 +8,6 @@ class PrintSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Print
         describe("Print") {
             
@@ -34,7 +30,7 @@ class PrintSpec: QuickSpec {
                 subject.send(completion: .finished)
                 subscription?.cancel()
                 
-                let count = stream.outputs.count(of: "[Q]: receive cancel")
+                let count = stream.outputs.lazy.filter { $0 == "[Q]: receive cancel" }.count
                 expect(count) == 2
             }
             
@@ -57,7 +53,7 @@ class PrintSpec: QuickSpec {
                 subject.send(completion: .finished)
                 subscription?.request(.max(1))
                 
-                let count = stream.outputs.count(of: "[Q]: request max: (1)")
+                let count = stream.outputs.lazy.filter { $0 == "[Q]: request max: (1)" }.count
                 expect(count) == 2
             }
             

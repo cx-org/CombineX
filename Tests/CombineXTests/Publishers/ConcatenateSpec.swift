@@ -7,10 +7,6 @@ class ConcatenateSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Send Values
         describe("Send Values") {
             
@@ -20,11 +16,9 @@ class ConcatenateSpec: QuickSpec {
                 let p1 = Just(5)
                 
                 let pub = Publishers.Concatenate(prefix: p0, suffix: p1)
-                let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
-                pub.subscribe(sub)
-                
-                let valueEvents = (1...5).map { TracingSubscriberEvent<Int, Never>.value($0) }
+                let valueEvents = (1...5).map(TracingSubscriber<Int, Never>.Event.value)
                 let expected = valueEvents + [.completion(.finished)]
                 expect(sub.eventsWithoutSubscription) == expected
             }
@@ -44,7 +38,7 @@ class ConcatenateSpec: QuickSpec {
                 
                 pub.subscribe(sub)
                 
-                let events = (0..<12).map { TracingSubscriberEvent<Int, Never>.value($0) }
+                let events = (0..<12).map(TracingSubscriber<Int, Never>.Event.value)
                 expect(sub.eventsWithoutSubscription) == events
             }
             
@@ -58,22 +52,20 @@ class ConcatenateSpec: QuickSpec {
                 }
                 var events: [Event] = []
                 
-                let pub1 = TestPublisher<Int, Never> { s in
+                let pub1 = AnyPublisher<Int, Never> { s in
                     events.append(.subscribeToPrefix)
                     s.receive(subscription: Subscriptions.empty)
                     events.append(.beforePrefixFinish)
                     s.receive(completion: .finished)
                     events.append(.afterPrefixFinish)
                 }
-                let pub2 = TestPublisher<Int, Never> { s in
+                let pub2 = AnyPublisher<Int, Never> { s in
                     events.append(.subscribeToSuffix)
                     s.receive(subscription: Subscriptions.empty)
                 }
                 
                 let pub = pub1.append(pub2)
-                let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
-                
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 expect(events) == [
                     .subscribeToPrefix,
@@ -81,6 +73,8 @@ class ConcatenateSpec: QuickSpec {
                     .subscribeToSuffix,
                     .afterPrefixFinish
                 ]
+                
+                withExtendedLifetime(sub) {}
             }
         }
     }

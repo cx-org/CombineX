@@ -8,10 +8,6 @@ class VersioningReceiveOnSpec: QuickSpec {
 
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         it("should not schedule subscription since iOS 13.3") {
             let subject = PassthroughSubject<Int, Never>()
             let scheduler = DispatchQueue(label: UUID().uuidString).cx

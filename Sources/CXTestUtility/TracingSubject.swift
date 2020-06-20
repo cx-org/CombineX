@@ -1,27 +1,24 @@
 import CXShim
 import CXUtility
 
-public class TestSubject<Output, Failure: Error>: Subject, TestLogging {
+// TODO: move to CXTest
+public class TracingSubject<Output, Failure: Error>: Subject {
     
     private let downstreamLock = Lock()
     private var completion: Subscribers.Completion<Failure>?
-    private var downstreamSubscriptions: [Inner] = []
+    private var downstreamSubscriptions: [Subscription] = []
     
     private let upstreamLock = Lock()
     private var isRequested = false
-    private var upstreamSubscriptions: [Subscription] = []
+    private var upstreamSubscriptions: [CXShim.Subscription] = []
     
-    public let name: String?
+    public init() {}
     
-    public init(name: String? = nil) {
-        self.name = name
-    }
-    
-    public var subscriptions: [Inner] {
+    public var subscriptions: [Subscription] {
         return self.downstreamLock.withLockGet(self.downstreamSubscriptions)
     }
     
-    public var subscription: Inner {
+    public var subscription: Subscription {
         return self.subscriptions[0]
     }
     
@@ -35,7 +32,7 @@ public class TestSubject<Output, Failure: Error>: Subject, TestLogging {
             return
         }
         
-        let subscription = Inner(pub: self, sub: AnySubscriber(subscriber))
+        let subscription = Subscription(pub: self, sub: AnySubscriber(subscriber))
         self.downstreamSubscriptions.append(subscription)
         self.downstreamLock.unlock()
         
@@ -72,13 +69,13 @@ public class TestSubject<Output, Failure: Error>: Subject, TestLogging {
         }
     }
     
-    private func removeDownstreamSubscription(_ subscription: Inner) {
+    private func removeDownstreamSubscription(_ subscription: Subscription) {
         self.downstreamLock.lock()
         self.downstreamSubscriptions.removeAll(where: { $0 === subscription })
         self.downstreamLock.unlock()
     }
     
-    public func send(subscription: Subscription) {
+    public func send(subscription: CXShim.Subscription) {
         self.upstreamLock.lock()
         self.upstreamSubscriptions.append(subscription)
         let isRequested = self.isRequested
@@ -106,20 +103,25 @@ public class TestSubject<Output, Failure: Error>: Subject, TestLogging {
     }
 }
 
-extension TestSubject {
+// MARK: - Subscription
+
+extension TracingSubject {
     
-    public final class Inner: Subscription, CustomStringConvertible, CustomDebugStringConvertible, TestLogging {
+    public final class Subscription: CXShim.Subscription, CustomStringConvertible, CustomDebugStringConvertible {
         
-        typealias Pub = TestSubject<Output, Failure>
+        typealias Pub = TracingSubject<Output, Failure>
         typealias Sub = AnySubscriber<Output, Failure>
         
         let lock = Lock(recursive: true)
-        
-        public var name: String?
        
         var pub: Pub?
         var sub: Sub?
         
+        enum DemandState: Equatable {
+            case waiting
+            case demanding(Subscribers.Demand)
+            case completed
+        }
         var state: DemandState = .waiting
         
         enum DemandType {
@@ -157,7 +159,7 @@ extension TestSubject {
                 return
             }
             
-            _ = self.state.sub(.max(1))
+            self.state.sub(.max(1))
             
             let sub = self.sub!
             self.lock.unlock()
@@ -166,10 +168,9 @@ extension TestSubject {
             let more = sub.receive(value)
             
             self._demandRecords.withLockMutating { $0.append((.sync, more)) }
-            self.trace("sync more", more)
             
             self.lock.withLock {
-                _ = self.state.add(more)
+                self.state.add(more)
             }
         }
         
@@ -191,7 +192,6 @@ extension TestSubject {
         public func request(_ demand: Subscribers.Demand) {
             precondition(demand > 0)
             self._demandRecords.withLockMutating { $0.append((.request, demand)) }
-            self.trace("request more", demand)
             
             self.lock.lock()
             var pub: Pub?
@@ -201,7 +201,7 @@ extension TestSubject {
                 pub = self.pub
                 self.state = .demanding(demand)
             case .demanding:
-                _ = self.state.add(demand)
+                self.state.add(demand)
             case .completed:
                 break
             }
@@ -227,11 +227,49 @@ extension TestSubject {
         }
         
         public var description: String {
-            return "TestSubject"
+            return "TracingSubject"
         }
         
         public var debugDescription: String {
-            return "TestSubject"
+            return "TracingSubject"
         }
     }
 }
+
+// MARK: - DemandState
+
+extension TracingSubject.Subscription.DemandState {
+    
+    var demand: Subscribers.Demand? {
+        switch self {
+        case .demanding(let d): return d
+        default:                return nil
+        }
+    }
+}
+
+extension TracingSubject.Subscription.DemandState {
+    
+    /// - Returns: `true` if the previous state is not `completed`.
+    mutating func complete() -> Bool {
+        if self == .completed {
+            return false
+        } else {
+            self = .completed
+            return true
+        }
+    }
+    
+    mutating func add(_ demand: Subscribers.Demand) {
+        if let old = self.demand {
+            self = .demanding(old + demand)
+        }
+    }
+    
+    mutating func sub(_ demand: Subscribers.Demand) {
+        if let old = self.demand {
+            self = .demanding(old - demand)
+        }
+    }
+}
+

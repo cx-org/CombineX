@@ -1,6 +1,7 @@
 import CXShim
 import CXTestUtility
 import Dispatch
+import Foundation
 import Nimble
 import Quick
 
@@ -8,19 +9,13 @@ class JustSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Send Values
         describe("Send Values") {
             
             // MARK: 1.1 should send a value then send finished
             it("should send value then send finished") {
                 let pub = Just<Int>(1)
-                
-                let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 expect(sub.eventsWithoutSubscription) == [.value(1), .completion(.finished)]
             }
@@ -29,9 +24,8 @@ class JustSpec: QuickSpec {
             // MARK: 1.2 should throw assertion when none demand is requested
             it("should throw assertion when less than one demand is requested") {
                 let pub = Just<Int>(1)
-                let sub = makeTestSubscriber(Int.self, Never.self, .max(0))
                 expect {
-                    pub.subscribe(sub)
+                    pub.subscribeTracingSubscriber(initialDemand: .max(0))
                 }.to(throwAssertion())
             }
             
@@ -40,7 +34,7 @@ class JustSpec: QuickSpec {
                 var subscription: Subscription?
                 
                 let pub = Just<Int>(1)
-                let sub = TestSubscriber<Int, Never>(receiveSubscription: { s in
+                let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
                     subscription = s
                     s.request(.unlimited)
                 }, receiveValue: { _ in
@@ -114,11 +108,11 @@ class JustSpec: QuickSpec {
                 weak var testObj: AnyObject?
                 
                 do {
-                    let obj = TestObject()
+                    let obj = NSObject()
                     testObj = obj
                     
-                    let pub = Just<TestObject>(obj)
-                    let sub = TracingSubscriber<TestObject, Never>(receiveSubscription: { s in
+                    let pub = Just(obj)
+                    let sub = TracingSubscriber<NSObject, Never>(receiveSubscription: { s in
                         subscription = s
                     }, receiveValue: { _ in
                         return .none
@@ -141,11 +135,11 @@ class JustSpec: QuickSpec {
                 weak var testObj: AnyObject?
                 
                 do {
-                    let obj = TestObject()
+                    let obj = NSObject()
                     testObj = obj
                     
-                    let pub = Just<TestObject>(obj)
-                    let sub = TracingSubscriber<TestObject, Never>(receiveSubscription: { s in
+                    let pub = Just<NSObject>(obj)
+                    let sub = TracingSubscriber<NSObject, Never>(receiveSubscription: { s in
                         subscription = s
                     }, receiveValue: { _ in
                         return .none

@@ -8,10 +8,6 @@ class FutureSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Future
         describe("Future") {
             
@@ -23,8 +19,7 @@ class FutureSpec: QuickSpec {
                     }
                 }
                 
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                f.subscribe(sub)
+                let sub = f.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 expect(sub.eventsWithoutSubscription) == []
                 expect(sub.eventsWithoutSubscription).toEventually(equal([.value(1), .completion(.finished)]))
@@ -38,8 +33,7 @@ class FutureSpec: QuickSpec {
                     }
                 }
                 
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                f.subscribe(sub)
+                let sub = f.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 expect(sub.eventsWithoutSubscription) == []
                 expect(sub.eventsWithoutSubscription).toEventually(equal([.completion(.failure(.e0))]))
@@ -51,8 +45,7 @@ class FutureSpec: QuickSpec {
                     p(.success(1))
                 }
                 
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                f.subscribe(sub)
+                let sub = f.subscribeTracingSubscriber(initialDemand: .unlimited)
                 expect(sub.eventsWithoutSubscription) == [.value(1), .completion(.finished)]
             }
         }
@@ -69,7 +62,7 @@ class FutureSpec: QuickSpec {
                         p(.failure(.e0))
                     }
                 }
-                let subs = Array.make(count: 100, make: makeTestSubscriber(Int.self, TestError.self, .max(1)))
+                let subs = (0..<100).map { _ in TracingSubscriber<Int, TestError>(receiveSubscription: { $0.request(.max(1)) }) }
                 
                 100.times { i in
                     DispatchQueue.global().async(group: g) {

@@ -7,23 +7,16 @@ class SuspiciousBufferSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: 1.4 should throw an error when full
         it("should throw an error when full") {
             let subject = PassthroughSubject<Int, TestError>()
             let pub = subject.buffer(size: 5, prefetch: .byRequest, whenFull: .customError({ TestError.e1 }))
-            let sub = makeTestSubscriber(Int.self, TestError.self, .max(5))
-            pub.subscribe(sub)
+            let sub = pub.subscribeTracingSubscriber(initialDemand: .max(5))
             
-            100.times {
-                subject.send($0)
-            }
+            subject.send(contentsOf: 0..<100)
             
             // FIXME: Apple's combine doesn't receive error.
-            let valueEvents = Array(0..<5).map { TracingSubscriberEvent<Int, TestError>.value($0) }
+            let valueEvents = (0..<5).map(TracingSubscriber<Int, TestError>.Event.value)
             let expected = valueEvents + [.completion(.failure(.e1))]
             expect(sub.eventsWithoutSubscription).toBranch(
                 combine: equal(valueEvents),

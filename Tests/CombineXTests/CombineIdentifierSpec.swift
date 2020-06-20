@@ -1,6 +1,7 @@
 import CXShim
 import CXTestUtility
 import CXUtility
+import Foundation
 import Dispatch
 import Nimble
 import Quick
@@ -8,10 +9,6 @@ import Quick
 class CombineIdentifierSpec: QuickSpec {
     
     override func spec() {
-        
-        afterEach {
-            TestResources.release()
-        }
         
         // MARK: - Unique
         describe("Unique") {
@@ -33,7 +30,7 @@ class CombineIdentifierSpec: QuickSpec {
             
             // MARK: 1.2 should use object's address as id
             it("should use object's address as id") {
-                let obj = TestObject()
+                let obj = NSObject()
                 
                 let id1 = CombineIdentifier(obj)
                 let id2 = CombineIdentifier(obj)

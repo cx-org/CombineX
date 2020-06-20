@@ -7,10 +7,6 @@ class VersioningSwitchToLatestSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: 1.1 should finish when the last child finish
         it("should finish when the last child finish") {
             let subject1 = PassthroughSubject<Int, TestError>()
@@ -18,8 +14,7 @@ class VersioningSwitchToLatestSpec: QuickSpec {
             
             let subject = PassthroughSubject<PassthroughSubject<Int, TestError>, TestError>()
             let pub = subject.switchToLatest()
-            let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-            pub.subscribe(sub)
+            let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
             
             subject.send(subject1)
             subject1.send(completion: .finished)

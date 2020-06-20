@@ -8,10 +8,6 @@ class FlatMapSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: Send Values
         describe("Send Values") {
             
@@ -33,7 +29,7 @@ class FlatMapSpec: QuickSpec {
                 
                 pub.subscribe(sub)
                 
-                let events = [1, 2, 3].flatMap { [$0, $0, $0] }.map { TracingSubscriberEvent<Int, Never>.value($0) }
+                let events = [1, 2, 3].flatMap { [$0, $0, $0] }.map(TracingSubscriber<Int, Never>.Event.value)
                 let expected = events + [.completion(.finished)]
                 expect(sub.eventsWithoutSubscription) == expected
             }
@@ -167,15 +163,9 @@ class FlatMapSpec: QuickSpec {
                 
                 pub.subscribe(sub)
                 
-                let g = DispatchGroup()
-                
-                100.times { i in
-                    DispatchQueue.global().async(group: g) {
-                        subjects[i].send(i)
-                    }
+                DispatchQueue.global().concurrentPerform(iterations: 100) { i in
+                    subjects[i].send(i)
                 }
-                
-                g.wait()
                 
                 expect(sub.eventsWithoutSubscription.count) == 10
             }

@@ -7,10 +7,6 @@ class ShareSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: Relay
         describe("Relay") {
             
@@ -21,8 +17,8 @@ class ShareSpec: QuickSpec {
                     normalCount += 1
                     return i
                 }
-                normal.subscribe(makeTestSubscriber(Int.self, TestError.self, .unlimited))
-                normal.subscribe(makeTestSubscriber(Int.self, TestError.self, .unlimited))
+                _ = normal.subscribeTracingSubscriber(initialDemand: .unlimited)
+                _ = normal.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 var shareCount = 0
                 let share = subject.map { i -> Int in
@@ -30,8 +26,8 @@ class ShareSpec: QuickSpec {
                     return i
                 }.share()
                 
-                share.subscribe(makeTestSubscriber(Int.self, TestError.self, .unlimited))
-                share.subscribe(makeTestSubscriber(Int.self, TestError.self, .unlimited))
+                _ = share.subscribeTracingSubscriber(initialDemand: .unlimited)
+                _ = share.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 subject.send(1)
                 subject.send(2)

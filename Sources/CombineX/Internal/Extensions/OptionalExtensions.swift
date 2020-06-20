@@ -21,24 +21,6 @@ extension Optional: OptionalProtocol {
 
 extension Optional {
     
-    var isNil: Bool {
-        return self == nil
-    }
-    
-    var isNotNil: Bool {
-        return !self.isNil
-    }
-    
-    mutating func setIfNil(_ value: Wrapped) -> Bool {
-        switch self {
-        case .none:
-            self = .some(value)
-            return true
-        default:
-            return false
-        }
-    }
-    
     func filter(_ isIncluded: (Wrapped) -> Bool) -> Wrapped? {
         guard let val = self, isIncluded(val) else {
             return nil
@@ -48,18 +30,15 @@ extension Optional {
 }
 
 extension LockedAtomic where Value: OptionalProtocol {
-
-    var isNil: Bool {
-        return self.load().optional == nil
-    }
-
-    var isNotNil: Bool {
-        return !self.isNil
-    }
-
+    
     func setIfNil(_ value: Value.Wrapped) -> Bool {
         return self.withLockMutating {
-            $0.optional.setIfNil(value)
+            if $0.optional == nil {
+                $0.optional = value
+                return true
+            } else {
+                return false
+            }
         }
     }
 }

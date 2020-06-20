@@ -7,10 +7,6 @@ class SuspiciousSwitchToLatestSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: 1.1 should not crash if the child sends more events than initial demand.
         it("should not crash if the child sends more events than initial demand.") {
             let subject1 = PassthroughSubject<Int, Never>()

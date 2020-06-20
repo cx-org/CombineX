@@ -7,34 +7,23 @@ class TryScanSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Relay
         describe("Relay") {
             
             // MARK: 1.1 should scan values from upstream
             it("should scan values from upstream") {
                 let subject = PassthroughSubject<Int, Never>()
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
+                let sub = subject
+                    .tryScan(0) { $0 + $1 }
+                    .subscribeTracingSubscriber(initialDemand: .unlimited)
                 
-                subject.tryScan(0) {
-                    $0 + $1
-                }.subscribe(sub)
-                
-                100.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<100)
                 subject.send(completion: .finished)
                 
                 let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 
-                var initial = 0
-                let valueEvents = (0..<100).map { n -> TracingSubscriberEvent<Int, TestError> in
-                    initial += n
-                    return TracingSubscriberEvent<Int, TestError>.value(initial)
-                }
+                let valueEvents = (0..<100).scan(0, +)
+                    .map(TracingSubscriber<Int, TestError>.Event.value)
                 let expected = valueEvents + [.completion(.finished)]
 
                 expect(got) == expected
@@ -43,15 +32,11 @@ class TryScanSpec: QuickSpec {
             // MARK: 1.2 should fail if closure throws an error
             it("should fail if closure throws an error") {
                 let subject = PassthroughSubject<Int, Never>()
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
+                let sub = subject
+                    .tryScan(0) { _, _ in throw TestError.e0 }
+                    .subscribeTracingSubscriber(initialDemand: .unlimited)
                 
-                subject.tryScan(0) { _, _ in
-                    throw TestError.e0
-                }.subscribe(sub)
-                
-                100.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<100)
                 
                 let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 expect(got) == [.completion(.failure(.e0))]
@@ -65,10 +50,9 @@ class TryScanSpec: QuickSpec {
                 }
                 
                 let pub = upstream.tryScan(0) { $0 + $1 }
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
                 
                 expect {
-                    pub.subscribe(sub)
+                    pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 }.toNot(throwAssertion())
             }
             
@@ -79,10 +63,9 @@ class TryScanSpec: QuickSpec {
                 }
                 
                 let pub = upstream.tryScan(0) { $0 + $1 }
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
 
                 expect {
-                    pub.subscribe(sub)
+                    pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 }.toNot(throwAssertion())
             }
             #endif

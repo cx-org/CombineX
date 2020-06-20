@@ -7,22 +7,15 @@ class CollectByCountSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Relay
         describe("Relay") {
             
             // MARK: 1.1 should relay values by collection
             it("should relay values by collection") {
                 let pub = PassthroughSubject<Int, TestError>()
-                let sub = makeTestSubscriber([Int].self, TestError.self, .unlimited)
-                pub.collect(2).subscribe(sub)
+                let sub = pub.collect(2).subscribeTracingSubscriber(initialDemand: .unlimited)
                 
-                5.times {
-                    pub.send($0)
-                }
+                pub.send(contentsOf: 0..<5)
                 pub.send(completion: .failure(.e0))
                 
                 expect(sub.eventsWithoutSubscription) == [
@@ -35,12 +28,9 @@ class CollectByCountSpec: QuickSpec {
             // MARK: 1.2 should send unsent values if upstream finishes
             it("should send unsent values if upstream finishes") {
                 let pub = PassthroughSubject<Int, TestError>()
-                let sub = makeTestSubscriber([Int].self, TestError.self, .unlimited)
-                pub.collect(2).subscribe(sub)
+                let sub = pub.collect(2).subscribeTracingSubscriber(initialDemand: .unlimited)
                 
-                5.times {
-                    pub.send($0)
-                }
+                pub.send(contentsOf: 0..<5)
                 pub.send(completion: .finished)
                 
                 expect(sub.eventsWithoutSubscription) == [
@@ -63,9 +53,7 @@ class CollectByCountSpec: QuickSpec {
                 
                 pub.collect(2).subscribe(sub)
                 
-                5.times {
-                    pub.send($0)
-                }
+                pub.send(contentsOf: 0..<5)
                 pub.send(completion: .finished)
                 
                 expect(sub.eventsWithoutSubscription) == [.value([0, 1]), .value([2, 3]), .completion(.finished)]

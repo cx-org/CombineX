@@ -7,10 +7,6 @@ class PrefixUntilOutputSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Relay
         describe("Relay") {
             
@@ -21,19 +17,16 @@ class PrefixUntilOutputSpec: QuickSpec {
                 let pub1 = PassthroughSubject<Int, TestError>()
                 
                 let pub = pub0.prefix(untilOutputFrom: pub1)
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
-                10.times {
-                    pub0.send($0)
-                }
+                pub0.send(contentsOf: 0..<10)
                 pub1.send(-1)
                 
                 for i in 10..<20 {
                     pub0.send(i)
                 }
                  
-                let valueEvents = (0..<10).map { TracingSubscriberEvent<Int, TestError>.value($0) }
+                let valueEvents = (0..<10).map(TracingSubscriber<Int, TestError>.Event.value)
                 let expected = valueEvents + [.completion(.finished)]
                 expect(sub.eventsWithoutSubscription) == expected
             }
@@ -45,20 +38,15 @@ class PrefixUntilOutputSpec: QuickSpec {
                 let pub1 = PassthroughSubject<Int, TestError>()
                 
                 let pub = pub0.prefix(untilOutputFrom: pub1)
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
-                10.times {
-                    pub0.send($0)
-                }
+                pub0.send(contentsOf: 0..<10)
                 pub1.send(completion: .failure(.e0))
                 for i in 10..<20 {
                     pub0.send(i)
                 }
                 
-                let expected = (0..<20).map {
-                    TracingSubscriberEvent<Int, TestError>.value($0)
-                }
+                let expected = (0..<20).map(TracingSubscriber<Int, TestError>.Event.value)
                 expect(sub.eventsWithoutSubscription) == expected
             }
         }

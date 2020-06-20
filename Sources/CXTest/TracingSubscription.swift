@@ -13,16 +13,14 @@ public class TracingSubscription: Subscription {
     
     private let _rcvRequest: ((Subscribers.Demand) -> Void)?
     private let _rcvCancel: (() -> Void)?
-    private let _onDeinit: (() -> Void)?
     
     public var events: [Event] {
         return self._lock.withLockGet(self._events)
     }
     
-    public init(receiveRequest: ((Subscribers.Demand) -> Void)? = nil, receiveCancel: (() -> Void)? = nil, onDeinit: (() -> Void)? = nil) {
+    public init(receiveRequest: ((Subscribers.Demand) -> Void)? = nil, receiveCancel: (() -> Void)? = nil) {
         self._rcvRequest = receiveRequest
         self._rcvCancel = receiveCancel
-        self._onDeinit = onDeinit
     }
     
     public func request(_ demand: Subscribers.Demand) {

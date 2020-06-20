@@ -7,10 +7,6 @@ class TryAllSatisfySpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Relay
         describe("Relay") {
             
@@ -27,9 +23,7 @@ class TryAllSatisfySpec: QuickSpec {
                 
                 pub.subscribe(sub)
                 
-                10.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<10)
                 subject.send(completion: .finished)
                 
                 let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
@@ -49,9 +43,7 @@ class TryAllSatisfySpec: QuickSpec {
                 
                 pub.subscribe(sub)
                 
-                10.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<10)
                 subject.send(completion: .finished)
                 
                 let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
@@ -76,9 +68,7 @@ class TryAllSatisfySpec: QuickSpec {
                 
                 pub.subscribe(sub)
                 
-                10.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<10)
                 subject.send(completion: .finished)
                 
                 let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }

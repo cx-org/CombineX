@@ -7,15 +7,11 @@ class OutputSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Relay
         describe("Relay") {
             
             xit("should not receive values even if no subscription is received") {
-                let pub = TestPublisher<Int, Error> { s in
+                let pub = AnyPublisher<Int, Error> { s in
                     _ = s.receive(0)
                     _ = s.receive(1)
                     _ = s.receive(2)
@@ -23,8 +19,9 @@ class OutputSpec: QuickSpec {
                     _ = s.receive(4)
                 }
                 
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
-                pub.output(in: 0..<2).subscribe(sub)
+                let sub = pub
+                    .output(in: 0..<2)
+                    .subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 
@@ -45,13 +42,9 @@ class OutputSpec: QuickSpec {
                 
                 pub.subscribe(sub)
                 
-                100.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<100)
                 
-                let valueEvents = (10..<20).map {
-                    TracingSubscriberEvent<Int, Never>.value($0)
-                }
+                let valueEvents = (10..<20).map(TracingSubscriber<Int, Never>.Event.value)
                 let expected = valueEvents + [.completion(.finished)]
                 expect(sub.eventsWithoutSubscription) == expected
             }
@@ -69,13 +62,9 @@ class OutputSpec: QuickSpec {
                 
                 pub.subscribe(sub)
                 
-                100.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<100)
                 
-                let expected = (10..<17).map {
-                    TracingSubscriberEvent<Int, Never>.value($0)
-                }
+                let expected = (10..<17).map(TracingSubscriber<Int, Never>.Event.value)
                 expect(sub.eventsWithoutSubscription) == expected
             }
             
@@ -87,10 +76,9 @@ class OutputSpec: QuickSpec {
                 }
                 
                 let pub = upstream.output(in: 0..<10)
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
                 
                 expect {
-                    pub.subscribe(sub)
+                    pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 }.toNot(throwAssertion())
             }
             
@@ -101,10 +89,9 @@ class OutputSpec: QuickSpec {
                 }
                 
                 let pub = upstream.output(in: 0..<10)
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
                 
                 expect {
-                    pub.subscribe(sub)
+                    pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 }.toNot(throwAssertion())
             }
             #endif

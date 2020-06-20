@@ -6,10 +6,6 @@ import Quick
 class SwitchToLatestSpec: QuickSpec {
     
     override func spec() {
-        
-        afterEach {
-            TestResources.release()
-        }
 
         // MARK: - Relay
         describe("Relay") {
@@ -22,8 +18,7 @@ class SwitchToLatestSpec: QuickSpec {
                 let subject = PassthroughSubject<PassthroughSubject<Int, Never>, Never>()
                 
                 let pub = subject.switchToLatest()
-                let sub = makeTestSubscriber(Int.self, Never.self, .unlimited)
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 subject.send(subject1)
                 
@@ -40,7 +35,7 @@ class SwitchToLatestSpec: QuickSpec {
                 subject2.send(8)
                 subject2.send(9)
 
-                let expected = [1, 2, 3, 7, 8, 9].map { TracingSubscriberEvent<Int, Never>.value($0) }
+                let expected = [1, 2, 3, 7, 8, 9].map(TracingSubscriber<Int, Never>.Event.value)
                 expect(sub.eventsWithoutSubscription) == expected
             }
             
@@ -51,20 +46,15 @@ class SwitchToLatestSpec: QuickSpec {
                 
                 let subject = PassthroughSubject<PassthroughSubject<Int, TestError>, TestError>()
                 let pub = subject.switchToLatest()
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 subject.send(subject1)
                 subject1.send(completion: .failure(.e0))
-                10.times {
-                    subject1.send($0)
-                }
+                subject1.send(contentsOf: 0..<10)
                 
                 subject.send(subject2)
                 subject2.send(completion: .failure(.e1))
-                10.times {
-                    subject2.send($0)
-                }
+                subject2.send(contentsOf: 0..<10)
                 
                 expect(sub.eventsWithoutSubscription) == [.completion(.failure(.e0))]
             }
@@ -76,8 +66,7 @@ class SwitchToLatestSpec: QuickSpec {
                 
                 let subject = PassthroughSubject<PassthroughSubject<Int, TestError>, TestError>()
                 let pub = subject.switchToLatest()
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 subject.send(subject1)
                 subject1.send(completion: .finished)
@@ -98,16 +87,19 @@ class SwitchToLatestSpec: QuickSpec {
             
             // MARK: 2.1 should always request .unlimited when subscribing
             it("should always request .unlimited when subscribing") {
-                let pub = TestSubject<Just<Int>, Never>()
+                let pub = TracingSubject<Just<Int>, Never>()
                 
-                let sub = makeTestSubscriber(Int.self, Never.self, .max(10))
-                pub.switchToLatest().subscribe(sub)
+                let sub = pub
+                    .switchToLatest()
+                    .subscribeTracingSubscriber(initialDemand: .max(10))
                 
                 pub.send(Just(1))
                 pub.send(Just(1))
                 
                 expect(pub.subscription.requestDemandRecords) == [.unlimited]
                 expect(pub.subscription.syncDemandRecords) == [.max(0), .max(0)]
+                
+                _ = sub
             }
         }
     }

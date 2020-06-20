@@ -8,10 +8,6 @@ import Quick
 class FailingSubjectSpec: QuickSpec {
 
     override func spec() {
-    
-        afterEach {
-            TestResources.release()
-        }
         
         describe("Subject should not invoke receiveValue on multiple threads at the same time") {
             

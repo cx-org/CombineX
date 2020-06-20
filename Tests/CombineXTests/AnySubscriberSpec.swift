@@ -7,17 +7,13 @@ class AnySubscriberSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Erase
         describe("Erase") {
             
             // MARK: 1.1 should preserve combine identifier
             it("should preserve combine identifier") {
-                let sub1 = makeTestSubscriber(Int.self, TestError.self)
-                let sub2 = makeTestSubscriber(Int.self, TestError.self)
+                let sub1 = TracingSubscriber<Int, TestError>()
+                let sub2 = TracingSubscriber<Int, TestError>()
                 
                 let erased1 = AnySubscriber(sub1)
                 let erased2 = AnySubscriber(sub2)
@@ -42,7 +38,7 @@ class AnySubscriberSpec: QuickSpec {
                 expect(emptyErased.description) == "Anonymous AnySubscriber"
                 expect(emptyErased.playgroundDescription as? String) == "Anonymous AnySubscriber"
                 
-                let sub = makeTestSubscriber(Int.self, TestError.self)
+                let sub = TracingSubscriber<Int, TestError>()
                 let erased = AnySubscriber(sub)
                 
                 expect(sub.description) == erased.description
@@ -60,7 +56,7 @@ class AnySubscriberSpec: QuickSpec {
             // MARK: 2.1 shoud forward events to underlying subscriber
             it("shoud forward events to underlying subscriber") {
                 let pub = PassthroughSubject<Int, TestError>()
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
+                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { $0.request(.unlimited)})
                 let erased = AnySubscriber(sub)
                 pub.subscribe(erased)
                 

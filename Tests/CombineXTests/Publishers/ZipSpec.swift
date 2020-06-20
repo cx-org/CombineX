@@ -7,10 +7,6 @@ class ZipSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Relay
         describe("Relay") {
         
@@ -20,8 +16,7 @@ class ZipSpec: QuickSpec {
                 let subject1 = PassthroughSubject<String, TestError>()
                 
                 let pub = subject0.zip(subject1, +)
-                let sub = makeTestSubscriber(String.self, TestError.self, .unlimited)
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 subject0.send("0")
                 subject0.send("1")
@@ -31,7 +26,8 @@ class ZipSpec: QuickSpec {
                 subject1.send("b")
                 subject1.send("c")
                 
-                let expected = ["0a", "1b", "2c"].map { TracingSubscriberEvent<String, TestError>.value($0) }
+                let expected = ["0a", "1b", "2c"]
+                    .map(TracingSubscriber<String, TestError>.Event.value)
                 expect(sub.eventsWithoutSubscription) == expected
             }
             
@@ -42,8 +38,7 @@ class ZipSpec: QuickSpec {
                 let subject2 = PassthroughSubject<String, TestError>()
                 
                 let pub = subject0.zip(subject1, subject2, { $0 + $1 + $2 })
-                let sub = makeTestSubscriber(String.self, TestError.self, .unlimited)
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 subject0.send("0")
                 subject0.send("1")
@@ -59,18 +54,18 @@ class ZipSpec: QuickSpec {
                 subject2.send("C")
                 subject2.send("D")
                 
-                let expected = ["0aA", "1bB", "2cC", "3dD"].map { TracingSubscriberEvent<String, TestError>.value($0) }
+                let expected = ["0aA", "1bB", "2cC", "3dD"]
+                    .map(TracingSubscriber<String, TestError>.Event.value)
                 expect(sub.eventsWithoutSubscription) == expected
             }
             
             // MARK: 1.3 should finish when one sends a finish
             it("should finish when one sends a finish") {
-                let subjects = Array.make(count: 4, make: PassthroughSubject<Int, TestError>())
+                let subjects = (0..<4).map { _ in PassthroughSubject<Int, TestError>() }
                 let pub = subjects[0].zip(subjects[1], subjects[2], subjects[3]) {
                     $0 + $1 + $2 + $3
                 }
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 10.times {
                     subjects[$0 % 4].send($0)
@@ -81,12 +76,11 @@ class ZipSpec: QuickSpec {
             
             // MARK: 1.4 should fail when one sends an error
             it("should fail when one sends an error") {
-                let subjects = Array.make(count: 4, make: PassthroughSubject<Int, TestError>())
+                let subjects = (0..<4).map { _ in PassthroughSubject<Int, TestError>() }
                 let pub = subjects[0].zip(subjects[1], subjects[2], subjects[3]) {
                     $0 + $1 + $2 + $3
                 }
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 10.times {
                     subjects[$0 % 4].send($0)

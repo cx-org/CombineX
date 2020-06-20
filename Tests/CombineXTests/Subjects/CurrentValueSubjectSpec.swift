@@ -8,24 +8,16 @@ class CurrentValueSubjectSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Send Events
         describe("Send Events") {
             
             // MARK: 1.1 should not send values to subscribers after sending completion
             it("should not send values to subscribers after sending completion") {
                 let subject = CurrentValueSubject<Int, TestError>(-1)
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                subject.subscribe(sub)
+                let sub = subject.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 subject.send(completion: .finished)
-                
-                10.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<10)
                 
                 expect(sub.eventsWithoutSubscription) == [.value(-1), .completion(.finished)]
                 expect(subject.value) == -1
@@ -34,8 +26,7 @@ class CurrentValueSubjectSpec: QuickSpec {
             // MARK: 1.2 should not send completion to subscribers after sending completion
             it("should not send completion to subscribers after sending completion") {
                 let subject = CurrentValueSubject<Int, TestError>(-1)
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                subject.subscribe(sub)
+                let sub = subject.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 subject.send(completion: .failure(.e0))
                 subject.send(completion: .failure(.e1))
@@ -75,9 +66,7 @@ class CurrentValueSubjectSpec: QuickSpec {
                 })
                 
                 subject.subscribe(sub)
-                10.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<10)
                 
                 expect(sub.eventsWithoutSubscription).to(beEmpty())
             }
@@ -103,8 +92,7 @@ class CurrentValueSubjectSpec: QuickSpec {
                 let subject = CurrentValueSubject<Int, TestError>(-1)
                 subject.send(completion: .finished)
                 
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                subject.subscribe(sub)
+                let sub = subject.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 expect(sub.eventsWithoutSubscription) == [.completion(.finished)]
             }
@@ -126,16 +114,12 @@ class CurrentValueSubjectSpec: QuickSpec {
 
                 subject.subscribe(sub)
 
-                10.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<10)
                 
                 expect(sub.eventsWithoutSubscription.count) == 2
                 sub.subscription?.request(.max(5))
 
-                10.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<10)
                 expect(sub.eventsWithoutSubscription.count) == 7
             }
             
@@ -147,14 +131,11 @@ class CurrentValueSubjectSpec: QuickSpec {
                 let nums = (0..<10).map { _ in Int.random(in: 1..<10) }
                 
                 for i in nums {
-                    let sub = makeTestSubscriber(Int.self, Error.self, .max(i))
+                    let sub = subject.subscribeTracingSubscriber(initialDemand: .max(i))
                     subs.append(sub)
-                    subject.subscribe(sub)
                 }
                 
-                10.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<10)
                 
                 for (i, sub) in zip(nums, subs) {
                     expect(sub.eventsWithoutSubscription.count) == i
@@ -165,10 +146,9 @@ class CurrentValueSubjectSpec: QuickSpec {
             // MARK: 2.3 should fatal error when less than one demand is requested
             it("should fatal error when less than one demand is requested") {
                 let subject = CurrentValueSubject<Int, Never>(-1)
-                let sub = makeTestSubscriber(Int.self, Never.self, .max(0))
                 
                 expect {
-                    subject.subscribe(sub)
+                    subject.subscribeTracingSubscriber(initialDemand: .max(0))
                 }.to(throwAssertion())
             }
             #endif
@@ -180,8 +160,7 @@ class CurrentValueSubjectSpec: QuickSpec {
             // MARK: 3.1 should retain subscriptions then release them after sending completion
             it("should retain subscriptions then release them after sending completion") {
                 let pub = CurrentValueSubject<Int, Never>(-1)
-                let sub = makeTestSubscriber(Int.self, Never.self, .max(1))
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .max(1))
 
                 weak var subscription = sub.subscription as AnyObject
                 
@@ -199,8 +178,7 @@ class CurrentValueSubjectSpec: QuickSpec {
                 weak var subObj: AnyObject?
                 
                 do {
-                    let sub = makeTestSubscriber(Int.self, Never.self, .max(1))
-                    pub.subscribe(sub)
+                    let sub = pub.subscribeTracingSubscriber(initialDemand: .max(1))
                     subObj = sub
                 }
                 
@@ -212,8 +190,7 @@ class CurrentValueSubjectSpec: QuickSpec {
             // MARK: 3.3 should retain subscriptions then release them after them are cancelled
             it("should retain subscriptions then release them after them are cancelled") {
                 let pub = CurrentValueSubject<Int, Never>(-1)
-                let sub = makeTestSubscriber(Int.self, Never.self, .max(1))
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .max(1))
 
                 weak var subscription = sub.subscription as AnyObject
                 
@@ -232,8 +209,7 @@ class CurrentValueSubjectSpec: QuickSpec {
                 weak var subObj: AnyObject?
                 
                 do {
-                    let sub = makeTestSubscriber(Int.self, Never.self, .max(1))
-                    pub.subscribe(sub)
+                    let sub = pub.subscribeTracingSubscriber(initialDemand: .max(1))
                     subObj = sub
                 }
                 
@@ -250,10 +226,8 @@ class CurrentValueSubjectSpec: QuickSpec {
                     let pub = CurrentValueSubject<Int, Never>(-1)
                     pubObj = pub
                     
-                    let sub = makeTestSubscriber(Int.self, Never.self, .max(1))
+                    let sub = pub.subscribeTracingSubscriber(initialDemand: .max(1))
                     subObj = sub
-                    
-                    pub.subscribe(sub)
                     
                     subscription = sub.subscription
                 }
@@ -279,10 +253,8 @@ class CurrentValueSubjectSpec: QuickSpec {
                     let pub = CurrentValueSubject<Int, Never>(-1)
                     pubObj = pub
                     
-                    let sub = makeTestSubscriber(Int.self, Never.self, .max(1))
+                    let sub = pub.subscribeTracingSubscriber(initialDemand: .max(1))
                     subObj = sub
-                    
-                    pub.subscribe(sub)
                     
                     subscription = sub.subscription
                 }
@@ -352,14 +324,7 @@ class CurrentValueSubjectSpec: QuickSpec {
                 
                 subject.subscribe(sub)
                 
-                let g = DispatchGroup()
-                100.times { i in
-                    DispatchQueue.global().async(group: g) {
-                        subject.send(i)
-                    }
-                }
-                
-                g.wait()
+                DispatchQueue.global().concurrentPerform(iterations: 100, execute: subject.send)
                 
                 expect(sub.eventsWithoutSubscription.count) == 10
             }
@@ -381,15 +346,7 @@ class CurrentValueSubjectSpec: QuickSpec {
                 
                 subject.subscribe(sub)
                 
-                let g = DispatchGroup()
-                
-                100.times { i in
-                    DispatchQueue.global().async(group: g) {
-                        subject.send(i)
-                    }
-                }
-                
-                g.wait()
+                DispatchQueue.global().concurrentPerform(iterations: 100, execute: subject.send)
                 
                 expect(sub.eventsWithoutSubscription.count) == 10
             }

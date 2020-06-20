@@ -8,10 +8,6 @@ class ReceiveOnSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Relay
         describe("Relay") {
             
@@ -46,18 +42,14 @@ class ReceiveOnSpec: QuickSpec {
                 // Versioning: see VersioningReceiveOnSpec
                 expect(sub.subscription).toEventuallyNot(beNil())
                 
-                1000.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<1000)
                 subject.send(completion: .finished)
 
-                expect(
-                    [
-                        received.subscription,
-                        received.value,
-                        received.completion
-                    ]
-                ).toEventually(equal([true, true, true]))
+                expect([
+                    received.subscription,
+                    received.value,
+                    received.completion
+                ]).toEventually(equal([true, true, true]))
             }
             
             // MARK: 1.2 should send values as many as demand
@@ -78,9 +70,7 @@ class ReceiveOnSpec: QuickSpec {
                 
                 expect(sub.subscription).toEventuallyNot(beNil())
                 
-                100.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<100)
                 
                 expect(sub.eventsWithoutSubscription.count).toEventually(equal(10))
             }

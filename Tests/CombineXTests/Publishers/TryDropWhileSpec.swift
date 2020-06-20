@@ -7,10 +7,6 @@ class TryDropWhileSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Relay
         describe("Relay") {
             
@@ -18,19 +14,14 @@ class TryDropWhileSpec: QuickSpec {
             it("should drop until predicate return false") {
                 let subject = PassthroughSubject<Int, Never>()
                 let pub = subject.tryDrop(while: { $0 < 50 })
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
-                100.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<100)
                 subject.send(completion: .finished)
                 
                 let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 
-                let valueEvents = (50..<100).map {
-                    TracingSubscriberEvent<Int, TestError>.value($0)
-                }
+                let valueEvents = (50..<100).map(TracingSubscriber<Int, TestError>.Event.value)
                 let expected = valueEvents + [.completion(.finished)]
                 
                 expect(got) == expected
@@ -39,8 +30,9 @@ class TryDropWhileSpec: QuickSpec {
             // MARK: 1.2 should send as many values as demand
             it("should send as many values as demand") {
                 let pub = PassthroughSubject<Int, Never>()
-                let sub = makeTestSubscriber(Int.self, Error.self, .max(10))
-                pub.tryDrop { $0 < 50 }.subscribe(sub)
+                let sub = pub
+                    .tryDrop { $0 < 50 }
+                    .subscribeTracingSubscriber(initialDemand: .max(10))
                 
                 for i in 0..<100 {
                     pub.send(i)
@@ -52,10 +44,9 @@ class TryDropWhileSpec: QuickSpec {
             // MARK: 1.3 should fail if predicate throws error
             it("should fail if predicate throws error") {
                 let pub = PassthroughSubject<Int, TestError>()
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
-                pub.tryDrop { _ in
-                    throw TestError.e0
-                }.subscribe(sub)
+                let sub = pub
+                    .tryDrop { _ in throw TestError.e0 }
+                    .subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 for i in 0..<100 {
                     pub.send(i)
@@ -75,10 +66,9 @@ class TryDropWhileSpec: QuickSpec {
                 }
                 
                 let pub = upstream.tryDrop { _ in true }
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
                 
                 expect {
-                    pub.subscribe(sub)
+                    pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 }.toNot(throwAssertion())
             }
             
@@ -89,10 +79,9 @@ class TryDropWhileSpec: QuickSpec {
                 }
                 
                 let pub = upstream.tryDrop { _ in true }
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
 
                 expect {
-                    pub.subscribe(sub)
+                    pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 }.toNot(throwAssertion())
             }
             #endif

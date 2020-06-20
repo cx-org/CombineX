@@ -7,10 +7,6 @@ class TryPrefixWhileSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Relay
         describe("Relay") {
             
@@ -18,19 +14,14 @@ class TryPrefixWhileSpec: QuickSpec {
             it("should relay until predicate return false") {
                 let subject = PassthroughSubject<Int, Never>()
                 let pub = subject.tryPrefix(while: { $0 < 50 })
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
-                100.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<100)
                 subject.send(completion: .finished)
                 
                 let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 
-                let valueEvents = (0..<50).map {
-                    TracingSubscriberEvent<Int, TestError>.value($0)
-                }
+                let valueEvents = (0..<50).map(TracingSubscriber<Int, TestError>.Event.value)
                 let expected = valueEvents + [.completion(.finished)]
                 
                 expect(got) == expected
@@ -40,12 +31,9 @@ class TryPrefixWhileSpec: QuickSpec {
             it("should finish immediately if the first element predicate failure") {
                 let subject = PassthroughSubject<Int, TestError>()
                 let pub = subject.tryPrefix(while: { $0 > 50 })
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
-                100.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<100)
                 subject.send(completion: .failure(.e0))
                 
                 let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
@@ -55,8 +43,9 @@ class TryPrefixWhileSpec: QuickSpec {
             // MARK: 1.3 should send as many values as demand
             it("should send as many values as demand") {
                 let pub = PassthroughSubject<Int, Never>()
-                let sub = makeTestSubscriber(Int.self, Error.self, .max(10))
-                pub.tryPrefix { $0 < 50 }.subscribe(sub)
+                let sub = pub
+                    .tryPrefix { $0 < 50 }
+                    .subscribeTracingSubscriber(initialDemand: .max(10))
                 
                 for i in 0..<100 {
                     pub.send(i)
@@ -68,10 +57,9 @@ class TryPrefixWhileSpec: QuickSpec {
             // MARK: 1.4 should fail if predicate throws error
             it("should fail if predicate throws error") {
                 let pub = PassthroughSubject<Int, TestError>()
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
-                pub.tryPrefix { _ in
-                    throw TestError.e0
-                }.subscribe(sub)
+                let sub = pub
+                    .tryPrefix { _ in throw TestError.e0 }
+                    .subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 for i in 0..<100 {
                     pub.send(i)

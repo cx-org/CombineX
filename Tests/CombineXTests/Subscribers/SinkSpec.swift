@@ -7,10 +7,6 @@ class SinkSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Receive Values
         describe("Receive Values") {
             
@@ -40,13 +36,13 @@ class SinkSpec: QuickSpec {
             
             // MARK: 1.2 should receive values whether received subscription or not
             it("should receive values whether received subscription or not") {
-                let pub = TestPublisher<Int, Never> { s in
+                let pub = AnyPublisher<Int, Never> { s in
                     _ = s.receive(1)
                     _ = s.receive(2)
                     s.receive(completion: .finished)
                 }
                 
-                var events: [TracingSubscriberEvent<Int, Never>] = []
+                var events: [TracingSubscriber<Int, Never>.Event] = []
                 let sink = pub.sink(receiveCompletion: { c in
                     events.append(.completion(c))
                 }, receiveValue: { v in
@@ -60,13 +56,13 @@ class SinkSpec: QuickSpec {
             
             // MARK: 1.3 should receive values even if it has received completion
             it("should receive values even if it has received completion") {
-                let pub = TestPublisher<Int, Never> { s in
+                let pub = AnyPublisher<Int, Never> { s in
                     _ = s.receive(1)
                     s.receive(completion: .finished)
                     _ = s.receive(2)
                 }
                 
-                var events: [TracingSubscriberEvent<Int, Never>] = []
+                var events: [TracingSubscriber<Int, Never>.Event] = []
                 let sink = pub.sink(receiveCompletion: { c in
                     events.append(.completion(c))
                 }, receiveValue: { v in
@@ -82,7 +78,7 @@ class SinkSpec: QuickSpec {
             it("should not receive vaules when re-activated") {
                 let pub = PassthroughSubject<Int, Never>()
 
-                var events = [TracingSubscriberEvent<Int, Never>]()
+                var events = [TracingSubscriber<Int, Never>.Event]()
                 let sink = Subscribers.Sink<Int, Never>(receiveCompletion: { c in
                     events.append(.completion(c))
                 }, receiveValue: { v in
@@ -106,14 +102,14 @@ class SinkSpec: QuickSpec {
             // MARK: 1.5 should not receive vaules if it was cancelled
             it("should not receive vaules if it was cancelled") {
                 let pub = PassthroughSubject<Int, Never>()
-                var events = [TracingSubscriberEvent<Int, Never>]()
+                var received = false
 
-                let cancellable = pub.sink { events.append(.value($0)) }
+                let cancellable = pub.sink { _ in received = true }
 
                 cancellable.cancel()
-                expect(events) == []
+                expect(received) == false
                 pub.send(1)
-                expect(events) == []
+                expect(received) == false
             }
         }
         

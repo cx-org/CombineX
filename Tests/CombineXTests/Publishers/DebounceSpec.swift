@@ -7,10 +7,6 @@ class DebounceSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Relay
         describe("Relay") {
             
@@ -19,8 +15,7 @@ class DebounceSpec: QuickSpec {
                 let subject = PassthroughSubject<Int, TestError>()
                 let scheduler = VirtualTimeScheduler()
                 let pub = subject.debounce(for: .seconds(1), scheduler: scheduler)
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 subject.send(1)
                 subject.send(2)
@@ -52,8 +47,7 @@ class DebounceSpec: QuickSpec {
                 let subject = PassthroughSubject<Int, TestError>()
                 let scheduler = VirtualTimeScheduler()
                 let pub = subject.debounce(for: .seconds(1), scheduler: scheduler)
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 subject.send(1)
                 scheduler.advance(by: .seconds(10))
@@ -88,7 +82,7 @@ class DebounceSpec: QuickSpec {
             
             // MARK: 2.1 should request unlimited at the beginning
             it("should request unlimited at the beginning") {
-                let subject = TestSubject<Int, TestError>()
+                let subject = TracingSubject<Int, TestError>()
                 let scheduler = VirtualTimeScheduler()
                 let pub = subject.debounce(for: .seconds(1), scheduler: scheduler)
                 let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in

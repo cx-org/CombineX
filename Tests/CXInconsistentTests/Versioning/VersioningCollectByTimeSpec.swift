@@ -7,19 +7,13 @@ class VersioningCollectByTimeSpec: QuickSpec {
 
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         describe("should schedule events since iOS 13.3") {
             
             it("should schedule value") {
                 let subject = PassthroughSubject<Int, TestError>()
                 let scheduler = VirtualTimeScheduler()
                 let pub = subject.collect(.byTimeOrCount(scheduler, .seconds(1), 2))
-                let sub = makeTestSubscriber([Int].self, TestError.self, .unlimited)
-                
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 subject.send(1)
                 subject.send(2)
@@ -38,9 +32,7 @@ class VersioningCollectByTimeSpec: QuickSpec {
                 let subject = PassthroughSubject<Int, TestError>()
                 let scheduler = VirtualTimeScheduler()
                 let pub = subject.collect(.byTime(scheduler, .seconds(2)))
-                let sub = makeTestSubscriber([Int].self, TestError.self, .unlimited)
-                
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 subject.send(1)
                 subject.send(completion: .failure(.e0))
@@ -59,9 +51,7 @@ class VersioningCollectByTimeSpec: QuickSpec {
                 let subject = PassthroughSubject<Int, TestError>()
                 let scheduler = VirtualTimeScheduler()
                 let pub = subject.collect(.byTime(scheduler, .seconds(2)))
-                let sub = makeTestSubscriber([Int].self, TestError.self, .unlimited)
-                
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 subject.send(1)
                 subject.send(completion: .finished)
@@ -79,7 +69,7 @@ class VersioningCollectByTimeSpec: QuickSpec {
         
         // FIXME: Versioning: out of sync
         it("should ignore sync backpresure from scheduling sending when strategy is byTimeOrCount") {
-            let subject = TestSubject<Int, TestError>()
+            let subject = TracingSubject<Int, TestError>()
             let scheduler = VirtualTimeScheduler()
             let pub = subject.collect(.byTimeOrCount(scheduler, .seconds(1), 2))
             

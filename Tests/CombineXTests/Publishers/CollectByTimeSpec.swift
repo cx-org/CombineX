@@ -7,10 +7,6 @@ class CollectByTimeSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Relay
         describe("Relay") {
             
@@ -19,9 +15,7 @@ class CollectByTimeSpec: QuickSpec {
                 let subject = PassthroughSubject<Int, TestError>()
                 let scheduler = VirtualTimeScheduler()
                 let pub = subject.collect(.byTime(scheduler, .seconds(2)))
-                let sub = makeTestSubscriber([Int].self, TestError.self, .unlimited)
-                
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 subject.send(1)
                 subject.send(2)
@@ -41,9 +35,7 @@ class CollectByTimeSpec: QuickSpec {
                 let subject = PassthroughSubject<Int, TestError>()
                 let scheduler = VirtualTimeScheduler()
                 let pub = subject.collect(.byTime(scheduler, .seconds(2)))
-                let sub = makeTestSubscriber([Int].self, TestError.self, .unlimited)
-                
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 subject.send(1)
                 subject.send(2)
@@ -67,9 +59,7 @@ class CollectByTimeSpec: QuickSpec {
                 let subject = PassthroughSubject<Int, TestError>()
                 let scheduler = VirtualTimeScheduler()
                 let pub = subject.collect(.byTimeOrCount(scheduler, .seconds(2), 2))
-                let sub = makeTestSubscriber([Int].self, TestError.self, .unlimited)
-                
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 subject.send(1)
                 subject.send(2)
@@ -96,7 +86,7 @@ class CollectByTimeSpec: QuickSpec {
             
             // MARK: 1.4 should send as many as demand when strategy is by time
             it("should send as many as demand when strategy is by time") {
-                let subject = TestSubject<Int, TestError>()
+                let subject = TracingSubject<Int, TestError>()
                 let scheduler = VirtualTimeScheduler()
                 let pub = subject.collect(.byTime(scheduler, .seconds(1)))
                 
@@ -125,7 +115,7 @@ class CollectByTimeSpec: QuickSpec {
             
             // MARK: 1.5 should always request 1 when strategy is by time
             it("should always request 1 when strategy is by time") {
-                let subject = TestSubject<Int, TestError>()
+                let subject = TracingSubject<Int, TestError>()
                 let scheduler = VirtualTimeScheduler()
                 let pub = subject.collect(.byTime(scheduler, .seconds(1)))
                 

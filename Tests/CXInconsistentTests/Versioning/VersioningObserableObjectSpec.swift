@@ -10,10 +10,6 @@ class VersioningObserableObjectSpec: QuickSpec {
 
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // FIXME: Versioning: out of sync
         it("instance of specific kind of class should return the same objectWillChange every time since iOS 13.3") {
             var objects: [ObservableObjectDefaultImplementation] = [

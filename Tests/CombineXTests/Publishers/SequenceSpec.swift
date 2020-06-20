@@ -9,24 +9,18 @@ class SequenceSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Send Values
         describe("Send Values") {
             typealias Sub = TracingSubscriber<Int, TestError>
-            typealias Event = TracingSubscriberEvent<Int, TestError>
+            typealias Event = Sub.Event
             
             // MARK: 1.1 should send values then send finished
             it("should send values then send finished") {
                 let values = Array(0..<100)
                 let pub = Publishers.Sequence<[Int], TestError>(sequence: values)
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
-                pub.subscribe(sub)
-                
-                let valueEvents = values.map { Event.value($0) }
+                let valueEvents = values.map(Event.value)
                 let expected = valueEvents + [.completion(.finished)]
                 expect(sub.eventsWithoutSubscription) == expected
             }

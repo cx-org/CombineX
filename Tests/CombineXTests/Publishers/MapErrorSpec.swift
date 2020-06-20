@@ -7,18 +7,15 @@ class MapErrorSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: Relay
         describe("Relay") {
             
             // MARK: 1.1 should map error
             it("should map error") {
                 let pub = PassthroughSubject<Int, TestError>()
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                pub.mapError { _ in .e2 }.subscribe(sub)
+                let sub = pub
+                    .mapError { _ in TestError.e2 }
+                    .subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 for i in 0..<100 {
                     pub.send(i)
@@ -26,7 +23,7 @@ class MapErrorSpec: QuickSpec {
                 
                 pub.send(completion: .failure(.e0))
                 
-                let valueEvents = (0..<100).map { TracingSubscriberEvent<Int, TestError>.value($0) }
+                let valueEvents = (0..<100).map(TracingSubscriber<Int, TestError>.Event.value)
                 let expected = valueEvents + [.completion(.failure(.e2))]
                 expect(sub.eventsWithoutSubscription) == expected
             }
@@ -37,12 +34,10 @@ class MapErrorSpec: QuickSpec {
                 let upstream = TestPublisher<Int, TestError> { s in
                     _ = s.receive(1)
                 }
-                
                 let pub = upstream.mapError { $0 as Error }
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
                 
                 expect {
-                    pub.subscribe(sub)
+                    pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 }.toNot(throwAssertion())
             }
             
@@ -51,12 +46,10 @@ class MapErrorSpec: QuickSpec {
                 let upstream = TestPublisher<Int, TestError> { s in
                     s.receive(completion: .finished)
                 }
-                
                 let pub = upstream.mapError { $0 as Error }
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
                 
                 expect {
-                    pub.subscribe(sub)
+                    pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 }.toNot(throwAssertion())
             }
             #endif

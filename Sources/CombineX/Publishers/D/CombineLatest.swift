@@ -277,7 +277,7 @@ extension Publishers.CombineLatest {
             }
             
             func receive(_ input: Input) -> Subscribers.Demand {
-                guard self.subscription.isNotNil else {
+                guard self.subscription.load() != nil else {
                     return .none
                 }
                 return self.parent.childReceive(input, from: self.source)

@@ -7,25 +7,17 @@ class TryReduceSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Relay
         describe("Relay") {
             
             // MARK: 1.1 should reduce values from upstream
             it("should reduce values from upstream") {
                 let subject = PassthroughSubject<Int, Never>()
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
+                let sub = subject
+                    .tryReduce(0) { $0 + $1 }
+                    .subscribeTracingSubscriber(initialDemand: .unlimited)
                 
-                subject.tryReduce(0) {
-                    $0 + $1
-                }.subscribe(sub)
-                
-                100.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<100)
                 subject.send(completion: .finished)
                 
                 let reduced = (0..<100).reduce(0) { $0 + $1 }
@@ -37,15 +29,11 @@ class TryReduceSpec: QuickSpec {
             // MARK: 1.2 should fail if closure throws an error
             it("should fail if closure throws an error") {
                 let subject = PassthroughSubject<Int, Never>()
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
+                let sub = subject
+                    .tryReduce(0) { _, _ in throw TestError.e0 }
+                    .subscribeTracingSubscriber(initialDemand: .unlimited)
                 
-                subject.tryReduce(0) { _, _ in
-                    throw TestError.e0
-                }.subscribe(sub)
-                
-                100.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<100)
                 
                 let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 expect(got) == [.completion(.failure(.e0))]
@@ -55,10 +43,9 @@ class TryReduceSpec: QuickSpec {
             // MARK: 1.3 should throw assertion when the demand is 0
             it("should throw assertion when the demand is 0") {
                 let pub = Empty<Int, TestError>().tryReduce(0) { $0 + $1 }
-                let sub = makeTestSubscriber(Int.self, Error.self, .max(0))
                 
                 expect {
-                    pub.subscribe(sub)
+                    pub.subscribeTracingSubscriber(initialDemand: .max(0))
                 }.to(throwAssertion())
             }
             
@@ -69,10 +56,9 @@ class TryReduceSpec: QuickSpec {
                 }
                 
                 let pub = upstream.tryReduce(0) { $0 + $1 }
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
                 
                 expect {
-                    pub.subscribe(sub)
+                    pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 }.toNot(throwAssertion())
             }
             
@@ -83,10 +69,9 @@ class TryReduceSpec: QuickSpec {
                 }
                 
                 let pub = upstream.tryReduce(0) { $0 + $1 }
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
 
                 expect {
-                    pub.subscribe(sub)
+                    pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 }.toNot(throwAssertion())
             }
             #endif

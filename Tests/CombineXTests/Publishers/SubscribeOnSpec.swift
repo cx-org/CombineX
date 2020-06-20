@@ -9,10 +9,6 @@ class SubscribeOnSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Relay
         describe("Relay") {
             
@@ -21,7 +17,7 @@ class SubscribeOnSpec: QuickSpec {
                 let scheduler = DispatchQueue(label: UUID().uuidString).cx
                 var executed = false
                 
-                let upstream = TestPublisher<Int, TestError> { s in
+                let upstream = AnyPublisher<Int, TestError> { s in
                     let subscription = TracingSubscription(receiveRequest: { _ in
                         expect(scheduler.base.isCurrent) == true
                         executed = true
@@ -30,10 +26,11 @@ class SubscribeOnSpec: QuickSpec {
                 }
                 
                 let pub = upstream.subscribe(on: scheduler)
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 expect(executed).toEventually(beTrue())
+                
+                _ = sub
             }
             
             // MARK: 1.2 should not schedule sync backpressure
@@ -41,7 +38,7 @@ class SubscribeOnSpec: QuickSpec {
                 let scheduler = DispatchQueue(label: UUID().uuidString).cx
                 var executed = false
                 
-                let upstream = TestPublisher<Int, TestError> { s in
+                let upstream = AnyPublisher<Int, TestError> { s in
                     let subscription = TracingSubscription(receiveRequest: { _ in
                         expect(scheduler.base.isCurrent) == true
                     })
@@ -72,7 +69,7 @@ class SubscribeOnSpec: QuickSpec {
                 let scheduler = DispatchQueue(label: UUID().uuidString).cx
                 
                 let executedCount = LockedAtomic(0)
-                let upstream = TestPublisher<Int, TestError> { s in
+                let upstream = AnyPublisher<Int, TestError> { s in
                     let subscription = TracingSubscription(receiveRequest: { _ in
                         expect(scheduler.base.isCurrent) == true
                         _ = executedCount.loadThenWrappingIncrement()

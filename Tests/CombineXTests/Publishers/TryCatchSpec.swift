@@ -7,10 +7,6 @@ class TryCatchSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Send Values
         describe("Send Values") {
             
@@ -20,13 +16,11 @@ class TryCatchSpec: QuickSpec {
                 let p1 = Publishers.Sequence<[Int], TestError>(sequence: [1, 2, 3]).append(Fail(error: .e0))
                 
                 let pub = p0.tryCatch { _ in p1 }
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
-                
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 
-                let valueEvents = [1, 2, 3].map { TracingSubscriberEvent<Int, TestError>.value($0) }
+                let valueEvents = [1, 2, 3].map(TracingSubscriber<Int, TestError>.Event.value)
                 let expected = valueEvents + [.completion(.failure(.e0))]
                 
                 expect(got) == expected
@@ -48,7 +42,7 @@ class TryCatchSpec: QuickSpec {
                 pub.subscribe(sub)
                 
                 let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
-                let events = (0..<12).map { TracingSubscriberEvent<Int, TestError>.value($0) }
+                let events = (0..<12).map(TracingSubscriber<Int, TestError>.Event.value)
                 expect(got) == events
             }
             
@@ -59,9 +53,7 @@ class TryCatchSpec: QuickSpec {
                 let p0 = Pub0(error: .e0)
                 
                 let pub: Publishers.TryCatch<Pub0, Pub1> = p0.tryCatch { _ in throw TestError.e2 }
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
-                
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 expect(got) == [.completion(.failure(.e2))]

@@ -7,20 +7,15 @@ class TryRemoveDuplicatesSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         // MARK: - Relay
         describe("Relay") {
             
             // MARK: 1.1 should remove duplicate values from upstream
             it("should remove duplicate values from upstream") {
                 let pub = PassthroughSubject<Int, Never>()
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
-                
-                pub.tryRemoveDuplicates(by: ==)
-                    .subscribe(sub)
+                let sub = pub
+                    .tryRemoveDuplicates(by: ==)
+                    .subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 pub.send(1)
                 pub.send(1)
@@ -37,8 +32,9 @@ class TryRemoveDuplicatesSpec: QuickSpec {
             // MARK: 1.2 should send as many values as demand
             it("should send as many values as demand") {
                 let pub = PassthroughSubject<Int, Never>()
-                let sub = makeTestSubscriber(Int.self, Error.self, .max(10))
-                pub.tryRemoveDuplicates(by: ==).subscribe(sub)
+                let sub = pub
+                    .tryRemoveDuplicates(by: ==)
+                    .subscribeTracingSubscriber(initialDemand: .max(10))
                 
                 for _ in 0..<100 {
                     pub.send(Int.random(in: 0..<100))
@@ -50,11 +46,9 @@ class TryRemoveDuplicatesSpec: QuickSpec {
             // MARK: 1.3 should fail if closure throws error
             it("should fail if closure throws error") {
                 let pub = PassthroughSubject<Int, Never>()
-                let sub = makeTestSubscriber(Int.self, Error.self, .unlimited)
-                
-                pub.tryRemoveDuplicates(by: { _, _ -> Bool in
-                    throw TestError.e0
-                }).subscribe(sub)
+                let sub = pub
+                    .tryRemoveDuplicates(by: { _, _ in throw TestError.e0 })
+                    .subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 pub.send(1)
                 pub.send(1)

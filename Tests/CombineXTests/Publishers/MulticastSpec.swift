@@ -7,10 +7,6 @@ class MulticastSpec: QuickSpec {
     
     override func spec() {
         
-        afterEach {
-            TestResources.release()
-        }
-        
         describe("Relay") {
             
             // MARK: 1.1 should multicase after connect
@@ -18,27 +14,19 @@ class MulticastSpec: QuickSpec {
                 let subject = PassthroughSubject<Int, TestError>()
                 let pub = subject.multicast(subject: PassthroughSubject<Int, TestError>())
                 
-                let sub = makeTestSubscriber(Int.self, TestError.self, .unlimited)
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
-                10.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<10)
                 expect(sub.eventsWithoutSubscription) == []
                 
                 let cancel = pub.connect()
                 
-                10.times {
-                    subject.send($0)
-                }
+                subject.send(contentsOf: 0..<10)
                 expect(sub.eventsWithoutSubscription) == (0..<10).map { .value($0) }
                 
                 cancel.cancel()
                 
-                10.times {
-                    subject.send($0)
-                }
-                
+                subject.send(contentsOf: 0..<10)
                 expect(sub.eventsWithoutSubscription) == (0..<10).map { .value($0) }
             }
         }
