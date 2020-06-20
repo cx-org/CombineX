@@ -1,5 +1,3 @@
-extension Fail: Equatable where Failure: Equatable {}
-
 /// A publisher that immediately terminates with the specified error.
 public struct Fail<Output, Failure: Error>: Publisher {
     
@@ -31,3 +29,5 @@ public struct Fail<Output, Failure: Error>: Publisher {
             .receive(subscriber: subscriber)
     }
 }
+
+extension Fail: Equatable where Failure: Equatable {}
