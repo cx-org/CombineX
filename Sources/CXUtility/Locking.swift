@@ -217,7 +217,7 @@ private extension UnsafeMutablePointer where Pointee == pthread_mutex_t {
         if recursive {
             var attr = pthread_mutexattr_t()
             pthread_mutexattr_init(&attr)
-            pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE).assertZero()
+            pthread_mutexattr_settype(&attr, Int32(PTHREAD_MUTEX_RECURSIVE)).assertZero()
             pthread_mutex_init(l, &attr).assertZero()
         } else {
             pthread_mutex_init(l, nil).assertZero()
