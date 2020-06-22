@@ -1,5 +1,5 @@
 #if !COCOAPODS
-import CXLibc
+@_implementationOnly import CXLibc
 #endif
 
 extension Publisher {

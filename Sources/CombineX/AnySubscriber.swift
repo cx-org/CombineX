@@ -126,19 +126,19 @@ class AnySubscriberBase<Input, Failure: Error>: Subscriber {
     @inlinable
     init() {}
     
-    @inlinable
+    @usableFromInline
     func receive(subscription: Subscription) {
-        Global.RequiresConcreteImplementation()
+        Never.requiresConcreteImplementation()
     }
     
     @usableFromInline
     func receive(_ input: Input) -> Subscribers.Demand {
-        Global.RequiresConcreteImplementation()
+        Never.requiresConcreteImplementation()
     }
     
     @usableFromInline
     func receive(completion: Subscribers.Completion<Failure>) {
-        Global.RequiresConcreteImplementation()
+        Never.requiresConcreteImplementation()
     }
 }
 
@@ -234,7 +234,7 @@ final class SubjectSubscriberBox<S: Subject>: AnySubscriberBase<S.Output, S.Fail
         switch self.state {
         case .waiting:
             self.lock.unlock()
-            fatalError()
+            APIViolation.valueBeforeSubscription()
         case .relaying:
             let subject = self.subject!
             self.lock.unlock()
@@ -251,7 +251,7 @@ final class SubjectSubscriberBox<S: Subject>: AnySubscriberBase<S.Output, S.Fail
         switch self.state {
         case .waiting:
             self.lock.unlock()
-            fatalError()
+            APIViolation.unexpectedCompletion()
         case .relaying:
             self.state = .completed
             let subject = self.subject!

@@ -2,6 +2,116 @@
 import CXUtility
 #endif
 
+/// A publisher that emits an output to each subscriber just once, and then finishes.
+///
+/// You can use a `Just` publisher to start a chain of publishers. A `Just` publisher is also useful when replacing a value with `Catch`.
+///
+/// In contrast with `Publishers.Once`, a `Just` publisher cannot fail with an error.
+public struct Just<Output>: Publisher {
+    
+    public typealias Failure = Never
+    
+    /// The one element that the publisher emits.
+    public let output: Output
+    
+    /// Initializes a publisher that emits the specified output just once.
+    ///
+    /// - Parameter output: The one element that the publisher emits.
+    public init(_ output: Output) {
+        self.output = output
+    }
+    
+    public func receive<S: Subscriber>(subscriber: S) where Output == S.Input, S.Failure == Just<Output>.Failure {
+        let s = Inner(pub: self, sub: subscriber)
+        subscriber.receive(subscription: s)
+    }
+}
+
+extension Just {
+    
+    private final class Inner<S>: Subscription,
+        CustomStringConvertible,
+        CustomDebugStringConvertible
+    where
+        S: Subscriber,
+        S.Input == Output,
+        S.Failure == Failure {
+        
+        typealias Pub = Just<Output>
+        typealias Sub = S
+        
+        let lock = Lock()
+        let output: Output
+        
+        var sub: Sub?
+        var state = DemandState.waiting
+        
+        init(pub: Pub, sub: Sub) {
+            self.output = pub.output
+            self.sub = sub
+        }
+        
+        func request(_ demand: Subscribers.Demand) {
+            precondition(demand > 0)
+
+            self.lock.lock()
+            guard self.state.isWaiting else {
+                self.lock.unlock()
+                return
+            }
+            
+            self.state = .completed
+            
+            let sub = self.sub!
+            self.sub = nil
+            
+            self.lock.unlock()
+            
+            _ = sub.receive(output)
+            sub.receive(completion: .finished)
+        }
+        
+        func cancel() {
+            self.lock.withLock {
+                self.state = .completed
+                self.sub = nil
+            }
+        }
+        
+        var description: String {
+            return "Just"
+        }
+        
+        var debugDescription: String {
+            return "Just"
+        }
+    }
+}
+
+extension Just: Equatable where Output: Equatable {}
+
+extension Just where Output: Equatable {
+    
+    public func contains(_ output: Output) -> Just<Bool> {
+        return .init(self.output == output)
+    }
+    
+    public func removeDuplicates() -> Just<Output> {
+        return self
+    }
+}
+
+extension Just where Output: Comparable {
+    
+    public func min() -> Just<Output> {
+        return self
+    }
+    
+    public func max() -> Just<Output> {
+        return self
+    }
+}
+
 extension Just {
     
     public func allSatisfy(_ predicate: (Output) -> Bool) -> Just<Bool> {
@@ -168,115 +278,5 @@ extension Just {
     
     public func setFailureType<E: Error>(to failureType: E.Type) -> Result<Output, E>.CX.Publisher {
         return .init(self.output)
-    }
-}
-
-extension Just: Equatable where Output: Equatable {}
-
-extension Just where Output: Comparable {
-    
-    public func min() -> Just<Output> {
-        return self
-    }
-    
-    public func max() -> Just<Output> {
-        return self
-    }
-}
-
-extension Just where Output: Equatable {
-    
-    public func contains(_ output: Output) -> Just<Bool> {
-        return .init(self.output == output)
-    }
-    
-    public func removeDuplicates() -> Just<Output> {
-        return self
-    }
-}
-
-/// A publisher that emits an output to each subscriber just once, and then finishes.
-///
-/// You can use a `Just` publisher to start a chain of publishers. A `Just` publisher is also useful when replacing a value with `Catch`.
-///
-/// In contrast with `Publishers.Once`, a `Just` publisher cannot fail with an error.
-public struct Just<Output>: Publisher {
-    
-    public typealias Failure = Never
-    
-    /// The one element that the publisher emits.
-    public let output: Output
-    
-    /// Initializes a publisher that emits the specified output just once.
-    ///
-    /// - Parameter output: The one element that the publisher emits.
-    public init(_ output: Output) {
-        self.output = output
-    }
-    
-    public func receive<S: Subscriber>(subscriber: S) where Output == S.Input, S.Failure == Just<Output>.Failure {
-        let s = Inner(pub: self, sub: subscriber)
-        subscriber.receive(subscription: s)
-    }
-}
-
-extension Just {
-    
-    private final class Inner<S>: Subscription,
-        CustomStringConvertible,
-        CustomDebugStringConvertible
-    where
-        S: Subscriber,
-        S.Input == Output,
-        S.Failure == Failure {
-        
-        typealias Pub = Just<Output>
-        typealias Sub = S
-        
-        let lock = Lock()
-        let output: Output
-        
-        var sub: Sub?
-        var state = DemandState.waiting
-        
-        init(pub: Pub, sub: Sub) {
-            self.output = pub.output
-            self.sub = sub
-        }
-        
-        func request(_ demand: Subscribers.Demand) {
-            precondition(demand > 0)
-
-            self.lock.lock()
-            guard self.state.isWaiting else {
-                self.lock.unlock()
-                return
-            }
-            
-            self.state = .completed
-            
-            let sub = self.sub!
-            self.sub = nil
-            
-            self.lock.unlock()
-            
-            _ = sub.receive(output)
-            sub.receive(completion: .finished)
-        }
-        
-        func cancel() {
-            self.lock.withLock {
-                self.state = .completed
-                self.sub = nil
-            }
-        }
-        
-        var description: String {
-            return "Just"
-        }
-        
-        var debugDescription: String {
-            return "Just"
-        }
     }
 }

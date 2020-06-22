@@ -1,4 +1,4 @@
-struct Queue<Element>: BidirectionalCollection, CustomStringConvertible {
+struct CircularBuffer<Element>: BidirectionalCollection, CustomStringConvertible {
     
     private var storage: ContiguousArray<Element?>
     private var head = 0
@@ -125,7 +125,7 @@ struct Queue<Element>: BidirectionalCollection, CustomStringConvertible {
     }
     
     subscript(position: Index) -> Element {
-        assert(self.indices.contains(position), "[Queue]: Queue index is out of range.")
+        assert(self.indices.contains(position), "[CircularBuffer]: CircularBuffer index is out of range.")
         let idx = self.index(advance: self.head, by: position.distanceToHead)
         return self.storage[idx]!
     }
