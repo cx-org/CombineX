@@ -120,6 +120,10 @@ extension Publishers.Buffer {
             self.sub = sub
         }
         
+        deinit {
+            lock.cleanupLock()
+        }
+        
         func request(_ demand: Subscribers.Demand) {
             self.lock.lock()
             guard let subscription = self.state.subscription else {
@@ -285,6 +289,10 @@ extension Publishers.Buffer {
             self.size = pub.size
             self.whenFull = pub.whenFull
             self.sub = sub
+        }
+        
+        deinit {
+            lock.cleanupLock()
         }
         
         func request(_ demand: Subscribers.Demand) {

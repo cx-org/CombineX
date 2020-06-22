@@ -87,7 +87,7 @@ private extension Notification {
         
         let lock = Lock()
         
-        let downstreamLock = Lock(recursive: true)
+        let downstreamLock = RecursiveLock()
         
         var demand = Subscribers.Demand.none
         
@@ -106,6 +106,11 @@ private extension Notification {
             self.observation = center.addObserver(forName: name, object: object, queue: nil) { [unowned self] in
                 self.didReceiveNotification($0, downstream: downstream)
             }
+        }
+        
+        deinit {
+            lock.cleanupLock()
+            downstreamLock.cleanupLock()
         }
         
         func request(_ demand: Subscribers.Demand) {

@@ -28,7 +28,7 @@ public final class VirtualTimeScheduler: Scheduler {
         }
     }
     
-    private let lock = Lock(recursive: true)
+    private let lock = RecursiveLock()
     private var scheduledActions = BinaryHeap<ScheduledAction>(sort: <)
     
     private var _now: SchedulerTimeType
@@ -41,6 +41,10 @@ public final class VirtualTimeScheduler: Scheduler {
     
     public init(time: VirtualTime = .zero) {
         self._now = time
+    }
+    
+    deinit {
+        lock.cleanupLock()
     }
     
     public func schedule(options: VirtualTimeScheduler.SchedulerOptions?, _ action: @escaping () -> Void) {

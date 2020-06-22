@@ -88,6 +88,10 @@ extension Publishers.TryAllSatisfy {
             self.sub = sub
         }
         
+        deinit {
+            lock.cleanupLock()
+        }
+        
         func request(_ demand: Subscribers.Demand) {
             precondition(demand > 0)
             self.lock.withLockGet(self.state.subscription)?.request(.unlimited)

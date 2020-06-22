@@ -89,6 +89,10 @@ extension Publishers.DropUntilOutput {
             
             self.child = child
         }
+        
+        deinit {
+            lock.cleanupLock()
+        }
 
         func request(_ demand: Subscribers.Demand) {
             self.lock.withLockGet(self.state.subscription)?.request(demand)

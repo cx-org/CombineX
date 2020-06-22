@@ -22,6 +22,10 @@ public class TracingSubscription: Subscription {
         self._rcvRequest = receiveRequest
         self._rcvCancel = receiveCancel
     }
+
+    deinit {
+        _lock.cleanupLock()
+    }
     
     public func request(_ demand: Subscribers.Demand) {
         self._lock.withLock {

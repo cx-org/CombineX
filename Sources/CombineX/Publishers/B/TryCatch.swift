@@ -83,6 +83,10 @@ extension Publishers.TryCatch {
             self.sub = sub
         }
         
+        deinit {
+            lock.cleanupLock()
+        }
+        
         func request(_ demand: Subscribers.Demand) {
             self.lock.lock()
             guard let subscription = self.state.subscription else {

@@ -125,6 +125,7 @@ class PrintSpec: QuickSpec {
 }
 
 private class Stream: TextOutputStream {
+    
     private var _outputs: [String] = []
     let lock = Lock()
     
@@ -134,6 +135,10 @@ private class Stream: TextOutputStream {
     
     var string: String {
         return self.outputs.joined()
+    }
+    
+    deinit {
+        lock.cleanupLock()
     }
     
     func write(_ string: String) {

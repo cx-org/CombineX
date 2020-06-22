@@ -77,7 +77,7 @@ extension Publishers.Debounce {
         typealias Pub = Publishers.Debounce<Upstream, Context>
         typealias Sub = S
         
-        let lock = Lock(recursive: true)
+        let lock = RecursiveLock()
         let scheduler: Context
         let dueTime: Context.SchedulerTimeType.Stride
         let options: Context.SchedulerOptions?
@@ -93,6 +93,10 @@ extension Publishers.Debounce {
             self.dueTime = pub.dueTime
             self.options = pub.options
             self.sub = sub
+        }
+        
+        deinit {
+            lock.cleanupLock()
         }
         
         private func schedule(_ action: @escaping () -> Void) -> Cancellable {

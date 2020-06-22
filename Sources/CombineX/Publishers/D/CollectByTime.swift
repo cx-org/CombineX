@@ -84,7 +84,7 @@ extension Publishers.CollectByTime {
         typealias Pub = Publishers.CollectByTime<Upstream, Context>
         typealias Sub = S
         
-        let lock = Lock(recursive: true)
+        let lock = RecursiveLock()
         let strategy: Publishers.TimeGroupingStrategy<Context>
         let sub: Sub
         
@@ -107,6 +107,10 @@ extension Publishers.CollectByTime {
             self.time = time
             self.count = count
             self.rescheduleTimeoutTask()
+        }
+        
+        deinit {
+            lock.cleanupLock()
         }
         
         func rescheduleTimeoutTask() {
@@ -235,7 +239,7 @@ extension Publishers.CollectByTime {
         typealias Pub = Publishers.CollectByTime<Upstream, Context>
         typealias Sub = S
         
-        let lock = Lock(recursive: true)
+        let lock = RecursiveLock()
         let sub: Sub
         
         let context: Context
@@ -256,6 +260,10 @@ extension Publishers.CollectByTime {
             self.time = time
             
             self.rescheduleTimeoutTask()
+        }
+        
+        deinit {
+            lock.cleanupLock()
         }
         
         func rescheduleTimeoutTask() {

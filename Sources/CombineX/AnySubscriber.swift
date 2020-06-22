@@ -216,6 +216,10 @@ final class SubjectSubscriberBox<S: Subject>: AnySubscriberBase<S.Output, S.Fail
         self.subject = s
     }
     
+    deinit {
+        lock.cleanupLock()
+    }
+    
     override func receive(subscription: Subscription) {
         self.lock.lock()
         guard self.state.relay(subscription) else {

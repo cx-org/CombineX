@@ -51,6 +51,10 @@ extension Subscribers {
             self.keyPath = keyPath
         }
         
+        deinit {
+            lock.cleanupLock()
+        }
+        
         public final func receive(subscription: Subscription) {
             self.lock.lock()
             if self.subscription == nil {

@@ -73,6 +73,10 @@ extension Publishers.TryScan {
             self.output = pub.initialResult
         }
         
+        deinit {
+            lock.cleanupLock()
+        }
+        
         func request(_ demand: Subscribers.Demand) {
             self.lock.withLockGet(self.state.subscription)?.request(demand)
         }

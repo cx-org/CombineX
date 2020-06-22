@@ -85,6 +85,11 @@ extension Publishers.FlatMap {
             self.sub = sub
         }
         
+        deinit {
+            upLock.cleanupLock()
+            downLock.cleanupLock()
+        }
+        
         // MARK: Subscription
         func request(_ demand: Subscribers.Demand) {
             self.downLock.lock()

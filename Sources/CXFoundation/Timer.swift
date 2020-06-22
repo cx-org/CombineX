@@ -110,6 +110,10 @@ private extension CXWrappers.Timer.TimerPublisher {
             self.inner = Inner<RoutingSubscription>(downstream: self, parent: parent)
         }
         
+        deinit {
+            lock.cleanupLock()
+        }
+        
         func receive<S: Subscriber>(subscriber: S) where Failure == S.Failure, Output == S.Input {
             lock.lock()
             subscribers.append(AnySubscriber(subscriber))
@@ -194,6 +198,10 @@ private extension CXWrappers.Timer.TimerPublisher {
             self.downstream = downstream
             self.parent = parent
             super.init()
+        }
+        
+        deinit {
+            lock.cleanupLock()
         }
         
         func request(_ demand: Subscribers.Demand) {

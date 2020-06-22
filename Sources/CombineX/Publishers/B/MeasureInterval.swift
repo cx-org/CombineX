@@ -80,6 +80,10 @@ extension Publishers.MeasureInterval {
             self.timestamp = pub.scheduler.now
         }
         
+        deinit {
+            lock.cleanupLock()
+        }
+        
         func request(_ demand: Subscribers.Demand) {
             self.lock.withLockGet(self.state.subscription)?.request(demand)
         }
