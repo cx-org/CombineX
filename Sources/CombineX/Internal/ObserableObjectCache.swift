@@ -11,6 +11,10 @@ class ObservableObjectPublisherCache<Key: AnyObject, Value: AnyObject> {
     
     private var lock = Lock()
     
+    deinit {
+        lock.cleanupLock()
+    }
+    
     private func cleanup() {
         for (key, value) in storage where key.value == nil || value.value == nil {
             storage.removeValue(forKey: key)

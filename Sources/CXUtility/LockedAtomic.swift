@@ -7,8 +7,12 @@ public final class LockedAtomic<Value> {
         self.value = value
     }
     
+    deinit {
+        lock.cleanupLock()
+    }
+    
     public var isMutating: Bool {
-        if lock.try() {
+        if lock.tryLock() {
             lock.unlock()
             return false
         }

@@ -77,6 +77,10 @@ extension Publishers.Sequence {
             self.sub = sub
         }
         
+        deinit {
+            lock.cleanupLock()
+        }
+        
         func request(_ demand: Subscribers.Demand) {
             self.lock.lock()
             

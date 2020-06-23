@@ -51,6 +51,10 @@ extension Publishers {
             self.createSubject = createSubject
         }
         
+        deinit {
+            lock.cleanupLock()
+        }
+        
         public final func receive<S: Subscriber>(subscriber: S) where SubjectType.Failure == S.Failure, SubjectType.Output == S.Input {
             self.subject.receive(subscriber: subscriber)
         }

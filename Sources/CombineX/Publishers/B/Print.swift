@@ -86,6 +86,10 @@ extension Publishers.Print {
             self.sub = sub
         }
         
+        deinit {
+            lock.cleanupLock()
+        }
+        
         private func write(_ string: String) {
             self.lock.withLock {
                 self.stream.write("")

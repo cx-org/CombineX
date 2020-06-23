@@ -25,7 +25,7 @@ let package = Package(
     ],
     targets: [
         .target(name: "CXLibc"),
-        .target(name: "CXUtility"),
+        .target(name: "CXUtility", dependencies: ["CXLibc"]),
         .target(name: "CXNamespace"),
         .target(name: "CombineX", dependencies: ["CXLibc", "CXUtility", "CXNamespace"]),
         .target(name: "CXFoundation", dependencies: ["CXUtility", "CXNamespace", "CombineX"]),

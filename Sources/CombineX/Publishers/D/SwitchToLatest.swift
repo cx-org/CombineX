@@ -85,6 +85,11 @@ extension Publishers.SwitchToLatest {
             self.sub = sub
         }
         
+        deinit {
+            upLock.cleanupLock()
+            downLock.cleanupLock()
+        }
+        
         // MARK: Subscription
         func request(_ demand: Subscribers.Demand) {
             self.downLock.lock()

@@ -93,6 +93,10 @@ private extension CXWrappers.URLSession.DataTaskPublisher {
             self.downstream = downstream
         }
         
+        deinit {
+            lock.cleanupLock()
+        }
+        
         func request(_ demand: Subscribers.Demand) {
             lock.withLock { () -> URLSessionDataTask? in
                 guard let parent = self.parent else {

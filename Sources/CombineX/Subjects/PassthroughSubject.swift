@@ -17,6 +17,11 @@ public final class PassthroughSubject<Output, Failure: Error>: Subject {
     
     public init() { }
     
+    deinit {
+        upstreamLock.cleanupLock()
+        downstreamLock.cleanupLock()
+    }
+    
     public final func receive<S: Subscriber>(subscriber: S) where Output == S.Input, Failure == S.Failure {
         self.downstreamLock.lock()
         
@@ -115,6 +120,10 @@ extension PassthroughSubject {
         init(pub: Pub, sub: Sub) {
             self.pub = pub
             self.sub = sub
+        }
+        
+        deinit {
+            lock.cleanupLock()
         }
         
         func receive(_ value: Output) {

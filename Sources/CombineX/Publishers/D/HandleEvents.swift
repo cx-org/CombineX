@@ -118,6 +118,10 @@ extension Publishers.HandleEvents {
             self.sub = sub
         }
         
+        deinit {
+            lock.cleanupLock()
+        }
+        
         func request(_ demand: Subscribers.Demand) {
             self.receiveRequest?(demand)
             self.lock.withLockGet(self.state.subscription)?.request(demand)

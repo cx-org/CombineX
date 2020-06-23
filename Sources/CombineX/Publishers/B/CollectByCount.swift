@@ -74,6 +74,10 @@ extension Publishers.CollectByCount {
             self.sub = sub
         }
         
+        deinit {
+            lock.cleanupLock()
+        }
+        
         func request(_ demand: Subscribers.Demand) {
             self.lock.withLockGet(self.state.subscription)?.request(demand * self.count)
         }

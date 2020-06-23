@@ -90,6 +90,10 @@ extension Publishers.SubscribeOn {
             self.sub = sub
         }
         
+        deinit {
+            lock.cleanupLock()
+        }
+        
         func request(_ demand: Subscribers.Demand) {
             guard let subscription = self.lock.withLockGet(self.state.subscription) else {
                 return

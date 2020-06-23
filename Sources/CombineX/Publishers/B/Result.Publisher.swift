@@ -102,6 +102,10 @@ extension Result.CX.Publisher {
             self.sub = sub
         }
         
+        deinit {
+            lock.cleanupLock()
+        }
+        
         func request(_ demand: Subscribers.Demand) {
             precondition(demand > 0)
 

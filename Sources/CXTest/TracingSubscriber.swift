@@ -31,6 +31,10 @@ public class TracingSubscriber<Input, Failure: Error>: Subscriber {
         self._rcvCompletion = receiveCompletion
     }
     
+    deinit {
+        _lock.cleanupLock()
+    }
+    
     public func receive(subscription: Subscription) {
         self._lock.withLock {
             self._events.append(.subscription(subscription.combineIdentifier))

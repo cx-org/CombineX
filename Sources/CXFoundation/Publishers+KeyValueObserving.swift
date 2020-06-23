@@ -112,7 +112,7 @@ extension CXWrappers.NSObject {
         private let lock = Lock()
 
         // This lock can only be held for the duration of downstream callouts
-        private let downstreamLock = Lock(recursive: true)
+        private let downstreamLock = RecursiveLock()
 
         var description: String { return "KVOSubscription" }
         var customMirror: Mirror {
@@ -171,8 +171,8 @@ extension CXWrappers.NSObject {
         }
 
         deinit {
-//            lock.cleanupLock()
-//            downstreamLock.cleanupLock()
+            lock.cleanupLock()
+            downstreamLock.cleanupLock()
         }
 
         func request(_ d: Subscribers.Demand) {

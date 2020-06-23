@@ -75,7 +75,7 @@ extension Publishers.Throttle {
         typealias Pub = Publishers.Throttle<Upstream, Context>
         typealias Sub = S
         
-        let lock = Lock(recursive: true)
+        let lock = RecursiveLock()
         let scheduler: Context
         let interval: Context.SchedulerTimeType.Stride
         let sub: Sub
@@ -93,6 +93,10 @@ extension Publishers.Throttle {
             self.timeoutTask = self.schedule {
                 self.sendValueIfPossible()
             }
+        }
+        
+        deinit {
+            lock.cleanupLock()
         }
         
         private func schedule(_ action: @escaping () -> Void) -> Cancellable {
@@ -218,6 +222,10 @@ extension Publishers.Throttle {
             self.timeoutTask = self.schedule {
                 self.sendValueIfPossible()
             }
+        }
+        
+        deinit {
+            lock.cleanupLock()
         }
         
         private func schedule(_ action: @escaping () -> Void) -> Cancellable {

@@ -80,6 +80,10 @@ extension Publishers.TryReduce {
             self.output = pub.initial
         }
         
+        deinit {
+            lock.cleanupLock()
+        }
+        
         func request(_ demand: Subscribers.Demand) {
             precondition(demand > 0)
             self.lock.withLockGet(self.state.subscription)?.request(.unlimited)

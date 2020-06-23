@@ -135,6 +135,10 @@ extension Publishers.CombineLatest {
             pub.b.subscribe(childB)
             self.childB = childB
         }
+        
+        deinit {
+            lock.cleanupLock()
+        }
 
         func request(_ demand: Subscribers.Demand) {
             guard demand > 0 else {

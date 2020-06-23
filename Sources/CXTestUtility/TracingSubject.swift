@@ -14,6 +14,11 @@ public class TracingSubject<Output, Failure: Error>: Subject {
     
     public init() {}
     
+    deinit {
+        upstreamLock.cleanupLock()
+        downstreamLock.cleanupLock()
+    }
+    
     public var subscriptions: [Subscription] {
         return self.downstreamLock.withLockGet(self.downstreamSubscriptions)
     }
@@ -112,7 +117,7 @@ extension TracingSubject {
         typealias Pub = TracingSubject<Output, Failure>
         typealias Sub = AnySubscriber<Output, Failure>
         
-        let lock = Lock(recursive: true)
+        let lock = RecursiveLock()
        
         var pub: Pub?
         var sub: Sub?
@@ -149,6 +154,10 @@ extension TracingSubject {
         init(pub: Pub, sub: Sub) {
             self.pub = pub
             self.sub = sub
+        }
+        
+        deinit {
+            lock.cleanupLock()
         }
         
         func receive(_ value: Output) {
