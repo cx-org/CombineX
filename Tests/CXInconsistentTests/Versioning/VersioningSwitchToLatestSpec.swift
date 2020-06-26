@@ -26,7 +26,7 @@ class VersioningSwitchToLatestSpec: QuickSpec {
             subject.send(completion: .finished)
             expect(sub.eventsWithoutSubscription) == []
             
-            // FIXME: Combine won't get any event when the last child finish.
+            // VERSIONING: Combine won't get any event when the last child finish.
             subject2.send(completion: .finished)
             expect(sub.eventsWithoutSubscription).toVersioning([
                 .v11_0: beEmpty(),
