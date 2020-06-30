@@ -15,7 +15,7 @@ class SuspiciousBufferSpec: QuickSpec {
             
             subject.send(contentsOf: 0..<100)
             
-            // FIXME: Apple's combine doesn't receive error.
+            // SUSPICIOUS: Apple's combine doesn't receive error.
             let valueEvents = (0..<5).map(TracingSubscriber<Int, TestError>.Event.value)
             let expected = valueEvents + [.completion(.failure(.e1))]
             expect(sub.eventsWithoutSubscription).toBranch(

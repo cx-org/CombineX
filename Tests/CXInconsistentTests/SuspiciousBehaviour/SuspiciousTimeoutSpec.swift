@@ -14,7 +14,7 @@ class SuspiciousTimeoutSpec: QuickSpec {
             let sub = pub.subscribeTracingSubscriber()
             subject.send(0)
             expect(sub.events[0].isSubscription) == true
-            // Combine.Publishers.Timeout leak value
+            // SUSPICIOUS: Combine.Publishers.Timeout leaks value
             expect(sub.events.count).toBranch(
                 combine: equal(2),
                 cx: equal(1))

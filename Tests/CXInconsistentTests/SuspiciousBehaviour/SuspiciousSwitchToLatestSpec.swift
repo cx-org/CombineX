@@ -26,7 +26,7 @@ class SuspiciousSwitchToLatestSpec: QuickSpec {
             
             (1...10).forEach(subject1.send)
             
-            // FIXME: Combine will crash here. This should be a bug.
+            // SUSPICIOUS: Combine will crash here. This should be a bug.
             #if !SWIFT_PACKAGE
             expect {
                 subject1.send(11)
