@@ -45,7 +45,7 @@ class SequenceSpec: QuickSpec {
                 
                 do {
                     let pub = (0..<10).cx.publisher
-                    let sub = pub.subscribeTracingSubscriber()
+                    let sub = pub.subscribeTracingSubscriber(initialDemand: nil)
                     subscription = sub.subscription
                     subObj = sub
                 }
@@ -64,7 +64,7 @@ class SequenceSpec: QuickSpec {
                 
                 do {
                     let pub = (0..<10).cx.publisher
-                    let sub = pub.subscribeTracingSubscriber()
+                    let sub = pub.subscribeTracingSubscriber(initialDemand: nil)
                     subscription = sub.subscription
                     subObj = sub
                 }
@@ -83,7 +83,7 @@ class SequenceSpec: QuickSpec {
             // MARK: 3.1 should send as many values as demand even if these are concurrently requested
             it("should send as many values as demand even if these are concurrently requested") {
                 let pub = (0...).cx.publisher
-                let sub = pub.subscribeTracingSubscriber()
+                let sub = pub.subscribeTracingSubscriber(initialDemand: nil)
                 
                 DispatchQueue.global().concurrentPerform(iterations: 100) { _ in
                     sub.subscription?.request(.max(1))

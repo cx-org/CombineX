@@ -38,14 +38,9 @@ class PublishedSpec: QuickSpec {
                     @Published var name = 0
                 }
                 let x = X()
-                let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
-                    s.request(.max(10))
-                }, receiveValue: { v in
+                let sub = x.$name.subscribeTracingSubscriber(initialDemand: .max(10)) { v in
                     return [0, 10].contains(v) ? .max(1) : .max(0)
-                }, receiveCompletion: { _ in
-                })
-                
-                x.$name.subscribe(sub)
+                }
 
                 100.times {
                     x.name = $0

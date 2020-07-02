@@ -73,16 +73,11 @@ class VersioningCollectByTimeSpec: QuickSpec {
             let scheduler = VirtualTimeScheduler()
             let pub = subject.collect(.byTimeOrCount(scheduler, .seconds(1), 2))
             
-            let sub = TracingSubscriber<[Int], TestError>(receiveSubscription: { s in
-                s.request(.max(2))
-            }, receiveValue: { v in
+            let sub = pub.subscribeTracingSubscriber(initialDemand: .max(2)) { v in
                 if v.contains(0) { return .max(1) }
                 if v.contains(2) { return .max(5) }
                 return .none
-            }, receiveCompletion: { _ in
-            })
-            
-            pub.subscribe(sub)
+            }
             
             100.times {
                 if $0.isMultiple(of: 3) {

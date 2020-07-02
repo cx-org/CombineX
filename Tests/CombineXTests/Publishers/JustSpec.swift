@@ -34,17 +34,10 @@ class JustSpec: QuickSpec {
                 var subscription: Subscription?
                 
                 let pub = Just<Int>(1)
-                let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
-                    subscription = s
-                    s.request(.unlimited)
-                }, receiveValue: { _ in
-                    return .none
-                }, receiveCompletion: { _ in
-                })
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 expect {
-                    subscription?.request(.max(0))
+                    sub.subscription?.request(.max(0))
                 }.to(throwAssertion())
             }
             #endif
@@ -60,14 +53,9 @@ class JustSpec: QuickSpec {
                 
                 do {
                     let pub = Just<Int>(1)
-                    let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
-                        subscription = s
-                    }, receiveValue: { _ in
-                        return .none
-                    }, receiveCompletion: { _ in
-                    })
+                    let sub = pub.subscribeTracingSubscriber(initialDemand: nil)
                     subObj = sub
-                    pub.subscribe(sub)
+                    subscription = sub.subscription
                 }
                 
                 expect(subObj).toNot(beNil())
@@ -84,15 +72,9 @@ class JustSpec: QuickSpec {
                 
                 do {
                     let pub = Just<Int>(1)
-                    let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
-                        subscription = s
-                    }, receiveValue: { _ in
-                        return .none
-                    }, receiveCompletion: { _ in
-                    })
-                    
+                    let sub = pub.subscribeTracingSubscriber(initialDemand: nil)
                     subObj = sub
-                    pub.subscribe(sub)
+                    subscription = sub.subscription
                 }
                 
                 expect(subObj).toNot(beNil())
@@ -112,14 +94,8 @@ class JustSpec: QuickSpec {
                     testObj = obj
                     
                     let pub = Just(obj)
-                    let sub = TracingSubscriber<NSObject, Never>(receiveSubscription: { s in
-                        subscription = s
-                    }, receiveValue: { _ in
-                        return .none
-                    }, receiveCompletion: { _ in
-                    })
-                    
-                    pub.subscribe(sub)
+                    let sub = pub.subscribeTracingSubscriber(initialDemand: nil)
+                    subscription = sub.subscription
                 }
                 
                 expect(testObj).toNot(beNil())
@@ -139,14 +115,8 @@ class JustSpec: QuickSpec {
                     testObj = obj
                     
                     let pub = Just<NSObject>(obj)
-                    let sub = TracingSubscriber<NSObject, Never>(receiveSubscription: { s in
-                        subscription = s
-                    }, receiveValue: { _ in
-                        return .none
-                    }, receiveCompletion: { _ in
-                    })
-                    
-                    pub.subscribe(sub)
+                    let sub = pub.subscribeTracingSubscriber(initialDemand: nil)
+                    subscription = sub.subscription
                 }
 
                 expect(testObj).toNot(beNil())
@@ -160,22 +130,13 @@ class JustSpec: QuickSpec {
             
             // MARK: 3.1 should only send only one value even if the subscription requests it multiple times concurrently
             it("should only send only one value even if the subscription requests it multiple times concurrently") {
-                var subscription: Subscription?
-                
                 let pub = Just<Int>(1)
-                let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
-                    subscription = s
-                }, receiveValue: { _ in
-                    return .none
-                }, receiveCompletion: { _ in
-                })
-                
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: nil)
                 
                 let g = DispatchGroup()
                 for _ in 0..<100 {
                     DispatchQueue.global().async(group: g) {
-                        subscription?.request(.max(1))
+                        sub.subscription?.request(.max(1))
                     }
                 }
                 g.wait()

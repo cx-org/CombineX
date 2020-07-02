@@ -60,13 +60,9 @@ class DebounceSpec: QuickSpec {
                 let subject = PassthroughSubject<Int, TestError>()
                 let scheduler = VirtualTimeScheduler()
                 let pub = subject.debounce(for: .seconds(1), scheduler: scheduler)
-                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
-                    s.request(.max(10))
-                }, receiveValue: { v in
-                    return [0, 5].contains(v) ? .max(1) : .none
-                }, receiveCompletion: { _ in
-                })
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .max(10)) { v in
+                    [0, 5].contains(v) ? .max(1) : .none
+                }
                 
                 100.times {
                     subject.send($0)
@@ -85,13 +81,9 @@ class DebounceSpec: QuickSpec {
                 let subject = TracingSubject<Int, TestError>()
                 let scheduler = VirtualTimeScheduler()
                 let pub = subject.debounce(for: .seconds(1), scheduler: scheduler)
-                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
-                    s.request(.max(10))
-                }, receiveValue: { v in
-                    return [1].contains(v) ? .max(1) : .none
-                }, receiveCompletion: { _ in
-                })
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .max(10)) { v in
+                    [1].contains(v) ? .max(1) : .none
+                }
                 
                 100.times {
                     subject.send($0)
@@ -99,6 +91,8 @@ class DebounceSpec: QuickSpec {
                 }
                 expect(subject.subscription.requestDemandRecords) == [.unlimited]
                 expect(subject.subscription.syncDemandRecords) == Array(repeating: .max(0), count: 100)
+                
+                _ = sub
             }
         }
     }

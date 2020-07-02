@@ -122,18 +122,13 @@ class TryCompactMapSpec: QuickSpec {
                     
                     let sub = TracingSubscriber<Int, Error>(receiveSubscription: { s in
                         subscription = s
-                    }, receiveValue: { _ in
-                        return .none
-                    }, receiveCompletion: { _ in
                     })
                     downstreamObj = sub
                     
-                    testPub
-                        .tryCompactMap { i -> Int in
-                            withExtendedLifetime(obj) {}
-                            return i
-                        }
-                    .subscribe(sub)
+                    testPub.tryCompactMap { i -> Int in
+                        withExtendedLifetime(obj) {}
+                        return i
+                    }.subscribe(sub)
                 }
                 
                 expect(downstreamObj).toNot(beNil())
@@ -159,18 +154,13 @@ class TryCompactMapSpec: QuickSpec {
                     
                     let sub = TracingSubscriber<Int, Error>(receiveSubscription: { s in
                         subscription = s
-                    }, receiveValue: { _ in
-                        return .none
-                    }, receiveCompletion: { _ in
                     })
                     downstreamObj = sub
                     
-                    testPub
-                        .tryCompactMap { i -> Int in
-                            withExtendedLifetime(obj) {}
-                            return i
-                        }
-                        .subscribe(sub)
+                    testPub.tryCompactMap { i -> Int in
+                        withExtendedLifetime(obj) {}
+                        return i
+                    }.subscribe(sub)
                 }
                 
                 subscription?.cancel()

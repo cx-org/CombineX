@@ -17,14 +17,8 @@ class PrintSpec: QuickSpec {
                 
                 let subject = PassthroughSubject<Int, TestError>()
                 let pub = subject.print("[Q]", to: stream)
-                var subscription: Subscription?
-                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
-                    subscription = s
-                }, receiveValue: { _ in
-                    return .none
-                }, receiveCompletion: { _ in
-                })
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: nil)
+                let subscription = sub.subscription
 
                 subscription?.cancel()
                 subject.send(completion: .finished)
@@ -40,14 +34,8 @@ class PrintSpec: QuickSpec {
                 
                 let subject = PassthroughSubject<Int, TestError>()
                 let pub = subject.print("[Q]", to: stream)
-                var subscription: Subscription?
-                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
-                    subscription = s
-                }, receiveValue: { _ in
-                    return .none
-                }, receiveCompletion: { _ in
-                })
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: nil)
+                let subscription = sub.subscription
                 
                 subscription?.request(.max(1))
                 subject.send(completion: .finished)
@@ -63,14 +51,8 @@ class PrintSpec: QuickSpec {
                 
                 let subject = PassthroughSubject<Int, TestError>()
                 let pub = subject.print("[Q]", to: stream)
-                var subscription: Subscription?
-                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
-                    subscription = s
-                }, receiveValue: { _ in
-                    return .none
-                }, receiveCompletion: { _ in
-                })
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: nil)
+                let subscription = sub.subscription
                 
                 subscription?.request(.unlimited)
                 
@@ -93,17 +75,8 @@ class PrintSpec: QuickSpec {
                 
                 let subject = PassthroughSubject<Int, TestError>()
                 let pub = subject.print("[Q]", to: stream)
-                
-                var subscription: Subscription?
-                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
-                    s.request(.unlimited)
-                    subscription = s
-                }, receiveValue: { _ in
-                    return .max(1)
-                }, receiveCompletion: { _ in
-                })
-                
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited, subsequentDemand: .max(1))
+                let subscription = sub.subscription
                 
                 subject.send(0)
                 subject.send(completion: .finished)

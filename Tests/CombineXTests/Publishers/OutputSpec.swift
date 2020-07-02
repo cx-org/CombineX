@@ -33,14 +33,7 @@ class OutputSpec: QuickSpec {
             it("should only send values in the specified range") {
                 let subject = PassthroughSubject<Int, Never>()
                 let pub = subject.output(in: 10..<20)
-                let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
-                    s.request(.unlimited)
-                }, receiveValue: { _ in
-                    return .none
-                }, receiveCompletion: { _ in
-                })
-                
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 subject.send(contentsOf: 0..<100)
                 
@@ -53,14 +46,9 @@ class OutputSpec: QuickSpec {
             it("should send values as demand") {
                 let subject = PassthroughSubject<Int, Never>()
                 let pub = subject.output(in: 10..<20)
-                let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
-                    s.request(.max(5))
-                }, receiveValue: { v in
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .max(5)) { v in
                     [10, 15].contains(v) ? .max(1) : .none
-                }, receiveCompletion: { _ in
-                })
-                
-                pub.subscribe(sub)
+                }
                 
                 subject.send(contentsOf: 0..<100)
                 

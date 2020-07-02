@@ -29,14 +29,9 @@ class ConcatenateSpec: QuickSpec {
                 let p1 = Publishers.Sequence<[Int], Never>(sequence: Array(10..<20))
                 
                 let pub = Publishers.Concatenate(prefix: p0, suffix: p1)
-                let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
-                    s.request(.max(10))
-                }, receiveValue: { v in
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .max(10)) { v in
                     [0, 10].contains(v) ? .max(1) : .none
-                }, receiveCompletion: { _ in
-                })
-                
-                pub.subscribe(sub)
+                }
                 
                 let events = (0..<12).map(TracingSubscriber<Int, Never>.Event.value)
                 expect(sub.eventsWithoutSubscription) == events

@@ -32,14 +32,9 @@ class TryCatchSpec: QuickSpec {
                 let p1 = Publishers.Sequence<[Int], TestError>(sequence: Array(10..<20))
                 
                 let pub = p0.tryCatch { _ in p1 }
-                let sub = TracingSubscriber<Int, Error>(receiveSubscription: { s in
-                    s.request(.max(10))
-                }, receiveValue: { v in
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .max(10)) { v in
                     [0, 10].contains(v) ? .max(1) : .none
-                }, receiveCompletion: { _ in
-                })
-                
-                pub.subscribe(sub)
+                }
                 
                 let got = sub.eventsWithoutSubscription.mapError { $0 as! TestError }
                 let events = (0..<12).map(TracingSubscriber<Int, TestError>.Event.value)

@@ -89,19 +89,9 @@ class CollectByTimeSpec: QuickSpec {
                 let subject = TracingSubject<Int, TestError>()
                 let scheduler = VirtualTimeScheduler()
                 let pub = subject.collect(.byTime(scheduler, .seconds(1)))
-                
-                let sub = TracingSubscriber<[Int], TestError>(receiveSubscription: { s in
-                    s.request(.max(2))
-                }, receiveValue: { v in
-                    if Set(v).isDisjoint(with: [0, 5]) {
-                        return .none
-                    } else {
-                        return .max(1)
-                    }
-                }, receiveCompletion: { _ in
-                })
-                
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .max(2)) { v in
+                    Set(v).isDisjoint(with: [0, 5]) ? .none : .max(1)
+                }
                 
                 100.times {
                     if ($0 % 3) == 0 {
@@ -118,19 +108,9 @@ class CollectByTimeSpec: QuickSpec {
                 let subject = TracingSubject<Int, TestError>()
                 let scheduler = VirtualTimeScheduler()
                 let pub = subject.collect(.byTime(scheduler, .seconds(1)))
-                
-                let sub = TracingSubscriber<[Int], TestError>(receiveSubscription: { s in
-                    s.request(.max(2))
-                }, receiveValue: { v in
-                    if Set(v).isDisjoint(with: [0, 5]) {
-                        return .none
-                    } else {
-                        return .max(1)
-                    }
-                }, receiveCompletion: { _ in
-                })
-                
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .max(2)) { v in
+                    Set(v).isDisjoint(with: [0, 5]) ? .none : .max(1)
+                }
                 
                 100.times {
                     if ($0 % 3) == 0 {
