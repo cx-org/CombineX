@@ -11,35 +11,26 @@ class SequenceSpec: QuickSpec {
         
         // MARK: - Send Values
         describe("Send Values") {
-            typealias Sub = TracingSubscriber<Int, TestError>
-            typealias Event = Sub.Event
             
             // MARK: 1.1 should send values then send finished
             it("should send values then send finished") {
-                let values = Array(0..<100)
-                let pub = Publishers.Sequence<[Int], TestError>(sequence: values)
+                let seq = 0..<100
+                let pub = seq.cx.publisher
                 let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
-                let valueEvents = values.map(Event.value)
+                let valueEvents = seq.map(TracingSubscriber<Int, Never>.Event.value)
                 let expected = valueEvents + [.completion(.finished)]
                 expect(sub.eventsWithoutSubscription) == expected
             }
             
             // MARK: 1.2 should send as many values as demand
             it("should send as many values as demand") {
-                let values = Array(0..<100)
-                
-                let pub = Publishers.Sequence<[Int], TestError>(sequence: values)
-                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
-                    s.request(.max(50))
-                }, receiveValue: { v in
+                let pub = (0..<100).cx.publisher
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .max(50)) { v in
                     [0, 10].contains(v) ? .max(10) : .none
-                }, receiveCompletion: { _ in
-                })
+                }
                 
-                pub.subscribe(sub)
-                
-                let events = (0..<70).map { Event.value($0) }
+                let events = (0..<70).map(TracingSubscriber<Int, Never>.Event.value)
                 expect(sub.eventsWithoutSubscription) == events
             }
         }
@@ -53,18 +44,10 @@ class SequenceSpec: QuickSpec {
                 weak var subObj: AnyObject?
                 
                 do {
-                    let values = Array(0..<10)
-                    let pub = Publishers.Sequence<[Int], Never>(sequence: values)
-                    let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
-                        subscription = s
-                    }, receiveValue: { _ in
-                        return .none
-                    }, receiveCompletion: { _ in
-                    })
-                    
+                    let pub = (0..<10).cx.publisher
+                    let sub = pub.subscribeTracingSubscriber()
+                    subscription = sub.subscription
                     subObj = sub
-                    
-                    pub.subscribe(sub)
                 }
                 
                 expect(subObj).toNot(beNil())
@@ -80,19 +63,10 @@ class SequenceSpec: QuickSpec {
                 weak var subObj: AnyObject?
                 
                 do {
-                    let values = Array(0..<10)
-                    let pub = Publishers.Sequence<[Int], Never>(sequence: values)
-                    
-                    let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
-                        subscription = s
-                    }, receiveValue: { _ in
-                        return .none
-                    }, receiveCompletion: { _ in
-                    })
-                    
+                    let pub = (0..<10).cx.publisher
+                    let sub = pub.subscribeTracingSubscriber()
+                    subscription = sub.subscription
                     subObj = sub
-                    
-                    pub.subscribe(sub)
                 }
                 
                 expect(subObj).toNot(beNil())
@@ -105,64 +79,34 @@ class SequenceSpec: QuickSpec {
         
         // MARK: - Concurrent
         describe("Concurrent") {
-            struct Seq: Sequence, IteratorProtocol {
-                private var n = 0
-                mutating func next() -> Int? {
-                    defer {
-                        n += 1
-                    }
-                    return n
-                }
-            }
             
             // MARK: 3.1 should send as many values as demand even if these are concurrently requested
             it("should send as many values as demand even if these are concurrently requested") {
-                let g = DispatchGroup()
-                let pub = Publishers.Sequence<Seq, Never>(sequence: Seq())
+                let pub = (0...).cx.publisher
+                let sub = pub.subscribeTracingSubscriber()
                 
-                var subscription: Subscription?
-                let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
-                    subscription = s
-                }, receiveValue: { _ in
-                    return .none
-                }, receiveCompletion: { _ in
-                })
-                
-                pub.subscribe(sub)
-                
-                for _ in 0..<100 {
-                    DispatchQueue.global().async(group: g) {
-                        subscription?.request(.max(1))
-                    }
+                DispatchQueue.global().concurrentPerform(iterations: 100) { _ in
+                    sub.subscription?.request(.max(1))
                 }
-            
-                g.wait()
                 
                 expect(sub.eventsWithoutSubscription.count) == 100
             }
             
             // MARK: 3.2 receiving value should not block cancel
             it("receiving value should not block") {
-                let pub = Publishers.Sequence<Seq, Never>(sequence: Seq())
-                
-                var subscription: Subscription?
-                let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
-                    subscription = s
-                }, receiveValue: { _ in
+                let pub = (0...).cx.publisher
+                let sub = pub.subscribeTracingSubscriber(initialDemand: nil) { _ in
                     Thread.sleep(forTimeInterval: 0.1)
                     return .none
-                }, receiveCompletion: { _ in
-                })
-                
-                pub.subscribe(sub)
+                }
                 
                 let status = LockedAtomic(0)
                 DispatchQueue.global().asyncAfter(deadline: .now() + 0.2) {
-                    subscription?.cancel()
+                    sub.subscription?.cancel()
                     status.store(2)
                 }
                 
-                subscription?.request(.max(5))
+                sub.subscription?.request(.max(5))
                 status.store(1)
                 
                 expect(status.load()) == 1
