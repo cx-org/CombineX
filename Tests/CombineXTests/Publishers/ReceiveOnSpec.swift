@@ -57,16 +57,7 @@ class ReceiveOnSpec: QuickSpec {
                 let subject = PassthroughSubject<Int, Never>()
                 let scheduler = DispatchQueue(label: UUID().uuidString).cx
                 let pub = subject.receive(on: scheduler)
-                
-                let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
-                    s.request(.max(10))
-                }, receiveValue: { _ in
-                    // FIXME: Apple's Combine doesn't seems to strictly support sync backpressure.
-                    return .none
-                }, receiveCompletion: { _ in
-                })
-                
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .max(10))
                 
                 expect(sub.subscription).toEventuallyNot(beNil())
                 

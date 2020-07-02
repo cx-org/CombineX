@@ -96,17 +96,12 @@ class ZipSpec: QuickSpec {
                 
                 var counter = 0
                 let pub = subject0.zip(subject1)
-                let sub = TracingSubscriber<(String, String), TestError>(receiveSubscription: { s in
-                    s.request(.max(10))
-                }, receiveValue: { _ in
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .max(10)) { _ in
                     defer {
                         counter += 1
                     }
-                    
                     return [0, 10].contains(counter) ? .max(1) : .none
-                }, receiveCompletion: { _ in
-                })
-                pub.subscribe(sub)
+                }
                 
                 100.times {
                     subject0.send("\($0)")

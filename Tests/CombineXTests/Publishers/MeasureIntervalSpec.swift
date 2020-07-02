@@ -25,7 +25,6 @@ class MeasureIntervalSpec: QuickSpec {
                     dts.append(-t.timeIntervalSinceNow)
                     t = Date()
                     return .none
-                }, receiveCompletion: { _ in
                 })
                 
                 pub.subscribe(sub)

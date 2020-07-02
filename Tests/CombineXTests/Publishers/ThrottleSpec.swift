@@ -44,13 +44,9 @@ class ThrottleSpec: QuickSpec {
                     let subject = PassthroughSubject<Int, TestError>()
                     let scheduler = VirtualTimeScheduler()
                     let pub = subject.throttle(for: .seconds(1), scheduler: scheduler, latest: true)
-                    let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
-                        s.request(.max(10))
-                    }, receiveValue: { v in
+                    let sub = pub.subscribeTracingSubscriber(initialDemand: .max(10)) { v in
                         return [0, 5].contains(v) ? .max(1) : .none
-                    }, receiveCompletion: { _ in
-                    })
-                    pub.subscribe(sub)
+                    }
                     
                     100.times {
                         subject.send($0)
@@ -95,13 +91,9 @@ class ThrottleSpec: QuickSpec {
                     let subject = PassthroughSubject<Int, TestError>()
                     let scheduler = VirtualTimeScheduler()
                     let pub = subject.throttle(for: .seconds(1), scheduler: scheduler, latest: true)
-                    let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
-                        s.request(.max(10))
-                    }, receiveValue: { v in
+                    let sub = pub.subscribeTracingSubscriber(initialDemand: .max(10)) { v in
                         return [0, 5].contains(v) ? .max(1) : .none
-                    }, receiveCompletion: { _ in
-                    })
-                    pub.subscribe(sub)
+                    }
                     
                     100.times {
                         subject.send($0)
@@ -123,13 +115,9 @@ class ThrottleSpec: QuickSpec {
                     let subject = TracingSubject<Int, TestError>()
                     let scheduler = VirtualTimeScheduler()
                     let pub = subject.throttle(for: .seconds(1), scheduler: scheduler, latest: true)
-                    let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
-                        s.request(.max(10))
-                    }, receiveValue: { v in
+                    let sub = pub.subscribeTracingSubscriber(initialDemand: .max(10)) { v in
                         return [1].contains(v) ? .max(1) : .none
-                    }, receiveCompletion: { _ in
-                    })
-                    pub.subscribe(sub)
+                    }
                     
                     100.times {
                         subject.send($0)
@@ -137,6 +125,8 @@ class ThrottleSpec: QuickSpec {
                     }
                     expect(subject.subscription.requestDemandRecords) == [.unlimited]
                     expect(subject.subscription.syncDemandRecords) == Array(repeating: .max(0), count: 100)
+                    
+                    _ = sub
                 }
             }
             
@@ -147,13 +137,9 @@ class ThrottleSpec: QuickSpec {
                     let subject = TracingSubject<Int, TestError>()
                     let scheduler = VirtualTimeScheduler()
                     let pub = subject.throttle(for: .seconds(1), scheduler: scheduler, latest: false)
-                    let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
-                        s.request(.max(10))
-                    }, receiveValue: { v in
+                    let sub = pub.subscribeTracingSubscriber(initialDemand: .max(10)) { v in
                         return [1].contains(v) ? .max(1) : .none
-                    }, receiveCompletion: { _ in
-                    })
-                    pub.subscribe(sub)
+                    }
                     
                     100.times {
                         subject.send($0)
@@ -161,6 +147,8 @@ class ThrottleSpec: QuickSpec {
                     }
                     expect(subject.subscription.requestDemandRecords) == [.unlimited]
                     expect(subject.subscription.syncDemandRecords) == Array(repeating: .max(0), count: 100)
+                    
+                    _ = sub
                 }
             }
         }

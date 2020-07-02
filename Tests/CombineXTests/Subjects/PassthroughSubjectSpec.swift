@@ -63,7 +63,7 @@ class PassthroughSubjectSpec: QuickSpec {
                 subject.send(subscription: sA)
                 expect(sA.events) == []
                 
-                let sub = subject.subscribeTracingSubscriber()
+                let sub = subject.subscribeTracingSubscriber(initialDemand: nil)
                 expect(sA.events) == []
                 
                 sub.subscription?.request(.max(1))
@@ -118,9 +118,6 @@ class PassthroughSubjectSpec: QuickSpec {
                 
                 let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.cancel()
-                }, receiveValue: { _ in
-                    return .none
-                }, receiveCompletion: { _ in
                 })
                 
                 subject.subscribe(sub)
@@ -135,7 +132,7 @@ class PassthroughSubjectSpec: QuickSpec {
             it("should not send values before the subscriber requests") {
                 let subject = PassthroughSubject<Int, TestError>()
                 
-                let sub = subject.subscribeTracingSubscriber()
+                let sub = subject.subscribeTracingSubscriber(initialDemand: nil)
                 
                 subject.send(1)
                 subject.send(1)
@@ -170,14 +167,9 @@ class PassthroughSubjectSpec: QuickSpec {
             // MARK: 2.1 should send as many values as the subscriber's demand
             it("should send as many values as the subscriber's demand") {
                 let subject = PassthroughSubject<Int, TestError>()
-                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
-                    s.request(.max(1))
-                }, receiveValue: { v in
+                let sub = subject.subscribeTracingSubscriber(initialDemand: .max(1)) { v in
                     return v == 0 ? .max(1) : .none
-                }, receiveCompletion: { _ in
-                })
-                
-                subject.subscribe(sub)
+                }
                 
                 subject.send(contentsOf: 0..<10)
                 
@@ -340,16 +332,10 @@ class PassthroughSubjectSpec: QuickSpec {
             // MARK: 4.1 should send value concurrently
             it("should send value concurrently") {
                 let pub = PassthroughSubject<Int, Never>()
-                
-                let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
-                    s.request(.unlimited)
-                }, receiveValue: { _ in
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited) { _ in
                     Thread.sleep(forTimeInterval: 0.1)
                     return .none
-                }, receiveCompletion: { _ in
-                })
-                
-                pub.subscribe(sub)
+                }
                 
                 let g = DispatchGroup()
                 let q = DispatchQueue(label: UUID().uuidString)
@@ -374,20 +360,13 @@ class PassthroughSubjectSpec: QuickSpec {
                 q.sync {
                     expect(dateA.max()) < dateB.min()!
                 }
+                _ = sub
             }
             
             // MARK: 4.2 should send as many values as the subscriber's demand even if these are sent concurrently
             it("should send as many values as the subscriber's demand even if these are sent concurrently") {
                 let subject = PassthroughSubject<Int, Never>()
-                
-                let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
-                    s.request(.max(10))
-                }, receiveValue: { _ in
-                    return .none
-                }, receiveCompletion: { _ in
-                })
-                
-                subject.subscribe(sub)
+                let sub = subject.subscribeTracingSubscriber(initialDemand: .max(10))
                 
                 DispatchQueue.global().concurrentPerform(iterations: 100, execute: subject.send)
                 
@@ -397,19 +376,13 @@ class PassthroughSubjectSpec: QuickSpec {
             // MARK: 4.3 no guarantee of synchronous backpressure
             it("no guarantee of synchronous backpressure") {
                 let subject = PassthroughSubject<Int, Never>()
-                
-                let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
-                    s.request(.max(10))
-                }, receiveValue: { v in
+                let sub = subject.subscribeTracingSubscriber(initialDemand: .max(10)) { v in
                     if v == 1 {
                         Thread.sleep(forTimeInterval: 0.1)
                         return .max(5)
                     }
                     return .none
-                }, receiveCompletion: { _ in
-                })
-                
-                subject.subscribe(sub)
+                }
                 
                 DispatchQueue.global().concurrentPerform(iterations: 100, execute: subject.send)
                 

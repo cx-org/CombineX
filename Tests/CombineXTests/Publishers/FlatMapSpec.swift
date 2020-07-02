@@ -20,14 +20,7 @@ class FlatMapSpec: QuickSpec {
                         Publishers.Sequence<[Int], Never>(sequence: [$0, $0, $0])
                     }
                 
-                let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
-                    s.request(.unlimited)
-                }, receiveValue: { _ in
-                    return .none
-                }, receiveCompletion: { _ in
-                })
-                
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 let events = [1, 2, 3].flatMap { [$0, $0, $0] }.map(TracingSubscriber<Int, Never>.Event.value)
                 let expected = events + [.completion(.finished)]
@@ -46,22 +39,15 @@ class FlatMapSpec: QuickSpec {
                         Publishers.Sequence<[Int], Never>(sequence: [$0, $0, $0])
                     }
                 
-                let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
-                    s.request(.max(10))
-                }, receiveValue: { v in
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .max(10)) { v in
                     [1, 5].contains(v) ? .max(1) : .none
-                }, receiveCompletion: { _ in
-                })
-                
-                pub.subscribe(sub)
+                }
                 
                 expect(sub.eventsWithoutSubscription.count) == 19
             }
             
             // MARK: 1.3 should complete when a sub-publisher sends an error
             it("should complete when a sub-publisher sends an error") {
-                typealias Sub = TracingSubscriber<Int, TestError>
-                
                 let sequence = Publishers.Sequence<[Int], TestError>(sequence: [0, 1, 2])
                 
                 let subjects = [
@@ -75,14 +61,7 @@ class FlatMapSpec: QuickSpec {
                         subjects[$0]
                     }
                 
-                let sub = Sub(receiveSubscription: { s in
-                    s.request(.unlimited)
-                }, receiveValue: { _ in
-                    return .none
-                }, receiveCompletion: { _ in
-                })
-                
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 3.times {
                     subjects[0].send(0)
@@ -94,30 +73,20 @@ class FlatMapSpec: QuickSpec {
                 
                 expect(sub.eventsWithoutSubscription.count) == 10
                 
-                var events = [0, 1, 2].flatMap { _ in [0, 1, 2] }.map { Sub.Event.value($0) }
-                events.append(Sub.Event.completion(.failure(.e1)))
+                var events = [0, 1, 2].flatMap { _ in [0, 1, 2] }.map(TracingSubscriber<Int, TestError>.Event.value)
+                events.append(.completion(.failure(.e1)))
                 
                 expect(sub.eventsWithoutSubscription) == events
             }
             
             // MARK: 1.4 should buffer one output for each sub-publisher if there is no demand
             it("should buffer one output for each sub-publisher if there is no demand") {
-                typealias Sub = TracingSubscriber<Int, Never>
-                
                 let subjects = [
                     PassthroughSubject<Int, Never>(),
                     PassthroughSubject<Int, Never>()
                 ]
                 let pub = Publishers.Sequence<[Int], Never>(sequence: [0, 1]).flatMap { subjects[$0] }
-                
-                var subscription: Subscription?
-                let sub = Sub(receiveSubscription: { s in
-                    subscription = s
-                }, receiveValue: { _ in
-                    return .none
-                }, receiveCompletion: { _ in
-                })
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: nil)
                 
                 subjects[0].send(0)
                 subjects[1].send(0)
@@ -125,14 +94,14 @@ class FlatMapSpec: QuickSpec {
                 subjects[0].send(1)
                 subjects[1].send(1)
                 
-                subscription?.request(.max(2))
+                sub.subscription?.request(.max(2))
                 
                 subjects[1].send(2)
                 subjects[0].send(3)
                 subjects[1].send(4)
                 subjects[0].send(5)
                 
-                subscription?.request(.unlimited)
+                sub.subscription?.request(.unlimited)
                 
                 expect(sub.eventsWithoutSubscription) == [.value(0), .value(0), .value(2), .value(3)]
             }
@@ -154,14 +123,7 @@ class FlatMapSpec: QuickSpec {
                     return subjects[i]
                 }
                 
-                let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
-                    s.request(.max(10))
-                }, receiveValue: { _ in
-                    return .none
-                }, receiveCompletion: { _ in
-                })
-                
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .max(10))
                 
                 DispatchQueue.global().concurrentPerform(iterations: 100) { i in
                     subjects[i].send(i)

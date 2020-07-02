@@ -53,15 +53,11 @@ class SubscribeOnSpec: QuickSpec {
                 }
                 
                 let pub = upstream.subscribe(on: scheduler)
-                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
-                    s.request(.max(10))
-                }, receiveValue: { _ in
-                    return .max(2)
-                }, receiveCompletion: { _ in
-                })
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .max(10), subsequentDemand: .max(2))
                 
                 expect(executed).toEventually(beTrue())
+                
+                _ = sub
             }
             
             // MARK: 1.3 should request demand on the specified queue
@@ -78,13 +74,7 @@ class SubscribeOnSpec: QuickSpec {
                 }
                 
                 let pub = upstream.subscribe(on: scheduler)
-                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
-                    s.request(.max(10))
-                }, receiveValue: { _ in
-                    return .max(2)
-                }, receiveCompletion: { _ in
-                })
-                pub.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .max(10), subsequentDemand: .max(2))
                 
                 expect(sub.subscription).toEventuallyNot(beNil())
                 sub.subscription?.request(.max(1))

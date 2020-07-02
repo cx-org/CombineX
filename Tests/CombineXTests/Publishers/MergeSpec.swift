@@ -13,19 +13,12 @@ class MergeSpec: QuickSpec {
             // MARK: It should merge 8 upstreams
             it("should merge 8 upstreams") {
                 let subjects = (0..<8).map { _ in PassthroughSubject<Int, TestError>() }
-                let merge = Publishers.Merge8(
+                let pub = Publishers.Merge8(
                     subjects[0], subjects[1], subjects[2], subjects[3],
                     subjects[4], subjects[5], subjects[6], subjects[7]
                     )
                 
-                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
-                    s.request(.unlimited)
-                }, receiveValue: { _ in
-                    return .none
-                }, receiveCompletion: { _ in
-                })
-                
-                merge.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 100.times {
                     subjects.randomElement()!.send($0)
@@ -38,16 +31,9 @@ class MergeSpec: QuickSpec {
             // MARK: It should merge many upstreams
             it("should merge many upstreams") {
                 let subjects = (0..<9).map { _ in PassthroughSubject<Int, TestError>() }
-                let merge = Publishers.MergeMany(subjects)
+                let pub = Publishers.MergeMany(subjects)
                 
-                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
-                    s.request(.unlimited)
-                }, receiveValue: { _ in
-                    return .none
-                }, receiveCompletion: { _ in
-                })
-                
-                merge.subscribe(sub)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
                 
                 100.times {
                     subjects.randomElement()!.send($0)

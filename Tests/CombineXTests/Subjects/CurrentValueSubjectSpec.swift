@@ -41,9 +41,6 @@ class CurrentValueSubjectSpec: QuickSpec {
                 
                 let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.cancel()
-                }, receiveValue: { _ in
-                    return .none
-                }, receiveCompletion: { _ in
                 })
                 
                 subject.subscribe(sub)
@@ -58,14 +55,8 @@ class CurrentValueSubjectSpec: QuickSpec {
             // MARK: 1.4 should not send values before the subscriber requests
             it("should not send values before the subscriber requests") {
                 let subject = CurrentValueSubject<Int, TestError>(-1)
+                let sub = subject.subscribeTracingSubscriber(initialDemand: nil)
                 
-                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { _ in
-                }, receiveValue: { _ in
-                    return .none
-                }, receiveCompletion: { _ in
-                })
-                
-                subject.subscribe(sub)
                 subject.send(contentsOf: 0..<10)
                 
                 expect(sub.eventsWithoutSubscription).to(beEmpty())
@@ -74,13 +65,8 @@ class CurrentValueSubjectSpec: QuickSpec {
             // MARK: 1.5 should send completion even if the subscriber does not request
             it("should send completion even if the subscriber does not request") {
                 let subject = CurrentValueSubject<Int, TestError>(-1)
+                let sub = subject.subscribeTracingSubscriber(initialDemand: nil)
                 
-                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { _ in
-                }, receiveValue: { _ in
-                    return .none
-                }, receiveCompletion: { _ in
-                })
-                subject.subscribe(sub)
                 subject.send(completion: .failure(.e0))
                 
                 expect(sub.eventsWithoutSubscription) == [.completion(.failure(.e0))]
@@ -104,15 +90,9 @@ class CurrentValueSubjectSpec: QuickSpec {
             // MARK: 2.1 should send as many values as the subscriber's demand
             it("should send as many values as the subscriber's demand") {
                 let subject = CurrentValueSubject<Int, TestError>(-1)
-
-                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
-                    s.request(.max(1))
-                }, receiveValue: { v in
+                let sub = subject.subscribeTracingSubscriber(initialDemand: .max(1)) { v in
                     return v == -1 ? .max(1) : .none
-                }, receiveCompletion: { _ in
-                })
-
-                subject.subscribe(sub)
+                }
 
                 subject.send(contentsOf: 0..<10)
                 
@@ -274,17 +254,11 @@ class CurrentValueSubjectSpec: QuickSpec {
             
             // MARK: 4.1 should send value concurrently
             it("should send value concurrently") {
-                let pub = CurrentValueSubject<Int, Never>(-1)
-                
-                let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
-                    s.request(.unlimited)
-                }, receiveValue: { _ in
+                let subject = CurrentValueSubject<Int, Never>(-1)
+                let sub = subject.subscribeTracingSubscriber(initialDemand: .unlimited) { _ in
                     Thread.sleep(forTimeInterval: 0.1)
                     return .none
-                }, receiveCompletion: { _ in
-                })
-                
-                pub.subscribe(sub)
+                }
                 
                 let g = DispatchGroup()
                 let q = DispatchQueue(label: UUID().uuidString)
@@ -297,7 +271,7 @@ class CurrentValueSubjectSpec: QuickSpec {
                         q.async {
                             datesA.append(Date())
                         }
-                        pub.send(i)
+                        subject.send(i)
                         q.async {
                             datesB.append(Date())
                         }
@@ -309,20 +283,13 @@ class CurrentValueSubjectSpec: QuickSpec {
                 q.sync {
                     expect(datesA.max()) < datesB.min()!
                 }
+                _ = sub
             }
             
             // MARK: 4.2 should send as many values as the subscriber's demand even if these are sent concurrently
             it("should send as many values as the subscriber's demand even if these are sent concurrently") {
                 let subject = CurrentValueSubject<Int, Never>(-1)
-                
-                let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
-                    s.request(.max(10))
-                }, receiveValue: { _ in
-                    return .none
-                }, receiveCompletion: { _ in
-                })
-                
-                subject.subscribe(sub)
+                let sub = subject.subscribeTracingSubscriber(initialDemand: .max(10))
                 
                 DispatchQueue.global().concurrentPerform(iterations: 100, execute: subject.send)
                 
@@ -332,19 +299,13 @@ class CurrentValueSubjectSpec: QuickSpec {
             // MARK: 4.3 no guarantee of synchronous backpressure
             it("no guarantee of synchronous backpressure") {
                 let subject = CurrentValueSubject<Int, Never>(-1)
-                
-                let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
-                    s.request(.max(10))
-                }, receiveValue: { v in
+                let sub = subject.subscribeTracingSubscriber(initialDemand: .max(10)) { v in
                     if v == 1 {
                         Thread.sleep(forTimeInterval: 0.1)
                         return .max(5)
                     }
                     return .none
-                }, receiveCompletion: { _ in
-                })
-                
-                subject.subscribe(sub)
+                }
                 
                 DispatchQueue.global().concurrentPerform(iterations: 100, execute: subject.send)
                 
@@ -376,12 +337,7 @@ class CurrentValueSubjectSpec: QuickSpec {
             // MARK: 5.2 should not send current value if the subscription requests again
             it("should not send current value if the subscription requests again") {
                 let subject = CurrentValueSubject<Int, TestError>(0)
-                let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { _ in
-                }, receiveValue: { _ in
-                    return .none
-                }, receiveCompletion: { _ in
-                })
-                subject.subscribe(sub)
+                let sub = subject.subscribeTracingSubscriber(initialDemand: nil)
                 expect(sub.eventsWithoutSubscription) == []
                 
                 subject.send(1)

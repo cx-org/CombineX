@@ -42,13 +42,9 @@ class VersioningSwitchToLatestSpec: QuickSpec {
             let subject = PassthroughSubject<PassthroughSubject<Int, Never>, Never>()
             
             let pub = subject.switchToLatest()
-            let sub = TracingSubscriber<Int, Never>(receiveSubscription: { s in
-                s.request(.max(10))
-            }, receiveValue: { v in
+            let sub = pub.subscribeTracingSubscriber(initialDemand: .max(10)) { v in
                 return [1, 11].contains(v) ? .max(1) : .none
-            }, receiveCompletion: { _ in
-            })
-            pub.subscribe(sub)
+            }
             
             subject.send(subject1)
             

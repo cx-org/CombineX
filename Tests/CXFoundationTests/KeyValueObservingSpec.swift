@@ -72,7 +72,7 @@ class KeyValueObservingSpec: QuickSpec {
                 // With .initial, the publisher caches the property value at subscription time until it receives its first non-zero demand.
                 let sub = x.cx
                     .publisher(for: \.p, options: [.initial])
-                    .subscribeTracingSubscriber()
+                    .subscribeTracingSubscriber(initialDemand: nil)
 
                 expect(sub.eventsWithoutSubscription) == []
                 x.p = 1

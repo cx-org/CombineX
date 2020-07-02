@@ -46,13 +46,11 @@ class TimeoutSpec: QuickSpec {
                 let pub = subject.timeout(.seconds(0.01), scheduler: scheduler, customError: { TestError.e0 })
                 let sub = TracingSubscriber<Int, TestError>(receiveSubscription: { s in
                     s.request(.unlimited)
-                }, receiveValue: { _ in
-                    return .none
                 }, receiveCompletion: { _ in
                     expect(scheduler.base.isCurrent) == true
                 })
-                
                 pub.subscribe(sub)
+                
                 expect(sub.eventsWithoutSubscription).toEventually(equal([.completion(.failure(TestError.e0))]))
             }
         }
