@@ -54,3 +54,11 @@ These libraries bring additional functionality to Combine. They are all [Combine
 
 - [CXCocoa](https://github.com/cx-org/CXCocoa): provides `Combine` extensions to `Cocoa`, such as `KVO+Publisher`, `Method Interception`, `UIBinding`, `Delegate Proxy`, etc.
 - [CXExtensions](https://github.com/cx-org/CXExtensions): provides a collection of useful extensions for `Combine`, such as `IgnoreError`, `DelayedAutoCancellable`, etc.
+
+## License
+
+CombineX is released under the MIT license. See [LICENSE](LICENSE) for details.
+
+The following files are adapted from the Swift open source project:
+
+- [Publishers+KeyValueObserving](Sources/CXFoundation/Publishers+KeyValueObserving.swift)
