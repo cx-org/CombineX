@@ -19,14 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
---------------------------
-
-The following files are adapted from the Swift open source project:
-
-- Sources/CXFoundation/Publishers+KeyValueObserving.swift
-
-These files are under the Apache License version 2.0, found here:
-
-https://github.com/apple/swift/blob/4f3eab3aae55bd7ad2af710fd468d0361aa907da/LICENSE.txt
-

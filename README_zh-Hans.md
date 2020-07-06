@@ -52,3 +52,11 @@ CXShim 仅在 Swift Package Manager 下可用。
 
 - [CXCocoa](https://github.com/cx-org/CXCocoa)：提供 `Cocoa` 的 `Combine` 扩展。例如 `KVO+Publisher`，`Method Interception`，`UIBinding`，`Delegate Proxy` 等。
 - [CXExtensions](https://github.com/cx-org/CXExtensions)：提供一系列有用的 Combine 扩展，例如：`IgnoreError`，`DelayedAutoCancellable` 等。
+
+## 许可协议
+
+CombineX 以 MIT 协议发布. 查看 [LICENSE](LICENSE) 获取更多信息.
+
+以下文件取自 Swift 项目:
+
+- [Publishers+KeyValueObserving](Sources/CXFoundation/Publishers+KeyValueObserving.swift)
