@@ -18,7 +18,7 @@ jobs:
   mac:
     strategy:
       matrix:
-        xcode_version: ['11', '11.3', '11.4', '11.5']
+        xcode_version: ['11', '11.3', '11.6']
     runs-on: macOS-latest
     env:
       DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode_version }}.app/Contents/Developer
@@ -84,6 +84,8 @@ jobs:
             ios: '13.4'
           - xcode: '11.5'
             ios: '13.5'
+          - xcode: '11.6'
+            ios: '13.6'
     runs-on: macOS-latest
     env:
       DEVELOPER_DIR: /Applications/Xcode_${{ matrix.versions.xcode }}.app/Contents/Developer
