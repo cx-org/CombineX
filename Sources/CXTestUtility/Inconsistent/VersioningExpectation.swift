@@ -27,7 +27,7 @@ public extension Expectation {
 }
 
 // assume combine change its behaviour with xcode release, along with system update.
-public enum XcodeVersion: Comparable {
+public enum XcodeVersion: Equatable, Hashable, Comparable {
     
     case v11_0
     case v11_1
@@ -35,6 +35,7 @@ public enum XcodeVersion: Comparable {
     case v11_3
     case v11_4
     case v11_5
+    case v11_6
     
     #if canImport(Darwin)
     var systemVersion: Semver {
@@ -58,6 +59,7 @@ public enum XcodeVersion: Comparable {
         case .v11_3: return "10.15.2"
         case .v11_4: return "10.15.4"
         case .v11_5: return "10.15.5"
+        case .v11_6: return "10.15.6"
         }
     }
     
@@ -69,6 +71,7 @@ public enum XcodeVersion: Comparable {
         case .v11_3: return "13.3.0"
         case .v11_4: return "13.4.0"
         case .v11_5: return "13.5.0"
+        case .v11_6: return "13.6.0"
         }
     }
     
@@ -79,7 +82,8 @@ public enum XcodeVersion: Comparable {
         case .v11_2: return "13.2.0"
         case .v11_3: return "13.3.0"
         case .v11_4: return "13.4.0"
-        case .v11_5: return "13.5.0"
+        case .v11_5: return "13.4.6"
+        case .v11_6: return "13.4.8"
         }
     }
     
@@ -91,6 +95,7 @@ public enum XcodeVersion: Comparable {
         case .v11_3: return "6.1.1"
         case .v11_4: return "6.2.0"
         case .v11_5: return "6.2.6"
+        case .v11_6: return "6.2.8"
         }
     }
     
@@ -102,6 +107,7 @@ public enum XcodeVersion: Comparable {
         case .v11_3: return "11.3.0"
         case .v11_4: return "11.4.0"
         case .v11_5: return "11.5.0"
+        case .v11_6: return "11.6.0"
         }
     }
     
