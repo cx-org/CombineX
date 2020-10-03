@@ -18,9 +18,8 @@ let package = Package(
         .library(name: "CXTest", targets: ["CXTest"])
     ],
     dependencies: [
-        .package(url: "https://github.com/Quick/Quick.git", from: "2.0.0"),
-        // TODO: Use "8.0.2" until https://github.com/Quick/Nimble/issues/705 is fixed.
-        .package(url: "https://github.com/Quick/Nimble.git", .exact("8.0.2")),
+        .package(url: "https://github.com/Quick/Quick.git", from: "3.0.0"),
+        .package(url: "https://github.com/Quick/Nimble.git", from: "9.0.0"),
         .package(url: "https://github.com/ddddxxx/Semver.git", .upToNextMinor(from: "0.2.1")),
     ],
     targets: [

@@ -24,7 +24,7 @@ class URLSessionSpec: QuickSpec {
                     response = v.response
                 })
             
-            expect(response).toEventuallyNot(beNil(), timeout: 5)
+            expect(response).toEventuallyNot(beNil(), timeout: .seconds(5))
             _ = sink
         }
     }

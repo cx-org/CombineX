@@ -13,7 +13,7 @@ class TimerSpec: QuickSpec {
             let pub = CXWrappers.Timer.publish(every: 0.1, on: .main, in: .common)
             let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
             
-            waitUntil(timeout: 3) { done in
+            waitUntil(timeout: .seconds(3)) { done in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     done()
                     expect(sub.eventsWithoutSubscription).to(beEmpty())
