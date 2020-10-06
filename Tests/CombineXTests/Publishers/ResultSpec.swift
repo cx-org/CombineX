@@ -57,9 +57,9 @@ class ResultSpec: QuickSpec {
                 let err = TestError.e0
                 
                 let r1 = pub.tryMin(by: { _, _ in throw err }).result
-                expect { try r1.get() }.to(throwError(err))
+                expect(expression: { try r1.get() }).to(throwError(err))
                 let r2 = pub.tryMax(by: { _, _ in throw err }).result
-                expect { try r2.get() }.to(throwError(err))
+                expect(expression: { try r2.get() }).to(throwError(err))
             }
         }
     }
