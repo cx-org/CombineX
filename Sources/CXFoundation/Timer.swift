@@ -231,16 +231,10 @@ extension CXWrappers.Timer {
                 Downstream.Failure == Never
         {
             private lazy var timer: Timer? = {
-                let t = Timer(
-                    timeInterval: parent?.interval ?? 0,
-                    target: self,
-                    selector: #selector(timerFired),
-                    userInfo: nil,
-                    repeats: true
-                )
-                
+                let t = Timer.cx_init(timeInterval: parent?.interval ?? 0, repeats: true) { [weak self] timer in
+                    self?.timerFired(arg: timer)
+                }
                 t.tolerance = parent?.tolerance ?? 0
-                
                 return t
             }()
             
@@ -316,7 +310,6 @@ extension CXWrappers.Timer {
                 demand += n
             }
             
-            @objc
             func timerFired(arg: Any) {
                 lock.lock()
                 guard let ds = downstream, parent != nil else {
