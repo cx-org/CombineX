@@ -20,6 +20,21 @@ extension Timer {
     }
 }
 
+// Adapted from the original file:
+// https://github.com/apple/swift/blob/main/stdlib/public/Darwin/Foundation/Publishers%2BTimer.swift
+
+//===----------------------------------------------------------------------===//
+//
+// This source file is part of the Swift.org open source project
+//
+// Copyright (c) 2014 - 2019 Apple Inc. and the Swift project authors
+// Licensed under Apache License v2.0 with Runtime Library Exception
+//
+// See https://swift.org/LICENSE.txt for license information
+// See https://swift.org/CONTRIBUTORS.txt for the list of Swift project authors
+//
+//===----------------------------------------------------------------------===//
+
 extension CXWrappers.Timer {
 
     /// Returns a publisher that repeatedly emits the current date on the given interval.
@@ -46,22 +61,23 @@ extension CXWrappers.Timer {
     
     /// A publisher that repeatedly emits the current date on a given interval.
     public final class TimerPublisher: ConnectablePublisher {
-        
         public typealias Output = Date
-        
         public typealias Failure = Never
         
         public let interval: TimeInterval
-        
         public let tolerance: TimeInterval?
-        
         public let runLoop: RunLoop
-        
         public let mode: RunLoop.Mode
-        
         public let options: CXWrappers.RunLoop.SchedulerOptions?
+
+        private lazy var routingSubscription: RoutingSubscription = {
+            return RoutingSubscription(parent: self)
+        }()
         
-        private lazy var routingSubscription = RoutingSubscription(parent: self)
+        // Stores if a `.connect()` happened before subscription, internally readable for tests
+        internal var isConnected: Bool {
+            return routingSubscription.isConnected
+        }
         
         /// Creates a publisher that repeatedly emits the current date on the given interval.
         ///
@@ -79,175 +95,253 @@ extension CXWrappers.Timer {
             self.options = options
         }
         
+        /// Adapter subscription to allow `Timer` to multiplex to multiple subscribers
+        /// the values produced by a single `TimerPublisher.Inner`
+        private class RoutingSubscription: Subscription, Subscriber, CustomStringConvertible, CustomReflectable, CustomPlaygroundDisplayConvertible {
+            typealias Input = Date
+            typealias Failure = Never
+            
+            private typealias ErasedSubscriber = AnySubscriber<Output, Failure>
+            
+            private let lock: Lock
+            
+            // Inner is IUP due to init requirements
+            private var inner: Inner<RoutingSubscription>!
+            private var subscribers: [ErasedSubscriber] = []
+
+            private var _lockedIsConnected = false
+            var isConnected: Bool {
+                get {
+                    lock.lock()
+                    defer { lock.unlock() }
+                    return _lockedIsConnected
+                }
+                
+                set {
+                    lock.lock()
+                    let oldValue = _lockedIsConnected
+                    _lockedIsConnected = newValue
+                    
+                    // Inner will always be non-nil
+                    let inner = self.inner!
+                    lock.unlock()
+                    
+                    guard newValue, !oldValue else {
+                        return
+                    }
+                    inner.enqueue()
+                }
+            }
+            
+            var description: String { return "Timer" }
+            var customMirror: Mirror { return inner.customMirror }
+            var playgroundDescription: Any { return description }
+            var combineIdentifier: CombineIdentifier { return inner.combineIdentifier }
+            
+            init(parent: TimerPublisher) {
+                self.lock = Lock()
+                self.inner = Inner(parent, self)
+            }
+            
+            deinit {
+                lock.cleanupLock()
+            }
+            
+            func addSubscriber<S: Subscriber>(_ sub: S)
+                where
+                    S.Failure == Failure,
+                    S.Input == Output
+            {
+                lock.lock()
+                subscribers.append(AnySubscriber(sub))
+                lock.unlock()
+                
+                sub.receive(subscription: self)
+            }
+            
+            func receive(subscription: Subscription) {
+                lock.lock()
+                let subscribers = self.subscribers
+                lock.unlock()
+                
+                for sub in subscribers {
+                    sub.receive(subscription: subscription)
+                }
+            }
+            
+            func receive(_ value: Input) -> Subscribers.Demand {
+                var resultingDemand: Subscribers.Demand = .max(0)
+                lock.lock()
+                let subscribers = self.subscribers
+                let isConnected = _lockedIsConnected
+                lock.unlock()
+                
+                guard isConnected else { return .none }
+                
+                for sub in subscribers {
+                    resultingDemand += sub.receive(value)
+                }
+                return resultingDemand
+            }
+            
+            func receive(completion: Subscribers.Completion<Failure>) {
+                lock.lock()
+                let subscribers = self.subscribers
+                lock.unlock()
+                
+                for sub in subscribers {
+                    sub.receive(completion: completion)
+                }
+            }
+            
+            func request(_ demand: Subscribers.Demand) {
+                lock.lock()
+                // Inner will always be non-nil
+                let inner = self.inner!
+                lock.unlock()
+                
+                inner.request(demand)
+            }
+            
+            func cancel() {
+                lock.lock()
+                // Inner will always be non-nil
+                let inner = self.inner!
+                _lockedIsConnected = false
+                self.subscribers = []
+                lock.unlock()
+                
+                inner.cancel()
+            }
+        }
+        
         public func receive<S: Subscriber>(subscriber: S) where Failure == S.Failure, Output == S.Input {
-            routingSubscription.receive(subscriber: subscriber)
+            routingSubscription.addSubscriber(subscriber)
         }
         
         public func connect() -> Cancellable {
-            routingSubscription.connect()
+            routingSubscription.isConnected = true
             return routingSubscription
         }
-    }
-}
-
-private extension CXWrappers.Timer.TimerPublisher {
-    
-    final class RoutingSubscription: Subscription, Subscriber {
         
-        typealias Input = Date
-        
-        typealias Failure = Never
-        
-        private let lock = Lock()
-        
-        private var inner: Inner<RoutingSubscription>?
-        
-        private var subscribers: [AnySubscriber<Date, Never>] = []
-        
-        private var _lockedIsConnected = false
-        
-        init(parent: CXWrappers.Timer.TimerPublisher) {
-            self.inner = Inner<RoutingSubscription>(downstream: self, parent: parent)
-        }
-        
-        deinit {
-            lock.cleanupLock()
-        }
-        
-        func receive<S: Subscriber>(subscriber: S) where Failure == S.Failure, Output == S.Input {
-            lock.lock()
-            subscribers.append(AnySubscriber(subscriber))
-            lock.unlock()
-            subscriber.receive(subscription: self)
-        }
-
-        func connect() {
-            lock.lock()
-            guard _lockedIsConnected == false else {
+        private typealias Parent = TimerPublisher
+        private final class Inner<Downstream: Subscriber>: NSObject, Subscription, CustomReflectable, CustomPlaygroundDisplayConvertible
+            where
+                Downstream.Input == Date,
+                Downstream.Failure == Never
+        {
+            private lazy var timer: Timer? = {
+                let t = Timer(
+                    timeInterval: parent?.interval ?? 0,
+                    target: self,
+                    selector: #selector(timerFired),
+                    userInfo: nil,
+                    repeats: true
+                )
+                
+                t.tolerance = parent?.tolerance ?? 0
+                
+                return t
+            }()
+            
+            private let lock: Lock
+            private var downstream: Downstream?
+            private var parent: Parent?
+            private var started: Bool
+            private var demand: Subscribers.Demand
+            
+            override var description: String { return "Timer" }
+            var customMirror: Mirror {
+                lock.lock()
+                defer { lock.unlock() }
+                return Mirror(self, children: [
+                    "downstream": downstream as Any,
+                    "interval": parent?.interval as Any,
+                    "tolerance": parent?.tolerance as Any
+                ])
+            }
+            var playgroundDescription: Any { return description }
+            
+            init(_ parent: Parent, _ downstream: Downstream) {
+                self.lock = Lock()
+                self.parent = parent
+                self.downstream = downstream
+                self.started = false
+                self.demand = .max(0)
+                super.init()
+            }
+            
+            deinit {
+                lock.cleanupLock()
+            }
+            
+            func enqueue() {
+                lock.lock()
+                guard let t = timer, let parent = self.parent, !started else {
+                    lock.unlock()
+                    return
+                }
+                
+                started = true
                 lock.unlock()
-                return
+                
+                parent.runLoop.add(t, forMode: parent.mode)
             }
-            _lockedIsConnected = true
-            let inner = self.inner
-            lock.unlock()
-            inner?.start()
-        }
-        
-        func receive(subscription: Subscription) {
-            // Never receive subscription?
-            fatalError()
-        }
-        
-        func receive(_ input: Input) -> Subscribers.Demand {
-            return lock.withLockGet(self.subscribers).reduce(into: Subscribers.Demand.none) { result, sub in
-                // Not locked.
-                // It's locked in Combine, but I don't think it's necessary. The whole invocation is locked by `Inner` anyway.
-                result += sub.receive(input)
-            }
-        }
-        
-        func receive(completion: Subscribers.Completion<Failure>) {
-            // Never complete?
-            fatalError()
-        }
-        
-        func request(_ demand: Subscribers.Demand) {
-            inner?.request(demand)
-        }
-        
-        func cancel() {
-            lock.lock()
-            guard _lockedIsConnected else {
+            
+            func cancel() {
+                lock.lock()
+                guard let t = timer else {
+                    lock.unlock()
+                    return
+                }
+                
+                // clear out all optionals
+                downstream = nil
+                parent = nil
+                started = false
+                demand = .max(0)
+                timer = nil
                 lock.unlock()
-                return
+                
+                // cancel the timer
+                t.invalidate()
             }
-            _lockedIsConnected = false
-            subscribers = []
-            inner?.cancel()
-            // inner = nil
-            lock.unlock()
-        }
-    }
-    
-    final class Inner<Downstream: Subscriber>: NSObject, Subscription where Downstream.Input == Date, Downstream.Failure == Never {
-        
-        lazy var timer: Timer? = {
-            guard let parent = parent else {
-                return nil
+            
+            func request(_ n: Subscribers.Demand) {
+                lock.lock()
+                defer { lock.unlock() }
+                guard parent != nil else {
+                    return
+                }
+                demand += n
             }
-            let timer = Timer.cx_init(timeInterval: parent.interval, repeats: true) { [weak self] _ in
-                self?.timerFired()
-            }
-            if let tolerance = parent.tolerance {
-                timer.tolerance = tolerance
-            }
-            return timer
-        }()
-        
-        let lock = Lock()
-        
-        var downstream: Downstream?
-        
-        var parent: CXWrappers.Timer.TimerPublisher?
-        
-        var started = false
-        
-        var demand = Subscribers.Demand.none
-        
-        init(downstream: Downstream, parent: CXWrappers.Timer.TimerPublisher) {
-            self.downstream = downstream
-            self.parent = parent
-            super.init()
-        }
-        
-        deinit {
-            lock.cleanupLock()
-        }
-        
-        func request(_ demand: Subscribers.Demand) {
-            lock.lock()
-            self.demand += demand
-            lock.unlock()
-        }
-        
-        func cancel() {
-            lock.lock()
-            guard let timer = timer else {
+            
+            @objc
+            func timerFired(arg: Any) {
+                lock.lock()
+                guard let ds = downstream, parent != nil else {
+                    lock.unlock()
+                    return
+                }
+                
+                // This publisher drops events on the floor when there is no space in the subscriber
+                guard demand > 0 else {
+                    lock.unlock()
+                    return
+                }
+                
+                demand -= 1
                 lock.unlock()
-                return
-            }
-            self.timer = nil
-            downstream = nil
-            parent = nil
-            started = false
-            lock.unlock()
-            timer.invalidate()
-        }
-        
-        func start() {
-            lock.lock()
-            guard started == false, let parent = parent, let timer = timer else {
+                
+                let extra = ds.receive(Date())
+                guard extra > 0 else {
+                    return
+                }
+                
+                lock.lock()
+                demand += extra
                 lock.unlock()
-                return
             }
-            started = true
-            lock.unlock()
-            parent.runLoop.add(timer, forMode: parent.mode)
-        }
-        
-        func timerFired() {
-            lock.lock()
-            guard demand > 0 else {
-                lock.unlock()
-                return
-            }
-            demand -= 1
-            if let downstream = self.downstream {
-                // Should it be locked?
-                // It's locked in Combine when receiving value, and result in surprising behaviour (to me).
-                demand += downstream.receive(Date())
-            }
-            lock.unlock()
         }
     }
 }
