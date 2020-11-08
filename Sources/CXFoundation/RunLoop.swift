@@ -171,8 +171,14 @@ extension CXWrappers.RunLoop: CombineX.Scheduler {
                          tolerance: SchedulerTimeType.Stride,
                          options: SchedulerOptions?,
                          _ action: @escaping () -> Void) {
+        #if canImport(ObjectiveC)
         let ti = date.date.timeIntervalSince(Date())
         self.base.perform(#selector(RunLoop.cx_runLoopScheduled), with: _CXRunLoopAction(action), afterDelay: ti)
+        #else
+        let timer = Timer.cx_init(fire: date.date, interval: 42, repeats: false) { _ in action() }
+        timer.tolerance = tolerance.timeInterval
+        self.base.add(timer, forMode: .default)
+        #endif
     }
     
     public func schedule(after date: SchedulerTimeType,
@@ -199,6 +205,8 @@ extension CXWrappers.RunLoop: CombineX.Scheduler {
     }
 }
 
+#if canImport(ObjectiveC)
+
 extension RunLoop {
     @objc
     fileprivate func cx_runLoopScheduled(action: _CXRunLoopAction) {
@@ -214,3 +222,5 @@ private class _CXRunLoopAction: NSObject {
         self.action = action
     }
 }
+
+#endif

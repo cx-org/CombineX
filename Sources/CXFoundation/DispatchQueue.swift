@@ -52,10 +52,10 @@ extension DispatchQueue {
 //
 //===----------------------------------------------------------------------===//
     
-private func clampedIntProduct(_ m1: Int, _ m2: UInt64) -> Int {
+private func clampedIntProduct(_ m1: Int, _ m2: Int) -> Int {
     assert(m2 > 0, "multiplier must be positive")
     guard m1 < Int.max, m2 < Int.max else { return Int.max }
-    let (result, overflow) = m1.multipliedReportingOverflow(by: Int(m2))
+    let (result, overflow) = m1.multipliedReportingOverflow(by: m2)
     if overflow {
         return m1 > 0 ? Int.max : Int.min
     }
@@ -65,9 +65,9 @@ private func clampedIntProduct(_ m1: Int, _ m2: UInt64) -> Int {
 private extension DispatchTimeInterval {
     var nanoseconds: Int {
         switch self {
-        case .seconds(let s): return clampedIntProduct(s, NSEC_PER_SEC)
-        case .milliseconds(let ms): return clampedIntProduct(ms, NSEC_PER_MSEC)
-        case .microseconds(let us): return clampedIntProduct(us, NSEC_PER_USEC)
+        case .seconds(let s): return clampedIntProduct(s, Const.nsec_per_sec)
+        case .milliseconds(let ms): return clampedIntProduct(ms, Const.nsec_per_msec)
+        case .microseconds(let us): return clampedIntProduct(us, Const.nsec_per_usec)
         case .nanoseconds(let ns): return ns
         case .never: return Int.max
         @unknown default:
