@@ -33,24 +33,35 @@ extension CXWrappers.NotificationCenter {
     }
 }
 
+// Adapted from the original file:
+// https://github.com/apple/swift/blob/main/stdlib/public/Darwin/Foundation/Publishers%2BNotificationCenter.swift
+
+//===----------------------------------------------------------------------===//
+//
+// This source file is part of the Swift.org open source project
+//
+// Copyright (c) 2014 - 2019 Apple Inc. and the Swift project authors
+// Licensed under Apache License v2.0 with Runtime Library Exception
+//
+// See https://swift.org/LICENSE.txt for license information
+// See https://swift.org/CONTRIBUTORS.txt for the list of Swift project authors
+//
+//===----------------------------------------------------------------------===//
+
 extension CXWrappers.NotificationCenter {
     
     /// A publisher that emits elements when broadcasting notifications.
     public struct Publisher: CombineX.Publisher {
-        
         public typealias Output = Notification
-        
         public typealias Failure = Never
-        
+
         /// The notification center this publisher uses as a source.
         public let center: NotificationCenter
-        
         /// The name of notifications published by this publisher.
         public let name: Notification.Name
-        
         /// The object posting the named notfication.
         public let object: AnyObject?
-        
+
         /// Creates a publisher that emits events when broadcasting notifications.
         ///
         /// - Parameters:
@@ -63,19 +74,20 @@ extension CXWrappers.NotificationCenter {
             self.object = object
         }
         
-        public func receive<S: Subscriber>(subscriber: S) where S.Failure == Publisher.Failure, S.Input == Publisher.Output {
-            let subscription = Notification.Subscription(center: center, name: name, object: object, downstream: subscriber)
-            subscriber.receive(subscription: subscription)
+        public func receive<S: Subscriber>(subscriber: S) where S.Input == Output, S.Failure == Failure {
+            subscriber.receive(subscription: Notification.Subscription(center, name, object, subscriber))
         }
     }
 }
 
 extension CXWrappers.NotificationCenter.Publisher: Equatable {
-    
-    public static func == (lhs: CXWrappers.NotificationCenter.Publisher, rhs: CXWrappers.NotificationCenter.Publisher) -> Bool {
-        return lhs.center == rhs.center &&
-            lhs.name == rhs.name &&
-            lhs.object === rhs.object
+    public static func == (
+        lhs: CXWrappers.NotificationCenter.Publisher,
+        rhs: CXWrappers.NotificationCenter.Publisher
+    ) -> Bool {
+        return lhs.center === rhs.center
+            && lhs.name == rhs.name
+            && lhs.object === rhs.object
     }
 }
 
@@ -83,72 +95,102 @@ extension CXWrappers.NotificationCenter.Publisher: Equatable {
 
 private extension Notification {
     
-    final class Subscription<Downstream: Subscriber>: CombineX.Subscription where Downstream.Input == Notification, Downstream.Failure == Never {
+    final class Subscription<S: Subscriber>: CombineX.Subscription, CustomStringConvertible, CustomReflectable, CustomPlaygroundDisplayConvertible
+            where
+                S.Input == Notification
+    {
+        private let lock = Lock()
         
-        let lock = Lock()
-        
-        let downstreamLock = RecursiveLock()
-        
-        var demand = Subscribers.Demand.none
-        
-        var center: NotificationCenter?
-        
-        let name: Name
-        
-        var object: AnyObject?
-        
-        var observation: AnyObject?
-        
-        init(center: NotificationCenter, name: Notification.Name, object: AnyObject?, downstream: Downstream) {
+        // This lock can only be held for the duration of downstream callouts
+        private let downstreamLock = RecursiveLock()
+
+        private var demand: Subscribers.Demand      // GuardedBy(lock)
+        private var center: NotificationCenter?     // GuardedBy(lock)
+        private let name: Notification.Name         // Stored only for debug info
+        private var object: AnyObject?              // Stored only for debug info
+        private var observation: AnyObject?         // GuardedBy(lock)
+        var description: String { return "NotificationCenter Observer" }
+        var customMirror: Mirror {
+            lock.lock()
+            defer { lock.unlock() }
+            return Mirror(self, children: [
+                "center": center as Any,
+                "name": name as Any,
+                "object": object as Any,
+                "demand": demand
+            ])
+        }
+        var playgroundDescription: Any { return description }
+
+        init(_ center: NotificationCenter,
+             _ name: Notification.Name,
+             _ object: AnyObject?,
+             _ next: S)
+        {
+            self.demand = .max(0)
             self.center = center
             self.name = name
             self.object = object
-            self.observation = center.addObserver(forName: name, object: object, queue: nil) { [unowned self] in
-                self.didReceiveNotification($0, downstream: downstream)
+
+            self.observation = center.addObserver(
+                forName: name,
+                object: object,
+                queue: nil
+            ) { [weak self] note in
+                guard let self = self else { return }
+
+                self.lock.lock()
+                guard self.observation != nil else {
+                    self.lock.unlock()
+                    return
+                }
+
+                let demand = self.demand
+                if demand > 0 {
+                    self.demand -= 1
+                }
+                self.lock.unlock()
+
+                if demand > 0 {
+                    self.downstreamLock.lock()
+                    let additionalDemand = next.receive(note)
+                    self.downstreamLock.unlock()
+
+                    if additionalDemand > 0 {
+                        self.lock.lock()
+                        self.demand += additionalDemand
+                        self.lock.unlock()
+                    }
+                } else {
+                    // Drop it on the floor
+                }
             }
         }
-        
+
         deinit {
             lock.cleanupLock()
             downstreamLock.cleanupLock()
         }
-        
-        func request(_ demand: Subscribers.Demand) {
-            lock.withLock {
-                self.demand += demand
-            }
+
+        func request(_ d: Subscribers.Demand) {
+            lock.lock()
+            demand += d
+            lock.unlock()
         }
-        
+
         func cancel() {
             lock.lock()
-            guard let center = self.center, let observation = self.observation else {
-                lock.unlock()
-                return
+            guard let center = self.center,
+                let observation = self.observation else {
+                    lock.unlock()
+                    return
             }
             self.center = nil
-            self.object = nil
             self.observation = nil
+            self.object = nil
             lock.unlock()
-            
+
             center.removeObserver(observation)
-        }
-        
-        func didReceiveNotification(_ notification: Notification, downstream: Downstream) {
-            lock.lock()
-            guard demand > 0 else {
-                lock.unlock()
-                return
-            }
-            demand -= 1
-            lock.unlock()
-            
-            let newDemand = downstreamLock.withLock {
-                downstream.receive(notification)
-            }
-            
-            lock.withLock {
-                self.demand += newDemand
-            }
         }
     }
 }
