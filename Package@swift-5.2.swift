@@ -1,4 +1,4 @@
-// swift-tools-version:5.0
+// swift-tools-version:5.2
 
 import PackageDescription
 
@@ -18,6 +18,8 @@ let package = Package(
         .library(name: "CXTest", targets: ["CXTest"])
     ],
     dependencies: [
+        .package(url: "https://github.com/Quick/Quick.git", from: "3.0.0"),
+        .package(url: "https://github.com/Quick/Nimble.git", from: "9.0.0"),
         .package(url: "https://github.com/ddddxxx/Semver.git", .upToNextMinor(from: "0.2.1")),
     ],
     targets: [
@@ -29,6 +31,10 @@ let package = Package(
         .target(name: "CXCompatible", dependencies: ["CXNamespace"]),
         .target(name: "CXShim", dependencies: [/* depends on concrete combine implementation */]),
         .target(name: "CXTest", dependencies: ["CXUtility", "CXShim"]),
+        .target(name: "CXTestUtility", dependencies: ["CXUtility", "CXTest", "Semver", "CXShim", "Nimble"]),
+        .testTarget(name: "CombineXTests", dependencies: ["CXTestUtility", "CXUtility", "CXShim", "Quick", "Nimble"]),
+        .testTarget(name: "CXFoundationTests", dependencies: ["CXTestUtility", "CXShim", "Quick", "Nimble"]),
+        .testTarget(name: "CXInconsistentTests", dependencies: ["CXTestUtility", "CXUtility", "CXShim", "Quick", "Nimble"]),
     ],
     swiftLanguageVersions: [
         .v5,
@@ -127,6 +133,9 @@ let shimTarget = package.targets.first(where: { $0.name == "CXShim" })!
 shimTarget.dependencies = combineImp.shimTargetDependencies
 shimTarget.swiftSettings.append(contentsOf: combineImp.swiftSettings)
 
+let testUtilityTarget = package.targets.first(where: { $0.name == "CXTestUtility" })!
+testUtilityTarget.swiftSettings.append(contentsOf: combineImp.swiftSettings)
+
 if combineImp == .combine && isCI {
     package.platforms = [.macOS("10.15"), .iOS("13.0"), .tvOS("13.0"), .watchOS("6.0")]
 } else {
@@ -134,4 +143,3 @@ if combineImp == .combine && isCI {
     package.platforms = [.macOS(.v10_10), .iOS(.v9), .tvOS(.v9), .watchOS(.v2)]
     #endif
 }
-

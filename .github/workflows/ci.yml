@@ -49,6 +49,23 @@ jobs:
       - name: Build and Test
         run: swift test
 
+  swift5_0:
+    strategy:
+      matrix:
+        swift_version: ['5.1'] # FIXME: swift 5.0
+    runs-on: ubuntu-latest
+    container:
+      image: swift:${{ matrix.swift_version }}
+    steps:
+      - uses: actions/checkout@v1
+      - name: Swift Version
+        run: |
+          swift -version
+          swift package --version
+      - name: Build and Test
+        # no tests available, just build.
+        run: swift build
+
   combine:
     runs-on: macOS-latest
     env:
