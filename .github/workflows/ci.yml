@@ -64,41 +64,42 @@ jobs:
       - name: Build and Test
         run: swift test
 
-  combine_versioning_ios:
-    strategy:
-      matrix:
-        versions:
-          # FIXME: versioning tests
-          # - xcode: '11'
-          #   ios: '13.0'
-          # - xcode: '11.1'
-          #   ios: '13.1'
-          # - xcode: '11.2'
-          #   ios: '13.2'
-          # - xcode: '11.3'
-          #   ios: '13.3'
-          # - xcode: '11.4'
-          #   ios: '13.4'
-          # - xcode: '11.5'
-          #   ios: '13.5'
-          - xcode: '11.6'
-            ios: '13.6'
-    runs-on: macOS-latest
-    env:
-      DEVELOPER_DIR: /Applications/Xcode_${{ matrix.versions.xcode }}.app/Contents/Developer
-      CX_COMBINE_IMPLEMENTATION: Combine
-      CX_CONTINUOUS_INTEGRATION: "YES"
-      PROJECT: CombineX.xcodeproj
-      SCHEME: CombineX-Package
-      DESTINATION: "platform=iOS Simulator,name=iPhone 11,OS=${{ matrix.versions.ios }}"
-    steps:
-      - uses: actions/checkout@v1
-      - name: Generate Xcode Project
-        run: swift package generate-xcodeproj
-      - name: Build and Test
-        run: |
-          set -o pipefail
-          xcodebuild test \
-            -project "$PROJECT" \
-            -scheme "$SCHEME" \
-            -destination "$DESTINATION" | xcpretty
+  # FIXME: wait until https://github.com/Quick/Quick/issues/997 is fixed.
+  # combine_versioning_ios:
+  #   strategy:
+  #     matrix:
+  #       versions:
+  #         # FIXME: versioning tests
+  #         # - xcode: '11'
+  #         #   ios: '13.0'
+  #         # - xcode: '11.1'
+  #         #   ios: '13.1'
+  #         # - xcode: '11.2'
+  #         #   ios: '13.2'
+  #         # - xcode: '11.3'
+  #         #   ios: '13.3'
+  #         # - xcode: '11.4'
+  #         #   ios: '13.4'
+  #         # - xcode: '11.5'
+  #         #   ios: '13.5'
+  #         - xcode: '11.6'
+  #           ios: '13.6'
+  #   runs-on: macOS-latest
+  #   env:
+  #     DEVELOPER_DIR: /Applications/Xcode_${{ matrix.versions.xcode }}.app/Contents/Developer
+  #     CX_COMBINE_IMPLEMENTATION: Combine
+  #     CX_CONTINUOUS_INTEGRATION: "YES"
+  #     PROJECT: CombineX.xcodeproj
+  #     SCHEME: CombineX-Package
+  #     DESTINATION: "platform=iOS Simulator,name=iPhone 11,OS=${{ matrix.versions.ios }}"
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - name: Generate Xcode Project
+  #       run: swift package generate-xcodeproj
+  #     - name: Build and Test
+  #       run: |
+  #         set -o pipefail
+  #         xcodebuild test \
+  #           -project "$PROJECT" \
+  #           -scheme "$SCHEME" \
+  #           -destination "$DESTINATION" | xcpretty
