@@ -1,12 +1,6 @@
 import Foundation
 import Nimble
 
-public func throwAssertion<T>() -> Predicate<T> {
-    return Predicate { actualExpression in
-        return try Nimble.throwAssertion().satisfies(actualExpression.cast { _ in })
-    }
-}
-
 public func beAllEqual<S: Sequence, T: Equatable>() -> Predicate<S>
     where S.Iterator.Element == T {
     return Predicate.simple("element be all equal") { actualExpression in
@@ -41,7 +35,7 @@ public func beNotIdenticalTo(_ expected: Any?) -> Predicate<Any> {
             bool: bool,
             message: .expectedCustomValueTo(
                 "be not identical to \(identityAsString(expected))",
-                "\(identityAsString(actual))"
+                actual: "\(identityAsString(actual))"
             )
         )
     }

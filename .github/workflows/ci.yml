@@ -18,7 +18,7 @@ jobs:
   mac:
     strategy:
       matrix:
-        xcode_version: ['11', '11.3', '11.6']
+        xcode_version: ['11.7']
     runs-on: macOS-latest
     env:
       DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode_version }}.app/Contents/Developer
@@ -31,13 +31,12 @@ jobs:
           swift -version
           swift package --version
       - name: Build and Test
-        # FIXME: suppress warning for Nimble
-        run: swift test -Xswiftc -suppress-warnings
+        run: swift test
 
   linux:
     strategy:
       matrix:
-        swift_version: ['5.1', '5.2', 'latest']
+        swift_version: ['5.2', 'latest']
     runs-on: ubuntu-latest
     container:
       image: swift:${{ matrix.swift_version }}
@@ -47,9 +46,25 @@ jobs:
         run: |
           swift -version
           swift package --version
-      # FIXME: suppress warning for Nimble
       - name: Build and Test
-        run: swift test -Xswiftc -suppress-warnings
+        run: swift test
+
+  swift5_0:
+    strategy:
+      matrix:
+        swift_version: ['5.1'] # FIXME: swift 5.0
+    runs-on: ubuntu-latest
+    container:
+      image: swift:${{ matrix.swift_version }}
+    steps:
+      - uses: actions/checkout@v1
+      - name: Swift Version
+        run: |
+          swift -version
+          swift package --version
+      - name: Build and Test
+        # no tests available, just build.
+        run: swift build
 
   combine:
     runs-on: macOS-latest
@@ -64,44 +79,44 @@ jobs:
           swift -version
           swift package --version
       - name: Build and Test
-        # FIXME: suppress warning for Nimble
-        run: swift test -Xswiftc -suppress-warnings
+        run: swift test
 
-  combine_versioning_ios:
-    strategy:
-      matrix:
-        versions:
-          # FIXME: versioning tests
-          # - xcode: '11'
-          #   ios: '13.0'
-          # - xcode: '11.1'
-          #   ios: '13.1'
-          # - xcode: '11.2'
-          #   ios: '13.2'
-          - xcode: '11.3'
-            ios: '13.3'
-          - xcode: '11.4'
-            ios: '13.4'
-          - xcode: '11.5'
-            ios: '13.5'
-          - xcode: '11.6'
-            ios: '13.6'
-    runs-on: macOS-latest
-    env:
-      DEVELOPER_DIR: /Applications/Xcode_${{ matrix.versions.xcode }}.app/Contents/Developer
-      CX_COMBINE_IMPLEMENTATION: Combine
-      CX_CONTINUOUS_INTEGRATION: "YES"
-      PROJECT: CombineX.xcodeproj
-      SCHEME: CombineX-Package
-      DESTINATION: "platform=iOS Simulator,name=iPhone 11,OS=${{ matrix.versions.ios }}"
-    steps:
-      - uses: actions/checkout@v1
-      - name: Generate Xcode Project
-        run: swift package generate-xcodeproj
-      - name: Build and Test
-        run: |
-          set -o pipefail
-          xcodebuild test \
-            -project "$PROJECT" \
-            -scheme "$SCHEME" \
-            -destination "$DESTINATION" | xcpretty
+  # FIXME: wait until https://github.com/Quick/Quick/issues/997 is fixed.
+  # combine_versioning_ios:
+  #   strategy:
+  #     matrix:
+  #       versions:
+  #         # FIXME: versioning tests
+  #         # - xcode: '11'
+  #         #   ios: '13.0'
+  #         # - xcode: '11.1'
+  #         #   ios: '13.1'
+  #         # - xcode: '11.2'
+  #         #   ios: '13.2'
+  #         # - xcode: '11.3'
+  #         #   ios: '13.3'
+  #         # - xcode: '11.4'
+  #         #   ios: '13.4'
+  #         # - xcode: '11.5'
+  #         #   ios: '13.5'
+  #         - xcode: '11.6'
+  #           ios: '13.6'
+  #   runs-on: macOS-latest
+  #   env:
+  #     DEVELOPER_DIR: /Applications/Xcode_${{ matrix.versions.xcode }}.app/Contents/Developer
+  #     CX_COMBINE_IMPLEMENTATION: Combine
+  #     CX_CONTINUOUS_INTEGRATION: "YES"
+  #     PROJECT: CombineX.xcodeproj
+  #     SCHEME: CombineX-Package
+  #     DESTINATION: "platform=iOS Simulator,name=iPhone 11,OS=${{ matrix.versions.ios }}"
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - name: Generate Xcode Project
+  #       run: swift package generate-xcodeproj
+  #     - name: Build and Test
+  #       run: |
+  #         set -o pipefail
+  #         xcodebuild test \
+  #           -project "$PROJECT" \
+  #           -scheme "$SCHEME" \
+  #           -destination "$DESTINATION" | xcpretty
