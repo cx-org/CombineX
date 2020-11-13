@@ -13,7 +13,7 @@ class DemandSpec: QuickSpec {
         // MARK: - Create
         describe("Create") {
             
-            #if !SWIFT_PACKAGE
+            #if arch(x86_64) && canImport(Darwin)
             // MARK: 1.1 should fatal error when create with negative number
             it("should fatal error when create with negative number") {
                 expect {
@@ -111,7 +111,7 @@ class DemandSpec: QuickSpec {
                 d *= 0
                 expect(d) == .unlimited
                 
-                #if !SWIFT_PACKAGE
+                #if arch(x86_64) && canImport(Darwin)
                 expect {
                     _ = Demand.max(1) * -1
                 }.to(throwAssertion())
@@ -223,8 +223,8 @@ class DemandSpec: QuickSpec {
             it("should be codable") {
                 
                 struct Q: Codable {
-                    let a = Demand.unlimited
-                    let b = Demand.max(10)
+                    var a = Demand.unlimited
+                    var b = Demand.max(10)
                 }
                 
                 let q = Q()

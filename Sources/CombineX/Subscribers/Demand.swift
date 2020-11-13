@@ -248,7 +248,7 @@ extension Subscribers {
                 return .none
             }
             let (result, overflow) = Int(lhs.rawValue).subtractingReportingOverflow(Int(rhs.rawValue))
-            return overflow ? .none : .max(result)
+            return (overflow || result<0) ? .none : .max(result)
         }
         
         /// When subtracting any value (including .unlimited) from .unlimited, the result is still .unlimited.

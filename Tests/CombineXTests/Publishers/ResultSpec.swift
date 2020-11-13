@@ -29,7 +29,7 @@ class ResultSpec: QuickSpec {
                 expect(sub.eventsWithoutSubscription) == [.completion(.failure(.e0))]
             }
             
-            #if !SWIFT_PACKAGE
+            #if arch(x86_64) && canImport(Darwin)
             // MARK: 1.3 should throw assertion when none demand is requested
             it("should throw assertion when less than one demand is requested") {
                 let pub = ResultPublisher<Int, TestError>(1)

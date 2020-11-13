@@ -17,7 +17,7 @@ class ReplaceErrorSpec: QuickSpec {
                 expect(sub.eventsWithoutSubscription) == [.value(1), .completion(.finished)]
             }
             
-            #if !SWIFT_PACKAGE
+            #if arch(x86_64) && canImport(Darwin)
             // MARK: 1.2 should crash when the demand is 0
             it("should crash when the demand is 0") {
                 let pub = Fail<Int, TestError>(error: .e0).replaceError(with: 1)
