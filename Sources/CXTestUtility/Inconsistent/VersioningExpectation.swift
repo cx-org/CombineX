@@ -36,6 +36,10 @@ public enum XcodeVersion: Equatable, Hashable, Comparable {
     case v11_4
     case v11_5
     case v11_6
+    case v11_7
+    // let‘s forget about the chaotic period of Xcode 12.0 and skip to Xcode 12.2
+    public static let v12_0 = XcodeVersion.v12_2
+    case v12_2
     
     #if canImport(Darwin)
     var systemVersion: Semver {
@@ -60,6 +64,8 @@ public enum XcodeVersion: Equatable, Hashable, Comparable {
         case .v11_4: return "10.15.4"
         case .v11_5: return "10.15.5"
         case .v11_6: return "10.15.6"
+        case .v11_7: return "10.15.6"
+        case .v12_2: return "11.0.0" // actually 11.0.1
         }
     }
     
@@ -72,6 +78,8 @@ public enum XcodeVersion: Equatable, Hashable, Comparable {
         case .v11_4: return "13.4.0"
         case .v11_5: return "13.5.0"
         case .v11_6: return "13.6.0"
+        case .v11_7: return "13.7.0"
+        case .v12_2: return "14.0.0" // actually 14.2.0
         }
     }
     
@@ -84,6 +92,8 @@ public enum XcodeVersion: Equatable, Hashable, Comparable {
         case .v11_4: return "13.4.0"
         case .v11_5: return "13.4.6"
         case .v11_6: return "13.4.8"
+        case .v11_7: return "13.4.8"
+        case .v12_2: return "14.0.0" // actually 14.2.0
         }
     }
     
@@ -96,6 +106,8 @@ public enum XcodeVersion: Equatable, Hashable, Comparable {
         case .v11_4: return "6.2.0"
         case .v11_5: return "6.2.6"
         case .v11_6: return "6.2.8"
+        case .v11_7: return "6.2.8"
+        case .v12_2: return "7.0.0" // actually 7.1.0
         }
     }
     
@@ -108,6 +120,8 @@ public enum XcodeVersion: Equatable, Hashable, Comparable {
         case .v11_4: return "11.4.0"
         case .v11_5: return "11.5.0"
         case .v11_6: return "11.6.0"
+        case .v11_7: return "11.7.0"
+        case .v12_2: return "12.2.0"
         }
     }
     
