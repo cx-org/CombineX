@@ -26,7 +26,7 @@ class ReplaceEmptySpec: QuickSpec {
                 expect(sub.eventsWithoutSubscription) == [.value(0), .completion(.finished)]
             }
             
-            #if !SWIFT_PACKAGE
+            #if arch(x86_64) && canImport(Darwin)
             // MARK: 1.3 should throw assertion when the demand is 0
             it("should throw assertion when the demand is 0") {
                 let pub = Empty<Int, Never>().replaceEmpty(with: 1)

@@ -30,14 +30,13 @@ class RecordSpec: QuickSpec {
                 expect(recording.completion) == .finished
             }
             
-            #if !SWIFT_PACKAGE
+            #if arch(x86_64) && canImport(Darwin)
             // MARK: 1.3 should fatal if receiving value after receiving completion
             it("should fatal if receiving value after receiving completion") {
                 expect {
                     var recording = Recording()
                     recording.receive(completion: .finished)
                     recording.receive(1)
-                    return nil
                 }.to(throwAssertion())
             }
             
@@ -47,7 +46,6 @@ class RecordSpec: QuickSpec {
                     var recording = Recording()
                     recording.receive(completion: .finished)
                     recording.receive(completion: .finished)
-                    return nil
                 }.to(throwAssertion())
             }
             #endif

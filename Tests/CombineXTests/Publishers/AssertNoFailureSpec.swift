@@ -10,7 +10,7 @@ class AssertNoFailureSpec: QuickSpec {
         // MARK: - No Failure
         describe("No Failure") {
             
-            #if !SWIFT_PACKAGE
+            #if arch(x86_64) && canImport(Darwin)
             it("should throw assertion if there is an error") {
                 let pub = Fail<Int, TestError>(error: .e0)
                     .assertNoFailure()

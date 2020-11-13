@@ -29,7 +29,7 @@ class SchedulerSpec: QuickSpec {
             
             expect(dts).to(beAllEqual())
             
-            #if !SWIFT_PACKAGE
+            #if arch(x86_64) && canImport(Darwin)
             expect {
                 CXWrappers.DispatchQueue.SchedulerTimeType.Stride.seconds(.infinity)
             }.to(throwAssertion())

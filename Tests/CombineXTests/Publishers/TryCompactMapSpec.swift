@@ -74,10 +74,10 @@ class TryCompactMapSpec: QuickSpec {
                 expect(got) == expected
             }
             
-            #if !SWIFT_PACKAGE
+            #if arch(x86_64) && canImport(Darwin)
             // MARK: 1.4 should throw assertion when upstream send values before sending subscription
             it("should throw assertion when upstream send values before sending subscription") {
-                let upstream = TestPublisher<Int, TestError> { s in
+                let upstream = AnyPublisher<Int, TestError> { s in
                     _ = s.receive(1)
                 }
                 let pub = upstream.tryCompactMap { $0 }
@@ -89,7 +89,7 @@ class TryCompactMapSpec: QuickSpec {
             
             // MARK: 1.5 should throw assertion when upstream send completion before sending subscription
             it("should throw assertion when upstream send values before sending subscription") {
-                let upstream = TestPublisher<Int, TestError> { s in
+                let upstream = AnyPublisher<Int, TestError> { s in
                     s.receive(completion: .finished)
                 }
                 let pub = upstream.tryCompactMap { $0 }

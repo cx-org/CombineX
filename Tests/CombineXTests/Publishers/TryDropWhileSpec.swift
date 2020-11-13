@@ -58,10 +58,10 @@ class TryDropWhileSpec: QuickSpec {
                 expect(got) == [.completion(.failure(.e0))]
             }
             
-            #if !SWIFT_PACKAGE
+            #if arch(x86_64) && canImport(Darwin)
             // MARK: 1.4 should not throw assertion when upstream send values before sending subscription
             it("should not throw assertion when upstream send values before sending subscription") {
-                let upstream = TestPublisher<Int, TestError> { s in
+                let upstream = AnyPublisher<Int, TestError> { s in
                     _ = s.receive(1)
                 }
                 
@@ -74,7 +74,7 @@ class TryDropWhileSpec: QuickSpec {
             
             // MARK: 1.5 should not throw assertion when upstream send completion before sending subscription
             it("should not throw assertion when upstream send values before sending subscription") {
-                let upstream = TestPublisher<Int, TestError> { s in
+                let upstream = AnyPublisher<Int, TestError> { s in
                     s.receive(completion: .finished)
                 }
                 

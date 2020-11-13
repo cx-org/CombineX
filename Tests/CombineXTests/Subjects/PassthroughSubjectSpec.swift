@@ -199,7 +199,7 @@ class PassthroughSubjectSpec: QuickSpec {
                 }
             }
             
-            #if !SWIFT_PACKAGE
+            #if arch(x86_64) && canImport(Darwin)
             // MARK: 2.3 should fatal error when less than one demand is requested
             it("should fatal error when less than one demand is requested") {
                 let subject = PassthroughSubject<Int, Never>()
