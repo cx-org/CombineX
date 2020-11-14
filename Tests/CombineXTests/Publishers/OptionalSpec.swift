@@ -48,11 +48,6 @@ class OptionalSpec: QuickSpec {
             #endif
             
             it("Optional provide publisher property since macOS 11") {
-                #if USE_COMBINE
-                guard #available(macOS 11.0, iOS 14.0, tvOS 14.0, watchOS 7.0, *) else {
-                    return
-                }
-                #endif
                 let pub = Optional(11).cx.publisher
                 assert(pub == OptionalPublisher(11))
             }
