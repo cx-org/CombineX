@@ -133,8 +133,8 @@ let shimTarget = package.targets.first(where: { $0.name == "CXShim" })!
 shimTarget.dependencies = combineImp.shimTargetDependencies
 shimTarget.swiftSettings.append(contentsOf: combineImp.swiftSettings)
 
-let testUtilityTarget = package.targets.first(where: { $0.name == "CXTestUtility" })!
-testUtilityTarget.swiftSettings.append(contentsOf: combineImp.swiftSettings)
+let testTargets = package.targets.filter { $0.name == "CXTestUtility" || $0.isTest }
+testTargets.forEach { $0.swiftSettings.append(contentsOf: combineImp.swiftSettings) }
 
 if combineImp == .combine && isCI {
     package.platforms = [.macOS("10.15"), .iOS("13.0"), .tvOS("13.0"), .watchOS("6.0")]

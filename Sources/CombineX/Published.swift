@@ -1,37 +1,134 @@
 #if swift(>=5.1)
 
-/// Adds a `Publisher` to a property.
-///
-/// Properties annotated with `@Published` contain both the stored value and a publisher which sends any
-/// new values after the property value has been sent. New subscribers will receive the current value of the
-/// property first.
-///
-/// Note that the `@Published` property is class-constrained. Use it with properties of classes, not with
-/// non-class types like structures.
-@propertyWrapper public struct Published<Value> {
+extension Publisher where Self.Failure == Never {
 
-    /// Initialize the storage of the Published property as well as the corresponding `Publisher`.
+    /// Republishes elements received from a publisher, by assigning them to a
+    /// property marked as a publisher.
+    ///
+    /// Use this operator when you want to receive elements from a publisher and
+    /// republish them through a property marked with the `@Published` attribute.
+    /// The `assign(to:)` operator manages the life cycle of the subscription,
+    /// canceling the subscription automatically when the ``Published`` instance
+    /// deinitializes. Because of this, the `assign(to:)` operator doesn't
+    /// return an ``AnyCancellable`` that you're responsible for like
+    /// ``assign(to:on:)`` does.
+    ///
+    /// The example below shows a model class that receives elements from an
+    /// internal `TimerPublisher`, and assigns them to a `@Published` property
+    /// called `lastUpdated`:
+    ///
+    ///     class MyModel: ObservableObject {
+    ///             @Published var lastUpdated: Date = Date()
+    ///             init() {
+    ///                  Timer.publish(every: 1.0, on: .main, in: .common)
+    ///                      .autoconnect()
+    ///                      .assign(to: $lastUpdated)
+    ///             }
+    ///         }
+    ///
+    /// If you instead implemented `MyModel` with
+    /// `assign(to: lastUpdated, on: self)`, storing the returned
+    /// ``AnyCancellable`` instance could cause a reference cycle, because the
+    /// ``Subscribers/Assign`` subscriber would hold a strong reference to
+    /// `self`. Using `assign(to:)` solves this problem.
+    ///
+    /// - Parameter published: A property marked with the `@Published` attribute,
+    /// which receives and republishes all elements received from the upstream
+    /// publisher.
+    public func assign(to published: inout Published<Output>.Publisher) {
+        subscribe(PublishedSubscriber(subject: published.subject))
+    }
+}
+
+/// A type that publishes a property marked with an attribute.
+///
+/// Publishing a property with the `@Published` attribute creates a publisher of
+/// this type. You access the publisher with the `$` operator, as shown here:
+///
+///     class Weather {
+///         @Published var temperature: Double
+///         init(temperature: Double) {
+///             self.temperature = temperature
+///         }
+///     }
+///
+///     let weather = Weather(temperature: 20)
+///     cancellable = weather.$temperature
+///         .sink() {
+///             print ("Temperature now: \($0)")
+///     }
+///     weather.temperature = 25
+///
+///     // Prints:
+///     // Temperature now: 20.0
+///     // Temperature now: 25.0
+///
+/// When the property changes, publishing occurs in the property's `willSet`
+/// block, meaning subscribers receive the new value before it's actually set on
+/// the property. In the above example, the second time the sink executes its
+/// closure, it receives the parameter value `25`. However, if the closure
+/// evaluated `weather.temperature`, the value returned would be `20`.
+///
+/// > Important: The `@Published` attribute is class constrained. Use it with
+/// properties of classes, not with non-class types like structures.
+///
+/// ### See Also
+///
+/// - ``Combine/Publisher/assign(to:)``
+@propertyWrapper
+public struct Published<Value> {
+
+    /// Creates the published instance with an initial wrapped value.
+    ///
+    /// Don't use this initializer directly. Instead, create a property with
+    /// the `@Published` attribute, as shown here:
+    ///
+    ///     @Published var lastUpdated: Date = Date()
+    ///
+    /// - Parameter wrappedValue: The publisher's initial value.
     public init(wrappedValue: Value) {
-        self.value = wrappedValue
+        self.storage = .value(wrappedValue)
     }
     
+    /// Creates the published instance with an initial value.
+    ///
+    /// Don't use this initializer directly. Instead, create a property with the
+    /// `@Published` attribute, as shown here:
+    ///
+    ///     @Published var lastUpdated: Date = Date()
+    ///
+    /// - Parameter initialValue: The publisher's initial value.
     public init(initialValue: Value) {
         self.init(wrappedValue: initialValue)
     }
 
     /// The current value of the property.
     public var wrappedValue: Value {
-        get { return self.value }
+        get {
+            switch storage {
+            case let .value(val):
+                return val
+            case let .publisher(pub):
+                return pub.subject.value
+            }
+        }
         set {
             self.objectWillChange?.send()
-            self.publisher?.subject.send(newValue)
-            self.value = newValue
+            switch storage {
+            case .value:
+                storage = .value(newValue)
+            case let .publisher(pub):
+                pub.subject.send(newValue)
+            }
         }
     }
 
-    private var value: Value
-    
-    private var publisher: Publisher?
+    private enum Storage {
+        case value(Value)
+        case publisher(Publisher)
+    }
+
+    private var storage: Storage
     
     var objectWillChange: ObservableObjectPublisher?
     
@@ -53,18 +150,54 @@
         }
     }
 
-    /// The property that can be accessed with the `$` syntax and allows access to the `Publisher`
+    /// The property for which this instance exposes a publisher.
+    ///
+    /// The ``Published/projectedValue`` is the property accessed with the
+    /// `$` operator.
     public var projectedValue: Published<Value>.Publisher {
         mutating get {
-            if let pub = self.publisher {
+            switch storage {
+            case let .value(val):
+                let pub = Publisher(value: val)
+                storage = .publisher(pub)
                 return pub
-            } else {
-                let pub = Publisher(value: self.value)
-                self.publisher = pub
+            case let .publisher(pub):
                 return pub
             }
         }
+        set {
+            switch storage {
+            case let .value(val):
+                let pub = Publisher(value: val)
+                storage = .publisher(pub)
+            case .publisher:
+                return
+            }
+        }
     }
+}
+
+private struct PublishedSubscriber<Value>: Subscriber {
+
+    typealias Input = Value
+
+    typealias Failure = Never
+
+    let combineIdentifier = CombineIdentifier()
+
+    weak var subject: CurrentValueSubject<Value, Never>?
+
+    func receive(subscription: Subscription) {
+        subject?.send(subscription: subscription)
+        subscription.request(.unlimited)
+    }
+
+    func receive(_ input: Value) -> Subscribers.Demand {
+        subject?.send(input)
+        return .none
+    }
+
+    func receive(completion: Subscribers.Completion<Never>) {}
 }
 
 #endif
