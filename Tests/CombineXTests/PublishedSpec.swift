@@ -25,6 +25,9 @@ class PublishedSpec: QuickSpec {
                 expect(sub.eventsWithoutSubscription) == [.value(0), .value(1), .value(2)]
             }
             
+            // needs macOS 11 SDK (Xcode 12.2), check swift toolchain varion instead.
+            #if compiler(>=5.3.1)
+            
             it("test assign(to:) on Published.Publisher") {
                 #if USE_COMBINE
                 guard #available(macOS 11, iOS 14.0, tvOS 14.0, watchOS 7.0, *) else {
@@ -85,6 +88,8 @@ class PublishedSpec: QuickSpec {
                 expect(newSub1.eventsWithoutSubscription) == [.value(1), .value(3)]
                 expect(newSub2.eventsWithoutSubscription) == [.value(2), .value(4)]
             }
+            
+            #endif // compiler(>=5.3.1)
         }
         
         // MARK: - Demand
