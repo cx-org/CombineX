@@ -46,6 +46,11 @@ class OptionalSpec: QuickSpec {
                 }.toNot(throwAssertion())
             }
             #endif
+            
+            it("Optional provide publisher property since macOS 11") {
+                let pub = Optional(11).cx.publisher
+                assert(pub == OptionalPublisher(11))
+            }
         }
     }
 }

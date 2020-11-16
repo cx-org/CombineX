@@ -132,5 +132,15 @@ class FlatMapSpec: QuickSpec {
                 expect(sub.eventsWithoutSubscription.count) == 10
             }
         }
+        
+        // MARK: - Overloads
+        describe("Overloads") {
+            
+            it("convenient overloads for setting failure type") {
+                _ = Just(0).flatMap { _ in Fail<Bool, TestError>(error: .e0) }
+                _ = Fail<Bool, TestError>(error: .e0).flatMap { _ in Just(0) }
+                _ = Just(0).flatMap { _ in Just("") }
+            }
+        }
     }
 }

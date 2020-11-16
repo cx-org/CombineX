@@ -4,20 +4,121 @@ import CXUtility
 
 extension Publisher {
     
-    /// Transforms all elements from an upstream publisher into a new or existing publisher.
+    /// Transforms all elements from an upstream publisher into a new publisher
+    /// up to a maximum number of publishers you specify.
     ///
-    /// `flatMap` merges the output from all returned publishers into a single stream of output.
+    /// Combine‘s ``Publisher/flatMap(maxPublishers:_:)`` operator performs a
+    /// similar function to the ``Sequence.flatmap(_:) operator`` in the Swift
+    /// standard library, but turns the elements from one kind of publisher into
+    /// a new publisher that is sent to subscribers. Use
+    /// ``Publisher/flatMap(maxPublishers:_:)`` when you want to create a new
+    /// series of events for downstream subscribers based on the received value.
+    /// The closure creates the new ``Publisher`` based on the received value.
+    /// The new ``Publisher`` can emit more than one event, and successful
+    /// completion of the new ``Publisher`` does not complete the overall stream.
+    /// Failure of the new ``Publisher`` will fail the overall stream.
+    ///
+    /// In the example below, a ``PassthroughSubject`` publishes `WeatherStation`
+    /// elements. The ``Publisher/flatMap(maxPublishers:_:)`` receives each
+    /// element, creates a ``URL`` from it, and produces a new
+    /// ``DataTaskPublisher``, which will publish the data loaded from that
+    /// ``URL``.
+    ///
+    ///     public struct WeatherStation {
+    ///         public let stationID: String
+    ///     }
+    ///
+    ///     var weatherPublisher = PassthroughSubject<WeatherStation, URLError>()
+    ///
+    ///     cancellable = weatherPublisher.flatMap { station -> URLSession.DataTaskPublisher in
+    ///         let url = URL(string:"https://weatherapi.example.com/stations/\(station.stationID)/observations/latest")!
+    ///         return URLSession.shared.dataTaskPublisher(for: url)
+    ///     }
+    ///     .sink(
+    ///         receiveCompletion: { completion in
+    ///             // Handle publisher completion (normal or error).
+    ///         },
+    ///         receiveValue: {
+    ///             // Process the received data.
+    ///         }
+    ///      )
+    ///
+    ///     weatherPublisher.send(WeatherStation(stationID: "KSFO")) // San Francisco, CA
+    ///     weatherPublisher.send(WeatherStation(stationID: "EGLC")) // London, UK
+    ///     weatherPublisher.send(WeatherStation(stationID: "ZBBB")) // Beijing, CN
     ///
     /// - Parameters:
-    ///   - maxPublishers: The maximum number of publishers produced by this method.
-    ///   - transform: A closure that takes an element as a parameter and returns a publisher
-    /// that produces elements of that type.
-    /// - Returns: A publisher that transforms elements from an upstream publisher into
-    /// a publisher of that element’s type.
+    ///   - maxPublishers: Specifies the maximum number of concurrent publisher
+    ///   subscriptions, or ``Combine/Subscribers/Demand/unlimited`` if
+    ///   unspecified.
+    ///   - transform: A closure that takes an element as a parameter and
+    ///   returns a publisher that produces elements of that type.
+    /// - Returns: A publisher that transforms elements from an upstream
+    /// publisher into a publisher of that element’s type.
     public func flatMap<T, P>(
         maxPublishers: Subscribers.Demand = .unlimited,
         _ transform: @escaping (Output) -> P
     ) -> Publishers.FlatMap<P, Self> where T == P.Output, P: Publisher, Failure == P.Failure {
+        return .init(upstream: self, maxPublishers: maxPublishers, transform: transform)
+    }
+    
+    /// Transforms all elements from an upstream publisher into a new publisher
+    /// up to a maximum number of publishers you specify.
+    ///
+    /// - Parameters:
+    ///   - maxPublishers: Specifies the maximum number of concurrent publisher
+    ///   subscriptions, or ``Combine/Subscribers/Demand/unlimited`` if
+    ///   unspecified.
+    ///   - transform: A closure that takes an element as a parameter and
+    ///   returns a publisher that produces elements of that type.
+    /// - Returns: A publisher that transforms elements from an upstream
+    /// publisher into a publisher of that element’s type.
+    public func flatMap<P>(
+        maxPublishers: Subscribers.Demand = .unlimited,
+        _ transform: @escaping (Output) -> P
+    ) -> Publishers.FlatMap<Publishers.SetFailureType<P, Failure>, Self> where P: Publisher, P.Failure == Never {
+        return .init(upstream: self, maxPublishers: maxPublishers) {
+            transform($0).setFailureType(to: Failure.self)
+        }
+    }
+}
+
+extension Publisher where Failure == Never {
+    
+    /// Transforms all elements from an upstream publisher into a new publisher
+    /// up to a maximum number of publishers you specify.
+    ///
+    /// - Parameters:
+    ///   - maxPublishers: Specifies the maximum number of concurrent publisher
+    ///   subscriptions, or ``Combine/Subscribers/Demand/unlimited`` if
+    ///   unspecified.
+    ///   - transform: A closure that takes an element as a parameter and
+    ///   returns a publisher that produces elements of that type.
+    /// - Returns: A publisher that transforms elements from an upstream
+    /// publisher into a publisher of that element’s type.
+    public func flatMap<P>(
+        maxPublishers: Subscribers.Demand = .unlimited,
+        _ transform: @escaping (Output) -> P
+    ) -> Publishers.FlatMap<P, Publishers.SetFailureType<Self, P.Failure>> where P: Publisher {
+        return setFailureType(to: P.Failure.self)
+            .flatMap(maxPublishers: maxPublishers, transform)
+    }
+    
+    /// Transforms all elements from an upstream publisher into a new publisher
+    /// up to a maximum number of publishers you specify.
+    ///
+    /// - Parameters:
+    ///   - maxPublishers: Specifies the maximum number of concurrent publisher
+    ///   subscriptions, or ``Combine/Subscribers/Demand/unlimited`` if
+    ///   unspecified.
+    ///   - transform: A closure that takes an element as a parameter and
+    ///   returns a publisher that produces elements of that type.
+    /// - Returns: A publisher that transforms elements from an upstream
+    /// publisher into a publisher of that element’s type.
+    public func flatMap<P>(
+        maxPublishers: Subscribers.Demand = .unlimited,
+        _ transform: @escaping (Output) -> P
+    ) -> Publishers.FlatMap<P, Self> where P: Publisher, P.Failure == Never {
         return .init(upstream: self, maxPublishers: maxPublishers, transform: transform)
     }
 }
