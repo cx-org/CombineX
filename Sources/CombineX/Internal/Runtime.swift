@@ -6,7 +6,7 @@ struct PublishedFieldsEnumerator: Sequence {
     
     struct Iterator: IteratorProtocol {
         
-        typealias Element = (storage: UnsafeMutableRawPointer, type: _PublishedProtocol.Type)
+        typealias Element = (storage: UnsafeMutableRawPointer, type: _ObservableObjectProperty.Type)
         
         private let object: UnsafeMutableRawPointer
         private var inheritanceIterator: InheritanceSequence.Iterator
@@ -19,7 +19,7 @@ struct PublishedFieldsEnumerator: Sequence {
         
         mutating func next() -> Element? {
             while let (offset, type) = nextField() {
-                if let pType = type as? _PublishedProtocol.Type {
+                if let pType = type as? _ObservableObjectProperty.Type {
                     let storage = object.advanced(by: offset)
                     return (storage, pType)
                 }

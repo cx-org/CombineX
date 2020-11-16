@@ -67,25 +67,4 @@
     }
 }
 
-protocol _PublishedProtocol {
-    var objectWillChange: ObservableObjectPublisher? { get set }
-}
-
-extension _PublishedProtocol {
-    
-    static func getPublisher(for ptr: UnsafeMutableRawPointer) -> ObservableObjectPublisher? {
-        return ptr.assumingMemoryBound(to: Self.self)
-            .pointee
-            .objectWillChange
-    }
-    
-    static func setPublisher(_ publisher: ObservableObjectPublisher, on ptr: UnsafeMutableRawPointer) {
-        ptr.assumingMemoryBound(to: Self.self)
-            .pointee
-            .objectWillChange = publisher
-    }
-}
-
-extension Published: _PublishedProtocol {}
-
 #endif
