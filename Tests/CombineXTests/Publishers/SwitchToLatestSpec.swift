@@ -102,5 +102,15 @@ class SwitchToLatestSpec: QuickSpec {
                 _ = sub
             }
         }
+        
+        // MARK: - Overloads
+        describe("Overloads") {
+            
+            it("convenient overloads for setting failure type") {
+                _ = Just(Fail<Int, TestError>(error: .e0)).switchToLatest()
+                _ = Fail<Just<Int>, TestError>(error: .e0).switchToLatest()
+                _ = Just(Just(0)).switchToLatest()
+            }
+        }
     }
 }

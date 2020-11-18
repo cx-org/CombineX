@@ -30,6 +30,7 @@ jobs:
         run: |
           swift -version
           swift package --version
+          xcodebuild -version
       - name: Build and Test
         run: swift test
 
@@ -76,6 +77,7 @@ jobs:
       - name: Swift Version
         run: |
           sw_vers -productVersion
+          xcodebuild -version
           swift -version
           swift package --version
       - name: Build and Test

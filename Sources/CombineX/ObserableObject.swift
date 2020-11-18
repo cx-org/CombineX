@@ -33,8 +33,6 @@ public protocol ObservableObject: AnyObject {
     var objectWillChange: ObjectWillChangePublisher { get }
 }
 
-private let globalObjectWillChangeCache = ObservableObjectPublisherCache<AnyObject, ObservableObjectPublisher>()
-
 extension ObservableObject where ObjectWillChangePublisher == ObservableObjectPublisher {
     
     public var objectWillChange: ObservableObjectPublisher {
@@ -83,3 +81,28 @@ public final class ObservableObjectPublisher: Publisher {
         self.subject.send()
     }
 }
+
+// MARK: - Helpers
+
+private let globalObjectWillChangeCache = ObservableObjectPublisherCache<AnyObject, ObservableObjectPublisher>()
+
+protocol _ObservableObjectProperty {
+    var objectWillChange: ObservableObjectPublisher? { get set }
+}
+
+private extension _ObservableObjectProperty {
+    
+    static func getPublisher(for ptr: UnsafeMutableRawPointer) -> ObservableObjectPublisher? {
+        return ptr.assumingMemoryBound(to: Self.self)
+            .pointee
+            .objectWillChange
+    }
+    
+    static func setPublisher(_ publisher: ObservableObjectPublisher, on ptr: UnsafeMutableRawPointer) {
+        ptr.assumingMemoryBound(to: Self.self)
+            .pointee
+            .objectWillChange = publisher
+    }
+}
+
+extension Published: _ObservableObjectProperty {}
