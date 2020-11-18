@@ -93,4 +93,5 @@ QCKMain([
     VersioningSwitchToLatestSpec.self,
     VersioningFutureSpec.self,
     VersioningTimeoutSpec.self,
+    VersioningTimerSpec.self,
 ])
