@@ -3,7 +3,7 @@ import CXTestUtility
 import Nimble
 import Quick
 
-class SuspiciousFutureSpec: QuickSpec {
+class VersioningFutureSpec: QuickSpec {
     
     override func spec() {
         
@@ -15,10 +15,10 @@ class SuspiciousFutureSpec: QuickSpec {
             let sub = future.subscribeTracingSubscriber(initialDemand: nil)
             
             expect(sub.events.first?.isSubscription) == true
-            // SUSPICIOUS: Combine won't send failure if no request is received.
-            expect(sub.eventsWithoutSubscription).toBranch(
-                combine: beEmpty(),
-                cx: equal([.completion(.failure(.e0))]))
+            expect(sub.eventsWithoutSubscription).toVersioning([
+                .v11_0: beEmpty(),
+                .v12_0: equal([.completion(.failure(.e0))]),
+            ])
         }
         
         it("should not leak subscription") {
@@ -36,9 +36,10 @@ class SuspiciousFutureSpec: QuickSpec {
             }
             
             // SUSPICIOUS: Combine leaks subscription
-            expect(weakSubscription).toBranch(
-                combine: beNotNil(),
-                cx: beNil())
+            expect(weakSubscription).toVersioning([
+                .v11_0: beNotNil(),
+                .v12_0: beNil(),
+            ])
         }
     }
 }

@@ -92,4 +92,5 @@ QCKMain([
     VersioningObserableObjectSpec.self,
     VersioningCollectByTimeSpec.self,
     VersioningSwitchToLatestSpec.self,
+    VersioningFutureSpec.self,
 ])
