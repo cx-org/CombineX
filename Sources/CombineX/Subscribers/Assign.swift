@@ -81,7 +81,12 @@ extension Subscribers {
         }
         
         public final func receive(completion: Subscribers.Completion<Never>) {
-            self.cancel()
+            lock.lock()
+            guard self.subscription != nil else {
+                lock.unlock()
+                return
+            }
+            lockedTerminate()
         }
         
         public final func cancel() {
@@ -90,12 +95,14 @@ extension Subscribers {
                 self.lock.unlock()
                 return
             }
-            
+            lockedTerminate()
+            subscription.cancel()
+        }
+        
+        private func lockedTerminate() {
             self.subscription = nil
             self.object = nil
             self.lock.unlock()
-            
-            subscription.cancel()
         }
     }
 }

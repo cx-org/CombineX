@@ -111,33 +111,24 @@ class AssignSpec: QuickSpec {
             
             // MARK: 2.1 should retain subscription and object then release them after completion
             it("should retain subscription and object then release them after completion") {
-                
                 weak var object: AnyObject?
                 weak var subscription: TracingSubscription?
-                var cancelled = false
-                
                 let assign: Subscribers.Assign<Object, Int>
                 
                 do {
                     let obj = Object()
-                    object = obj
-                    
-                    assign = Subscribers.Assign<Object, Int>(object: obj, keyPath: \Object.value)
-                    
-                    let s = TracingSubscription(receiveCancel: {
-                        cancelled = true
-                    })
+                    assign = .init(object: obj, keyPath: \Object.value)
+                    let s = TracingSubscription()
                     assign.receive(subscription: s)
+                    object = obj
                     subscription = s
                 }
                 
                 expect(subscription).toNot(beNil())
                 expect(object).toNot(beNil())
-                expect(cancelled) == false
                 assign.receive(completion: .finished)
                 expect(subscription).to(beNil())
                 expect(object).to(beNil())
-                expect(cancelled) == true
             }
             
             // MARK: 2.2 should retain subscription and object then release them after cancel
