@@ -91,7 +91,12 @@ extension Subscribers {
         }
         
         public final func receive(_ value: Input) -> Subscribers.Demand {
-            self.receiveValue(value)
+            switch self.state.load() {
+            case .unsubscribed, .subscribed:
+                self.receiveValue(value)
+            case .closed:
+                break
+            }
             return .none
         }
         
