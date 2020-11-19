@@ -1,4 +1,5 @@
 import Foundation
+import Quick
 import Nimble
 import Semver
 
@@ -24,6 +25,12 @@ public extension Expectation {
         let predicate = predicates[targetVersion]!
         to(predicate, description: description)
     }
+}
+
+public func context(minimalVersion: XcodeVersion, closure: () -> Void) {
+    let description = "tests requires minimal system version \(minimalVersion.systemVersion)"
+    let enabled = ProcessInfo.processInfo.operatingSystemSemanticVersion > minimalVersion.systemVersion
+    context(description, flags: ["pending": !enabled], closure: closure)
 }
 
 // assume combine change its behaviour with xcode release, along with system update.
