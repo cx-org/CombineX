@@ -96,4 +96,5 @@ QCKMain([
     VersioningTimerSpec.self,
     VersioningSinkSpec.self,
     VersioningAssignSpec.self,
+    VersioningBufferSpec.self,
 ])
