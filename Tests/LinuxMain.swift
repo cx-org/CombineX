@@ -92,7 +92,6 @@ QCKMain([
     VersioningCollectByTimeSpec.self,
     VersioningSwitchToLatestSpec.self,
     VersioningFutureSpec.self,
-    VersioningTimeoutSpec.self,
     VersioningTimerSpec.self,
     VersioningSinkSpec.self,
     VersioningAssignSpec.self,
