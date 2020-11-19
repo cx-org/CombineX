@@ -28,8 +28,12 @@ public extension Expectation {
 }
 
 public func context(minimalVersion: XcodeVersion, closure: () -> Void) {
-    let description = "tests requires minimal system version \(minimalVersion.systemVersion)"
+    let description = "tests requires minimal system version shipping with Xcode \(minimalVersion.version)"
+    #if canImport(Darwin)
     let enabled = ProcessInfo.processInfo.operatingSystemSemanticVersion > minimalVersion.systemVersion
+    #else
+    let enabled = true
+    #endif
     context(description, flags: ["pending": !enabled], closure: closure)
 }
 
