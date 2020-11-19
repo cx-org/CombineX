@@ -79,6 +79,8 @@ QCKMain([
     // MARK: - CXInconsistentTests
     
     FailingSubjectSpec.self,
+    FailingTimerSpec.self,
+    FailingBufferSpec.self,
     
     SuspiciousBufferSpec.self,
     SuspiciousDemandSpec.self,
@@ -92,8 +94,6 @@ QCKMain([
     VersioningCollectByTimeSpec.self,
     VersioningSwitchToLatestSpec.self,
     VersioningFutureSpec.self,
-    VersioningTimerSpec.self,
     VersioningSinkSpec.self,
     VersioningAssignSpec.self,
-    VersioningBufferSpec.self,
 ])
