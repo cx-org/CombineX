@@ -27,9 +27,12 @@ public extension Expectation {
     }
 }
 
+/// Only test Combine with minimal system version shipping with specified Xcode.
+///
+/// This doesn't affect CombineX tests.
 public func context(minimalVersion: XcodeVersion, closure: () -> Void) {
-    let description = "tests requires minimal system version shipping with Xcode \(minimalVersion.version)"
-    #if canImport(Darwin)
+    let description = "tests requires Combine with minimal system version shipping with Xcode \(minimalVersion.version)"
+    #if USE_COMBINE
     let enabled = ProcessInfo.processInfo.operatingSystemSemanticVersion > minimalVersion.systemVersion
     #else
     let enabled = true
