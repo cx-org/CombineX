@@ -102,27 +102,6 @@ public struct Published<Value> {
         self.init(wrappedValue: initialValue)
     }
 
-    /// The current value of the property.
-    public var wrappedValue: Value {
-        get {
-            switch storage {
-            case let .value(val):
-                return val
-            case let .publisher(pub):
-                return pub.subject.value
-            }
-        }
-        set {
-            self.objectWillChange?.send()
-            switch storage {
-            case .value:
-                storage = .value(newValue)
-            case let .publisher(pub):
-                pub.subject.send(newValue)
-            }
-        }
-    }
-
     private enum Storage {
         case value(Value)
         case publisher(Publisher)
@@ -172,6 +151,63 @@ public struct Published<Value> {
                 storage = .publisher(pub)
             case .publisher:
                 return
+            }
+        }
+    }
+    
+    /*
+     https://github.com/apple/swift/blob/main/test/Interpreter/property_wrappers.swift
+     
+     https://github.com/apple/swift/commit/8c54db727be2b36643e69c06a43f39410f3a8a9a
+     https://github.com/apple/swift/commit/bc2e605b3148857ad7051a98c8cabbd0ee3b1070#diff-16e30c7e9deca1f0874e8fa55b65aa7d24eb9d27d0257c8f3e674c1df0e1da94
+     
+     > Allow property wrapper types to support a second access pattern for
+     instance properties of classes. When supported, the property wrapper's
+     static subscript(_enclosingInstance:storage:) is provided with the
+     enclosing "self" and a reference-writable key path referring to the
+     backing storage property.
+     */
+    
+    public var wrappedValue: Value {
+        get {
+            fatalError("'wrappedValue' is unavailable: @Published is only available on properties of classes")
+        }
+        set {
+            fatalError("'wrappedValue' is unavailable: @Published is only available on properties of classes")
+        }
+    }
+    
+    public static subscript<EnclosingSelf: AnyObject, FinalValue>(
+        _enclosingInstance object: EnclosingSelf,
+        wrapped wrappedKeyPath: ReferenceWritableKeyPath<EnclosingSelf, FinalValue>,
+        storage storageKeyPath: ReferenceWritableKeyPath<EnclosingSelf, Self>
+    ) -> Value {
+        get {
+            var this: Self {
+                get { object[keyPath: storageKeyPath] }
+                set { object[keyPath: storageKeyPath] = newValue }
+            }
+            
+            switch this.storage {
+            case let .value(val):
+                return val
+            case let .publisher(pub):
+                return pub.subject.value
+            }
+        }
+        set {
+            var this: Self {
+                get { object[keyPath: storageKeyPath] }
+                set { object[keyPath: storageKeyPath] = newValue }
+            }
+            
+            this.objectWillChange?.send()
+            
+            switch this.storage {
+            case .value:
+                this.storage = .value(newValue)
+            case let .publisher(pub):
+                pub.subject.send(newValue)
             }
         }
     }

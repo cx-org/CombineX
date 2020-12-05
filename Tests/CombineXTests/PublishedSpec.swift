@@ -109,6 +109,57 @@ class PublishedSpec: QuickSpec {
                 expect(sub.eventsWithoutSubscription.count) == 13
             }
         }
+        
+        // MARK: - Simultaneous accesses
+        
+        // https://github.com/cx-org/CombineX/issues/10
+        describe("Simultaneous accesses") {
+            
+            it("should not simultaneous accesses") {
+                class SomeDependency {
+                    @Published var value = 0
+                }
+
+                class NestedObject {
+                    let dependency: SomeDependency
+                    var subscriptions = Set<AnyCancellable>()
+
+                    init(dependency: SomeDependency) {
+                        self.dependency = dependency
+
+                        dependency.$value
+                            .sink { value in
+                                print("Nested:", value)
+                            }
+                            .store(in: &subscriptions)
+
+                    }
+                }
+
+                class SuperObject {
+                    let dependency: SomeDependency
+                    var nestedObject: NestedObject?
+                    var subscriptions = Set<AnyCancellable>()
+
+                    init(dependency: SomeDependency) {
+                        self.dependency = dependency
+
+                        dependency.$value
+                            .sink { [unowned self] value in
+                                print("Super:", value)
+                                if value == 1 {
+                                    nestedObject = NestedObject(dependency: dependency)
+                                }
+                            }
+                            .store(in: &subscriptions)
+                    }
+                }
+
+                let dependency = SomeDependency()
+                let _ = SuperObject(dependency: dependency)
+                dependency.value = 1
+            }
+        }
     }
     
     class TestObject {
