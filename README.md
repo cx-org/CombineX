@@ -30,20 +30,20 @@ Open-source implementation of Apple's [Combine](https://developer.apple.com/docu
 
 ```swift
 package.dependencies += [
-    .package(url: "https://github.com/cx-org/CombineX", from: "0.2.1"),
+    .package(url: "https://github.com/cx-org/CombineX", from: "0.3.0"),
 ]
 ```
 
 #### CocoaPods
 
 ```ruby
-pod 'CombineX', "~> 0.2.1"
+pod 'CombineX', "~> 0.3.0"
 ```
 
 #### Carthage
 
 ```carthage
-github "cx-org/CombineX" ~> 0.2.1
+github "cx-org/CombineX" ~> 0.3.0
 ```
 
 CXShim is only available with Swift Package Manager.
