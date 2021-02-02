@@ -35,5 +35,27 @@ class SchedulerSpec: QuickSpec {
             }.to(throwAssertion())
             #endif
         }
+
+        // MARK: 3.1 should compute time intervals correctly.
+        it("should compute time intervals correctly") {
+            typealias RunLoopSchedulerTimeType = CXWrappers.RunLoop.SchedulerTimeType
+
+            let earlyDate = Date(timeIntervalSinceReferenceDate: 69)
+            let lateDate = Date(timeIntervalSinceReferenceDate: 420)
+
+            let earlyRLSTT = RunLoopSchedulerTimeType(earlyDate)
+            let lateRLSTT = RunLoopSchedulerTimeType(lateDate)
+            let rlDistance = earlyRLSTT.distance(to: lateRLSTT)
+            expect(rlDistance) > .seconds(0)
+            expect(lateRLSTT) == earlyRLSTT.advanced(by: rlDistance)
+
+            typealias OperationQueueSchedulerTimeType = CXWrappers.OperationQueue.SchedulerTimeType
+
+            let earlyOQSTT = OperationQueueSchedulerTimeType(earlyDate)
+            let lateOQSTT = OperationQueueSchedulerTimeType(lateDate)
+            let oqDistance = earlyOQSTT.distance(to: lateOQSTT)
+            expect(oqDistance.timeInterval > 0).to(beTrue())
+            expect(lateOQSTT) == earlyOQSTT.advanced(by: oqDistance)
+        }
     }
 }
