@@ -148,7 +148,7 @@ class PublishedSpec: QuickSpec {
                             .sink { [unowned self] value in
                                 print("Super:", value)
                                 if value == 1 {
-                                    nestedObject = NestedObject(dependency: dependency)
+                                    self.nestedObject = NestedObject(dependency: dependency)
                                 }
                             }
                             .store(in: &subscriptions)
