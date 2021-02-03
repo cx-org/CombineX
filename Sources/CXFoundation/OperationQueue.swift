@@ -54,7 +54,7 @@ extension CXWrappers.OperationQueue: CombineX.Scheduler {
         /// - Returns: The time interval between this time and the provided time.
         public func distance(to other: SchedulerTimeType) -> SchedulerTimeType.Stride {
             
-            return SchedulerTimeType.Stride(floatLiteral: date.timeIntervalSince(other.date))
+            return SchedulerTimeType.Stride(floatLiteral: other.date.timeIntervalSince(date))
         }
     
         /// Returns a operation queue scheduler time calculated by advancing this instance’s time by the given interval.

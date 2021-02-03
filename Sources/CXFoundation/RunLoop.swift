@@ -53,7 +53,7 @@ extension CXWrappers.RunLoop: CombineX.Scheduler {
         /// - Parameter other: Another dispatch queue time.
         /// - Returns: The time interval between this time and the provided time.
         public func distance(to other: SchedulerTimeType) -> SchedulerTimeType.Stride {
-            return Stride(floatLiteral: date.timeIntervalSince(other.date))
+            return Stride(floatLiteral: other.date.timeIntervalSince(date))
         }
     
         /// Returns a run loop scheduler time calculated by advancing this instance’s time by the given interval.
