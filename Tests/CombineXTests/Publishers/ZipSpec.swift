@@ -89,6 +89,24 @@ class ZipSpec: QuickSpec {
                 expect(sub.eventsWithoutSubscription) == [.value(6), .value(22), .completion(.failure(.e0))]
             }
             
+            it("should wait unapplied values before finish") {
+                let subject0 = PassthroughSubject<String, TestError>()
+                let subject1 = PassthroughSubject<String, TestError>()
+                
+                let pub = subject0.zip(subject1, +)
+                let sub = pub.subscribeTracingSubscriber(initialDemand: .unlimited)
+                
+                subject0.send("0")
+                subject0.send("1")
+                subject1.send("a")
+                
+                subject0.send(completion: .finished)
+                subject1.send("b")
+                subject1.send("c")
+                
+                expect(sub.eventsWithoutSubscription) == [.value("0a"), .value("1b"), .completion(.finished)]
+            }
+            
             // MARK: 1.5 should send as many as demands
             it("should send as many as demands") {
                 let subject0 = PassthroughSubject<String, TestError>()
