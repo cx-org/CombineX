@@ -126,22 +126,19 @@ extension Publishers.Zip {
         func cancel() {
             self.lock.lock()
             self.isCompleted = true
-            let (childA, childB) = self.release()
+            let (childA, childB) = (self.childA, self.childB)
+            self.release()
             self.lock.unlock()
             
             childA?.cancel()
             childB?.cancel()
         }
         
-        private func release() -> (Child<A.Output>?, Child<B.Output>?) {
-            defer {
-                self.bufferA = CircularBuffer()
-                self.bufferB = CircularBuffer()
-                
-                self.childA = nil
-                self.childB = nil
-            }
-            return (self.childA, self.childB)
+        private func release() {
+            self.bufferA = CircularBuffer()
+            self.bufferB = CircularBuffer()
+            self.childA = nil
+            self.childB = nil
         }
         
         func childReceive(_ value: Any, from source: Source) -> Subscribers.Demand {
@@ -170,6 +167,7 @@ extension Publishers.Zip {
                 let childB = self.childB
                 self.lock.unlock()
                 
+                // TODO: we don't want more if we need complete
                 if more > 0 {
                     switch source {
                     case .a:
@@ -178,6 +176,7 @@ extension Publishers.Zip {
                         childA?.request(more)
                     }                    
                 }
+                self.completeIfNeeded(completion: .finished)
                 return more
             default:
                 self.lock.unlock()
@@ -185,15 +184,45 @@ extension Publishers.Zip {
             }
         }
         
-        func childReceive(completion: Subscribers.Completion<A.Failure>, from source: Source) {
+        func childReceive(completion: Subscribers.Completion<Failure>, from source: Source) {
             self.lock.lock()
             if self.isCompleted {
                 self.lock.unlock()
                 return
             }
+            switch source {
+            case .a:
+                let childA = self.childA
+                self.childA = nil
+                self.lock.unlock()
+                childA?.cancel()
+            case .b:
+                let childB = self.childB
+                self.childB = nil
+                self.lock.unlock()
+                childB?.cancel()
+            }
+            
+            self.completeIfNeeded(completion: completion)
+        }
+        
+        func completeIfNeeded(completion: Subscribers.Completion<Failure>) {
+            self.lock.lock()
+            if self.isCompleted {
+                self.lock.unlock()
+                return
+            }
+            guard completion.isFailure ||
+                (self.childA == nil && bufferA.isEmpty) ||
+                (self.childB == nil && bufferB.isEmpty) ||
+                (self.childA == nil && self.childB == nil) else {
+                self.lock.unlock()
+                return
+            }
             
             self.isCompleted = true
-            let (childA, childB) = self.release()
+            let (childA, childB) = (self.childA, self.childB)
+            self.release()
             self.lock.unlock()
             
             childA?.cancel()
