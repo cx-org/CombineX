@@ -157,7 +157,9 @@ extension Publishers.Concatenate {
                     let demand = self.demand
                     self.lock.unlock()
                     
-                    subscription.request(demand)
+                    if demand > 0 {
+                        subscription.request(demand)
+                    }
                 }
             case .completed:
                 self.lock.unlock()
