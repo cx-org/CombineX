@@ -72,5 +72,11 @@ class ConcatenateSpec: QuickSpec {
                 withExtendedLifetime(sub) {}
             }
         }
+        
+        it("should not send zero demand") {
+            let pub = Just(0).append(Just(1))
+            let sub = pub.subscribeTracingSubscriber(initialDemand: .max(1))
+            expect(sub.eventsWithoutSubscription) == [.value(0)]
+        }
     }
 }
