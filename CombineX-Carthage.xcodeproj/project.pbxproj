@@ -620,6 +620,13 @@
 			remoteGlobalIDString = FE2C640154184F2E813CB0CB;
 			remoteInfo = CXUtility_iOS;
 		};
+		09A1225E25F827CC004BE5E8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 33B8E25C282CCF769FEAE7D7 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3A28AF58DE9300F0A52B0C13;
+			remoteInfo = CXLibc_iOS;
+		};
 		14A3C5F67C6714C2D9BC0830 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 33B8E25C282CCF769FEAE7D7 /* Project object */;
@@ -1673,6 +1680,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				09A1225F25F827CC004BE5E8 /* PBXTargetDependency */,
 			);
 			name = CXUtility_iOS;
 			productName = CXUtility_iOS;
@@ -2442,6 +2450,11 @@
 			isa = PBXTargetDependency;
 			target = 96D63731CF9DB932FC0693DA /* CXUtility_watchOS */;
 			targetProxy = 1DD7ED80DCA7ED795428E72A /* PBXContainerItemProxy */;
+		};
+		09A1225F25F827CC004BE5E8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3A28AF58DE9300F0A52B0C13 /* CXLibc_iOS */;
+			targetProxy = 09A1225E25F827CC004BE5E8 /* PBXContainerItemProxy */;
 		};
 		0B62F4A3BDBB176F68FA0A8E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
