@@ -1,4 +1,6 @@
+#if !COCOAPODS
 import CXLibc
+#endif
 
 public protocol Locking {
     
