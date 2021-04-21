@@ -81,6 +81,7 @@ QCKMain([
     FailingSubjectSpec.self,
     FailingTimerSpec.self,
     FailingBufferSpec.self,
+    FailingFlatMapSpec.self,
     
     SuspiciousBufferSpec.self,
     SuspiciousDemandSpec.self,
