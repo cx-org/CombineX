@@ -20,6 +20,12 @@ Open-source implementation of Apple's [Combine](https://developer.apple.com/docu
 
 ## Get Started
 
+CombineX contains 3 products: `CombineX`, `CXShim`, and `CXTest`. You can simply use `CombineX` and ignore the presence of system Combine.
+
+But if you develop a library, it's encouraged to use `CXShim`, a virtual Combine interface, so your library is backward deployable **and** compatible with SwiftUI. See [Combine Compatible Package](https://github.com/cx-org/CombineX/wiki/Combine-Compatible-Package) for more information.
+
+`CXTest` is a test infrastructure for Combine, built on `CXShim`. It provides useful test utilities like [TracingSubscriber](Sources/CXTest/TracingSubscriber.swift) and [VirtualTimeScheduler](Sources/CXTest/VirtualTimeScheduler.swift).
+
 ### Requirements
 
 - Swift 5.0 (Xcode 10.2)
