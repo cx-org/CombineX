@@ -136,7 +136,7 @@ shimTarget.swiftSettings.append(contentsOf: combineImp.swiftSettings)
 let testTargets = package.targets.filter { $0.name == "CXTestUtility" || $0.isTest }
 testTargets.forEach { $0.swiftSettings.append(contentsOf: combineImp.swiftSettings) }
 
-if combineImp == .combine && isCI {
+if combineImp == .combine {
     package.platforms = [.macOS("10.15"), .iOS("13.0"), .tvOS("13.0"), .watchOS("6.0")]
 } else {
     #if compiler(>=5.3)
