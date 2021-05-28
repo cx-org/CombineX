@@ -51,7 +51,11 @@ enum CombineImplementation {
     
     static var `default`: CombineImplementation {
         #if canImport(Combine)
-        return .combine
+        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
+            return .combine
+        } else {
+            return .combineX
+        }
         #else
         return .combineX
         #endif
