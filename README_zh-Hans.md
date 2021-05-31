@@ -20,7 +20,7 @@
 
 ### 要求
 
-- Swift 5.0 (Xcode 10.2)
+- Swift 5.0+ (Xcode 10.2+)
 
 ### 安装
 
@@ -28,20 +28,23 @@
 
 ```swift
 package.dependencies += [
-    .package(url: "https://github.com/cx-org/CombineX", from: "0.3.0"),
+    .package(url: "https://github.com/cx-org/CombineX", from: "0.3.2"),
 ]
 ```
 
 #### CocoaPods
 
 ```ruby
-pod 'CombineX', "~> 0.3.0"
+pod 'CombineX', "~> 0.3.2"
+
+# 或者，如果你想用 `Foundation` 扩展：
+pod 'CombineX/CXFoundation', "~> 0.3.2"
 ```
 
 #### Carthage
 
 ```carthage
-github "cx-org/CombineX" ~> 0.3.0
+github "cx-org/CombineX" ~> 0.3.2
 ```
 
 CXShim 仅在 Swift Package Manager 下可用。
