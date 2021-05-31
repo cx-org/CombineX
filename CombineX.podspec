@@ -32,13 +32,10 @@ Pod::Spec.new do |s|
     ss.dependency "CombineX/CXLibc"
     ss.dependency "CombineX/CXUtility"
     ss.dependency "CombineX/CXNamespace"
-    # ss.dependency "Runtime"
   end
 
   s.subspec "CXFoundation" do |ss|
     ss.source_files = "Sources/CXFoundation/**/*.swift"
-    ss.dependency "CombineX/CXUtility"
-    ss.dependency "CombineX/CXNamespace"
     ss.dependency "CombineX/Main"
   end
 

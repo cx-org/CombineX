@@ -18,8 +18,12 @@
 #if canImport(ObjectiveC)
 
 import Foundation
-import CombineX
+
+#if !COCOAPODS
 import CXUtility
+import CXNamespace
+import CombineX
+#endif
 
 // The following protocol is so that we can reference `Self` in the Publisher
 // below. This is based on a trick used in the the standard library's

@@ -1,10 +1,11 @@
 #if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
 
-import CombineX
 import Foundation
 
 #if !COCOAPODS
+import CXUtility
 import CXNamespace
+import CombineX
 #endif
 
 extension CXWrappers {
