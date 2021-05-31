@@ -1,9 +1,9 @@
-import CombineX
 import Dispatch
 
 #if !COCOAPODS
-import CXNamespace
 import CXUtility
+import CXNamespace
+import CombineX
 #endif
 
 extension CXWrappers {

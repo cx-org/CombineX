@@ -44,6 +44,9 @@ package.dependencies += [
 
 ```ruby
 pod 'CombineX', "~> 0.3.1"
+
+# or, if you want to use `Foundation` extensions: 
+pod 'CombineX/CXFoundation', "~> 0.3.1"
 ```
 
 #### Carthage

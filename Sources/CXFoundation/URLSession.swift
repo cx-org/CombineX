@@ -1,5 +1,3 @@
-import CombineX
-import CXUtility
 import Foundation
 
 #if canImport(FoundationNetworking)
@@ -7,7 +5,9 @@ import FoundationNetworking
 #endif
 
 #if !COCOAPODS
+import CXUtility
 import CXNamespace
+import CombineX
 #endif
 
 extension CXWrappers {
