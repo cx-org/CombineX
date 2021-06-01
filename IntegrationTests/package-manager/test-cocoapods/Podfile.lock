@@ -1,10 +1,10 @@
 PODS:
-  - CombineX/CXFoundation (0.3.1):
+  - CombineX/CXFoundation (0.3.2):
     - CombineX/Main
-  - CombineX/CXLibc (0.3.1)
-  - CombineX/CXNamespace (0.3.1)
-  - CombineX/CXUtility (0.3.1)
-  - CombineX/Main (0.3.1):
+  - CombineX/CXLibc (0.3.2)
+  - CombineX/CXNamespace (0.3.2)
+  - CombineX/CXUtility (0.3.2)
+  - CombineX/Main (0.3.2):
     - CombineX/CXLibc
     - CombineX/CXNamespace
     - CombineX/CXUtility
@@ -17,7 +17,7 @@ EXTERNAL SOURCES:
     :path: "../../../"
 
 SPEC CHECKSUMS:
-  CombineX: 6e872a6e60d79753ffc7f7858e77ca10ade0d18c
+  CombineX: b53401095fde63464c26481ee7ef02be236e3735
 
 PODFILE CHECKSUM: 3a29d190c4c632efb8197ec21c78a8e81ec206d6
 

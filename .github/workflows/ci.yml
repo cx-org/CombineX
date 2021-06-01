@@ -125,6 +125,7 @@ jobs:
 
   integration_tests_package_manager:
     strategy:
+      fail-fast: false
       matrix:
         package_manager: ['SPM', 'COCOAPODS', 'CARTHAGE']
     runs-on: macos-latest
