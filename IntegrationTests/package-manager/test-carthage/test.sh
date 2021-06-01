@@ -1,7 +1,5 @@
 #! /usr/bin/env bash
 
-brew install carthage
-
 GIT_PATH=$(cd ../../../ && pwd)
 echo "git \"${GIT_PATH}\"" >| 'Cartfile'
 
