@@ -1,0 +1,24 @@
+PODS:
+  - CombineX/CXFoundation (0.3.1):
+    - CombineX/Main
+  - CombineX/CXLibc (0.3.1)
+  - CombineX/CXNamespace (0.3.1)
+  - CombineX/CXUtility (0.3.1)
+  - CombineX/Main (0.3.1):
+    - CombineX/CXLibc
+    - CombineX/CXNamespace
+    - CombineX/CXUtility
+
+DEPENDENCIES:
+  - CombineX/CXFoundation (from `../../../`)
+
+EXTERNAL SOURCES:
+  CombineX:
+    :path: "../../../"
+
+SPEC CHECKSUMS:
+  CombineX: 6e872a6e60d79753ffc7f7858e77ca10ade0d18c
+
+PODFILE CHECKSUM: 3a29d190c4c632efb8197ec21c78a8e81ec206d6
+
+COCOAPODS: 1.10.0
