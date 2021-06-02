@@ -3,7 +3,7 @@
 pod install
 
 xcodebuild \
-  -scheme test-cocoapods \
-  -workspace test-cocoapods.xcworkspace \
+  -scheme MyApp \
+  -workspace MyApp.xcworkspace \
   -sdk iphonesimulator \
   clean build | xcpretty

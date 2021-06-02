@@ -1,0 +1,17 @@
+# SPM
+
+test-spm/.build
+test-spm/Packages
+test-spm/*.xcodeproj
+test-spm/xcuserdata/
+test-spm/DerivedData/
+test-spm/.swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
+
+# CocoaPods
+test-cocoapods/Pods/
+
+# Carthage
+
+test-carthage/Carthage/Checkouts
+test-carthage/Carthage/Build
+test-carthage/Cartfile.resolved

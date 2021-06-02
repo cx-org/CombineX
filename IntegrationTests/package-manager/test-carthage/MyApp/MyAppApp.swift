@@ -1,15 +1,15 @@
 //
-// test_cocoapodsApp.swift
+// MyAppApp.swift
 //
 //
-// Created by Quentin Jin on 2021/5/31.
+// Created by Quentin Jin on 2021/6/2.
 //
 
 
 import SwiftUI
 
 @main
-struct test_cocoapodsApp: App {
+struct MyAppApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
