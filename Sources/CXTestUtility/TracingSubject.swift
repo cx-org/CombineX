@@ -1,4 +1,3 @@
-import CXShim
 import CXUtility
 
 // TODO: move to CXTest
@@ -10,7 +9,7 @@ public class TracingSubject<Output, Failure: Error>: Subject {
     
     private let upstreamLock = Lock()
     private var isRequested = false
-    private var upstreamSubscriptions: [CXShim.Subscription] = []
+    private var upstreamSubscriptions: [CXTestUtility.Subscription] = []
     
     public init() {}
     
@@ -80,7 +79,7 @@ public class TracingSubject<Output, Failure: Error>: Subject {
         self.downstreamLock.unlock()
     }
     
-    public func send(subscription: CXShim.Subscription) {
+    public func send(subscription: CXTestUtility.Subscription) {
         self.upstreamLock.lock()
         self.upstreamSubscriptions.append(subscription)
         let isRequested = self.isRequested
@@ -112,7 +111,7 @@ public class TracingSubject<Output, Failure: Error>: Subject {
 
 extension TracingSubject {
     
-    public final class Subscription: CXShim.Subscription, CustomStringConvertible, CustomDebugStringConvertible {
+    public final class Subscription: CXTestUtility.Subscription, CustomStringConvertible, CustomDebugStringConvertible {
         
         typealias Pub = TracingSubject<Output, Failure>
         typealias Sub = AnySubscriber<Output, Failure>

@@ -1,4 +1,3 @@
-import CXShim
 import CXTestUtility
 import Foundation
 import Nimble
