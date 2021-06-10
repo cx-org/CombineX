@@ -21,10 +21,9 @@ let package = Package(
         .package(url: "https://github.com/ddddxxx/Semver.git", .upToNextMinor(from: "0.2.1")),
     ],
     targets: [
-        .target(name: "CXLibc"),
-        .target(name: "CXUtility", dependencies: ["CXLibc"]),
+        .target(name: "CXUtility"),
         .target(name: "CXNamespace"),
-        .target(name: "CombineX", dependencies: ["CXLibc", "CXUtility", "CXNamespace"]),
+        .target(name: "CombineX", dependencies: ["CXUtility", "CXNamespace"]),
         .target(name: "CXFoundation", dependencies: ["CXUtility", "CXNamespace", "CombineX"]),
         .target(name: "CXCompatible", dependencies: ["CXNamespace"]),
         .target(name: "_CXShim", dependencies: shimDep, swiftSettings: swiftSetting),

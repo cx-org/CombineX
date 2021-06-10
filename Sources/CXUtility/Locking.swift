@@ -1,5 +1,10 @@
-#if !COCOAPODS
-import CXLibc
+#if os(Linux)
+import Glibc
+#elseif os(Windows)
+import MSVCRT
+import WinSDK
+#else
+import Darwin.C
 #endif
 
 public protocol Locking {

@@ -7,18 +7,13 @@ options:
     tvOS: 9.0
     watchOS: 2.0
 targets:
-  CXLibc:
-    templates: [Framework]
   CXUtility:
     templates: [Framework]
-    dependencies:
-      - target: CXLibc_${platform}
   CXNamespace:
     templates: [Framework]
   CombineX:
     templates: [Framework]
     dependencies:
-      - target: CXLibc_${platform}
       - target: CXUtility_${platform}
       - target: CXNamespace_${platform}
   CXFoundation:
