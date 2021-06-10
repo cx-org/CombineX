@@ -2,20 +2,11 @@
 
 import PackageDescription
 
-// MARK: - Package
-
 let package = Package(
     name: "CombineX",
-    platforms: [
-        .macOS(.v10_10), .iOS(.v8), .tvOS(.v9), .watchOS(.v2),
-    ],
     products: [
         .library(name: "CombineX", targets: ["CombineX", "CXFoundation"]),
         .library(name: "CXCompatible", targets: ["CXCompatible"]),
-        .library(name: "CXUtility", targets: ["CXUtility"]),
-    ],
-    dependencies: [
-//        .package(url: "https://github.com/ddddxxx/Semver.git", .upToNextMinor(from: "0.2.1")),
     ],
     targets: [
         .target(name: "CXLibc"),
@@ -24,8 +15,5 @@ let package = Package(
         .target(name: "CombineX", dependencies: ["CXLibc", "CXUtility", "CXNamespace"]),
         .target(name: "CXFoundation", dependencies: ["CXUtility", "CXNamespace", "CombineX"]),
         .target(name: "CXCompatible", dependencies: ["CXNamespace"]),
-    ],
-    swiftLanguageVersions: [
-        .v5,
     ]
 )

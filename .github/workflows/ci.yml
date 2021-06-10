@@ -22,8 +22,6 @@ jobs:
     runs-on: macOS-latest
     env:
       DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode_version }}.app/Contents/Developer
-      CX_COMBINE_IMPLEMENTATION: CombineX
-      CX_CONTINUOUS_INTEGRATION: "YES"
     steps:
       - uses: actions/checkout@v1
       - name: Swift Version
@@ -73,8 +71,7 @@ jobs:
   combine:
     runs-on: macOS-latest
     env:
-      CX_COMBINE_IMPLEMENTATION: Combine
-      CX_CONTINUOUS_INTEGRATION: "YES"
+      CX_TEST_COMBINE: "YES"
     steps:
       - uses: actions/checkout@v1
       - name: Swift Version
@@ -110,8 +107,7 @@ jobs:
   #   runs-on: macOS-latest
   #   env:
   #     DEVELOPER_DIR: /Applications/Xcode_${{ matrix.versions.xcode }}.app/Contents/Developer
-  #     CX_COMBINE_IMPLEMENTATION: Combine
-  #     CX_CONTINUOUS_INTEGRATION: "YES"
+  #     CX_TEST_COMBINE: "YES"
   #     PROJECT: CombineX.xcodeproj
   #     SCHEME: CombineX-Package
   #     DESTINATION: "platform=iOS Simulator,name=iPhone 11,OS=${{ matrix.versions.ios }}"
