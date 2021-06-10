@@ -10,9 +10,8 @@ let package = Package(
     ],
     targets: [
         .target(name: "CXUtility"),
-        .target(name: "CXNamespace"),
-        .target(name: "CombineX", dependencies: ["CXUtility", "CXNamespace"]),
-        .target(name: "CXFoundation", dependencies: ["CXUtility", "CXNamespace", "CombineX"]),
-        .target(name: "CXCompatible", dependencies: ["CXNamespace"]),
+        .target(name: "CombineX", dependencies: ["CXUtility"]),
+        .target(name: "CXFoundation", dependencies: ["CXUtility", "CombineX"]),
+        .target(name: "CXCompatible"),
     ]
 )

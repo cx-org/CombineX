@@ -2,7 +2,6 @@ import CombineX
 import Foundation
 
 #if !COCOAPODS
-import CXNamespace
 import CXUtility
 #endif
 

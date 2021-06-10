@@ -1,10 +1,6 @@
 import CombineX
 import Foundation
 
-#if !COCOAPODS
-import CXNamespace
-#endif
-
 extension CXWrappers {
     
     open class NSObject<Base: Foundation.NSObject>: CXWrapper {

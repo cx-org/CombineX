@@ -3,10 +3,6 @@
 import CombineX
 import Foundation
 
-#if !COCOAPODS
-import CXNamespace
-#endif
-
 extension CXWrappers {
     
     public final class PropertyListEncoder: CXWrapper {

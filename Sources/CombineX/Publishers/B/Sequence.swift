@@ -1,5 +1,4 @@
 #if !COCOAPODS
-import CXNamespace
 import CXUtility
 #endif
 

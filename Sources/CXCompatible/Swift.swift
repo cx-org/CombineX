@@ -1,7 +1,3 @@
-#if !COCOAPODS
-import CXNamespace
-#endif
-
 extension Optional: CXSelfWrapping {}
 extension Result: CXSelfWrapping {}
 

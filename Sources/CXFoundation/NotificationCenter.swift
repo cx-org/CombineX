@@ -2,10 +2,6 @@ import CombineX
 import CXUtility
 import Foundation
 
-#if !COCOAPODS
-import CXNamespace
-#endif
-
 extension CXWrappers {
     
     public final class NotificationCenter: NSObject<Foundation.NotificationCenter> {}

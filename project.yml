@@ -9,18 +9,14 @@ options:
 targets:
   CXUtility:
     templates: [Framework]
-  CXNamespace:
-    templates: [Framework]
   CombineX:
     templates: [Framework]
     dependencies:
       - target: CXUtility_${platform}
-      - target: CXNamespace_${platform}
   CXFoundation:
     templates: [Framework]
     dependencies:
       - target: CXUtility_${platform}
-      - target: CXNamespace_${platform}
       - target: CombineX_${platform}
 targetTemplates:
   Framework:

@@ -6,10 +6,6 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if !COCOAPODS
-import CXNamespace
-#endif
-
 extension CXWrappers {
     
     #if canImport(FoundationNetworking)

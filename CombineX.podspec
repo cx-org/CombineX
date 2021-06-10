@@ -19,21 +19,15 @@ Pod::Spec.new do |s|
     ss.source_files = "Sources/CXUtility/**/*.swift"
   end
 
-  s.subspec "CXNamespace" do |ss|
-    ss.source_files = "Sources/CXNamespace/**/*.swift"
-  end
-
   s.subspec "Main" do |ss|
     ss.source_files = "Sources/CombineX/**/*.swift"
     ss.dependency "CombineX/CXUtility"
-    ss.dependency "CombineX/CXNamespace"
     # ss.dependency "Runtime"
   end
 
   s.subspec "CXFoundation" do |ss|
     ss.source_files = "Sources/CXFoundation/**/*.swift"
     ss.dependency "CombineX/CXUtility"
-    ss.dependency "CombineX/CXNamespace"
     ss.dependency "CombineX/Main"
   end
 

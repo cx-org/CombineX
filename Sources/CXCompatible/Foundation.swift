@@ -6,10 +6,6 @@ import Foundation
 import FoundationNetworking
 #endif
 
-#if !COCOAPODS
-import CXNamespace
-#endif
-
 extension NSObject: CXSelfWrapping {}
 extension JSONEncoder: CXSelfWrapping {}
 extension JSONDecoder: CXSelfWrapping {}
