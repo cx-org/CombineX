@@ -1,0 +1,6 @@
+[submodule "CXShim"]
+	path = CXShim
+	url = https://github.com/cx-org/CXShim
+[submodule "CXTest"]
+	path = CXTest
+	url = https://github.com/cx-org/CXTest
