@@ -11,7 +11,8 @@ let package = Package(
     ],
     products: [
         .library(name: "CombineX", targets: ["CombineX", "CXFoundation"]),
-        .library(name: "CXCompatible", targets: ["CXCompatible"])
+        .library(name: "CXCompatible", targets: ["CXCompatible"]),
+        .library(name: "CXUtility", targets: ["CXUtility"]),
     ],
     dependencies: [
 //        .package(url: "https://github.com/ddddxxx/Semver.git", .upToNextMinor(from: "0.2.1")),

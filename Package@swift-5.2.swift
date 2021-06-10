@@ -12,6 +12,7 @@ let package = Package(
     products: [
         .library(name: "CombineX", targets: ["CombineX", "CXFoundation"]),
         .library(name: "CXCompatible", targets: ["CXCompatible"]),
+        .library(name: "CXUtility", targets: ["CXUtility"]),
     ],
     dependencies: [
 //        .package(url: "https://github.com/Quick/Quick.git", from: "3.0.0"),
