@@ -7,7 +7,7 @@ var testCombine = ProcessInfo.processInfo.environment["CX_TEST_COMBINE"] != nil
 // uncommenet the following line to test against combine
 // testCombine = true
 let combineImpFlag: [SwiftSetting] = testCombine ? [.define("USE_COMBINE")] : [.define("USE_COMBINEX")]
-let shimDep: [Target.Dependency] = testCombine ? ["CXCompatible"] : ["CombineX", "CXFoundation"]
+let shimDep: [Target.Dependency] = testCombine ? ["_CXCompatible"] : ["CombineX", "CXFoundation"]
 
 let package = Package(
     name: "CombineX",
