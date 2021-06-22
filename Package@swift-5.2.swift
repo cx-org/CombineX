@@ -6,14 +6,13 @@ import Foundation
 var testCombine = ProcessInfo.processInfo.environment["CX_TEST_COMBINE"] != nil
 // uncommenet the following line to test against combine
 // testCombine = true
-let swiftSetting: [SwiftSetting] = testCombine ? [.define("USE_COMBINE")] : [.define("USE_COMBINEX")]
+let combineImpFlag: [SwiftSetting] = testCombine ? [.define("USE_COMBINE")] : [.define("USE_COMBINEX")]
 let shimDep: [Target.Dependency] = testCombine ? ["CXCompatible"] : ["CombineX", "CXFoundation"]
 
 let package = Package(
     name: "CombineX",
     products: [
         .library(name: "CombineX", targets: ["CombineX", "CXFoundation"]),
-        .library(name: "CXCompatible", targets: ["CXCompatible"]),
     ],
     dependencies: [
         .package(url: "https://github.com/Quick/Quick.git", from: "3.0.0"),
@@ -24,13 +23,37 @@ let package = Package(
         .target(name: "CXUtility"),
         .target(name: "CombineX", dependencies: ["CXUtility"]),
         .target(name: "CXFoundation", dependencies: ["CXUtility", "CombineX"]),
-        .target(name: "CXCompatible"),
-        .target(name: "_CXShim", dependencies: shimDep, swiftSettings: swiftSetting),
-        .target(name: "_CXTest", dependencies: ["_CXShim"], swiftSettings: [.define("CX_PRIVATE_SHIM")]),
-        .target(name: "CXTestUtility", dependencies: ["CXUtility", "_CXShim", "_CXTest", "Semver", "Quick", "Nimble"], swiftSettings: swiftSetting),
-        .testTarget(name: "CombineXTests", dependencies: ["CXTestUtility", "CXUtility", "Quick", "Nimble"], swiftSettings: swiftSetting),
-        .testTarget(name: "CXFoundationTests", dependencies: ["CXTestUtility", "Quick", "Nimble"]),
-        .testTarget(name: "CXInconsistentTests", dependencies: ["CXTestUtility", "CXUtility", "Quick", "Nimble"]),
+        
+        // We have circular dependency CombineXTests -> CXTest -> CXShim -> CombineX
+        //
+        // Use git submodule instead of SPM dependency. also add underscore
+        // prefix to prevent name collision
+        .target(
+            name: "_CXCompatible"),
+        .target(
+            name: "_CXShim",
+            dependencies: shimDep,
+            swiftSettings: [.define("CX_PRIVATE_SHIM")] + combineImpFlag),
+        .target(
+            name: "_CXTest",
+            dependencies: ["_CXShim"],
+            swiftSettings: [.define("CX_PRIVATE_SHIM")]),
+        
+        
+        .target(
+            name: "CXTestUtility",
+            dependencies: ["CXUtility", "_CXShim", "_CXTest", "Semver", "Quick", "Nimble"],
+            swiftSettings: combineImpFlag),
+        .testTarget(
+            name: "CombineXTests",
+            dependencies: ["CXTestUtility", "CXUtility", "Quick", "Nimble"],
+            swiftSettings: combineImpFlag),
+        .testTarget(
+            name: "CXFoundationTests",
+            dependencies: ["CXTestUtility", "Quick", "Nimble"]),
+        .testTarget(
+            name: "CXInconsistentTests",
+            dependencies: ["CXTestUtility", "CXUtility", "Quick", "Nimble"]),
     ]
 )
 
