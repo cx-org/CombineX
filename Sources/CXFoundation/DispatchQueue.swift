@@ -1,8 +1,8 @@
-import CombineX
 import Dispatch
 
 #if !COCOAPODS
 import CXUtility
+import CombineX
 #endif
 
 extension CXWrappers {

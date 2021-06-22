@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "CombineX"
-  s.version      = "0.3.1"
+  s.version      = "0.3.2"
   s.summary      = "Open source implementation for Apple's Combine."
   s.homepage     = "https://github.com/cx-org/CombineX"
   s.license      = { :type => "MIT", :file => "LICENSE" }
@@ -22,12 +22,19 @@ Pod::Spec.new do |s|
   s.subspec "Main" do |ss|
     ss.source_files = "Sources/CombineX/**/*.swift"
     ss.dependency "CombineX/CXUtility"
+<<<<<<< HEAD
     # ss.dependency "Runtime"
+=======
+    ss.dependency "CombineX/CXNamespace"
+>>>>>>> master
   end
 
   s.subspec "CXFoundation" do |ss|
     ss.source_files = "Sources/CXFoundation/**/*.swift"
+<<<<<<< HEAD
     ss.dependency "CombineX/CXUtility"
+=======
+>>>>>>> master
     ss.dependency "CombineX/Main"
   end
 

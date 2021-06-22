@@ -28,7 +28,7 @@ But if you develop a library, it's encouraged to use `CXShim`, a virtual Combine
 
 ### Requirements
 
-- Swift 5.0 (Xcode 10.2)
+- Swift 5.0+ (Xcode 10.2+)
 
 ### Installation
 
@@ -36,20 +36,23 @@ But if you develop a library, it's encouraged to use `CXShim`, a virtual Combine
 
 ```swift
 package.dependencies += [
-    .package(url: "https://github.com/cx-org/CombineX", from: "0.3.1"),
+    .package(url: "https://github.com/cx-org/CombineX", from: "0.3.2"),
 ]
 ```
 
 #### CocoaPods
 
 ```ruby
-pod 'CombineX', "~> 0.3.1"
+pod 'CombineX', "~> 0.3.2"
+
+# or, if you want to use `Foundation` extensions: 
+pod 'CombineX/CXFoundation', "~> 0.3.2"
 ```
 
 #### Carthage
 
 ```carthage
-github "cx-org/CombineX" ~> 0.3.1
+github "cx-org/CombineX" ~> 0.3.2
 ```
 
 CXShim is only available with Swift Package Manager.

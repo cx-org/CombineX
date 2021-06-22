@@ -1,10 +1,34 @@
-import CombineX
-import CXUtility
 import Foundation
+
+#if !COCOAPODS
+import CXUtility
+import CombineX
+#endif
 
 extension CXWrappers {
     
-    public final class NotificationCenter: NSObject<Foundation.NotificationCenter> {}
+    public final class NotificationCenter: NSObject<Foundation.NotificationCenter> {
+        
+        #if COCOAPODS
+        /// For some reason, when installed via CocoaPods, the compilation will fail with the following error:
+        ///
+        ///     Value of type 'CXWrappers.NotificationCenter' has no member 'base'.
+        ///
+        /// This is a compiler bug, so, as you can see, there is a crazy workaround here, yes, override without `override` keyword.
+        public var base: Foundation.NotificationCenter {
+            return super.base
+        }
+        
+        /// For some reason, when installed via CocoaPods, the compilation will fail with the following error:
+        ///
+        ///     'CXWrappers.NotificationCenter' cannot be constructed because it has no accessible initializers.
+        ///
+        /// This is a compiler bug, so, as you can see, there is a crazy workaround here, yes, override without `override` keyword.
+        public init(wrapping base: Foundation.NotificationCenter) {
+            super.init(wrapping: base)
+        }
+        #endif
+    }
 }
 
 extension NotificationCenter {

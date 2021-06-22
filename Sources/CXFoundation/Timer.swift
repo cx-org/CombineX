@@ -1,6 +1,9 @@
-import CombineX
-import CXUtility
 import Foundation
+
+#if !COCOAPODS
+import CXUtility
+import CombineX
+#endif
 
 extension CXWrappers {
     
