@@ -18,12 +18,10 @@ jobs:
   mac:
     strategy:
       matrix:
-        xcode_version: ['11.7']
+        xcode_version: ['11.7', '12.4']
     runs-on: macOS-latest
     env:
       DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode_version }}.app/Contents/Developer
-      CX_COMBINE_IMPLEMENTATION: CombineX
-      CX_CONTINUOUS_INTEGRATION: "YES"
     steps:
       - uses: actions/checkout@v1
       - name: Swift Version
@@ -31,13 +29,14 @@ jobs:
           swift -version
           swift package --version
           xcodebuild -version
+      - run: git submodule update --init
       - name: Build and Test
         run: swift test
 
   linux:
     strategy:
       matrix:
-        swift_version: ['5.2', 'latest']
+        swift_version: ['5.2', '5.3']
     runs-on: ubuntu-latest
     container:
       image: swift:${{ matrix.swift_version }}
@@ -47,6 +46,7 @@ jobs:
         run: |
           swift -version
           swift package --version
+      - run: git submodule update --init
       - name: Build and Test
         run: swift test
 
@@ -63,6 +63,7 @@ jobs:
         run: |
           swift -version
           swift package --version
+      - run: git submodule update --init
       - name: Build and Test
         # no tests available, just build.
         run: swift build
@@ -70,8 +71,7 @@ jobs:
   combine:
     runs-on: macOS-latest
     env:
-      CX_COMBINE_IMPLEMENTATION: Combine
-      CX_CONTINUOUS_INTEGRATION: "YES"
+      CX_TEST_COMBINE: "YES"
     steps:
       - uses: actions/checkout@v1
       - name: Swift Version
@@ -80,6 +80,7 @@ jobs:
           xcodebuild -version
           swift -version
           swift package --version
+      - run: git submodule update --init
       - name: Build and Test
         run: swift test
 
@@ -106,8 +107,7 @@ jobs:
   #   runs-on: macOS-latest
   #   env:
   #     DEVELOPER_DIR: /Applications/Xcode_${{ matrix.versions.xcode }}.app/Contents/Developer
-  #     CX_COMBINE_IMPLEMENTATION: Combine
-  #     CX_CONTINUOUS_INTEGRATION: "YES"
+  #     CX_TEST_COMBINE: "YES"
   #     PROJECT: CombineX.xcodeproj
   #     SCHEME: CombineX-Package
   #     DESTINATION: "platform=iOS Simulator,name=iPhone 11,OS=${{ matrix.versions.ios }}"

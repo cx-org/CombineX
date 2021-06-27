@@ -1,7 +1,3 @@
-#if !COCOAPODS
-import CXNamespace
-#endif
-
 extension CXWrappers {
     
     // swiftlint:disable:next syntactic_sugar

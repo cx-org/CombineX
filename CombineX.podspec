@@ -15,27 +15,26 @@ Pod::Spec.new do |s|
 
   s.source = { :git => "https://github.com/cx-org/CombineX.git", :tag => "#{s.version}" }
 
-  s.subspec "CXLibc" do |ss|
-    ss.source_files = "Sources/CXLibc/**/*.swift"
-  end
-
   s.subspec "CXUtility" do |ss|
     ss.source_files = "Sources/CXUtility/**/*.swift"
   end
 
-  s.subspec "CXNamespace" do |ss|
-    ss.source_files = "Sources/CXNamespace/**/*.swift"
-  end
-
   s.subspec "Main" do |ss|
     ss.source_files = "Sources/CombineX/**/*.swift"
-    ss.dependency "CombineX/CXLibc"
     ss.dependency "CombineX/CXUtility"
+<<<<<<< HEAD
+    # ss.dependency "Runtime"
+=======
     ss.dependency "CombineX/CXNamespace"
+>>>>>>> master
   end
 
   s.subspec "CXFoundation" do |ss|
     ss.source_files = "Sources/CXFoundation/**/*.swift"
+<<<<<<< HEAD
+    ss.dependency "CombineX/CXUtility"
+=======
+>>>>>>> master
     ss.dependency "CombineX/Main"
   end
 
