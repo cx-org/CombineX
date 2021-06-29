@@ -36,8 +36,9 @@ extension Publishers {
         }
         
         public func receive<S: Subscriber>(subscriber: S) where Failure == S.Failure, Upstream.Output == S.Input {
+            func dummy<T>(_: Never) -> T {}
             self.upstream
-                .mapError { $0 as! Failure }
+                .mapError(dummy)
                 .receive(subscriber: subscriber)
         }
         
