@@ -15,14 +15,22 @@ let package = Package(
         .library(name: "CombineX", targets: ["CombineX", "CXFoundation"]),
     ],
     dependencies: [
+        .package(url: "https://github.com/apple/swift-atomics.git", .upToNextMinor(from: "0.0.3")),
         .package(url: "https://github.com/Quick/Quick.git", from: "3.0.0"),
         .package(url: "https://github.com/Quick/Nimble.git", from: "9.0.0"),
         .package(url: "https://github.com/ddddxxx/Semver.git", .upToNextMinor(from: "0.2.1")),
     ],
     targets: [
         .target(name: "CXUtility"),
-        .target(name: "CombineX", dependencies: ["CXUtility"]),
-        .target(name: "CXFoundation", dependencies: ["CXUtility", "CombineX"]),
+        .target(
+            name: "CombineX",
+            dependencies: [
+                "CXUtility",
+                .product(name: "Atomics", package: "swift-atomics")],
+            swiftSettings: [.define("CX_LOCK_FREE_ATOMIC")]),
+        .target(
+            name: "CXFoundation",
+            dependencies: ["CXUtility", "CombineX"]),
         
         // We have circular dependency CombineXTests -> CXTest -> CXShim -> CombineX
         //
