@@ -39,3 +39,23 @@ class CombineIdentifierSpec: QuickSpec {
         }
     }
 }
+
+import XCTest
+
+class CombineIdentifierTests: XCTestCase {
+    
+    func testPerformance() {
+        measure {
+            let g = DispatchGroup()
+            for _ in 0..<1000 {
+                DispatchQueue.global().async(group: g) {
+                    for _ in 0..<1000 {
+                        blackHole(CombineIdentifier())
+                    }
+                }
+            }
+            g.wait()
+        }
+    }
+}
+
