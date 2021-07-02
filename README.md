@@ -20,11 +20,7 @@ Open-source implementation of Apple's [Combine](https://developer.apple.com/docu
 
 ## Get Started
 
-CombineX contains 3 products: `CombineX`, `CXShim`, and `CXTest`. You can simply use `CombineX` and ignore the presence of system Combine.
-
-But if you develop a library, it's encouraged to use `CXShim`, a virtual Combine interface, so your library is backward deployable **and** compatible with SwiftUI. See [Combine Compatible Package](https://github.com/cx-org/CombineX/wiki/Combine-Compatible-Package) for more information.
-
-`CXTest` is a test infrastructure for Combine, built on `CXShim`. It provides useful test utilities like [TracingSubscriber](Sources/CXTest/TracingSubscriber.swift) and [VirtualTimeScheduler](Sources/CXTest/VirtualTimeScheduler.swift).
+> If you develop a library, it's recommended to use [`CXShim`](https://github.com/cx-org/CXShim) so your library is compatible with SwiftUI.
 
 ### Requirements
 
@@ -55,14 +51,13 @@ pod 'CombineX/CXFoundation', "~> 0.3.2"
 github "cx-org/CombineX" ~> 0.3.2
 ```
 
-CXShim is only available with Swift Package Manager.
-
 ## Related Projects
 
 These libraries bring additional functionality to Combine. They are all [Combine Compatible Package](https://github.com/cx-org/CombineX/wiki/Combine-Compatible-Package) and you're free to switch underlying Combine implementation between `CombineX` and Apple's `Combine`.
 
-- [CXCocoa](https://github.com/cx-org/CXCocoa): provides `Combine` extensions to `Cocoa`, such as `KVO+Publisher`, `Method Interception`, `UIBinding`, `Delegate Proxy`, etc.
-- [CXExtensions](https://github.com/cx-org/CXExtensions): provides a collection of useful extensions for `Combine`, such as `IgnoreError`, `DelayedAutoCancellable`, etc.
+- [CXTest](https://github.com/cx-org/CXTest): test infrastructure for Combine. It provides useful test utilities like `TracingSubscriber` and `VirtualTimeScheduler`.
+- [CXExtensions](https://github.com/cx-org/CXExtensions): provides a collection of useful extensions for Combine, such as `IgnoreError`, `DelayedAutoCancellable`, etc.
+- [CXCocoa](https://github.com/cx-org/CXCocoa): provides Combine extensions to `Cocoa`, such as `KVO+Publisher`, `Method Interception`, `UIBinding`, `Delegate Proxy`, etc.
 
 ## License
 
