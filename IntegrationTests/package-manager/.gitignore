@@ -8,10 +8,12 @@ test-spm/DerivedData/
 test-spm/.swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
 
 # CocoaPods
+
 test-cocoapods/Pods/
 
 # Carthage
 
 test-carthage/Carthage/Checkouts
 test-carthage/Carthage/Build
+test-carthage/Cartfile
 test-carthage/Cartfile.resolved
