@@ -10,6 +10,7 @@ test-spm/.swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
 # CocoaPods
 
 test-cocoapods/Pods/
+test-cocoapods/Podfile.lock
 
 # Carthage
 
