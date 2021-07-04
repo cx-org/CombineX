@@ -1,1 +1,2 @@
-@_exported import CXTest
+@_exported import _CXShim
+@_exported import _CXTest

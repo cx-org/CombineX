@@ -6,7 +6,6 @@ import FoundationNetworking
 
 #if !COCOAPODS
 import CXUtility
-import CXNamespace
 import CombineX
 #endif
 

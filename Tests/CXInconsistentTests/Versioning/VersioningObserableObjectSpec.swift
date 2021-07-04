@@ -1,4 +1,3 @@
-import CXShim
 import CXTestUtility
 import Foundation
 import Nimble
@@ -47,8 +46,8 @@ class VersioningObserableObjectSpec: QuickSpec {
 
 // TODO: duplicate code of ObserableObjectSpec
 
-private typealias Published = CXShim.Published
-private typealias ObservableObject = CXShim.ObservableObject
+private typealias Published = CXTestUtility.Published
+private typealias ObservableObject = CXTestUtility.ObservableObject
 
 private protocol ObservableObjectDefaultImplementation {
     var objectWillChange: ObservableObjectPublisher { get }

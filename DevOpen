@@ -1,7 +1,0 @@
-#!/bin/sh
-
-# Open the project in Xcode with env variables.
-
-export CX_COMBINE_IMPLEMENTATION="CombineX"
-killall Xcode || true
-open $(dirname $0)/Package.swift

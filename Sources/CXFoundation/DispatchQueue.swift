@@ -2,7 +2,6 @@ import Dispatch
 
 #if !COCOAPODS
 import CXUtility
-import CXNamespace
 import CombineX
 #endif
 

@@ -18,6 +18,8 @@
 
 ## 开始使用
 
+> 如果你开发的是库，建议使用 [`CXShim`](https://github.com/cx-org/CXShim) 以使其兼容 SwiftUI。
+
 ### 要求
 
 - Swift 5.0+ (Xcode 10.2+)
@@ -28,33 +30,32 @@
 
 ```swift
 package.dependencies += [
-    .package(url: "https://github.com/cx-org/CombineX", from: "0.3.2"),
+    .package(url: "https://github.com/cx-org/CombineX", from: "0.4.0"),
 ]
 ```
 
 #### CocoaPods
 
 ```ruby
-pod 'CombineX', "~> 0.3.2"
+pod 'CombineX', "~> 0.4.0"
 
 # 或者，如果你想用 `Foundation` 扩展：
-pod 'CombineX/CXFoundation', "~> 0.3.2"
+pod 'CombineX/CXFoundation', "~> 0.4.0"
 ```
 
 #### Carthage
 
 ```carthage
-github "cx-org/CombineX" ~> 0.3.2
+github "cx-org/CombineX" ~> 0.4.0
 ```
-
-CXShim 仅在 Swift Package Manager 下可用。
 
 ## 相关项目
 
 以下这些库为 Combine 添加了额外功能。它们都是 [Combine 兼容库](https://github.com/cx-org/CombineX/wiki/Combine-Compatible-Package)，你可以自由切换底层的 Combine 实现，以使用 CombineX 或是 Apple 提供的 Combine。
 
-- [CXCocoa](https://github.com/cx-org/CXCocoa)：提供 `Cocoa` 的 `Combine` 扩展。例如 `KVO+Publisher`，`Method Interception`，`UIBinding`，`Delegate Proxy` 等。
+- [CXTest](https://github.com/cx-org/CXTest): 针对 Combine 的单元测试工具，例如 `TracingSubscriber`，`VirtualTimeScheduler` 等。
 - [CXExtensions](https://github.com/cx-org/CXExtensions)：提供一系列有用的 Combine 扩展，例如：`IgnoreError`，`DelayedAutoCancellable` 等。
+- [CXCocoa](https://github.com/cx-org/CXCocoa)：提供 `Cocoa` 的 Combine 扩展。例如 `KVO+Publisher`，`Method Interception`，`UIBinding`，`Delegate Proxy` 等。
 
 ## 许可协议
 
