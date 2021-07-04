@@ -1,7 +1,10 @@
-import CombineX
 import MyFramework
+import Foundation
 
-_ = foo()
-    .sink {
-        precondition(1 == $0)
-    }
+
+func foo() async -> Int {
+    print(Thread.current)
+    return 1
+}
+
+dispatchMain()

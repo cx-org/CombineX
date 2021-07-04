@@ -1,5 +1,7 @@
 #! /usr/bin/env bash
 
+set -euxo pipefail
+
 GIT_PATH=$(cd ../../../ && pwd)
 echo "git \"${GIT_PATH}\"" >| 'Cartfile'
 

@@ -1,5 +1,7 @@
 #! /usr/bin/env bash
 
+set -euxo pipefail
+
 pod install
 
 xcodebuild \

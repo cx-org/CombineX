@@ -1,5 +1,7 @@
 #! /usr/bin/env bash
 
+set -euxo pipefail
+
 case $PACKAGE_MANAGER in
   
   USE_SPM)
