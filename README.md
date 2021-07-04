@@ -32,23 +32,23 @@ Open-source implementation of Apple's [Combine](https://developer.apple.com/docu
 
 ```swift
 package.dependencies += [
-    .package(url: "https://github.com/cx-org/CombineX", from: "0.3.2"),
+    .package(url: "https://github.com/cx-org/CombineX", from: "0.4.0"),
 ]
 ```
 
 #### CocoaPods
 
 ```ruby
-pod 'CombineX', "~> 0.3.2"
+pod 'CombineX', "~> 0.4.0"
 
 # or, if you want to use `Foundation` extensions: 
-pod 'CombineX/CXFoundation', "~> 0.3.2"
+pod 'CombineX/CXFoundation', "~> 0.4.0"
 ```
 
 #### Carthage
 
 ```carthage
-github "cx-org/CombineX" ~> 0.3.2
+github "cx-org/CombineX" ~> 0.4.0
 ```
 
 ## Related Projects
