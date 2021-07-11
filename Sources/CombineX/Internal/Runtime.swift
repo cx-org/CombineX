@@ -118,19 +118,29 @@ private struct AnyMetadata {
 private struct AnyClassMetadata {
     var _kind: UInt // isaPointer for classes
     var superClass: Any.Type
+    #if !swift(>=5.4) || canImport(ObjectiveC)
+    // ABI change in Swift 5.4
+    // https://github.com/wickwirew/Runtime/issues/92
     var cacheData: (Int, Int)
     var rodataPointer: Int
+    #endif
     
     var isSwiftClass: Bool {
+        #if !swift(>=5.4) || canImport(ObjectiveC)
         return (rodataPointer & classIsSwiftMask) != 0
+        #else
+        return true
+        #endif
     }
 }
 
 private struct ClassMetadata {
     var _kind: UInt // isaPointer for classes
     var superClass: Any.Type
+    #if !swift(>=5.4) || canImport(ObjectiveC)
     var cacheData: (Int, Int)
     var rodataPointer: Int
+    #endif
     var classFlags: Int32
     var instanceAddressPoint: UInt32
     var instanceSize: UInt32
