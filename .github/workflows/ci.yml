@@ -122,3 +122,19 @@ jobs:
   #           -project "$PROJECT" \
   #           -scheme "$SCHEME" \
   #           -destination "$DESTINATION" | xcpretty
+
+  integration_tests_package_manager:
+    strategy:
+      fail-fast: false
+      matrix:
+        package_manager: ['SPM', 'COCOAPODS', 'CARTHAGE']
+    runs-on: macos-latest
+    env:
+      PACKAGE_MANAGER: USE_${{matrix.package_manager}}
+    steps:
+      - uses: actions/checkout@v1
+      - name: integration_tests
+        run: |
+          cd IntegrationTests/package-manager
+          bash test.sh
+    
