@@ -15,7 +15,7 @@ let package = Package(
         .library(name: "CombineX", targets: ["CombineX", "CXFoundation"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-atomics.git", .upToNextMinor(from: "0.0.3")),
+        .package(url: "https://github.com/apple/swift-atomics.git", .upToNextMinor(from: "1.1.0")),
         .package(url: "https://github.com/Quick/Quick.git", from: "3.0.0"),
         .package(url: "https://github.com/Quick/Nimble.git", from: "9.0.0"),
         .package(url: "https://github.com/ddddxxx/Semver.git", .upToNextMinor(from: "0.2.1")),
